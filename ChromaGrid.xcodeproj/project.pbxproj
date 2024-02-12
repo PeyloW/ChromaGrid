@@ -7,21 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A69AE49F2B6EB9A900EBA43D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.m */; };
+		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
 		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
 		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
 		A69AE4A72B6EB9B000EBA43D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4A62B6EB9B000EBA43D /* main.m */; };
+		A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4BB2B6EBC4E00EBA43D /* Makefile */; };
+		A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C02B6EBFCA00EBA43D /* game.cpp */; };
+		A69AE4CB2B6FEFE500EBA43D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C92B6FEFE500EBA43D /* graphics.cpp */; };
+		A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
+		A69AE4D92B7062AC00EBA43D /* cpp_runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */; };
+		A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4DC2B70693500EBA43D /* backgrnd.iff */; };
+		A69AE4E62B72857F00EBA43D /* test.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E42B72851700EBA43D /* test.iff */; };
+		A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E82B77FED300EBA43D /* cursor.iff */; };
+		A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4EB2B791FF100EBA43D /* system.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		A69AE49E2B6EB9A900EBA43D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A69AE4A32B6EB9B000EBA43D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A69AE4A52B6EB9B000EBA43D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A69AE4A62B6EB9B000EBA43D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A69AE4A82B6EB9B000EBA43D /* ChromaGrid.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChromaGrid.entitlements; sourceTree = "<group>"; };
+		A69AE4AF2B6EB9EB00EBA43D /* allocator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allocator.hpp; sourceTree = "<group>"; };
+		A69AE4B02B6EB9EB00EBA43D /* grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = grid.hpp; sourceTree = "<group>"; };
+		A69AE4B72B6EBC4100EBA43D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A69AE4BB2B6EBC4E00EBA43D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		A69AE4C02B6EBFCA00EBA43D /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
+		A69AE4C12B6EBFCA00EBA43D /* game.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = game.hpp; sourceTree = "<group>"; };
+		A69AE4C52B6EC28800EBA43D /* cincludes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cincludes.hpp; sourceTree = "<group>"; };
+		A69AE4C92B6FEFE500EBA43D /* graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics.cpp; sourceTree = "<group>"; };
+		A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = graphics.hpp; sourceTree = "<group>"; };
+		A69AE4CE2B6FFA3700EBA43D /* graphics_m68k.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = graphics_m68k.s; sourceTree = "<group>"; };
+		A69AE4D32B701EF600EBA43D /* iff_file.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iff_file.cpp; sourceTree = "<group>"; };
+		A69AE4D42B701EF600EBA43D /* iff_file.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = iff_file.hpp; sourceTree = "<group>"; };
+		A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpp_runtime.cpp; sourceTree = "<group>"; };
+		A69AE4DC2B70693500EBA43D /* backgrnd.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgrnd.iff; sourceTree = "<group>"; };
+		A69AE4E42B72851700EBA43D /* test.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.iff; sourceTree = "<group>"; };
+		A69AE4E82B77FED300EBA43D /* cursor.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = cursor.iff; sourceTree = "<group>"; };
+		A69AE4EB2B791FF100EBA43D /* system.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
+		A69AE4EC2B791FF100EBA43D /* system.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system.hpp; sourceTree = "<group>"; };
+		A69AE4EF2B79202A00EBA43D /* system_m68k.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = system_m68k.s; sourceTree = "<group>"; };
+		A69AE4F42B79253A00EBA43D /* types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
+		A69AE4FA2B793CEF00EBA43D /* system_host.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_host.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +67,7 @@
 		A69AE4912B6EB9A900EBA43D = {
 			isa = PBXGroup;
 			children = (
+				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
 				A69AE49C2B6EB9A900EBA43D /* ChromaGrid */,
 				A69AE49B2B6EB9A900EBA43D /* Products */,
 			);
@@ -54,15 +84,42 @@
 		A69AE49C2B6EB9A900EBA43D /* ChromaGrid */ = {
 			isa = PBXGroup;
 			children = (
-				A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */,
-				A69AE49E2B6EB9A900EBA43D /* AppDelegate.m */,
-				A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */,
-				A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */,
-				A69AE4A52B6EB9B000EBA43D /* Info.plist */,
-				A69AE4A62B6EB9B000EBA43D /* main.m */,
-				A69AE4A82B6EB9B000EBA43D /* ChromaGrid.entitlements */,
+				A69AE4BB2B6EBC4E00EBA43D /* Makefile */,
+				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
+				A69AE4F42B79253A00EBA43D /* types.hpp */,
+				A69AE4AF2B6EB9EB00EBA43D /* allocator.hpp */,
+				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
+				A69AE4EC2B791FF100EBA43D /* system.hpp */,
+				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,
+				A69AE4EB2B791FF100EBA43D /* system.cpp */,
+				A69AE4EF2B79202A00EBA43D /* system_m68k.s */,
+				A69AE4B02B6EB9EB00EBA43D /* grid.hpp */,
+				A69AE4D42B701EF600EBA43D /* iff_file.hpp */,
+				A69AE4D32B701EF600EBA43D /* iff_file.cpp */,
+				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
+				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
+				A69AE4CE2B6FFA3700EBA43D /* graphics_m68k.s */,
+				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
+				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
+				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
 			);
 			path = ChromaGrid;
+			sourceTree = "<group>";
+		};
+		A69AE4B62B6EBBE600EBA43D /* MacOSHost */ = {
+			isa = PBXGroup;
+			children = (
+				A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */,
+				A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */,
+				A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */,
+				A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */,
+				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
+				A69AE4E42B72851700EBA43D /* test.iff */,
+				A69AE4E82B77FED300EBA43D /* cursor.iff */,
+				A69AE4A52B6EB9B000EBA43D /* Info.plist */,
+				A69AE4A62B6EB9B000EBA43D /* main.m */,
+			);
+			path = MacOSHost;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,7 +179,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */,
+				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
+				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
+				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,8 +193,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */,
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
-				A69AE49F2B6EB9A900EBA43D /* AppDelegate.m in Sources */,
+				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
+				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
+				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,
+				A69AE4D92B7062AC00EBA43D /* cpp_runtime.cpp in Sources */,
+				A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */,
+				A69AE4CB2B6FEFE500EBA43D /* graphics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +224,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -217,7 +283,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -268,12 +334,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ChromaGrid/ChromaGrid.entitlements;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = GW7LBAF36Q;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = ChromaGrid/Info.plist;
+				INFOPLIST_FILE = MacOSHost/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -288,12 +350,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ChromaGrid/ChromaGrid.entitlements;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = GW7LBAF36Q;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = ChromaGrid/Info.plist;
+				INFOPLIST_FILE = MacOSHost/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

@@ -7,8 +7,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface CGGameView : NSView
+@end
+
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-
-
 @end
 
