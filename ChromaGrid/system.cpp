@@ -16,8 +16,8 @@ extern "C" {
 
 static bool enabled_timers[1] = { false };
 
-cgtimer_t::func_t pVBLFunc = NULL;
-uint32_t pVBLTick = 0;
+cgtimer_t::func_t pVBLFunc = nullptr;
+volatile uint32_t pVBLTick = 0;
 static cgrect_t pMosueLimit;
 static bool pLastButtonState[2];
 uint8_t pMouseButtons;
@@ -26,6 +26,9 @@ cgpoint_t pMousePosition;
 #ifdef __M68000__
     extern cgtimer_t::func_t pSystemVBLInterupt;
     extern void pVBLInterupt();
+    extern cgtimer_t::func_a_t pSystemMouseInterupt;
+    extern void pMouseInterupt(void *);
+    static _KBDVECS *pKeyboardVectors = nullptr;
 #else
     void (*pYieldFunction)() = nullptr;
 
@@ -63,7 +66,7 @@ cgtimer_t::~cgtimer_t() {
     *((func_t *)0x0070) = pSystemVBLInterupt;
 #endif
     enabled_timers[timer] = false;
-    pVBLFunc = NULL;
+    pVBLFunc = nullptr;
 }
 
 uint32_t cgtimer_t::tick() {
@@ -86,9 +89,17 @@ cgmouse_t::cgmouse_t(cgrect_t limit) {
         static_cast<int16_t>(limit.origin.x + limit.size.width / 2),
         static_cast<int16_t>(limit.origin.y + limit.size.height / 2)
     };
+#ifdef __M68000__
+    pKeyboardVectors = Kbdvbase();
+    pSystemMouseInterupt = pKeyboardVectors->mousevec;
+    pKeyboardVectors->mousevec = &pMouseInterupt;
+#endif
 }
 
 cgmouse_t::~cgmouse_t() {
+#ifdef __M68000__
+    pKeyboardVectors->mousevec = pSystemMouseInterupt;
+#endif
 }
 
 bool cgmouse_t::is_pressed(button_t button) {

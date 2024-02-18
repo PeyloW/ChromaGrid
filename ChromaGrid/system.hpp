@@ -41,7 +41,8 @@ public:
         vbl
     };
     typedef void(*func_t)(void);
-    
+    typedef void(*func_a_t)(void *);
+
     cgtimer_t(timer_t timer, func_t func) asm("_cgtimer_t_init");
     ~cgtimer_t() asm("_cgtimer_t_deinit");
     

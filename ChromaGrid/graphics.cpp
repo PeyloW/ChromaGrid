@@ -249,7 +249,7 @@ void cgimage_t::set_active() const {
 #ifdef __M68000__
     uint16_t word_offset = offset.y * line_words + (offset.x >> 4);
     uint32_t high_bytes =  (uint32_t)(bitmap + (word_offset << 4));
-    set_screen(nullptr, high_bytes, 0);
+    set_screen(nullptr, (void *)high_bytes, 0);
     uint8_t low_byte = (uint8_t)high_bytes;
     uint8_t bit_shift = offset.x & 0x0f;
     uint8_t word_skip = line_words - 20;
