@@ -25,16 +25,16 @@ public:
         reinterpret_cast<uint16_t*>(0xffff8240)[i] = color;
 #endif
     }
-    void get(uint8_t *r, uint8_t *g, uint8_t *b) const asm("_cgcolor_get") {
+    void get(uint8_t *r, uint8_t *g, uint8_t *b) const {
         *r = from_ste(color, 8);
         *g = from_ste(color, 4);
         *b = from_ste(color, 0);
     }
 private:
-    static uint16_t to_ste(const uint8_t c, const uint8_t shift)  asm("_cgcolor_to_ste"){
+    __forceinline static uint16_t to_ste(const uint8_t c, const uint8_t shift) {
         return ste_to_seq[c >> 4] << shift;
     }
-    static uint8_t from_ste(const uint16_t c, const uint8_t shift)  asm("_cgcolor_from_ste") {
+    __forceinline static uint8_t from_ste(const uint16_t c, const uint8_t shift) {
         return ste_from_seq[(c >> shift) & 0x0f];
     }
 };
@@ -44,13 +44,13 @@ class cgpalette_t {
 public:
     cgcolor_t colors[16];
     cgpalette_t(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
-    cgpalette_t(uint8_t *c) asm("_cgpalette_init") {
+    cgpalette_t(uint8_t *c) {
         for (int i = 0; i < 16; i++) {
             colors[i] = cgcolor_t(c[0], c[1], c[2]);
             c += 3;
         }
     }
-    void set_active() const asm("_cgpalette_set_active");
+    void set_active() const;
 };
 
 typedef int8_t colorindex_t;
@@ -62,36 +62,37 @@ public:
         mask_mode_auto, mask_mode_none, mask_mode_masked
     };
     
-    cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette) asm("_cgimage_init");
-    cgimage_t(const cgimage_t *image, cgrect_t rect) asm("_cgimage_init_subimage");
-    cgimage_t(const char *path, mask_mode_t mask_mode = mask_mode_auto) asm("_cgimage_init_path");
-    ~cgimage_t() asm("_cgimage_deinit");
+    cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette);
+    cgimage_t(const cgimage_t *image, cgrect_t rect);
+    cgimage_t(const char *path, mask_mode_t mask_mode = mask_mode_auto);
+    ~cgimage_t();
     
-    void set_active() const asm("_cgimage_set_active");
+    void set_active() const;
     
-    inline cgpalette_t *get_palette() const { return palette; }
-    inline cgpoint_t get_offset() const { return offset; }
-    inline void set_offset(const cgpoint_t o) { offset = o; }
-    inline cgsize_t get_size() const { return size; }
+    __forceinline cgpalette_t *get_palette() const { return palette; }
+    __forceinline cgpoint_t get_offset() const { return offset; }
+    __forceinline void set_offset(const cgpoint_t o) { offset = o; }
+    __forceinline cgsize_t get_size() const { return size; }
     
     template<class Commands>
-    inline void with_clipping(bool clip, Commands commands) {
+    __forceinline void with_clipping(bool clip, Commands commands) {
         const bool old_clip = clipping;
         clipping = clip;
         commands();
         clipping = old_clip;
     }
     
-    void put_pixel(colorindex_t ci, cgpoint_t at) asm("_cgimage_put_pixel");
-    colorindex_t get_pixel(cgpoint_t at) asm("_cgimage_get_pixel");
+    void put_pixel(colorindex_t ci, cgpoint_t at);
+    colorindex_t get_pixel(cgpoint_t at);
 
-    void fill(colorindex_t ci, cgrect_t rect) asm("_cgimage_fill");
+    void fill(colorindex_t ci, cgrect_t rect);
     
-    void draw_aligned(cgimage_t *src, cgpoint_t at) asm("_cgimage_draw_aligned");
-    void draw(cgimage_t *src, cgpoint_t at) asm("_cgimage_draw");
-    void draw(cgimage_t *src, cgrect_t rect, cgpoint_t at) asm("_cgimage_draw_rect");
+    void draw_aligned(cgimage_t *src, cgpoint_t at);
+    void draw(cgimage_t *src, cgpoint_t at);
+    void draw(cgimage_t *src, cgrect_t rect, cgpoint_t at);
     
 private:
+    // Must be __packed and syn with graphics_m68k.s implementation
     const cgimage_t *super_image;
     cgpalette_t *palette;
     uint16_t *bitmap;
@@ -103,7 +104,6 @@ private:
     bool clipping;
     
     static void imp_draw_aligned(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) asm("_m68_cgimage_draw_aligned");
-    static void imp_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) asm("_m68_cgimage_draw");
     static void imp_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point) asm("_m68_cgimage_draw_rect");
 
 };

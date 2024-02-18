@@ -14,9 +14,10 @@ extern "C" {
 #include "system_host.hpp"
 #endif
 
-static bool enabled_timers[1] = { false };
+static int pTimerRefCount[1] = { 0 };
 
-cgtimer_t::func_t pVBLFunc = nullptr;
+#define VBL_FUNC_MAX_CNT 4
+cgtimer_t::func_t pVBLFuncs[VBL_FUNC_MAX_CNT+1] = { nullptr };
 volatile uint32_t pVBLTick = 0;
 static cgrect_t pMosueLimit;
 static bool pLastButtonState[2];
@@ -33,10 +34,14 @@ cgpoint_t pMousePosition;
     void (*pYieldFunction)() = nullptr;
 
     void pVBLInterupt() {
-        if (enabled_timers[0]) {
+        if (pTimerRefCount[cgtimer_t::vbl] > 0) {
             pVBLTick++;
-            if (pVBLFunc) {
-                pVBLFunc();
+            for (int i = 0; i < 8; i++) {
+                if (pVBLFuncs[i]) {
+                    pVBLFuncs[i]();
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -44,29 +49,62 @@ cgpoint_t pMousePosition;
     // Host must call when mouse state changes
     void pUpdateMouse(cgpoint_t position, bool left, bool right) {
         pMousePosition = position;
-        pMouseButtons = (left ? 1 : 0) | (right ? 2 : 0);
+        pMouseButtons = (left ? 2 : 0) | (right ? 1 : 0);
     }
 #endif
 }
 
 
-cgtimer_t::cgtimer_t(timer_t timer, func_t func) : timer(timer) {
+cgtimer_t::cgtimer_t(timer_t timer) : timer(timer) {
     assert(timer == vbl);
-    assert(enabled_timers[timer] == false);
-    enabled_timers[timer] = true;
-    pVBLFunc = func;
+    pTimerRefCount[timer]++;
+    if (pTimerRefCount[0] == 1) {
+        with_paused_timers([] {
 #ifdef __M68000__
-    pSystemVBLInterupt = *((func_t *)0x0070);
-    *((func_t *)0x0070) = &pVBLInterupt;
+        pSystemVBLInterupt = *((func_t *)0x0070);
+        *((func_t *)0x0070) = &pVBLInterupt;
 #endif
+        });
+    }
 }
 
 cgtimer_t::~cgtimer_t() {
+    pTimerRefCount[cgtimer_t::vbl]--;
+    assert(pTimerRefCount[cgtimer_t::vbl] >= 0);
+    if (pTimerRefCount[cgtimer_t::vbl] == 0) {
+        with_paused_timers([] {
 #ifdef __M68000__
-    *((func_t *)0x0070) = pSystemVBLInterupt;
+            *((func_t *)0x0070) = pSystemVBLInterupt;
 #endif
-    enabled_timers[timer] = false;
-    pVBLFunc = nullptr;
+        });
+    }
+}
+
+void cgtimer_t::add_func(func_t func) {
+    with_paused_timers([func] {
+        for (int i = 0; i < VBL_FUNC_MAX_CNT; i++) {
+            if (pVBLFuncs[i] == nullptr) {
+                pVBLFuncs[i] = func;
+                return;
+            }
+        }
+        assert(0);
+    });
+}
+
+void cgtimer_t::remove_func(func_t func) {
+    with_paused_timers([func] {
+        int i;
+        for (i = 0; i < VBL_FUNC_MAX_CNT; i++) {
+            if (pVBLFuncs[i] == func) {
+                pVBLFuncs[i] = func;
+                break;
+            }
+        }
+        for ( ; i < VBL_FUNC_MAX_CNT; i++) {
+            pVBLFuncs[i] = pVBLFuncs[i+1];
+        }
+    });
 }
 
 uint32_t cgtimer_t::tick() {
@@ -118,5 +156,6 @@ cgpoint_t cgmouse_t::get_postion() {
         static_cast<int16_t>(MIN(pMosueLimit.origin.x + pMosueLimit.size.width - 1, MAX(pMousePosition.x, pMosueLimit.origin.x))),
         static_cast<int16_t>(MIN(pMosueLimit.origin.y + pMosueLimit.size.height - 1, MAX(pMousePosition.y, pMosueLimit.origin.y)))
     };
+    pMousePosition = clamped_point;
     return clamped_point;
 }

@@ -32,6 +32,8 @@ static void set_screen(void *log, void *phys, int16_t mode) {
     log = log ?: (void *)-1;
     phys = phys ?: (void *)-1;
     Setscreen(log, phys, mode);
+    void *new_phys = Physbase();
+    //hard_assert(new_phys == phys);
 #endif
 }
 
@@ -43,11 +45,29 @@ public:
     typedef void(*func_t)(void);
     typedef void(*func_a_t)(void *);
 
-    cgtimer_t(timer_t timer, func_t func) asm("_cgtimer_t_init");
-    ~cgtimer_t() asm("_cgtimer_t_deinit");
+    cgtimer_t(timer_t timer);
+    ~cgtimer_t();
+
+    template<class Commands>
+    __forceinline static void with_paused_timers(Commands commands) {
+#ifdef __M68000__
+    __asm__ volatile ("move.w #0x2700,sr" : : : );
+        commands();
+        __asm__ volatile ("move.w #0x2300,sr" : : : );
+#else
+        static bool is_paused = false;
+        assert(is_paused == false);
+        is_paused = true;
+        commands();
+        is_paused = false;
+#endif
+    }
     
-    uint32_t tick() asm("_cgtimer_t_tick");
-    void wait() asm("_cgtimer_t_wait");
+    void add_func(func_t func);
+    void remove_func(func_t func);
+    
+    uint32_t tick();
+    void wait();
     
 private:
     timer_t timer;
@@ -56,14 +76,14 @@ private:
 class cgmouse_t {
 public:
     enum button_t {
-        left, right
+        right, left
     };
     
-    cgmouse_t(cgrect_t limit) asm("_cgmouse_t_init");
-    ~cgmouse_t() asm("_cgmouse_t_deinit");
+    cgmouse_t(cgrect_t limit);
+    ~cgmouse_t();
     
-    bool is_pressed(button_t button) asm("_cgmouse_t_is_pressed");
-    bool was_clicked(button_t button) asm("_cgmouse_t_was_clicked");
+    bool is_pressed(button_t button);
+    bool was_clicked(button_t button);
     
     cgpoint_t get_postion();
     

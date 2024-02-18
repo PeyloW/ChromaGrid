@@ -34,11 +34,14 @@ int32_t game_main(void) {
     pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
 
     printf("setup vbl.\n\r");
-    cgtimer_t vbl(cgtimer_t::vbl, nullptr);
+    cgtimer_t vbl(cgtimer_t::vbl);
 
     printf("setup mouse.\n\r");
     cgmouse_t mouse((cgrect_t){ 0, 4, 320, 200 });
     
+    printf("set low rez.\n\r");
+    set_screen(nullptr, nullptr, 0);
+
     printf("set palette.\n\r");
     background.get_palette()->set_active();
 

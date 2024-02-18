@@ -60,7 +60,7 @@ bool cgiff_file::read(cgiff_chunk_t *chunk) {
 
 #ifndef __M68000__
 template<size_t S>
-static inline void swap(uint8_t bytes[S]) {
+__forceinline static void swap(uint8_t bytes[S]) {
     for (int i = 0; i < S / 2; i++) {
         uint8_t t = bytes[i];
         bytes[i] = bytes[S - (i + 1)];

@@ -1,7 +1,7 @@
 |
 | Primitive Interupt handlers.
 |
-    .extern _pVBLFunc
+    .extern _pVBLFuncs
     .extern _pVBLTick
     .global _pVBLInterupt
     .global _pSystemVBLInterupt
@@ -15,16 +15,17 @@
 
     .even
 _pVBLInterupt:
-    move.l  d0,-(sp)
+    movem.l d0-d2/a0-a2,-(sp)
     add.l   #1,_pVBLTick
-    move.l  _pVBLFunc, d0
-    beq.s   .L1
-    movem.l d1-d2/a0-a1,-(sp)
+    lea     _pVBLFuncs, a2
+.L1:
+    move.l  (a2)+,d0
+    beq.s   .L2
     move.l  d0,a0
     jsr     (a0)
-    movem.l (sp)+,d1-d2/a0-a1
-.L1:
-    move.l  (sp)+,d0
+    bra.s   .L1
+.L2:
+    movem.l (sp)+,d0-d2/a0-a2
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _pSystemVBLInterupt:
     .dc.l    0x0

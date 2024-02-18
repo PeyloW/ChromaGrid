@@ -20,7 +20,7 @@ uint16_t cg_htons(uint16_t v);
 uint32_t cg_htons(uint32_t v);
 #endif
 
-static inline cgiff_id_t cgiff_id_make(const char *str) {
+__forceinline static cgiff_id_t cgiff_id_make(const char *str) {
     assert(strlen(str) == 4);
 #ifdef __M68000__
     return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
@@ -28,7 +28,7 @@ static inline cgiff_id_t cgiff_id_make(const char *str) {
     return (uint32_t)str[3]<<24 | (uint32_t)str[2]<<16 | (uint32_t)str[1]<<8 | str[0];
 #endif
 }
-static inline bool cgiff_id_equals(const cgiff_id_t id, const char *str) {
+__forceinline static bool cgiff_id_equals(const cgiff_id_t id, const char *str) {
     return cgiff_id_make(str) == id;
 }
 
@@ -44,20 +44,20 @@ typedef struct {
 
 class cgiff_file {
 public:
-    cgiff_file(FILE *file) asm("_cgiff_file_init_file");
-    cgiff_file(const char *path) asm("_cgiff_file_init_path");
-    ~cgiff_file() asm("_cgiff_file_deinit");
+    cgiff_file(FILE *file);
+    cgiff_file(const char *path);
+    ~cgiff_file();
   
-    bool read(cgiff_header_t *header) asm("_cgiff_file_read_header");
+    bool read(cgiff_header_t *header);
   
-    bool find(const cgiff_id_t id, cgiff_chunk_t *chunk) asm("_cgiff_file_find_chunk");
+    bool find(const cgiff_id_t id, cgiff_chunk_t *chunk);
     bool read(cgiff_chunk_t *chunk);
     
     template<typename T>
     bool read(T *data, size_t n) {
         return read(data, sizeof(T), n);
     }
-    bool read(void *data, size_t s, size_t n) asm("_cgiff_file_read_bytes");
+    bool read(void *data, size_t s, size_t n);
     
 private:
     FILE *file;

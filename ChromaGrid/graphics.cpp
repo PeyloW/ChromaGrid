@@ -245,26 +245,45 @@ cgimage_t::~cgimage_t() {
     }
 }
 
+#ifdef __M68000__
+static uint16_t pSetActiveVBLCode[20];
+#endif
+
 void cgimage_t::set_active() const {
 #ifdef __M68000__
+#ifndef __append_int16
+#define __append_int16(p,n) __asm__ volatile ("move.w %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
+#define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
+#endif
+
     uint16_t word_offset = offset.y * line_words + (offset.x >> 4);
-    uint32_t high_bytes =  (uint32_t)(bitmap + (word_offset << 4));
-    set_screen(nullptr, (void *)high_bytes, 0);
+    uint32_t high_bytes =  (uint32_t)(bitmap + (word_offset << 2));
     uint8_t low_byte = (uint8_t)high_bytes;
+    __asm__ ("lsr.w #8,%[hb]" : [hb] "+d" (high_bytes) : :);
     uint8_t bit_shift = offset.x & 0x0f;
     uint8_t word_skip = line_words - 20;
     if (bit_shift != 0) {
         word_skip--;
     }
     word_skip <<= 2;
-    // high_bytes = (high_bytes & 0xffff0000) | ((high_bytes & 0xff00) >> 8);
-    __asm__ __volatile__ (
-             "lsr.w #8,%[hb] \n\t"
-             "move.l %[hb],0xffff8204.w \n\t"
-             "move.b %[lb],0xffff8209.w \n\t"
-             "move.b %[ws],0xffff820f.w \n\t"
-             "move.b %[bs],0xffff8265.w \n\t"
-             : [hb] "+d" (high_bytes), [lb] "+d" (low_byte), [ws] "+d" (word_skip), [bs] "+d" (bit_shift) : :);
+    
+    // move.l #highBytes,$ffff8204.w
+    // move.b #lowByte,$ffff8209.w
+    // move.b #wordSkip,$ffff820f.w
+    // move.b #shift,$ffff8265.w
+    // rts
+    uint16_t *code = pSetActiveVBLCode;
+    __append_int16(code, 0x21fc);
+    __append_int32(code, high_bytes);
+    __append_int32(code, 0x820411fcl);
+    __append_int16(code, low_byte);
+    __append_int32(code, 0x820911fcl);
+    __append_int16(code, word_skip);
+    __append_int32(code, 0x820f11fcl);
+    __append_int16(code, bit_shift);
+    __append_int32(code, 0x82654e75);
+    cgtimer_t vbl(cgtimer_t::vbl);
+    vbl.add_func((cgtimer_t::func_t)pSetActiveVBLCode);
 #else
     pActiveImage = this;
 #endif
@@ -336,6 +355,7 @@ void cgimage_t::draw_aligned(cgimage_t *src, cgpoint_t at) {
     assert((at.x & 0xf) == 0);
     assert(src->offset.x == 0);
     assert(src->offset.x == 0);
+    assert(src->maskmap == nullptr);
     if (clipping) {
         const cgrect_t rect = (cgrect_t){ at, src->get_size() };
         if (!rect.contained_by(size)) {
@@ -350,16 +370,8 @@ void cgimage_t::draw_aligned(cgimage_t *src, cgpoint_t at) {
 void cgimage_t::draw(cgimage_t *src, cgpoint_t at) {
     const auto offset = src->get_offset();
     const cgpoint_t real_at = (cgpoint_t){static_cast<int16_t>(at.x - offset.x), static_cast<int16_t>(at.y - offset.y)};
-    if (clipping) {
-        const cgrect_t rect = (cgrect_t){ real_at, src->get_size() };
-        if (!rect.contained_by(size)) {
-            cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
-            draw(src, rect, real_at);
-            return;
-        }
-    }
-    assert(size.contains(real_at));
-    imp_draw(this, src, real_at);
+    cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
+    draw(src, rect, real_at);
 }
 
 void cgimage_t::draw(cgimage_t *src, cgrect_t rect, cgpoint_t at) {
@@ -406,14 +418,15 @@ void cgimage_t::imp_draw_aligned(cgimage_t *image, cgimage_t *srcImage, cgpoint_
                srcImage->bitmap +(srcImage->line_words * y * 4),
                srcImage->line_words * 8);
     }
-    imp_draw(image, srcImage, point);
 }
 
+/*
 void cgimage_t::imp_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) {
     assert(image->get_size().contains(point));
     cgrect_t rect = { { 0, 0 }, srcImage->get_size() };
     imp_draw_rect(image, srcImage, &rect, point);
 }
+*/
 
 void cgimage_t::imp_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point) {
     assert(image->get_size().contains(point));

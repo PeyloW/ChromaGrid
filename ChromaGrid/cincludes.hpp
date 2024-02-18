@@ -14,8 +14,10 @@ extern "C" {
 #define __forceinline __attribute__((__visibility__("default"), __always_inline__))
 #define __packed __attribute__((packed))
 
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#ifndef MAX
+#   define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#   define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#endif
 
 #ifdef __M68000__
 #define hard_assert(expr)\

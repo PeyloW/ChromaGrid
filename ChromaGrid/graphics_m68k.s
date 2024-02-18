@@ -1,5 +1,5 @@
 **************************************************************************************
-*	GRF_B4_S.S
+*	graphics_m68k.s
 *
 *	4 BitPlane Blitter Rendering Functions
 *
@@ -16,8 +16,7 @@
 |	.global	_m68_cgimage_set
 |	.global	_m68_cgimage_get
 	.global	_m68_cgimage_draw_aligned
-        .global _m68_cgimage_draw
-        .global    _m68_cgimage_draw_rect
+        .global _m68_cgimage_draw_rect
 
 **************************************************************************************
 *	STRUCTS
@@ -201,181 +200,8 @@ _m68_cgimage_draw_aligned:
     bne.s   .wait_1
     move.l	(sp)+,a2
     rts
-	
-|
-| m68_cgimage_draw(cgimage_t *dst, cgimage_t *src, cgpoint_t point)
-|
-_m68_cgimage_draw:
-    movem.l	d3-d6/a2,-(a7)	   		| a0 = image, a1 = srcCtx
-    swap	d0						| point.y{d0:high} for later
 
-|    TCInteger width{d5} = (srcImage->size.width){s_cgimage_width(a1)} - 1|
-    move.w	s_cgimage_width(a1),d5
-    subq.w	#1,d5
-|    TCInteger leftEndMask{d1} = endMasks[point.x{d0} % 16]|
-    moveq.l	#0xf,d6
-    move.w	d0,d1
-    and.w	d6,d1
-    move.w	d1,d3			| (point.x % 16{d6}){d3} for later
-    add.w	d1,d1
-    lea		gGraphic_EndMasks(pc),a2	| endMasks{a2} for later
-    move.w	(a2,d1.w),d1
 
-|    TCInteger rightEndMask{d2} = endMasks{a2}[(point.x{d0} + width{d5}) % 16{d6} + 1]|
-    move.w	d0,d2
-    add.w	d5,d2
-    and.w	d6,d2
-    add.w	d2,d2
-    move.w	2(a2,d2.w),d2
-    not.w	d2
-
-|    blitter->HOP = 2|
-    move.b	#eBLITTERHOP_SRC,(eBLITTER_BASE+sBLITTER_HOP).w
-|    blitter->DST_INC_X = 8|
-    move.w	#8,(eBLITTER_BASE+sBLITTER_DST_INC_X).w
-
-|    int8_t skew{d3} = ((point.x % 16){d3}|
-|    int8_t flags{d4} = 0|
-    clr.w	d4
-
-|    TCInteger dstWords{d6} = ((point.x{d0} + width{d5}) >> 4) - (point.x{d0} >> 4)|
-    move.w	d0,d6
-    add.w	d5,d6
-    asr.w	#4,d6
-    asr.w	#4,d0		| (point.x >> 4){d0} for later
-    sub.w	d0,d6
-
-|    TCInteger srcWords{d5} = (width{d5} >> 4)|
-    asr.w	#4,d5
-
-|    if (dstWords{d6} == 0) {
-    bne.s	.not_zero_2
-|      blitter->ENDMASK_1 = leftEndMask{d1} & rightEndMask{d2}|
-    and.w	d2,d1
-    move.w	d1,(eBLITTER_BASE+sBLITTER_ENDMASK_1).w
-|      flags{d4} += 4|
-    addq.w	#4,d4
-|    } else {
-    bra.s	.was_zero_2
-.not_zero_2:
-|      blitter->ENDMASK_1 = leftEndMask{d1}|
-    move.w	d1,(eBLITTER_BASE+sBLITTER_ENDMASK_1).w
-|      blitter->ENDMASK_2 = 0xffff|
-    move.w	#0xffff,(eBLITTER_BASE+sBLITTER_ENDMASK_2).w
-|      blitter->ENDMASK_3 = rightEndMask{d2}|
-    move.w	d2,(eBLITTER_BASE+sBLITTER_ENDMASK_3).w
-|    }
-.was_zero_2:
-|    if (srcWords{}d5 == dstWords{d6}) {
-    cmp.w	d5,d6
-    bne.s	.not_same_2
-|      flags{d4} += 2|
-    addq.w	#2,d4
-|    }
-.not_same_2:
-|    skew{d3} |= skewFlags[flags{d4}]|
-    lea		gGraphic_4BP_SkewFlags(pc),a2
-    or.b	(a2,d4.w),d3
-|    blitter->SKEW = skew{d3}|
-    move.b	d3,(eBLITTER_BASE+sBLITTER_SKEW).w
-
-|    TCInteger srcIncYBase{d1} = srcImage->lineWords{s_cgimage_lineWord(a1)} - srcWords{d5}|
-    move.w	s_cgimage_lineWords(a1),d1
-    move.w	d1,d4			| srcImage->lineWords{d4} for later
-    sub.w	d5,d1
-|    blitter->DST_INC_Y = (image->lineWords{s_cgimage_lineWords(a0)} - dstWords{d6}) << 3|
-    move.w	s_cgimage_lineWords(a0),d2
-    move.w	d2,d3			| image->lineWords{d3} for later
-    sub.w	d6,d2
-    asl.w	#3,d2
-    move.w	d2,(eBLITTER_BASE+sBLITTER_DST_INC_Y).w
-|    TCInteger dstOffsYBase{d3.l} = (point.x >> 4){d0} + image->lineWords{d3} * point.y{d0:high}|
-    swap	d0
-    mulu	d0,d3
-    swap	d0
-    add.w	d0,d3
-    ext.l	d3
-  
-|    blitter->COUNT_X = dstWords{d6} + 1|
-    addq.w	#1,d6
-    move.w	d6,(eBLITTER_BASE+sBLITTER_COUNT_X).w
-|    TCInteger countY{d0} = srcImage->size.height{sTGContex_height(a1)}|
-    move.w	s_cgimage_height(a1),d0
-  
-|    void *pDST{a0} = image->bitmap{s_cgimage_bitmap(a0)} + (dstOffsYBase{d3} << 3)|
-    move.l	s_cgimage_bitmap(a0),a0
-    asl.l	#3,d3
-    add.l	d3,a0
-	
-    lea		(eBLITTER_BASE+sBLITTER_MODE).w,a2			| {a2} fast blitter mode access
-|    if (srcImage->maskmap{s_cgimage_maskmap(a1)} != NULL) {
-    move.l	s_cgimage_maskmap(a1),d3				| srcImage->maskmap{d3} for later
-    beq.s	.no_mask_2
-|      blitter->LOP = 1|
-    move.b	#eBLITTERLOP_NOTSRC_AND_DST,(eBLITTER_BASE+sBLITTER_LOP).w
-|      blitter->SRC_INC_X = 2|
-    move.w	#2,(eBLITTER_BASE+sBLITTER_SRC_INC_X).w
-|      blitter->SRC_INC_Y = srcIncYBase{d1} << 1|
-    add.w	d1,d1				| (srcIncYBase << 1){d1}
-    move.w	d1,(eBLITTER_BASE+sBLITTER_SRC_INC_Y).w
-|      for (int bp = 0| bp < 4| bp++) {
-    moveq.l	#3,d6
-    move.l	a0,d4				| pDST{d4} temp
-.mask_loop_2:
-|        blitter->pSRC = srcImage->maskmap{d3}|
-    move.l	d3,(eBLITTER_BASE+sBLITTER_pSRC).w
-|        blitter->pDST = (pDST + (bp << 1)){d4}|
-    move.l	d4,(eBLITTER_BASE+sBLITTER_pDST).w
-|        blitter->COUNT_Y = countY{d0}|
-    move.w	d0,(eBLITTER_BASE+sBLITTER_COUNT_Y).w
-|        blitter->MODE = 0x80|
-    move.b  #eBLITTERMODE_BUSY_BIT,(a2)
-    addq.w  #2,d4
-.wait_mask_2:
-    bset.b  #7,(a2)					      	| restart blitter if needed
-    nop
-    bne.s   .wait_mask_2
-|      }
-    dbra	d6,.mask_loop_2
-|      blitter->LOP = 7|
-    move.b	#eBLITTERLOP_SRC_OR_DST,(eBLITTER_BASE+sBLITTER_LOP).w
-    asl.w	#2,d1							| (srcIncYBase << 3){d1}
-    bra.s	.had_mask_2
-|    } else {
-.no_mask_2:
-|      blitter->LOP = 3|
-    move.b	#eBLITTERLOP_SRC,(eBLITTER_BASE+sBLITTER_LOP).w
-    asl.w	#3,d1							| (srcIncYBase << 3){d1}
-|    }
-.had_mask_2:
-|    blitter->SRC_INC_X = 8|
-    move.w	#8,(eBLITTER_BASE+sBLITTER_SRC_INC_X).w
-|    blitter->SRC_INC_Y = (srcIncYBase << 3){d1}|
-    move.w	d1,(eBLITTER_BASE+sBLITTER_SRC_INC_Y).w
-|    for (int bp = 0| bp < 4| bp++) {
-    moveq.l	#3,d6
-    move.l	s_cgimage_bitmap(a1),a1	| srcImage->bitmap{a1}
-.bitmap_loop_2:
-|      blitter->pSRC = (srcImage->bitmap + (srcOffsYBase << 3) + (bp << 1)){a1}|
-    move.l	a1,(eBLITTER_BASE+sBLITTER_pSRC).w
-|      blitter->pDST = (pDST + (bp << 1)){a0}|
-    move.l	a0,(eBLITTER_BASE+sBLITTER_pDST).w
-|      blitter->COUNT_Y = countY{d0}|
-    move.w	d0,(eBLITTER_BASE+sBLITTER_COUNT_Y).w
-|        blitter->MODE = 0x80|
-    move.b  #eBLITTERMODE_BUSY_BIT,(a2)
-    addq.l	#2,a0
-    addq.l	#2,a1
-.wait_bitmap_2:
-    bset.b  #7,(a2)					      	| restart blitter if needed
-    nop
-    bne.s   .wait_bitmap_2
-|    }
-    dbra	d6,.bitmap_loop_2
-
-    movem.l	(a7)+,d3-d6/a2
-    rts
-	
 |
 | m68_cgimage_draw_rect(cgimage_t *image, cgimage_t *src, cgrect_t *rect, cgpoint_t point)
 |
