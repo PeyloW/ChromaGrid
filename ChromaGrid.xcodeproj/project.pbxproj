@@ -22,6 +22,7 @@
 		A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4EB2B791FF100EBA43D /* system.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
 		A69AE5022B82983A00EBA43D /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5002B82983A00EBA43D /* audio.cpp */; };
 		A69AE5062B82B1E300EBA43D /* music.snd in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5052B82B1E300EBA43D /* music.snd */; };
+		A69AE50C2B82CDB500EBA43D /* README.MD in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50B2B82CDB500EBA43D /* README.MD */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		A69AE5002B82983A00EBA43D /* audio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio.cpp; sourceTree = "<group>"; };
 		A69AE5012B82983A00EBA43D /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio.hpp; sourceTree = "<group>"; };
 		A69AE5052B82B1E300EBA43D /* music.snd */ = {isa = PBXFileReference; lastKnownFileType = file; path = music.snd; sourceTree = "<group>"; };
+		A69AE50B2B82CDB500EBA43D /* README.MD */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; lineEnding = 2; path = README.MD; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 		A69AE4912B6EB9A900EBA43D = {
 			isa = PBXGroup;
 			children = (
+				A69AE50B2B82CDB500EBA43D /* README.MD */,
 				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
 				A69AE49C2B6EB9A900EBA43D /* ChromaGrid */,
 				A69AE49B2B6EB9A900EBA43D /* Products */,
@@ -88,6 +91,7 @@
 		A69AE49C2B6EB9A900EBA43D /* ChromaGrid */ = {
 			isa = PBXGroup;
 			children = (
+				A69AE5092B82CD6100EBA43D /* data */,
 				A69AE4BB2B6EBC4E00EBA43D /* Makefile */,
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
 				A69AE4F42B79253A00EBA43D /* types.hpp */,
@@ -118,14 +122,21 @@
 				A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */,
 				A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */,
 				A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */,
-				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
-				A69AE4E42B72851700EBA43D /* test.iff */,
-				A69AE4E82B77FED300EBA43D /* cursor.iff */,
-				A69AE5052B82B1E300EBA43D /* music.snd */,
 				A69AE4A52B6EB9B000EBA43D /* Info.plist */,
 				A69AE4A62B6EB9B000EBA43D /* main.m */,
 			);
 			path = MacOSHost;
+			sourceTree = "<group>";
+		};
+		A69AE5092B82CD6100EBA43D /* data */ = {
+			isa = PBXGroup;
+			children = (
+				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
+				A69AE4E42B72851700EBA43D /* test.iff */,
+				A69AE4E82B77FED300EBA43D /* cursor.iff */,
+				A69AE5052B82B1E300EBA43D /* music.snd */,
+			);
+			path = data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -188,6 +199,7 @@
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
+				A69AE50C2B82CDB500EBA43D /* README.MD in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 			);
