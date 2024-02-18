@@ -17,6 +17,16 @@ extern "C" {
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
+#ifdef __M68000__
+#define hard_assert(expr)\
+    ((void)((expr)||(fprintf(stderr, \
+    "\nHard assert [%d]: (%s), in %s: %d\n", errno,\
+     #expr, __FILE__, __LINE__ ),\
+     fgetc(stdin))))
+#else
+#define hard_assert assert
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -46,21 +46,6 @@ cgpoint_t pMousePosition;
 #endif
 }
 
-int32_t exec_super(int32_t(*func)(void)) {
-#ifdef __M68000__
-    register int32_t *ret __asm__("d0");
-    __asm__ (
-             "move.l  %[func],-(sp)\n\t"
-             "move.w  #38,-(sp)\n\t"
-             "trap    #14\n\t"
-             "addq.l  #6,sp"
-             : "=r" (ret) : [func] "r" (func) : "d1", "d2", "a0", "a1", "a2"
-             );
-    return ret;
-#else
-    return func();
-#endif
-}
 
 cgtimer_t::cgtimer_t(timer_t timer, func_t func) : timer(timer) {
     assert(timer == vbl);

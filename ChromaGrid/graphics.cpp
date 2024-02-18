@@ -7,6 +7,7 @@
 
 #include "graphics.hpp"
 #include "iff_file.hpp"
+#include "system.hpp"
 
 extern "C" {
     //void m68_cgimage_set(cgimage_t *image, cgpoint_t point);
@@ -14,7 +15,6 @@ extern "C" {
     //void m68_cgimage_draw_aligned(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point);
     //void m68_cgimage_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point);
     //void m68_cgimage_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point);
-    
 #ifndef __M68000__
     const cgpalette_t *pActivePalette = NULL;
     const cgimage_t *pActiveImage = NULL;
@@ -23,7 +23,7 @@ extern "C" {
 
 void cgpalette_t::set_active() const {
 #ifdef __M68000__
-        memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
+    memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
 #else
     pActivePalette = this;
 #endif
@@ -31,10 +31,9 @@ void cgpalette_t::set_active() const {
 
 cgimage_t::cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette) {
     assert(mask_mode != mask_mode_auto);
+    memset(this, 0, sizeof(cgimage_t));
     bool masked = mask_mode == mask_mode_masked;
-    super_image = nullptr;
     palette = palette;
-    offset = {0, 0};
     this->size = size;
     line_words = ((size.width + 15) / 16);
     uint16_t bitmap_words = (line_words * size.height) << 2;
@@ -42,8 +41,6 @@ cgimage_t::cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *pa
     bitmap = reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2));
     if (masked) {
         maskmap = bitmap + bitmap_words;
-    } else {
-        maskmap = nullptr;
     }
     owns_bitmap = true;
     clipping = true;
@@ -51,16 +48,14 @@ cgimage_t::cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *pa
 
 cgimage_t::cgimage_t(const cgimage_t *image, cgrect_t rect) {
     assert((rect.origin.x % 0xf) == 0);
-    super_image = image;
-    palette = image->palette;
-    offset = {0, 0};
+    memcpy(this, image, sizeof(cgimage_t));
     size = rect.size;
-    line_words = image->line_words;
     int word_offset = image->line_words * rect.origin.y + rect.origin.x / 16;
-    bitmap = image->bitmap + word_offset * 4;
-    maskmap = image->maskmap ? image->maskmap + word_offset : nullptr;
+    bitmap += word_offset * 4;
+    if (maskmap) {
+        maskmap += word_offset;
+    }
     owns_bitmap = false;
-    clipping = true;
 }
 
 static void cgimage_read(cgiff_file &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
@@ -148,20 +143,21 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
         compression_type_vertical
     } compression_type_t;
     
-    super_image = nullptr;
-    palette = nullptr;
-    bitmap = nullptr;
-    maskmap = nullptr;
-    owns_bitmap = false;
-    clipping = true;
+    memset(this, 0, sizeof(cgimage_t));
 
     cgiff_file file(path);
     cgiff_header_t header;
-    if (!file.read(&header) || !cgiff_id_equals(header.subtype, "ILBM")) {
+    if (!file.read(&header)) {
+        hard_assert(0);
+        return; // Not a ILBM
+    }
+    if (!cgiff_id_equals(header.subtype, "ILBM")) {
+        printf("subtype: %lx\n\r", header.subtype);
+        hard_assert(0);
         return; // Not a ILBM
     }
     cgiff_chunk_t chunk;
-    if (!file.find("BMHD", &chunk)) {
+    if (!file.find(cgiff_id_make("BMHD"), &chunk)) {
         return; // Did nto find header
     }
     if (!file.read(&size.width, 4)) {
@@ -182,7 +178,7 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
     }
     
     
-    if (file.find("CMAP", &chunk)) {
+    if (file.find(cgiff_id_make("CMAP"), &chunk)) {
         int cnt = chunk.size / 3;
         assert(cnt == 16);
         uint8_t cmpa[48];
@@ -191,12 +187,12 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
         }
         palette = new cgpalette_t(&cmpa[0]);
     }
-    if (file.find("GRAB", &chunk)) {
+    if (file.find(cgiff_id_make("GRAB"), &chunk)) {
         if (!file.read(&offset.x, 2)) {
             return; // Failed ot read grab point
         }
     }
-    if (!file.find("BODY", &chunk)) {
+    if (!file.find(cgiff_id_make("BODY"), &chunk)) {
         return; // Could not find body
     }
     line_words = ((size.width + 15) / 16);
@@ -253,6 +249,7 @@ void cgimage_t::set_active() const {
 #ifdef __M68000__
     uint16_t word_offset = offset.y * line_words + (offset.x >> 4);
     uint32_t high_bytes =  (uint32_t)(bitmap + (word_offset << 4));
+    set_screen(nullptr, high_bytes, 0);
     uint8_t low_byte = (uint8_t)high_bytes;
     uint8_t bit_shift = offset.x & 0x0f;
     uint8_t word_skip = line_words - 20;
@@ -261,12 +258,12 @@ void cgimage_t::set_active() const {
     }
     word_skip <<= 2;
     // high_bytes = (high_bytes & 0xffff0000) | ((high_bytes & 0xff00) >> 8);
-    __asm__ (
-             "lsr.w #8,%[hb]"
-             "move.l %[hb],$ffff8204.w \n\t"
-             "move.b %[lb],$ffff8209.w \n\t"
-             "move.b %[ws],$ffff820f.w \n\t"
-             "move.b %[bs],$ffff8265.w \n\t"
+    __asm__ __volatile__ (
+             "lsr.w #8,%[hb] \n\t"
+             "move.l %[hb],0xffff8204.w \n\t"
+             "move.b %[lb],0xffff8209.w \n\t"
+             "move.b %[ws],0xffff820f.w \n\t"
+             "move.b %[bs],0xffff8265.w \n\t"
              : [hb] "+d" (high_bytes), [lb] "+d" (low_byte), [ws] "+d" (word_skip), [bs] "+d" (bit_shift) : :);
 #else
     pActiveImage = this;
@@ -340,7 +337,12 @@ void cgimage_t::draw_aligned(cgimage_t *src, cgpoint_t at) {
     assert(src->offset.x == 0);
     assert(src->offset.x == 0);
     if (clipping) {
-        draw(src, at);
+        const cgrect_t rect = (cgrect_t){ at, src->get_size() };
+        if (!rect.contained_by(size)) {
+            cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
+            draw(src, rect, at);
+            return;
+        }
     }
     imp_draw_aligned(this, src, at);
 }

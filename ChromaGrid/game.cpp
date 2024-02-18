@@ -9,24 +9,43 @@
 #include "system.hpp"
 #include "graphics.hpp"
 
-static cgimage_t pPhysical((cgsize_t){ 320, 208 }, cgimage_t::mask_mode_none, nullptr);
-static cgimage_t pLogical((cgsize_t){ 320, 208 }, cgimage_t::mask_mode_none, nullptr);
+#ifdef __M68000__
+extern "C" {
+#include <ext.h>
+}
+#endif
+
 
 int32_t game_main(void) {
-    
+    printf("create phys.\n\r");
+    cgimage_t pPhysical((cgsize_t){ 320, 208 }, cgimage_t::mask_mode_none, nullptr);
+    printf("create log.\n\r");
+    cgimage_t pLogical((cgsize_t){ 320, 208 }, cgimage_t::mask_mode_none, nullptr);
+
+    printf("load background.\n\r");
+    cgimage_t background("BACKGRND.IFF", cgimage_t::mask_mode_none);
+    background.set_offset((cgpoint_t){0, 0});
+
+    printf("load cursor.\n\r");
+    cgimage_t cursor("CURSOR.IFF");
+    cursor.set_offset((cgpoint_t){1, 2});
+
+    printf("draw background.\n\r");
+    pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
+
+    printf("setup vbl.\n\r");
     cgtimer_t vbl(cgtimer_t::vbl, nullptr);
+
+    printf("setup mouse.\n\r");
     cgmouse_t mouse((cgrect_t){ 0, 4, 320, 200 });
     
+    printf("set palette.\n\r");
+    background.get_palette()->set_active();
+
+    printf("Activate phys.\n\r");
     pPhysical.set_offset((cgpoint_t){ 0, 4 });
     pPhysical.set_active();
-    cgimage_t background("backgrnd.iff", cgimage_t::mask_mode_none);
-    background.set_offset((cgpoint_t){0, 0});
-    cgimage_t cursor("cursor.iff");
-    cursor.set_offset((cgpoint_t){1, 2});
-    
-    background.get_palette()->set_active();
-    pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
-    
+        
     while (true) {
         if (mouse.was_clicked(cgmouse_t::left)) {
             pLogical.put_pixel(9, mouse.get_postion());

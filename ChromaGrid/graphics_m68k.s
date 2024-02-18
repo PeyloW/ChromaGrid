@@ -40,14 +40,15 @@ s_cgrect_sizeof:                 ds.w	1
     .struct
 s_cgimage_superImage:            ds.l    1
 s_cgimage_palette:               ds.l    1
+s_cgimage_bitmap:                ds.l    1
+s_cgimage_maskmap:               ds.l    1
 s_cgimage_width:                 ds.w    1
 s_cgimage_height:                ds.w    1
 s_cgimage_x:                     ds.w    1
 s_cgimage_y:                     ds.w    1
 s_cgimage_lineWords:             ds.w	1
-s_cgimage_bitmap:                ds.l	1
-s_cgimage_maskmap:               ds.l	1
 s_cgimage_owns_bitmap:           ds.b    1
+s_cgimage_clipped:               ds.b    1
 s_cgimage_sizeof:                ds.w	1
 
   .struct

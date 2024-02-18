@@ -6,8 +6,9 @@ LIBCMINI=${LIBCMINI_LIBRARY_PATH}/mshort/mfastcall
 CC=/opt/cross-mint-OLD/bin/m68k-atari-mint-c++
 
 FLAGS=-m68000 -mshort -mfastcall
-FLAGS+=-g
+FLAGS+=-g1 -DNDEBUG
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
+#CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -fno-rtti -fpermissive
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) $(FLAGS)
 LDFLAGS=-nostdlib -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
@@ -17,7 +18,7 @@ OBJECTS=main.o cpp_runtime.o system.o system_m68k.o iff_file.o graphics.o graphi
 all: cgrid
 
 cgrid: $(OBJECTS)
-	$(CC) $(LIBCMINI)/startup.o $(OBJECTS) $(LDFLAGS) -o vgrid.tos
+	$(CC) $(LIBCMINI)/startup.o $(OBJECTS) $(LDFLAGS) -o cgrid.tos
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $<
@@ -26,3 +27,4 @@ cgrid: $(OBJECTS)
 
 clean:
 	rm -rf *.o
+	rm -rf *.tos

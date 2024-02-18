@@ -30,7 +30,6 @@
 		A69AE4A32B6EB9B000EBA43D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A69AE4A52B6EB9B000EBA43D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A69AE4A62B6EB9B000EBA43D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A69AE4AF2B6EB9EB00EBA43D /* allocator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allocator.hpp; sourceTree = "<group>"; };
 		A69AE4B02B6EB9EB00EBA43D /* grid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = grid.hpp; sourceTree = "<group>"; };
 		A69AE4B72B6EBC4100EBA43D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A69AE4BB2B6EBC4E00EBA43D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -87,7 +86,6 @@
 				A69AE4BB2B6EBC4E00EBA43D /* Makefile */,
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
 				A69AE4F42B79253A00EBA43D /* types.hpp */,
-				A69AE4AF2B6EB9EB00EBA43D /* allocator.hpp */,
 				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
 				A69AE4EC2B791FF100EBA43D /* system.hpp */,
 				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,

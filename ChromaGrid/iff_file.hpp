@@ -10,10 +10,7 @@
 
 #include "cincludes.hpp"
 
-typedef union {
-    uint32_t value;
-    uint8_t bytes[4];
-} cgiff_id_t;
+typedef uint32_t cgiff_id_t;
 
 #ifdef __M68000__
 static uint16_t cg_htons(uint16_t v) { return v; }
@@ -23,9 +20,16 @@ uint16_t cg_htons(uint16_t v);
 uint32_t cg_htons(uint32_t v);
 #endif
 
-static inline bool cgiff_id_equals(const cgiff_id_t &id, const char *str) {
+static inline cgiff_id_t cgiff_id_make(const char *str) {
     assert(strlen(str) == 4);
-    return memcmp(&id, str, 4) == 0;
+#ifdef __M68000__
+    return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
+#else
+    return (uint32_t)str[3]<<24 | (uint32_t)str[2]<<16 | (uint32_t)str[1]<<8 | str[0];
+#endif
+}
+static inline bool cgiff_id_equals(const cgiff_id_t id, const char *str) {
+    return cgiff_id_make(str) == id;
 }
 
 typedef struct {
@@ -40,21 +44,20 @@ typedef struct {
 
 class cgiff_file {
 public:
-    cgiff_file(FILE *file);
-    cgiff_file(const char *path);
-    ~cgiff_file();
+    cgiff_file(FILE *file) asm("_cgiff_file_init_file");
+    cgiff_file(const char *path) asm("_cgiff_file_init_path");
+    ~cgiff_file() asm("_cgiff_file_deinit");
   
-    bool read(cgiff_header_t *header);
+    bool read(cgiff_header_t *header) asm("_cgiff_file_read_header");
   
-    bool find(const char *id, cgiff_chunk_t *chunk);
-    bool find(const cgiff_id_t id, cgiff_chunk_t *chunk);
+    bool find(const cgiff_id_t id, cgiff_chunk_t *chunk) asm("_cgiff_file_find_chunk");
     bool read(cgiff_chunk_t *chunk);
     
     template<typename T>
     bool read(T *data, size_t n) {
         return read(data, sizeof(T), n);
     }
-    bool read(void *data, size_t s, size_t n);
+    bool read(void *data, size_t s, size_t n) asm("_cgiff_file_read_bytes");
     
 private:
     FILE *file;

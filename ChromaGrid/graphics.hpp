@@ -25,16 +25,16 @@ public:
         reinterpret_cast<uint16_t*>(0xffff8240)[i] = color;
 #endif
     }
-    void get(uint8_t *r, uint8_t *g, uint8_t *b) const {
+    void get(uint8_t *r, uint8_t *g, uint8_t *b) const asm("_cgcolor_get") {
         *r = from_ste(color, 8);
         *g = from_ste(color, 4);
         *b = from_ste(color, 0);
     }
 private:
-    static uint16_t to_ste(const uint8_t c, const uint8_t shift) {
+    static uint16_t to_ste(const uint8_t c, const uint8_t shift)  asm("_cgcolor_to_ste"){
         return ste_to_seq[c >> 4] << shift;
     }
-    static uint8_t from_ste(const uint16_t c, const uint8_t shift) {
+    static uint8_t from_ste(const uint16_t c, const uint8_t shift)  asm("_cgcolor_from_ste") {
         return ste_from_seq[(c >> shift) & 0x0f];
     }
 };
@@ -44,13 +44,13 @@ class cgpalette_t {
 public:
     cgcolor_t colors[16];
     cgpalette_t(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
-    cgpalette_t(uint8_t *c) {
+    cgpalette_t(uint8_t *c) asm("_cgpalette_init") {
         for (int i = 0; i < 16; i++) {
             colors[i] = cgcolor_t(c[0], c[1], c[2]);
             c += 3;
         }
     }
-    void set_active() const;
+    void set_active() const asm("_cgpalette_set_active");
 };
 
 typedef int8_t colorindex_t;
@@ -62,12 +62,12 @@ public:
         mask_mode_auto, mask_mode_none, mask_mode_masked
     };
     
-    cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette);
-    cgimage_t(const cgimage_t *image, cgrect_t rect);
-    cgimage_t(const char *path, mask_mode_t mask_mode = mask_mode_auto);
-    ~cgimage_t();
+    cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette) asm("_cgimage_init");
+    cgimage_t(const cgimage_t *image, cgrect_t rect) asm("_cgimage_init_subimage");
+    cgimage_t(const char *path, mask_mode_t mask_mode = mask_mode_auto) asm("_cgimage_init_path");
+    ~cgimage_t() asm("_cgimage_deinit");
     
-    void set_active() const;
+    void set_active() const asm("_cgimage_set_active");
     
     inline cgpalette_t *get_palette() const { return palette; }
     inline cgpoint_t get_offset() const { return offset; }
@@ -82,24 +82,23 @@ public:
         clipping = old_clip;
     }
     
-    void put_pixel(colorindex_t ci, cgpoint_t at);
-    colorindex_t get_pixel(cgpoint_t at);
+    void put_pixel(colorindex_t ci, cgpoint_t at) asm("_cgimage_put_pixel");
+    colorindex_t get_pixel(cgpoint_t at) asm("_cgimage_get_pixel");
 
-    void fill(colorindex_t ci, cgrect_t rect);
+    void fill(colorindex_t ci, cgrect_t rect) asm("_cgimage_fill");
     
-    void draw_aligned(cgimage_t *src, cgpoint_t at);
-    void draw(cgimage_t *src, cgpoint_t at);
-    void draw(cgimage_t *src, cgrect_t rect, cgpoint_t at);
+    void draw_aligned(cgimage_t *src, cgpoint_t at) asm("_cgimage_draw_aligned");
+    void draw(cgimage_t *src, cgpoint_t at) asm("_cgimage_draw");
+    void draw(cgimage_t *src, cgrect_t rect, cgpoint_t at) asm("_cgimage_draw_rect");
     
 private:
-    struct imp;
     const cgimage_t *super_image;
     cgpalette_t *palette;
+    uint16_t *bitmap;
+    uint16_t *maskmap;
     cgsize_t size;
     cgpoint_t offset;
     uint16_t line_words;
-    uint16_t *bitmap;
-    uint16_t *maskmap;
     bool owns_bitmap;
     bool clipping;
     

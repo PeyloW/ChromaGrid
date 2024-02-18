@@ -5,22 +5,22 @@
 //  Created by Fredrik on 2024-02-01.
 //
 
-#include "allocator.hpp"
+#include "cincludes.hpp"
 
 #ifdef __M68000__
 
 void *operator new (size_t n) {
-    return allocate(n);
+    return malloc(n);
 }
 void* operator new[] (size_t n) {
-    return allocate(n);
+    return malloc(n);
 }
 
 void operator delete (void* p) noexcept {
-    deallocate(p);
+    free(p);
 }
 void operator delete[] (void* p) noexcept {
-    deallocate(p);
+    free(p);
 }
 
 extern "C" void __cxa_pure_virtual() {
