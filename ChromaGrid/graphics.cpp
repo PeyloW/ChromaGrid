@@ -251,13 +251,8 @@ static uint16_t pSetActiveVBLCode[20];
 
 void cgimage_t::set_active() const {
 #ifdef __M68000__
-#ifndef __append_int16
-#define __append_int16(p,n) __asm__ volatile ("move.w %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
-#define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
-#endif
-
     uint16_t word_offset = offset.y * line_words + (offset.x >> 4);
-    uint32_t high_bytes =  (uint32_t)(bitmap + (word_offset << 2));
+    uint32_t high_bytes = (uint32_t)(bitmap + (word_offset << 2));
     uint8_t low_byte = (uint8_t)high_bytes;
     __asm__ ("lsr.w #8,%[hb]" : [hb] "+d" (high_bytes) : :);
     uint8_t bit_shift = offset.x & 0x0f;

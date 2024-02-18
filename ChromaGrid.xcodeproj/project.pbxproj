@@ -20,6 +20,8 @@
 		A69AE4E62B72857F00EBA43D /* test.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E42B72851700EBA43D /* test.iff */; };
 		A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E82B77FED300EBA43D /* cursor.iff */; };
 		A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4EB2B791FF100EBA43D /* system.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
+		A69AE5022B82983A00EBA43D /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5002B82983A00EBA43D /* audio.cpp */; };
+		A69AE5062B82B1E300EBA43D /* music.snd in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5052B82B1E300EBA43D /* music.snd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +52,9 @@
 		A69AE4EF2B79202A00EBA43D /* system_m68k.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = system_m68k.s; sourceTree = "<group>"; };
 		A69AE4F42B79253A00EBA43D /* types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
 		A69AE4FA2B793CEF00EBA43D /* system_host.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_host.hpp; sourceTree = "<group>"; };
+		A69AE5002B82983A00EBA43D /* audio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio.cpp; sourceTree = "<group>"; };
+		A69AE5012B82983A00EBA43D /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio.hpp; sourceTree = "<group>"; };
+		A69AE5052B82B1E300EBA43D /* music.snd */ = {isa = PBXFileReference; lastKnownFileType = file; path = music.snd; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +102,8 @@
 				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
 				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
 				A69AE4CE2B6FFA3700EBA43D /* graphics_m68k.s */,
+				A69AE5012B82983A00EBA43D /* audio.hpp */,
+				A69AE5002B82983A00EBA43D /* audio.cpp */,
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
 				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
@@ -114,6 +121,7 @@
 				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
 				A69AE4E42B72851700EBA43D /* test.iff */,
 				A69AE4E82B77FED300EBA43D /* cursor.iff */,
+				A69AE5052B82B1E300EBA43D /* music.snd */,
 				A69AE4A52B6EB9B000EBA43D /* Info.plist */,
 				A69AE4A62B6EB9B000EBA43D /* main.m */,
 			);
@@ -180,6 +188,7 @@
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
+				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,6 +204,7 @@
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
+				A69AE5022B82983A00EBA43D /* audio.cpp in Sources */,
 				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,
 				A69AE4D92B7062AC00EBA43D /* cpp_runtime.cpp in Sources */,
 				A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */,

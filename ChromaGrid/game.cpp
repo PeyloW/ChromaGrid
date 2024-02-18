@@ -8,6 +8,7 @@
 #include "game.hpp"
 #include "system.hpp"
 #include "graphics.hpp"
+#include "audio.hpp"
 
 #ifdef __M68000__
 extern "C" {
@@ -30,12 +31,19 @@ int32_t game_main(void) {
     cgimage_t cursor("CURSOR.IFF");
     cursor.set_offset((cgpoint_t){1, 2});
 
+    printf("load music.\n\r");
+    cgmusic_t music("music.snd");
+    
     printf("draw background.\n\r");
     pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
 
     printf("setup vbl.\n\r");
     cgtimer_t vbl(cgtimer_t::vbl);
 
+    
+    printf("start music.\n\r");
+    music.set_active(2);
+    
     printf("setup mouse.\n\r");
     cgmouse_t mouse((cgrect_t){ 0, 4, 320, 200 });
     
@@ -48,6 +56,7 @@ int32_t game_main(void) {
     printf("Activate phys.\n\r");
     pPhysical.set_offset((cgpoint_t){ 0, 4 });
     pPhysical.set_active();
+        
         
     while (true) {
         if (mouse.was_clicked(cgmouse_t::left)) {
