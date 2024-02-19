@@ -17,7 +17,7 @@
 #define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
 
 // Buffer must be 16 bytes
-static void generate_safe_trampoline(void *buffer, void *func, bool all_regs) {
+static void cggenerate_safe_trampoline(void *buffer, void *func, bool all_regs) {
     //movem.l d3-d7/a2-a6,-(sp)
     //jsr     _pSystemVBLInterupt.l
     //movem.l (sp)+,d3-d7/a2-a6
@@ -40,7 +40,7 @@ static void generate_safe_trampoline(void *buffer, void *func, bool all_regs) {
 #endif
 
 
-static int32_t exec_super(int32_t(*func)(void)) {
+static int32_t cgexec_super(int32_t(*func)(void)) {
 #ifdef __M68000__
     return Supexec(func);
 #else
@@ -48,7 +48,7 @@ static int32_t exec_super(int32_t(*func)(void)) {
 #endif
 }
 
-static int16_t get_screen_mode() {
+static int16_t cgget_screen_mode() {
 #ifdef __M68000__
     return Getrez();
 #else
@@ -56,7 +56,7 @@ static int16_t get_screen_mode() {
 #endif
 }
 
-static void set_screen(void *log, void *phys, int16_t mode) {
+static void cgset_screen(void *log, void *phys, int16_t mode) {
 #ifdef __M68000__
     log = log ?: (void *)-1;
     phys = phys ?: (void *)-1;
@@ -66,7 +66,7 @@ static void set_screen(void *log, void *phys, int16_t mode) {
 #endif
 }
 
-class cgtimer_t {
+class cgtimer_c {
 public:
     enum timer_t {
         vbl
@@ -75,8 +75,8 @@ public:
     typedef void(*func_a_t)(void *);
     typedef void(*func_i_t)(int);
 
-    cgtimer_t(timer_t timer);
-    ~cgtimer_t();
+    cgtimer_c(timer_t timer);
+    ~cgtimer_c();
 
     template<class Commands>
     __forceinline static void with_paused_timers(Commands commands) {
@@ -100,17 +100,17 @@ public:
     void wait();
     
 private:
-    timer_t timer;
+    timer_t _timer;
 };
 
-class cgmouse_t {
+class cgmouse_c {
 public:
     enum button_t {
         right, left
     };
     
-    cgmouse_t(cgrect_t limit);
-    ~cgmouse_t();
+    cgmouse_c(cgrect_t limit);
+    ~cgmouse_c();
     
     bool is_pressed(button_t button);
     bool was_clicked(button_t button);

@@ -8,16 +8,16 @@
 #include "iff_file.hpp"
 
 
-cgiff_file::cgiff_file(FILE *file) : file(file), owns_file(false) { hard_assert(file); };
-cgiff_file::cgiff_file(const char *path) : file(fopen(path, "r")), owns_file(true) { hard_assert(file); }
-cgiff_file::~cgiff_file() {
-    if (owns_file) {
-        fclose(file);
+cgiff_file_c::cgiff_file_c(FILE *file) : _file(file), _owns_file(false) { hard_assert(file); };
+cgiff_file_c::cgiff_file_c(const char *path) : _file(fopen(path, "r")), _owns_file(true) { hard_assert(_file); }
+cgiff_file_c::~cgiff_file_c() {
+    if (_owns_file) {
+        fclose(_file);
     }
 }
 
-bool cgiff_file::read(cgiff_header_t *header) {
-    size_t read = fread(header, sizeof(cgiff_header_t), 1, file);
+bool cgiff_file_c::read(cgiff_header_t *header) {
+    size_t read = fread(header, sizeof(cgiff_header_t), 1, _file);
 #ifndef __M68000__
     if (read == 1) {
         header->chunk.size = cg_htons(header->chunk.size);
@@ -30,14 +30,14 @@ bool cgiff_file::read(cgiff_header_t *header) {
     return false;
 }
 
-bool cgiff_file::find(const cgiff_id_t id, cgiff_chunk_t *chunk) {
-    if (fseek(file, sizeof(cgiff_header_t), SEEK_SET) == 0) {
+bool cgiff_file_c::find(const cgiff_id_t id, cgiff_chunk_t *chunk) {
+    if (fseek(_file, sizeof(cgiff_header_t), SEEK_SET) == 0) {
         while (read(chunk)) {
             if (chunk->id == id) {
                 return true;
             }
             size_t size = (chunk->size + 1) & 0xfffffffe;
-            if (fseek(file, size, SEEK_CUR) != 0) {
+            if (fseek(_file, size, SEEK_CUR) != 0) {
                 break;
             }
         }
@@ -45,8 +45,8 @@ bool cgiff_file::find(const cgiff_id_t id, cgiff_chunk_t *chunk) {
     return false;
 }
 
-bool cgiff_file::read(cgiff_chunk_t *chunk) {
-    size_t read = fread(chunk, sizeof(cgiff_chunk_t), 1, file);
+bool cgiff_file_c::read(cgiff_chunk_t *chunk) {
+    size_t read = fread(chunk, sizeof(cgiff_chunk_t), 1, _file);
 #ifndef __M68000__
     if (read == 1) {
         chunk->size = cg_htons(chunk->size);
@@ -89,8 +89,8 @@ uint32_t cg_htons(uint32_t v) {
 
 #endif
 
-bool cgiff_file::read(void *data, size_t s, size_t n) {
-    size_t read = fread(data, s, n, file);
+bool cgiff_file_c::read(void *data, size_t s, size_t n) {
+    size_t read = fread(data, s, n, _file);
 #ifndef __M68000__
     bool r = read == n;
     for (int i = 0; i < n; i++) {

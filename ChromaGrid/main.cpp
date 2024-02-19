@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
 //    int16_t res = Dsetpath("C:\\CGRID\\");
 //    hard_assert(res >= 0);
 
-    return exec_super(&game_main);
+    return cgexec_super(&cggame_main);
 }
 
 #else

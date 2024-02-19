@@ -17,7 +17,7 @@ extern "C" {
 static int pTimerRefCount[1] = { 0 };
 
 #define VBL_FUNC_MAX_CNT 4
-cgtimer_t::func_t pVBLFuncs[VBL_FUNC_MAX_CNT+1] = { nullptr };
+cgtimer_c::func_t pVBLFuncs[VBL_FUNC_MAX_CNT+1] = { nullptr };
 volatile uint32_t pVBLTick = 0;
 static cgrect_t pMosueLimit;
 static bool pLastButtonState[2];
@@ -25,16 +25,16 @@ uint8_t pMouseButtons;
 cgpoint_t pMousePosition;
 
 #ifdef __M68000__
-    extern cgtimer_t::func_t pSystemVBLInterupt;
+    extern cgtimer_c::func_t pSystemVBLInterupt;
     extern void pVBLInterupt();
-    extern cgtimer_t::func_a_t pSystemMouseInterupt;
+    extern cgtimer_c::func_a_t pSystemMouseInterupt;
     extern void pMouseInterupt(void *);
     static _KBDVECS *pKeyboardVectors = nullptr;
 #else
     void (*pYieldFunction)() = nullptr;
 
     void pVBLInterupt() {
-        if (pTimerRefCount[cgtimer_t::vbl] > 0) {
+        if (pTimerRefCount[cgtimer_c::vbl] > 0) {
             pVBLTick++;
             for (int i = 0; i < 8; i++) {
                 if (pVBLFuncs[i]) {
@@ -55,7 +55,7 @@ cgpoint_t pMousePosition;
 }
 
 
-cgtimer_t::cgtimer_t(timer_t timer) : timer(timer) {
+cgtimer_c::cgtimer_c(timer_t timer) : _timer(timer) {
     assert(timer == vbl);
     pTimerRefCount[timer]++;
     if (pTimerRefCount[0] == 1) {
@@ -68,10 +68,10 @@ cgtimer_t::cgtimer_t(timer_t timer) : timer(timer) {
     }
 }
 
-cgtimer_t::~cgtimer_t() {
-    pTimerRefCount[cgtimer_t::vbl]--;
-    assert(pTimerRefCount[cgtimer_t::vbl] >= 0);
-    if (pTimerRefCount[cgtimer_t::vbl] == 0) {
+cgtimer_c::~cgtimer_c() {
+    pTimerRefCount[cgtimer_c::vbl]--;
+    assert(pTimerRefCount[cgtimer_c::vbl] >= 0);
+    if (pTimerRefCount[cgtimer_c::vbl] == 0) {
         with_paused_timers([] {
 #ifdef __M68000__
             *((func_t *)0x0070) = pSystemVBLInterupt;
@@ -80,7 +80,7 @@ cgtimer_t::~cgtimer_t() {
     }
 }
 
-void cgtimer_t::add_func(func_t func) {
+void cgtimer_c::add_func(func_t func) {
     with_paused_timers([func] {
         for (int i = 0; i < VBL_FUNC_MAX_CNT; i++) {
             if (pVBLFuncs[i] == nullptr) {
@@ -92,7 +92,7 @@ void cgtimer_t::add_func(func_t func) {
     });
 }
 
-void cgtimer_t::remove_func(func_t func) {
+void cgtimer_c::remove_func(func_t func) {
     with_paused_timers([func] {
         int i;
         for (i = 0; i < VBL_FUNC_MAX_CNT; i++) {
@@ -107,11 +107,11 @@ void cgtimer_t::remove_func(func_t func) {
     });
 }
 
-uint32_t cgtimer_t::tick() {
+uint32_t cgtimer_c::tick() {
     return pVBLTick;
 }
 
-void cgtimer_t::wait() {
+void cgtimer_c::wait() {
     const auto old_tick = tick();
     while (old_tick == tick()) {
 #ifndef __M68000__
@@ -121,7 +121,7 @@ void cgtimer_t::wait() {
 }
 
 
-cgmouse_t::cgmouse_t(cgrect_t limit) {
+cgmouse_c::cgmouse_c(cgrect_t limit) {
     pMosueLimit = limit;
     pMousePosition = (cgpoint_t){
         static_cast<int16_t>(limit.origin.x + limit.size.width / 2),
@@ -134,24 +134,24 @@ cgmouse_t::cgmouse_t(cgrect_t limit) {
 #endif
 }
 
-cgmouse_t::~cgmouse_t() {
+cgmouse_c::~cgmouse_c() {
 #ifdef __M68000__
     pKeyboardVectors->mousevec = pSystemMouseInterupt;
 #endif
 }
 
-bool cgmouse_t::is_pressed(button_t button) {
+bool cgmouse_c::is_pressed(button_t button) {
     return (pMouseButtons & (1 << button)) != 0;
 }
 
-bool cgmouse_t::was_clicked(button_t button) {
+bool cgmouse_c::was_clicked(button_t button) {
     bool pressed = is_pressed(button);
     bool clicked = pLastButtonState[button] != pressed && pressed == false;
     pLastButtonState[button] = pressed;
     return clicked;
 }
 
-cgpoint_t cgmouse_t::get_postion() {
+cgpoint_t cgmouse_c::get_postion() {
     cgpoint_t clamped_point = (cgpoint_t){
         static_cast<int16_t>(MIN(pMosueLimit.origin.x + pMosueLimit.size.width - 1, MAX(pMousePosition.x, pMosueLimit.origin.x))),
         static_cast<int16_t>(MIN(pMosueLimit.origin.y + pMosueLimit.size.height - 1, MAX(pMousePosition.y, pMosueLimit.origin.y)))

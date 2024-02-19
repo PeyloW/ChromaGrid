@@ -25,11 +25,11 @@ extern void (*pYieldFunction)();
 // Host must call when mouse state changes
 extern void pUpdateMouse(cgpoint_t position, bool left, bool right);
 
-class cgpalette_t;
-class cgimage_t;
+class cgpalette_c;
+class cgimage_c;
 
-extern cgpalette_t *pActivePalette;
-extern cgimage_t *pActiveImage;
+extern cgpalette_c *pActivePalette;
+extern cgimage_c *pActiveImage;
 
 }
 

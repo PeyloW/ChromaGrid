@@ -11,6 +11,6 @@
 #include "cincludes.hpp"
 #include "grid.hpp"
 
-int32_t game_main(void) asm("_game_main");
+int32_t cggame_main(void) asm("_game_main");
 
 #endif /* game_hpp */

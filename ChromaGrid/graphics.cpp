@@ -16,12 +16,12 @@ extern "C" {
     //void m68_cgimage_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point);
     //void m68_cgimage_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point);
 #ifndef __M68000__
-    const cgpalette_t *pActivePalette = NULL;
-    const cgimage_t *pActiveImage = NULL;
+    const cgpalette_c *pActivePalette = NULL;
+    const cgimage_c *pActiveImage = NULL;
 #endif
 }
 
-void cgpalette_t::set_active() const {
+void cgpalette_c::set_active() const {
 #ifdef __M68000__
     memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
 #else
@@ -29,36 +29,36 @@ void cgpalette_t::set_active() const {
 #endif
 }
 
-cgimage_t::cgimage_t(const cgsize_t size, mask_mode_t mask_mode, cgpalette_t *palette) {
+cgimage_c::cgimage_c(const cgsize_t size, mask_mode_t mask_mode, cgpalette_c *palette) {
     assert(mask_mode != mask_mode_auto);
-    memset(this, 0, sizeof(cgimage_t));
+    memset(this, 0, sizeof(cgimage_c));
     bool masked = mask_mode == mask_mode_masked;
     palette = palette;
-    this->size = size;
-    line_words = ((size.width + 15) / 16);
-    uint16_t bitmap_words = (line_words * size.height) << 2;
-    uint16_t mask_bytes = masked ? (line_words * size.height) : 0;
-    bitmap = reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2));
+    this->_size = size;
+    _line_words = ((size.width + 15) / 16);
+    uint16_t bitmap_words = (_line_words * size.height) << 2;
+    uint16_t mask_bytes = masked ? (_line_words * size.height) : 0;
+    _bitmap = reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2));
     if (masked) {
-        maskmap = bitmap + bitmap_words;
+        _maskmap = _bitmap + bitmap_words;
     }
-    owns_bitmap = true;
-    clipping = true;
+    _owns_bitmap = true;
+    _clipping = true;
 }
 
-cgimage_t::cgimage_t(const cgimage_t *image, cgrect_t rect) {
+cgimage_c::cgimage_c(const cgimage_c *image, cgrect_t rect) {
     assert((rect.origin.x % 0xf) == 0);
-    memcpy(this, image, sizeof(cgimage_t));
-    size = rect.size;
-    int word_offset = image->line_words * rect.origin.y + rect.origin.x / 16;
-    bitmap += word_offset * 4;
-    if (maskmap) {
-        maskmap += word_offset;
+    memcpy(this, image, sizeof(cgimage_c));
+    _size = rect.size;
+    int word_offset = image->_line_words * rect.origin.y + rect.origin.x / 16;
+    _bitmap += word_offset * 4;
+    if (_maskmap) {
+        _maskmap += word_offset;
     }
-    owns_bitmap = false;
+    _owns_bitmap = false;
 }
 
-static void cgimage_read(cgiff_file &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     uint16_t word_buffer[line_words];
     const int bp_count = (maskmap ? 5 : 4);
     while (height--) {
@@ -85,7 +85,7 @@ static void cgimage_read(cgiff_file &file, uint16_t line_words, int height, uint
     }
 }
 
-static void cgimage_read_packbits(cgiff_file &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (height--) {
@@ -130,7 +130,7 @@ static void cgimage_read_packbits(cgiff_file &file, uint16_t line_words, int hei
     }
 }
 
-cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
+cgimage_c::cgimage_c(const char *path, mask_mode_t mask_mode) {
     typedef enum  {
         mask_type_none,
         mask_type_plane,
@@ -143,9 +143,9 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
         compression_type_vertical
     } compression_type_t;
     
-    memset(this, 0, sizeof(cgimage_t));
+    memset(this, 0, sizeof(cgimage_c));
 
-    cgiff_file file(path);
+    cgiff_file_c file(path);
     cgiff_header_t header;
     if (!file.read(&header)) {
         hard_assert(0);
@@ -160,7 +160,7 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
     if (!file.find(cgiff_id_make("BMHD"), &chunk)) {
         return; // Did nto find header
     }
-    if (!file.read(&size.width, 4)) {
+    if (!file.read(&_size.width, 4)) {
         return; // Could not read size + offset
     }
     uint8_t bmhd[4];
@@ -185,49 +185,49 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
         if (!file.read(cmpa, 48)) {
             return; // Could not read palette
         }
-        palette = new cgpalette_t(&cmpa[0]);
+        _palette = new cgpalette_c(&cmpa[0]);
     }
     if (file.find(cgiff_id_make("GRAB"), &chunk)) {
-        if (!file.read(&offset.x, 2)) {
+        if (!file.read(&_offset.x, 2)) {
             return; // Failed ot read grab point
         }
     }
     if (!file.find(cgiff_id_make("BODY"), &chunk)) {
         return; // Could not find body
     }
-    line_words = ((size.width + 15) / 16);
-    const uint16_t bitmap_words = (line_words * size.height) << 2;
+    _line_words = ((_size.width + 15) / 16);
+    const uint16_t bitmap_words = (_line_words * _size.height) << 2;
     const bool needs_mask_words = (mask_type == mask_type_color && mask_mode != mask_mode_none) || (mask_type == mask_type_plane);
     const uint16_t mask_words = needs_mask_words ? (bitmap_words >> 2) : 0;
-    bitmap = reinterpret_cast<uint16_t*>(malloc((bitmap_words + mask_words) << 1));
+    _bitmap = reinterpret_cast<uint16_t*>(malloc((bitmap_words + mask_words) << 1));
     if (needs_mask_words) {
-        maskmap = bitmap + bitmap_words;
+        _maskmap = _bitmap + bitmap_words;
     } else {
-        maskmap = nullptr;
+        _maskmap = nullptr;
     }
-    owns_bitmap = true;
+    _owns_bitmap = true;
     switch (compression_type) {
         case compression_type_none:
-            cgimage_read(file, line_words, size.height, bitmap, mask_type == mask_type_plane ? maskmap : nullptr);
+            cgimage_read(file, _line_words, _size.height, _bitmap, mask_type == mask_type_plane ? _maskmap : nullptr);
             break;
         case compression_type_packbits:
-            cgimage_read_packbits(file, line_words, size.height, bitmap, mask_type == mask_type_plane ? maskmap : nullptr);
+            cgimage_read_packbits(file, _line_words, _size.height, _bitmap, mask_type == mask_type_plane ? _maskmap : nullptr);
             break;
         default:
             break;
     }
     if (needs_mask_words) {
         if (mask_mode == mask_mode_none) {
-            maskmap = nullptr;
+            _maskmap = nullptr;
         } else if (mask_type == mask_type_color) {
-            memset(maskmap, -1, mask_words << 1);
+            memset(_maskmap, -1, mask_words << 1);
             with_clipping(false, [this, mask_color]() {
                 cgpoint_t at;
-                for (at.y = 0; at.y < size.height; at.y++) {
-                    for (at.x = 0; at.x < size.width; at.x++) {
-                        const colorindex_t c = get_pixel(at);
+                for (at.y = 0; at.y < _size.height; at.y++) {
+                    for (at.x = 0; at.x < _size.width; at.x++) {
+                        const cgcolorindex_t c = get_pixel(at);
                         if (c == mask_color) {
-                            put_pixel(transparent_colorindex, at);
+                            put_pixel(cgtransparent_colorindex, at);
                         }
                     }
                 }
@@ -236,12 +236,12 @@ cgimage_t::cgimage_t(const char *path, mask_mode_t mask_mode) {
     }
 }
 
-cgimage_t::~cgimage_t() {
-    if (owns_bitmap) {
-        free(bitmap);
+cgimage_c::~cgimage_c() {
+    if (_owns_bitmap) {
+        free(_bitmap);
     }
-    if (super_image == nullptr && palette) {
-        delete palette;
+    if (_super_image == nullptr && _palette) {
+        delete _palette;
     }
 }
 
@@ -249,14 +249,14 @@ cgimage_t::~cgimage_t() {
 static uint16_t pSetActiveVBLCode[20];
 #endif
 
-void cgimage_t::set_active() const {
+void cgimage_c::set_active() const {
 #ifdef __M68000__
-    uint16_t word_offset = offset.y * line_words + (offset.x >> 4);
-    uint32_t high_bytes = (uint32_t)(bitmap + (word_offset << 2));
+    uint16_t word_offset = _offset.y * _line_words + (_offset.x >> 4);
+    uint32_t high_bytes = (uint32_t)(_bitmap + (word_offset << 2));
     uint8_t low_byte = (uint8_t)high_bytes;
     __asm__ ("lsr.w #8,%[hb]" : [hb] "+d" (high_bytes) : :);
-    uint8_t bit_shift = offset.x & 0x0f;
-    uint8_t word_skip = line_words - 20;
+    uint8_t bit_shift = _offset.x & 0x0f;
+    uint8_t word_skip = _line_words - 20;
     if (bit_shift != 0) {
         word_skip--;
     }
@@ -277,23 +277,23 @@ void cgimage_t::set_active() const {
     __append_int32(code, 0x820f11fcl);
     __append_int16(code, bit_shift);
     __append_int32(code, 0x82654e75);
-    cgtimer_t vbl(cgtimer_t::vbl);
-    vbl.add_func((cgtimer_t::func_t)pSetActiveVBLCode);
+    cgtimer_c vbl(cgtimer_c::vbl);
+    vbl.add_func((cgtimer_c::func_t)pSetActiveVBLCode);
 #else
     pActiveImage = this;
 #endif
 }
 
-void cgimage_t::put_pixel(colorindex_t ci, cgpoint_t at) {
-    if (clipping) {
-        if (!size.contains(at)) return;
+void cgimage_c::put_pixel(cgcolorindex_t ci, cgpoint_t at) {
+    if (_clipping) {
+        if (!_size.contains(at)) return;
     }
-    assert(size.contains(at));
-    int word_offset = (at.x / 16) + at.y * line_words;
+    assert(_size.contains(at));
+    int word_offset = (at.x / 16) + at.y * _line_words;
     const uint16_t bit = 1 << (15 - at.x & 15);
     const uint16_t mask = ~bit;
-    if (maskmap != nullptr) {
-        uint16_t *maskmap = this->maskmap + word_offset;
+    if (_maskmap != nullptr) {
+        uint16_t *maskmap = this->_maskmap + word_offset;
         if (ci < 0) {
             *maskmap &= mask;
             return;
@@ -304,7 +304,7 @@ void cgimage_t::put_pixel(colorindex_t ci, cgpoint_t at) {
     } else if (ci < 0) {
         return;
     }
-    uint16_t *bitmap = this->bitmap + (word_offset << 2);
+    uint16_t *bitmap = this->_bitmap + (word_offset << 2);
     for (int bp = 0; bp < 4; bp++) {
         if (ci & (1 << bp)) {
             *bitmap++ |= bit;
@@ -314,19 +314,19 @@ void cgimage_t::put_pixel(colorindex_t ci, cgpoint_t at) {
     }
 }
 
-colorindex_t cgimage_t::get_pixel(cgpoint_t at) {
-    if (!clipping || size.contains(at)) {
-        int word_offset = (at.x / 16) + at.y * line_words;
+cgcolorindex_t cgimage_c::get_pixel(cgpoint_t at) {
+    if (!_clipping || _size.contains(at)) {
+        int word_offset = (at.x / 16) + at.y * _line_words;
         const uint16_t bit = 1 << (15 - at.x & 15);
-        if (maskmap != nullptr) {
-            uint16_t *maskmap = this->maskmap + word_offset;
+        if (_maskmap != nullptr) {
+            uint16_t *maskmap = this->_maskmap + word_offset;
             if (!(*maskmap & bit)) {
-                return transparent_colorindex;
+                return cgtransparent_colorindex;
             }
         }
-        colorindex_t ci = 0;
-        colorindex_t cb = 1;
-        uint16_t *bitmap = this->bitmap + (word_offset << 2);
+        cgcolorindex_t ci = 0;
+        cgcolorindex_t cb = 1;
+        uint16_t *bitmap = this->_bitmap + (word_offset << 2);
         for (int bp = 0; bp < 4; bp++) {
             if (*bitmap++ & bit) {
                 ci |= cb;
@@ -335,10 +335,10 @@ colorindex_t cgimage_t::get_pixel(cgpoint_t at) {
         }
         return ci;
     }
-    return maskmap != nullptr ? transparent_colorindex : 0;
+    return _maskmap != nullptr ? cgtransparent_colorindex : 0;
 }
 
-void cgimage_t::fill(colorindex_t ci, cgrect_t rect) {
+void cgimage_c::fill(cgcolorindex_t ci, cgrect_t rect) {
     for (int16_t y = 0; y < rect.size.height; y++) {
         for (int16_t x = 0; x < rect.size.height; x++) {
             put_pixel(ci, cgpoint_t{ static_cast<int16_t>(rect.origin.x + x), static_cast<int16_t>(rect.origin.y + y) });
@@ -346,14 +346,14 @@ void cgimage_t::fill(colorindex_t ci, cgrect_t rect) {
     }
 }
 
-void cgimage_t::draw_aligned(cgimage_t *src, cgpoint_t at) {
+void cgimage_c::draw_aligned(cgimage_c *src, cgpoint_t at) {
     assert((at.x & 0xf) == 0);
-    assert(src->offset.x == 0);
-    assert(src->offset.x == 0);
-    assert(src->maskmap == nullptr);
-    if (clipping) {
+    assert(src->_offset.x == 0);
+    assert(src->_offset.x == 0);
+    assert(src->_maskmap == nullptr);
+    if (_clipping) {
         const cgrect_t rect = (cgrect_t){ at, src->get_size() };
-        if (!rect.contained_by(size)) {
+        if (!rect.contained_by(_size)) {
             cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
             draw(src, rect, at);
             return;
@@ -362,16 +362,16 @@ void cgimage_t::draw_aligned(cgimage_t *src, cgpoint_t at) {
     imp_draw_aligned(this, src, at);
 }
 
-void cgimage_t::draw(cgimage_t *src, cgpoint_t at) {
+void cgimage_c::draw(cgimage_c *src, cgpoint_t at) {
     const auto offset = src->get_offset();
     const cgpoint_t real_at = (cgpoint_t){static_cast<int16_t>(at.x - offset.x), static_cast<int16_t>(at.y - offset.y)};
     cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
     draw(src, rect, real_at);
 }
 
-void cgimage_t::draw(cgimage_t *src, cgrect_t rect, cgpoint_t at) {
+void cgimage_c::draw(cgimage_c *src, cgrect_t rect, cgpoint_t at) {
     assert(rect.contained_by(get_size()));
-    if (clipping) {
+    if (_clipping) {
         if (at.x < 0) {
             rect.size.width += at.x;
             if (rect.size.width <= 0) return;
@@ -402,16 +402,16 @@ void cgimage_t::draw(cgimage_t *src, cgrect_t rect, cgpoint_t at) {
 
 #ifndef __M68000__
 
-void cgimage_t::imp_draw_aligned(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) {
+void cgimage_c::imp_draw_aligned(cgimage_c *image, cgimage_c *srcImage, cgpoint_t point) {
     assert(image->get_size().contains(point));
     assert((point.x & 0xf) == 0);
     assert((srcImage->get_size().width & 0xf) == 0);
     const auto size = srcImage->get_size();
-    const size_t word_offset = (point.x / 16) + point.y * image->line_words;
+    const size_t word_offset = (point.x / 16) + point.y * image->_line_words;
     for (int y = 0; y < size.height; y++) {
-        memcpy(image->bitmap + (word_offset + image->line_words * y) * 4,
-               srcImage->bitmap +(srcImage->line_words * y * 4),
-               srcImage->line_words * 8);
+        memcpy(image->_bitmap + (word_offset + image->_line_words * y) * 4,
+               srcImage->_bitmap +(srcImage->_line_words * y * 4),
+               srcImage->_line_words * 8);
     }
 }
 
@@ -423,11 +423,11 @@ void cgimage_t::imp_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point)
 }
 */
 
-void cgimage_t::imp_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point) {
+void cgimage_c::imp_draw_rect(cgimage_c *image, cgimage_c *srcImage, cgrect_t *const rect, cgpoint_t point) {
     assert(image->get_size().contains(point));
     for (int y = 0; y < rect->size.height; y++) {
         for (int x = 0; x < rect->size.width; x++) {
-            colorindex_t color = srcImage->get_pixel(cgpoint_t{static_cast<int16_t>(rect->origin.x + x), static_cast<int16_t>(rect->origin.y + y)});
+            cgcolorindex_t color = srcImage->get_pixel(cgpoint_t{static_cast<int16_t>(rect->origin.x + x), static_cast<int16_t>(rect->origin.y + y)});
             if (color >= 0) {
                 image->put_pixel(color, cgpoint_t{static_cast<int16_t>(point.x + x), static_cast<int16_t>(point.y + y)});
             }

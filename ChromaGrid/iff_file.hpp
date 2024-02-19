@@ -42,11 +42,11 @@ typedef struct {
     cgiff_id_t subtype;
 } cgiff_header_t;
 
-class cgiff_file {
+class cgiff_file_c {
 public:
-    cgiff_file(FILE *file);
-    cgiff_file(const char *path);
-    ~cgiff_file();
+    cgiff_file_c(FILE *file);
+    cgiff_file_c(const char *path);
+    ~cgiff_file_c();
   
     bool read(cgiff_header_t *header);
   
@@ -60,8 +60,8 @@ public:
     bool read(void *data, size_t s, size_t n);
     
 private:
-    FILE *file;
-    bool owns_file;
+    FILE *_file;
+    bool _owns_file;
 };
 
 #endif /* iff_file_hpp */

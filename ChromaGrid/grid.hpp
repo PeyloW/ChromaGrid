@@ -35,53 +35,53 @@ union __packed tilestate_t {
 };
 static_assert(sizeof(union tilestate_t) <= sizeof(uint16_t), "tilestate_t size overflow");
 
-class __packed tile_t {
+class __packed tile_c {
 
-    tilestate_t state;
+    tilestate_t _state;
     struct __packed transition_t {
         tilestate_t from_state;
         uint8_t step;
-    } transition;
-    bool dirty:1;
+    } _transition;
+    bool _dirty:1;
 
 public:
     static const uint8_t STEP_MAX = 7;
     
     void tick() {
-        if (transition.step > 0) {
-            transition.step--;
-            dirty = true;
+        if (_transition.step > 0) {
+            _transition.step--;
+            _dirty = true;
         }
     }
 
     uint8_t get_drawstate(tilestate_t *current, tilestate_t *from) const {
-        *current = state;
-        *from = transition.from_state;
-        return transition.step;
+        *current = _state;
+        *from = _transition.from_state;
+        return _transition.step;
     }
     
     bool check_dirty() {
-        const bool d = dirty;
-        dirty = false;
+        const bool d = _dirty;
+        _dirty = false;
         return d;
     }
     
     color_t orb_color() const {
-        return state.orb;
+        return _state.orb;
     }
     
     bool is_orb_color(color_t c) const {
-        return (state.orb & c) == c;
+        return (_state.orb & c) == c;
     }
     
     bool at_target() const {
-        return transition.step == 0 && state.target == state.current;
+        return _transition.step == 0 && _state.target == _state.current;
     }
     
     bool try_add_orb(color_t c) {
-        if (transition.step == 0 && state.orb == none && state.type >= glass) {
-            state.orb = c;
-            dirty = true;
+        if (_transition.step == 0 && _state.orb == none && _state.type >= glass) {
+            _state.orb = c;
+            _dirty = true;
             return true;
         } else {
             return false;
@@ -89,10 +89,10 @@ public:
     }
     
     color_t try_remove_orb() {
-        if (transition.step == 0 && state.orb != none && state.type != magnetic) {
-            const auto c = state.orb;
-            state.orb = none;
-            dirty = true;
+        if (_transition.step == 0 && _state.orb != none && _state.type != magnetic) {
+            const auto c = _state.orb;
+            _state.orb = none;
+            _dirty = true;
             return c;
         } else {
             return none;
@@ -100,14 +100,14 @@ public:
     }
     
     void solve_remove_orb() {
-        assert(state.orb != none && state.orb != both);
-        transition.from_state = state;
-        transition.step = STEP_MAX;
-        state.orb = none;
-        if (state.type == glass) {
-            state.type = broken;
+        assert(_state.orb != none && _state.orb != both);
+        _transition.from_state = _state;
+        _transition.step = STEP_MAX;
+        _state.orb = none;
+        if (_state.type == glass) {
+            _state.type = broken;
         }
-        dirty = true;
+        _dirty = true;
     }
         
 };
@@ -118,13 +118,13 @@ public:
 //  2. Optionally try_add_orb_at()
 //  3. If 2 is successfull resolve_at()
 //  4. tick() and redraw tiles with callback.
-class __packed grid_t {
+class __packed grid_c {
     static const int GRID_MAX = 12;
-    tile_t tiles[GRID_MAX][GRID_MAX];
+    tile_c _tiles[GRID_MAX][GRID_MAX];
         
     bool is_orb_at(color_t c, int x, int y) {
         if (x >= 0 && x < GRID_MAX && y >= 0 && y < GRID_MAX) {
-            return tiles[x][y].is_orb_color(c);
+            return _tiles[x][y].is_orb_color(c);
         }
         return false;
     }
@@ -133,16 +133,16 @@ class __packed grid_t {
     void visit_adjecent_at(int x, int y, V visitor) {
         for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 1); ay++) {
             for (int ax = x - 1; ax < x + 1; ax++) {
-                visitor(tiles[ax][ay], ax, ay);
+                visitor(_tiles[ax][ay], ax, ay);
             }
         }
     }
     
     bool is_orb_solved_at(int x, int y) {
-        const color_t c = tiles[x][y].orb_color();
+        const color_t c = _tiles[x][y].orb_color();
         assert(c != none);
         int cnt = 0;
-        visit_adjecent_at(x, y, [&cnt, c] (const tile_t &tile, int x, int y) {
+        visit_adjecent_at(x, y, [&cnt, c] (const tile_c &tile, int x, int y) {
             if (tile.is_orb_color(c)) {
                 cnt++;
             }
@@ -156,14 +156,14 @@ public:
         assert(c >= gold && c <= silver);
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        auto &tile = tiles[x][y];
+        auto &tile = _tiles[x][y];
         return tile.try_add_orb(c);
     }
     
     color_t try_remove_orb_at(int x, int y) {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        auto &tile = tiles[x][y];
+        auto &tile = _tiles[x][y];
         return tile.try_remove_orb();
     }
 
@@ -172,14 +172,14 @@ public:
         assert(y >= 0 && y < GRID_MAX);
         struct { int x; int y; } updates[9];
         int update_count = 0;
-        visit_adjecent_at(x, y, [this, &updates, &update_count] (const tile_t &tile, int x, int y) {
+        visit_adjecent_at(x, y, [this, &updates, &update_count] (const tile_c &tile, int x, int y) {
             if (is_orb_solved_at(x, x)) {
                 updates[update_count++] = { x, y };
             }
         });
         for (int i = 0; i < update_count; i++) {
             auto &update = updates[i];
-            auto &tile = tiles[update.x][update.y];
+            auto &tile = _tiles[update.x][update.y];
             tile.solve_remove_orb();
         }
     }
@@ -189,7 +189,7 @@ public:
         bool completed = true;
         for (int y = 0; y < GRID_MAX; y++) {
             for (int x = 0; x < GRID_MAX; x++) {
-                auto &tile = tiles[x][y];
+                auto &tile = _tiles[x][y];
                 tile.tick();
                 if (tile.check_dirty()) {
                     callback(x, y);
@@ -203,7 +203,7 @@ public:
     uint8_t get_drawstate_at(int x, int y, tilestate_t *current, tilestate_t *from) const {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        auto &tile = tiles[x][y];
+        auto &tile = _tiles[x][y];
         return tile.get_drawstate(current, from);
     }
     

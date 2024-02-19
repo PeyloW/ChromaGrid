@@ -43,7 +43,7 @@ static void _yieldFunction() {
     NSString *path = [[NSBundle mainBundle] resourcePath];
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
-        game_main();
+        cggame_main();
     });
 }
 
@@ -134,7 +134,7 @@ static void _yieldFunction() {
             for (at.x = 0; at.x < 320; at.x++) {
                 const auto real_at = (cgpoint_t){ static_cast<int16_t>(at.x + offset.x), static_cast<int16_t>(at.y + offset.y) };
                 const auto c = pActiveImage->get_pixel(real_at);
-                if (c != transparent_colorindex) {
+                if (c != cgtransparent_colorindex) {
                     auto offset = (at.y * size.width + at.x);
                     buffer[offset] = palette[c];
                 }

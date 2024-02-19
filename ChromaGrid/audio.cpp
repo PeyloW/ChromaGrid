@@ -9,15 +9,15 @@
 #include "system.hpp"
 
 
-cgsount_t::cgsount_t(char *path) {
+cgsount_c::cgsount_c(char *path) {
     // Load from aiff
 }
 
-cgsount_t::~cgsount_t() {
+cgsount_c::~cgsount_c() {
     // Free memory
 }
 
-void cgsount_t::set_active() {
+void cgsount_c::set_active() {
     // Play sample
 }
 
@@ -27,46 +27,46 @@ static uint16_t pMusicExitCode[8];
 static uint16_t pMusicVBLCode[8];
 #endif
 
-cgmusic_t::cgmusic_t(const char *path) : _track(0) {
+cgmusic_c::cgmusic_c(const char *path) : _track(0) {
     FILE *file = fopen(path, "r");
     assert(file);
     fseek(file, 0, SEEK_END);
     size_t size = ftell(file);
     fseek(file, 0L, SEEK_SET);
     
-    sndh = malloc(size);
-    size_t read = fread(sndh, size, 1, file);
+    _sndh = malloc(size);
+    size_t read = fread(_sndh, size, 1, file);
     assert(read == 1);
-    assert(memcmp((char *)sndh + 12, "SNDH", 4) == 0);
+    assert(memcmp((char *)_sndh + 12, "SNDH", 4) == 0);
 #ifdef __M68000__
-    generate_safe_trampoline(pMusicInitCode, sndh, false);
-    generate_safe_trampoline(pMusicExitCode, sndh + 4, false);
-    generate_safe_trampoline(pMusicVBLCode, sndh + 8, false);
+    cggenerate_safe_trampoline(pMusicInitCode, _sndh, false);
+    cggenerate_safe_trampoline(pMusicExitCode, _sndh + 4, false);
+    cggenerate_safe_trampoline(pMusicVBLCode, _sndh + 8, false);
 #endif
 }
 
-cgmusic_t::~cgmusic_t() {
+cgmusic_c::~cgmusic_c() {
     if (_track > 0) {
         set_active(0);
     }
 }
 
-void cgmusic_t::set_active(int track) {
+void cgmusic_c::set_active(int track) {
     if (_track != track) {
-        cgtimer_t::with_paused_timers([this, track] {
+        cgtimer_c::with_paused_timers([this, track] {
 #ifdef __M68000__
-            cgtimer_t vbl(cgtimer_t::vbl);
+            cgtimer_c vbl(cgtimer_c::vbl);
             if (_track > 0) {
                 // Exit driver
-                ((cgtimer_t::func_t)pMusicExitCode)();
+                ((cgtimer_c::func_t)pMusicExitCode)();
                 // remove VBL
-                vbl.remove_func((cgtimer_t::func_t)pMusicVBLCode);
+                vbl.remove_func((cgtimer_c::func_t)pMusicVBLCode);
             }
             if (track > 0) {
                 // init driver
-                ((cgtimer_t::func_i_t)pMusicInitCode)(track);
+                ((cgtimer_c::func_i_t)pMusicInitCode)(track);
                 // add VBL
-                vbl.add_func((cgtimer_t::func_t)pMusicVBLCode);
+                vbl.add_func((cgtimer_c::func_t)pMusicVBLCode);
             }
 #endif
         });

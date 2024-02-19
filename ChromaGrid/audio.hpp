@@ -11,27 +11,27 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
-class cgsount_t {
+class cgsount_c {
 public:
-    cgsount_t(char *path);
-    ~cgsount_t();
+    cgsount_c(char *path);
+    ~cgsount_c();
   
     void set_active();
     
 private:
-    int8_t *sample;
-    size_t length;
+    int8_t *_sample;
+    size_t _length;
 };
 
-class cgmusic_t {
+class cgmusic_c {
 public:
-    cgmusic_t(const char *path);
-    ~cgmusic_t();
+    cgmusic_c(const char *path);
+    ~cgmusic_c();
     
     void set_active(int track);
 
 private:
-    void *sndh;
+    void *_sndh;
     int _track;
     
 };
