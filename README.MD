@@ -16,40 +16,45 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 
 ### TODO: List
 
-* [x] System
-    * [x] MacOS Host app harness
-    * [x] Target machine bootstrap
-    * [x] VBL timer support
-    * [x] Mouse interups
-* [ ] Basic file loading
-    * [x] IFF Image files, with masks
-        * [ ] Load fonts
-    * [x] SNDH music files
+Legend:
+* __Required__
+* Expected
+* _Optional_
+
+* [x] __System__
+    * [x] __MacOS Host app harness__
+    * [x] __Target machine bootstrap__
+    * [x] __VBL timer support__
+    * [x] __Mouse interups__
+* [ ] __Basic file loading__
+    * [x] __IFF Image files, with masks__
+        * [ ] __Load fonts__
+    * [x] __SNDH music files__
     * [ ] AIF samples
-* [ ] Graphics
-    * [x] Display physical screen
+* [ ] __Graphics__
+    * [x] __Display physical screen__
         * [x] _STe HW scrolling_
-    * [x] Set & Get pixel
+    * [x] __Set & Get pixel__
         * [ ] Asm optimized
         * [ ] _Color replacement_
-    * [x] Blit word aligned grapcs
+    * [x] __Blit word aligned grapcs__
         * [x] Asm and HW optimized
-    * [x] Blit any alignment with clipping
-        * [x] With optional masking
+    * [x] __Blit any alignment with clipping__
+        * [x] __With optional masking__
         * [x] Asm and HW optimized
-    * [ ] Draw text
+    * [ ] __Draw text__
         * [ ] Optimized numerics
     * [ ] Add optional dirty mask to all draw operations
         * [ ] Restore from dirty mask
         * [ ] Asm and HW optimized
-* [ ] Sound
-    * [x] Play SNDH music
+* [ ] __Sound__
+    * [x] __Play SNDH music__
         * [x] Change tracks
-    * [ ] Play LCM samples
+    * [ ] __Play LCM samples__
         * [ ] _Mix several channels_
-* [ ] Scene management
-    * [ ] Shared resources manager
-    * [ ] A stage manager - push-pop scenes
+* [ ] __Scene management__
+    * [ ] __Shared resources manager__
+    * [ ] __A stage manager - push-pop scenes__
         * [ ] _Scene transitions_
     * [ ] Generic scene
 * [ ] Introduction scene
@@ -57,26 +62,26 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
     * [ ] Large Chroma Grid logo
     * [ ] _Intricate background_
     * [ ] Main music _(Thalion intro rip-off?)_
-* [ ] Main menu screne
-    * [x] 12x16 muse cursor
-    * [ ] Right side bar background 128px wide
-        * [ ] Small Chroma Grid Logo
-        * [ ] Button shapes, on and off
+* [ ] __Main menu screne__
+    * [x] __12x16 muse cursor__
+    * [ ] __Right side bar background 128px wide__
+        * [ ] __Small Chroma Grid Logo__
+        * [ ] __Button shapes, on and off__
     * [ ] Level selection grid, center
-* [ ] Gameplay screne
+* [ ] __Gameplay screne__
     * Re-use right side background
-    * [ ] 16x16 tiles, 5x types
+    * [ ] __16x16 tiles, 5x types__
         * [ ] Animations between states
-    * [ ] 8x8 orbs sprites
+    * [ ] __8x8 orbs sprites__
         * [ ] Animations between states
-    * [ ] Game logic ;)
-        * [ ] Count down timer
+    * [ ] __Game logic ;)__
+        * [ ] __Count down timer__
     * [ ] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
 * [ ] Game over screne
     * [ ] Large Game Over logo
     * [ ] Game over game music 
-* [ ] _Highscore screne
+* [ ] _Highscore screne_
     * [ ] _Name entry_
     * [ ] _High score per level_
 * [ ] _Level editor screne_
