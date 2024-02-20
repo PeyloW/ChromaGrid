@@ -23,6 +23,8 @@
 		A69AE5022B82983A00EBA43D /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5002B82983A00EBA43D /* audio.cpp */; };
 		A69AE5062B82B1E300EBA43D /* music.snd in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5052B82B1E300EBA43D /* music.snd */; };
 		A69AE50C2B82CDB500EBA43D /* README.MD in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50B2B82CDB500EBA43D /* README.MD */; };
+		A69AE5112B85031400EBA43D /* orbs.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50F2B85031400EBA43D /* orbs.iff */; };
+		A69AE5122B85031400EBA43D /* tiles.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5102B85031400EBA43D /* tiles.iff */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +59,8 @@
 		A69AE5012B82983A00EBA43D /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio.hpp; sourceTree = "<group>"; };
 		A69AE5052B82B1E300EBA43D /* music.snd */ = {isa = PBXFileReference; lastKnownFileType = file; path = music.snd; sourceTree = "<group>"; };
 		A69AE50B2B82CDB500EBA43D /* README.MD */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; lineEnding = 2; path = README.MD; sourceTree = "<group>"; };
+		A69AE50F2B85031400EBA43D /* orbs.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = orbs.iff; sourceTree = "<group>"; };
+		A69AE5102B85031400EBA43D /* tiles.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles.iff; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +138,8 @@
 				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
 				A69AE4E42B72851700EBA43D /* test.iff */,
 				A69AE4E82B77FED300EBA43D /* cursor.iff */,
+				A69AE50F2B85031400EBA43D /* orbs.iff */,
+				A69AE5102B85031400EBA43D /* tiles.iff */,
 				A69AE5052B82B1E300EBA43D /* music.snd */,
 			);
 			path = data;
@@ -196,12 +202,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */,
+				A69AE5112B85031400EBA43D /* orbs.iff in Resources */,
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
 				A69AE50C2B82CDB500EBA43D /* README.MD in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
+				A69AE5122B85031400EBA43D /* tiles.iff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

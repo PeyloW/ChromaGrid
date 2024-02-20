@@ -27,6 +27,14 @@ int32_t cggame_main(void) {
     cgimage_c background("BACKGRND.IFF", cgimage_c::mask_mode_none);
     background.set_offset((cgpoint_t){0, 0});
 
+    printf("load tiles.\n\r");
+    cgimage_c tiles("TILES.IFF", cgimage_c::mask_mode_none);
+    tiles.set_offset((cgpoint_t){0, 0});
+
+    printf("load orbs.\n\r");
+    cgimage_c orbs("ORBS.IFF", cgimage_c::mask_mode_auto);
+    orbs.set_offset((cgpoint_t){0, 0});
+
     printf("load cursor.\n\r");
     cgimage_c cursor("CURSOR.IFF");
     cursor.set_offset((cgpoint_t){1, 2});
@@ -34,8 +42,11 @@ int32_t cggame_main(void) {
     printf("load music.\n\r");
     cgmusic_c music("music.snd");
     
-    printf("draw background.\n\r");
+    printf("draw initial screen.\n\r");
     pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
+    pLogical.draw_aligned(&tiles, (cgpoint_t){0 + 16, 4 + 16});
+    pLogical.draw(&orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + (16 * 3) + 3});
+    pLogical.draw(&orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + (16 * 4) + 3});
 
     printf("setup vbl.\n\r");
     cgtimer_c vbl(cgtimer_c::vbl);
