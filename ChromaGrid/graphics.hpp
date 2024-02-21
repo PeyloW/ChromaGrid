@@ -54,17 +54,15 @@ public:
 };
 
 typedef int8_t cgcolorindex_t;
-static const cgcolorindex_t cgtransparent_colorindex = -1;
+static const cgcolorindex_t cgtrans_cidx = -1;
+
+typedef int8_t cgcolor_remap_table_t[17];
 
 class __packed cgimage_c {
 public:
-    enum mask_mode_t {
-        mask_mode_auto, mask_mode_none, mask_mode_masked
-    };
-    
-    cgimage_c(const cgsize_t size, mask_mode_t mask_mode, cgpalette_c *palette);
+    cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c *image, cgrect_t rect);
-    cgimage_c(const char *path, mask_mode_t mask_mode = mask_mode_auto);
+    cgimage_c(const char *path, bool masked, int8_t trans_cidx = cgtrans_cidx);
     ~cgimage_c();
     
     void set_active() const;
@@ -85,6 +83,13 @@ public:
     void put_pixel(cgcolorindex_t ci, cgpoint_t at);
     cgcolorindex_t get_pixel(cgpoint_t at);
 
+    inline static void make_noremap_table(cgcolor_remap_table_t table) {
+        for (int i = 0; i < 17; i++) {
+            table[i] = i - 1;
+        }
+    }
+    void remap_colors(cgcolor_remap_table_t table, cgrect_t rect);
+    
     void fill(cgcolorindex_t ci, cgrect_t rect);
     
     void draw_aligned(cgimage_c *src, cgpoint_t at);

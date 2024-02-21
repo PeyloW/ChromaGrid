@@ -29,10 +29,8 @@ void cgpalette_c::set_active() const {
 #endif
 }
 
-cgimage_c::cgimage_c(const cgsize_t size, mask_mode_t mask_mode, cgpalette_c *palette) {
-    assert(mask_mode != mask_mode_auto);
+cgimage_c::cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette) {
     memset(this, 0, sizeof(cgimage_c));
-    bool masked = mask_mode == mask_mode_masked;
     palette = palette;
     this->_size = size;
     _line_words = ((size.width + 15) / 16);
@@ -130,7 +128,7 @@ static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int h
     }
 }
 
-cgimage_c::cgimage_c(const char *path, mask_mode_t mask_mode) {
+cgimage_c::cgimage_c(const char *path, bool masked, int8_t trans_cidx) {
     typedef enum  {
         mask_type_none,
         mask_type_plane,
@@ -172,11 +170,10 @@ cgimage_c::cgimage_c(const char *path, mask_mode_t mask_mode) {
     assert(mask_type < mask_type_lasso); // Lasso not supported
     const compression_type_t compression_type = (compression_type_t)bmhd[2];
     assert(compression_type < compression_type_vertical); // DeluxePain ST format not supported
-    uint16_t mask_color;
-    if (!file.read(&mask_color, 1)) {
+    if (trans_cidx == -1 && masked)
+    if (!file.read(&trans_cidx, 1)) {
         return; // Failed to read color.
     }
-    
     
     if (file.find(cgiff_id_make("CMAP"), &chunk)) {
         int cnt = chunk.size / 3;
@@ -197,7 +194,7 @@ cgimage_c::cgimage_c(const char *path, mask_mode_t mask_mode) {
     }
     _line_words = ((_size.width + 15) / 16);
     const uint16_t bitmap_words = (_line_words * _size.height) << 2;
-    const bool needs_mask_words = (mask_type == mask_type_color && mask_mode != mask_mode_none) || (mask_type == mask_type_plane);
+    const bool needs_mask_words = masked || (mask_type == mask_type_plane);
     const uint16_t mask_words = needs_mask_words ? (bitmap_words >> 2) : 0;
     _bitmap = reinterpret_cast<uint16_t*>(malloc((bitmap_words + mask_words) << 1));
     if (needs_mask_words) {
@@ -217,21 +214,14 @@ cgimage_c::cgimage_c(const char *path, mask_mode_t mask_mode) {
             break;
     }
     if (needs_mask_words) {
-        if (mask_mode == mask_mode_none) {
+        if (!masked) {
             _maskmap = nullptr;
         } else if (mask_type == mask_type_color) {
             memset(_maskmap, -1, mask_words << 1);
-            with_clipping(false, [this, mask_color]() {
-                cgpoint_t at;
-                for (at.y = 0; at.y < _size.height; at.y++) {
-                    for (at.x = 0; at.x < _size.width; at.x++) {
-                        const cgcolorindex_t c = get_pixel(at);
-                        if (c == mask_color) {
-                            put_pixel(cgtransparent_colorindex, at);
-                        }
-                    }
-                }
-            });
+            cgcolor_remap_table_t table;
+            make_noremap_table(table);
+            table[trans_cidx + 1] = cgtrans_cidx;
+            remap_colors(table, (cgrect_t){ {0, 0}, _size});
         }
     }
 }
@@ -321,7 +311,7 @@ cgcolorindex_t cgimage_c::get_pixel(cgpoint_t at) {
         if (_maskmap != nullptr) {
             uint16_t *maskmap = this->_maskmap + word_offset;
             if (!(*maskmap & bit)) {
-                return cgtransparent_colorindex;
+                return cgtrans_cidx;
             }
         }
         cgcolorindex_t ci = 0;
@@ -335,15 +325,31 @@ cgcolorindex_t cgimage_c::get_pixel(cgpoint_t at) {
         }
         return ci;
     }
-    return _maskmap != nullptr ? cgtransparent_colorindex : 0;
+    return _maskmap != nullptr ? cgtrans_cidx : 0;
+}
+
+void cgimage_c::remap_colors(cgcolor_remap_table_t table, cgrect_t rect) {
+    with_clipping(false, [this, table, rect] {
+        for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
+            for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
+                const int8_t c = get_pixel((cgpoint_t){ x, y});
+                const int8_t rc = table[c + 1];
+                if (c != rc) {
+                    put_pixel(rc, (cgpoint_t){ x, y});
+                }
+            }
+        }
+    });
 }
 
 void cgimage_c::fill(cgcolorindex_t ci, cgrect_t rect) {
-    for (int16_t y = 0; y < rect.size.height; y++) {
-        for (int16_t x = 0; x < rect.size.height; x++) {
-            put_pixel(ci, cgpoint_t{ static_cast<int16_t>(rect.origin.x + x), static_cast<int16_t>(rect.origin.y + y) });
+    with_clipping(false, [this, ci, rect] {
+        for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
+            for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
+                put_pixel(ci, cgpoint_t{ x, y });
+            }
         }
-    }
+    });
 }
 
 void cgimage_c::draw_aligned(cgimage_c *src, cgpoint_t at) {
