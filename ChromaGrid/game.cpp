@@ -16,23 +16,24 @@ extern "C" {
 }
 #endif
 
-static void remap_to(color_t col, cgcolor_remap_table_t table) {
+static void remap_to(color_t col, cgcolor_remap_table_t table, uint8_t masked_idx = cgmasked_cidx) {
     switch (col) {
         case color_t::gold:
-            table[1] = 1;
-            table[3] = 1;
-            table[8] = 9;
-            table[11] = 14;
+            table[0] = 1;
+            table[2] = 1;
+            table[7] = 9;
+            table[10] = 14;
             break;
         case color_t::silver:
-            table[1] = 2;
-            table[3] = 2;
-            table[8] = 8;
-            table[11] = 13;
+            table[0] = 2;
+            table[2] = 2;
+            table[7] = 8;
+            table[10] = 13;
             break;
         default:
             break;
     }
+    table[masked_idx] = cgmasked_cidx;
 }
 
 int32_t cggame_main(void) {
@@ -49,15 +50,17 @@ int32_t cggame_main(void) {
     cgimage_c tiles("TILES.IFF", false);
     tiles.set_offset((cgpoint_t){0, 0});
     for (int x = 1; x < 3; x++) {
+        printf("  copy tiles %d.\n\r", x);
         cgcolor_remap_table_t table;
         cgimage_c::make_noremap_table(table);
         cgrect_t rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
-        tiles.draw(&tiles, (cgrect_t){{0, 0}, {48, 80}}, rect.origin);
+        tiles.draw(tiles, (cgrect_t){{0, 0}, {48, 80}}, rect.origin);
         if (x == 1) {
             remap_to(color_t::gold, table);
         } else {
             remap_to(color_t::silver, table);
         }
+        printf("  remap tiles %d.\n\r", x);
         tiles.remap_colors(table, rect);
     }
 
@@ -73,10 +76,12 @@ int32_t cggame_main(void) {
     cgmusic_c music("music.snd");
     
     printf("draw initial screen.\n\r");
-    pLogical.draw_aligned(&background, (cgpoint_t){0, 4});
-    pLogical.draw_aligned(&tiles, (cgpoint_t){0 + 16, 4 + 16});
-    pLogical.draw(&orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + (16 * 3) + 3});
-    pLogical.draw(&orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + (16 * 4) + 3});
+    pLogical.draw_aligned(background, (cgpoint_t){0, 4});
+    pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 4 + 16});
+    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + (16 * 3) + 3});
+    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + (16 * 4) + 3});
+    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + 100 });
+    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + 100 });
 
     printf("setup vbl.\n\r");
     cgtimer_c vbl(cgtimer_c::vbl);
@@ -106,8 +111,8 @@ int32_t cggame_main(void) {
         if (mouse.was_clicked(cgmouse_c::right)) {
             pLogical.put_pixel(10, mouse.get_postion());
         }
-        pPhysical.draw_aligned(&pLogical, (cgpoint_t){ 0, 0 } );
-        pPhysical.draw(&cursor, mouse.get_postion());
+        pPhysical.draw_aligned(pLogical, (cgpoint_t){ 0, 0 } );
+        pPhysical.draw(cursor, mouse.get_postion());
         vbl.wait();
     }
     

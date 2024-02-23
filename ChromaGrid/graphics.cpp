@@ -44,11 +44,11 @@ cgimage_c::cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette) {
     _clipping = true;
 }
 
-cgimage_c::cgimage_c(const cgimage_c *image, cgrect_t rect) {
+cgimage_c::cgimage_c(const cgimage_c &image, cgrect_t rect) {
     assert((rect.origin.x % 0xf) == 0);
-    memcpy(this, image, sizeof(cgimage_c));
+    memcpy(this, &image, sizeof(cgimage_c));
     _size = rect.size;
-    int word_offset = image->_line_words * rect.origin.y + rect.origin.x / 16;
+    int word_offset = image._line_words * rect.origin.y + rect.origin.x / 16;
     _bitmap += word_offset * 4;
     if (_maskmap) {
         _maskmap += word_offset;
@@ -59,7 +59,7 @@ cgimage_c::cgimage_c(const cgimage_c *image, cgrect_t rect) {
 static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     uint16_t word_buffer[line_words];
     const int bp_count = (maskmap ? 5 : 4);
-    while (height--) {
+    while (--height != -1) {
         for (int bp = 0; bp < bp_count; bp++) {
             uint16_t *buffer;
             if (bp < 4) {
@@ -71,7 +71,7 @@ static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, ui
                 return; // Failed to read line
             }
             if (bp < 4) {
-                for (int i = 0; i < line_words; i++) {
+                for (int i = line_words; --i != -1; ) {
                     bitmap[bp + i * 4] = buffer[i];
                 }
             }
@@ -86,7 +86,7 @@ static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, ui
 static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
-    while (height--) {
+    while (--height != -1) {
         int8_t *buffer = (int8_t*)word_buffer;
         int8_t *bufferEnd = buffer + (line_words * bp_count * 2);
         while (buffer < bufferEnd) {
@@ -128,7 +128,7 @@ static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int h
     }
 }
 
-cgimage_c::cgimage_c(const char *path, bool masked, int8_t trans_cidx) {
+cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
     typedef enum  {
         mask_type_none,
         mask_type_plane,
@@ -170,9 +170,12 @@ cgimage_c::cgimage_c(const char *path, bool masked, int8_t trans_cidx) {
     assert(mask_type < mask_type_lasso); // Lasso not supported
     const compression_type_t compression_type = (compression_type_t)bmhd[2];
     assert(compression_type < compression_type_vertical); // DeluxePain ST format not supported
-    if (trans_cidx == -1 && masked)
-    if (!file.read(&trans_cidx, 1)) {
-        return; // Failed to read color.
+    if (masked_cidx == cgmasked_cidx && masked) {
+        uint16_t tmp_masked_cidx;
+        if (!file.read(&tmp_masked_cidx, 1)) {
+            return; // Failed to read color.
+        }
+        masked_cidx = tmp_masked_cidx;
     }
     
     if (file.find(cgiff_id_make("CMAP"), &chunk)) {
@@ -220,7 +223,7 @@ cgimage_c::cgimage_c(const char *path, bool masked, int8_t trans_cidx) {
             memset(_maskmap, -1, mask_words << 1);
             cgcolor_remap_table_t table;
             make_noremap_table(table);
-            table[trans_cidx + 1] = cgtrans_cidx;
+            table[masked_cidx] = cgmasked_cidx;
             remap_colors(table, (cgrect_t){ {0, 0}, _size});
         }
     }
@@ -273,172 +276,3 @@ void cgimage_c::set_active() const {
     pActiveImage = this;
 #endif
 }
-
-void cgimage_c::put_pixel(cgcolorindex_t ci, cgpoint_t at) {
-    if (_clipping) {
-        if (!_size.contains(at)) return;
-    }
-    assert(_size.contains(at));
-    int word_offset = (at.x / 16) + at.y * _line_words;
-    const uint16_t bit = 1 << (15 - at.x & 15);
-    const uint16_t mask = ~bit;
-    if (_maskmap != nullptr) {
-        uint16_t *maskmap = this->_maskmap + word_offset;
-        if (ci < 0) {
-            *maskmap &= mask;
-            return;
-        } else {
-            *maskmap |= bit;
-        }
-        ci = 0;
-    } else if (ci < 0) {
-        return;
-    }
-    uint16_t *bitmap = this->_bitmap + (word_offset << 2);
-    for (int bp = 0; bp < 4; bp++) {
-        if (ci & (1 << bp)) {
-            *bitmap++ |= bit;
-        } else {
-            *bitmap++ &= mask;
-        }
-    }
-}
-
-cgcolorindex_t cgimage_c::get_pixel(cgpoint_t at) {
-    if (!_clipping || _size.contains(at)) {
-        int word_offset = (at.x / 16) + at.y * _line_words;
-        const uint16_t bit = 1 << (15 - at.x & 15);
-        if (_maskmap != nullptr) {
-            uint16_t *maskmap = this->_maskmap + word_offset;
-            if (!(*maskmap & bit)) {
-                return cgtrans_cidx;
-            }
-        }
-        cgcolorindex_t ci = 0;
-        cgcolorindex_t cb = 1;
-        uint16_t *bitmap = this->_bitmap + (word_offset << 2);
-        for (int bp = 0; bp < 4; bp++) {
-            if (*bitmap++ & bit) {
-                ci |= cb;
-            }
-            cb <<= 1;
-        }
-        return ci;
-    }
-    return _maskmap != nullptr ? cgtrans_cidx : 0;
-}
-
-void cgimage_c::remap_colors(cgcolor_remap_table_t table, cgrect_t rect) {
-    with_clipping(false, [this, table, rect] {
-        for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
-            for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                const int8_t c = get_pixel((cgpoint_t){ x, y});
-                const int8_t rc = table[c + 1];
-                if (c != rc) {
-                    put_pixel(rc, (cgpoint_t){ x, y});
-                }
-            }
-        }
-    });
-}
-
-void cgimage_c::fill(cgcolorindex_t ci, cgrect_t rect) {
-    with_clipping(false, [this, ci, rect] {
-        for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
-            for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                put_pixel(ci, cgpoint_t{ x, y });
-            }
-        }
-    });
-}
-
-void cgimage_c::draw_aligned(cgimage_c *src, cgpoint_t at) {
-    assert((at.x & 0xf) == 0);
-    assert(src->_offset.x == 0);
-    assert(src->_offset.x == 0);
-    assert(src->_maskmap == nullptr);
-    if (_clipping) {
-        const cgrect_t rect = (cgrect_t){ at, src->get_size() };
-        if (!rect.contained_by(_size)) {
-            cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
-            draw(src, rect, at);
-            return;
-        }
-    }
-    imp_draw_aligned(this, src, at);
-}
-
-void cgimage_c::draw(cgimage_c *src, cgpoint_t at) {
-    const auto offset = src->get_offset();
-    const cgpoint_t real_at = (cgpoint_t){static_cast<int16_t>(at.x - offset.x), static_cast<int16_t>(at.y - offset.y)};
-    cgrect_t rect = (cgrect_t){ {0, 0}, src->get_size()};
-    draw(src, rect, real_at);
-}
-
-void cgimage_c::draw(cgimage_c *src, cgrect_t rect, cgpoint_t at) {
-    assert(rect.contained_by(get_size()));
-    if (_clipping) {
-        if (at.x < 0) {
-            rect.size.width += at.x;
-            if (rect.size.width <= 0) return;
-            rect.origin.x -= at.x;
-            at.x = 0;
-        }
-        if (at.y < 0) {
-            rect.size.height += at.y;
-            if (rect.size.height <= 0) return;
-            rect.origin.y -= at.y;
-            at.y = 0;
-        }
-        const auto size = this->get_size();
-        const auto dx = size.width - (at.x + rect.size.width);
-        if (dx < 0) {
-            rect.size.width += dx;
-            if (rect.size.width <= 0) return;
-        }
-        const auto dy = size.height - (at.y + rect.size.height);
-        if (dy < 0) {
-            rect.size.height += dy;
-            if (rect.size.height <= 0) return;
-        }
-    }
-    imp_draw_rect(this, src, &rect, at);
-}
-
-
-#ifndef __M68000__
-
-void cgimage_c::imp_draw_aligned(cgimage_c *image, cgimage_c *srcImage, cgpoint_t point) {
-    assert(image->get_size().contains(point));
-    assert((point.x & 0xf) == 0);
-    assert((srcImage->get_size().width & 0xf) == 0);
-    const auto size = srcImage->get_size();
-    const size_t word_offset = (point.x / 16) + point.y * image->_line_words;
-    for (int y = 0; y < size.height; y++) {
-        memcpy(image->_bitmap + (word_offset + image->_line_words * y) * 4,
-               srcImage->_bitmap +(srcImage->_line_words * y * 4),
-               srcImage->_line_words * 8);
-    }
-}
-
-/*
-void cgimage_t::imp_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) {
-    assert(image->get_size().contains(point));
-    cgrect_t rect = { { 0, 0 }, srcImage->get_size() };
-    imp_draw_rect(image, srcImage, &rect, point);
-}
-*/
-
-void cgimage_c::imp_draw_rect(cgimage_c *image, cgimage_c *srcImage, cgrect_t *const rect, cgpoint_t point) {
-    assert(image->get_size().contains(point));
-    for (int y = 0; y < rect->size.height; y++) {
-        for (int x = 0; x < rect->size.width; x++) {
-            cgcolorindex_t color = srcImage->get_pixel(cgpoint_t{static_cast<int16_t>(rect->origin.x + x), static_cast<int16_t>(rect->origin.y + y)});
-            if (color >= 0) {
-                image->put_pixel(color, cgpoint_t{static_cast<int16_t>(point.x + x), static_cast<int16_t>(point.y + y)});
-            }
-        }
-    }
-}
-
-#endif

@@ -53,16 +53,16 @@ public:
     void set_active() const;
 };
 
-typedef int8_t cgcolorindex_t;
-static const cgcolorindex_t cgtrans_cidx = -1;
+typedef uint8_t uint8_t;
+static const uint8_t cgmasked_cidx = 0x10;
 
-typedef int8_t cgcolor_remap_table_t[17];
+typedef uint8_t cgcolor_remap_table_t[17];
 
-class __packed cgimage_c {
+class cgimage_c {
 public:
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
-    cgimage_c(const cgimage_c *image, cgrect_t rect);
-    cgimage_c(const char *path, bool masked, int8_t trans_cidx = cgtrans_cidx);
+    cgimage_c(const cgimage_c &image, cgrect_t rect);
+    cgimage_c(const char *path, bool masked, uint8_t masked_cidx = cgmasked_cidx);
     ~cgimage_c();
     
     void set_active() const;
@@ -73,31 +73,39 @@ public:
     __forceinline cgsize_t get_size() const { return _size; }
     
     template<class Commands>
-    __forceinline void with_clipping(bool clip, Commands commands) {
+    __forceinline static void with_clipping(bool clip, Commands commands) {
         const bool old_clip = _clipping;
         _clipping = clip;
         commands();
         _clipping = old_clip;
     }
+
+    template<class Commands>
+    __forceinline static void with_dirtymap(bool *dirtymap, Commands commands) {
+        bool *const old_dirtymap = _dirtymap;
+        _dirtymap = dirtymap;
+        commands();
+        _dirtymap = old_dirtymap;
+    }
     
-    void put_pixel(cgcolorindex_t ci, cgpoint_t at);
-    cgcolorindex_t get_pixel(cgpoint_t at);
+    void put_pixel(uint8_t ci, cgpoint_t at) const;
+    uint8_t get_pixel(cgpoint_t at) const;
 
     inline static void make_noremap_table(cgcolor_remap_table_t table) {
-        for (int i = 0; i < 17; i++) {
-            table[i] = i - 1;
+        for (int i = cgmasked_cidx + 1; --i != -1; ) {
+            table[i] = i;
         }
     }
-    void remap_colors(cgcolor_remap_table_t table, cgrect_t rect);
+    void remap_colors(cgcolor_remap_table_t table, cgrect_t rect) const;
     
-    void fill(cgcolorindex_t ci, cgrect_t rect);
+    void fill(uint8_t ci, cgrect_t rect) const;
     
-    void draw_aligned(cgimage_c *src, cgpoint_t at);
-    void draw(cgimage_c *src, cgpoint_t at);
-    void draw(cgimage_c *src, cgrect_t rect, cgpoint_t at);
+    void draw_aligned(const cgimage_c &src, cgpoint_t at) const;
+    void draw(const cgimage_c &src, cgpoint_t at) const;
+    void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
     
 private:
-    // Must be __packed and syn with graphics_m68k.s implementation
+    // Must be in sync with graphics_m68k.s implementation
     const cgimage_c *_super_image;
     cgpalette_c *_palette;
     uint16_t *_bitmap;
@@ -106,10 +114,12 @@ private:
     cgpoint_t _offset;
     uint16_t _line_words;
     bool _owns_bitmap;
-    bool _clipping;
-    
-    static void imp_draw_aligned(cgimage_c *image, cgimage_c *srcImage, cgpoint_t point) asm("_m68_cgimage_draw_aligned");
-    static void imp_draw_rect(cgimage_c *image, cgimage_c *srcImage, cgrect_t *const rect, cgpoint_t point) asm("_m68_cgimage_draw_rect");
+
+    static bool *_dirtymap;
+    static bool _clipping;
+
+    void imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
+    void imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
 
 };
 

@@ -36,7 +36,7 @@ Legend:
         * [x] _STe HW scrolling_
     * [x] __Set & Get pixel__
         * [ ] Asm optimized
-        * [ ] _Color replacement_
+        * [x] _Color replacement_
     * [x] __Blit word aligned grapcs__
         * [x] Asm and HW optimized
     * [x] __Blit any alignment with clipping__
@@ -63,17 +63,17 @@ Legend:
     * [ ] _Intricate background_
     * [ ] Main music _(Thalion intro rip-off?)_
 * [ ] __Main menu screne__
-    * [x] __12x16 muse cursor__
-    * [ ] __Right side bar background 128px wide__
+    * [x] __12x16 mouse cursor__
+    * [x] __Right side bar background 128px wide__
         * [ ] __Small Chroma Grid Logo__
         * [ ] __Button shapes, on and off__
     * [ ] Level selection grid, center
 * [ ] __Gameplay screne__
     * Re-use right side background
-    * [ ] __16x16 tiles, 5x types__
+    * [x] __16x16 tiles, 5x types__
         * [ ] Animations between states
-    * [ ] __8x8 orbs sprites__
-        * [ ] Animations between states
+    * [x] __8x8 orbs sprites__
+        * [x] Animations between states
     * [ ] __Game logic ;)__
         * [ ] __Count down timer__
     * [ ] _Per level scroll text_

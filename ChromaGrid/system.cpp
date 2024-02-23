@@ -111,9 +111,9 @@ uint32_t cgtimer_c::tick() {
     return pVBLTick;
 }
 
-void cgtimer_c::wait() {
-    const auto old_tick = tick();
-    while (old_tick == tick()) {
+void cgtimer_c::wait(int ticks) {
+    const auto wait_tick = tick() + ticks;
+    while (wait_tick >= tick()) {
 #ifndef __M68000__
         pYieldFunction();
 #endif

@@ -13,7 +13,13 @@ CFLAGS+=-fno-exceptions -Wno-write-strings -fno-rtti -fpermissive
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) $(FLAGS)
 LDFLAGS=-nostdlib -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format
-OBJECTS=main.o cpp_runtime.o system.o system_m68k.o iff_file.o graphics.o graphics_m68k.o audio.o game.o
+
+OBJECTS=main.o cpp_runtime.o
+OBJECTS+=system.o system_m68k.o
+OBJECTS+=iff_file.o
+OBJECTS+=graphics.o graphics_draw.o graphics_m68k.o
+OBJECTS+=audio.o
+OBJECTS+=game.o
 
 all: cgrid
 
