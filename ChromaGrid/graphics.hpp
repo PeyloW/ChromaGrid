@@ -11,10 +11,6 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
-static const uint8_t ste_to_seq[16] = { 0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
-static const uint8_t ste_from_seq[16] = { 0x00, 0x22, 0x44, 0x66, 0x88, 0xaa, 0xcc, 0xee,
-                                          0x11, 0x33, 0x55, 0x77, 0x99, 0xbb, 0xdd, 0xff};
-
 class cgcolor_c {
 public:
     uint16_t color;
@@ -32,10 +28,13 @@ public:
     }
 private:
     __forceinline static uint16_t to_ste(const uint8_t c, const uint8_t shift) {
-        return ste_to_seq[c >> 4] << shift;
+        static const uint8_t STE_TO_SEQ[16] = { 0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
+        return STE_TO_SEQ[c >> 4] << shift;
     }
     __forceinline static uint8_t from_ste(const uint16_t c, const uint8_t shift) {
-        return ste_from_seq[(c >> shift) & 0x0f];
+        static const uint8_t STE_FROM_SEQ[16] = { 0x00, 0x22, 0x44, 0x66, 0x88, 0xaa, 0xcc, 0xee,
+                                                  0x11, 0x33, 0x55, 0x77, 0x99, 0xbb, 0xdd, 0xff};
+        return STE_FROM_SEQ[(c >> shift) & 0x0f];
     }
 };
 
@@ -53,16 +52,15 @@ public:
     void set_active() const;
 };
 
-typedef uint8_t uint8_t;
-static const uint8_t cgmasked_cidx = 0x10;
-
-typedef uint8_t cgcolor_remap_table_t[17];
 
 class cgimage_c {
 public:
+    static const uint8_t MASKED_CIDX = 0x10;
+    typedef uint8_t remap_table_t[17];
+
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c &image, cgrect_t rect);
-    cgimage_c(const char *path, bool masked, uint8_t masked_cidx = cgmasked_cidx);
+    cgimage_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
     ~cgimage_c();
     
     void set_active() const;
@@ -73,30 +71,34 @@ public:
     __forceinline cgsize_t get_size() const { return _size; }
     
     template<class Commands>
-    __forceinline static void with_clipping(bool clip, Commands commands) {
+    __forceinline void with_clipping(bool clip, Commands commands) {
         const bool old_clip = _clipping;
         _clipping = clip;
         commands();
         _clipping = old_clip;
     }
 
+    size_t dirtymap_size() const {
+        return _line_words * _size.height / 16;
+    };
     template<class Commands>
-    __forceinline static void with_dirtymap(bool *dirtymap, Commands commands) {
+    __forceinline void with_dirtymap(bool *const dirtymap, Commands commands) {
         bool *const old_dirtymap = _dirtymap;
         _dirtymap = dirtymap;
         commands();
         _dirtymap = old_dirtymap;
     }
-    
+    void restore(const cgimage_c &clean_image, bool *const dirtymap) const;
+
     void put_pixel(uint8_t ci, cgpoint_t at) const;
     uint8_t get_pixel(cgpoint_t at) const;
 
-    inline static void make_noremap_table(cgcolor_remap_table_t table) {
-        for (int i = cgmasked_cidx + 1; --i != -1; ) {
+    inline static void make_noremap_table(remap_table_t table) {
+        for (int i = MASKED_CIDX + 1; --i != -1; ) {
             table[i] = i;
         }
     }
-    void remap_colors(cgcolor_remap_table_t table, cgrect_t rect) const;
+    void remap_colors(remap_table_t table, cgrect_t rect) const;
     
     void fill(uint8_t ci, cgrect_t rect) const;
     
@@ -110,14 +112,15 @@ private:
     cgpalette_c *_palette;
     uint16_t *_bitmap;
     uint16_t *_maskmap;
+    bool *_dirtymap;
     cgsize_t _size;
     cgpoint_t _offset;
     uint16_t _line_words;
     bool _owns_bitmap;
+    bool _clipping;
 
-    static bool *_dirtymap;
-    static bool _clipping;
-
+    inline void imp_update_dirtymap(cgrect_t rect) const;
+    
     void imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
     void imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
 

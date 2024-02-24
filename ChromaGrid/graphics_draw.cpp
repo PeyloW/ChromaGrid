@@ -7,8 +7,26 @@
 
 #include "graphics.hpp"
 
-bool *cgimage_c::_dirtymap = nullptr;
-bool cgimage_c::_clipping = true;
+void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) const {
+    assert(_size == clean_image.get_size());
+    assert((_size.width & 0xf) == 0);
+    assert((_size.height & 0xf) == 0);
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, clean_image, dirtymap] {
+        cgimage_c subimage(clean_image, (cgrect_t){{0, 0}, {16, 16}});
+        const int row_count = _size.height / 16;
+        const int row_words = _line_words * 16;
+        for (int row = row_count; --row != -1; ) {
+            const int row_offset = row * _line_words;
+            const int row_word_offset = row * row_words;
+            for (int col = _line_words; --col != 0; ) {
+                if (dirtymap[col + row_offset]) {
+                    dirtymap[col + row_offset] = false;
+                    subimage._bitmap = clean_image._bitmap + (row_word_offset + col) * 4;
+                }
+            }
+        }
+    });
+}
 
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     if (_clipping) {
@@ -20,7 +38,7 @@ void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     const uint16_t mask = ~bit;
     if (_maskmap != nullptr) {
         uint16_t *maskmap = this->_maskmap + word_offset;
-        if (ci == cgmasked_cidx) {
+        if (ci == MASKED_CIDX) {
             *maskmap &= mask;
         } else {
             *maskmap |= bit;
@@ -46,7 +64,7 @@ uint8_t cgimage_c::get_pixel(cgpoint_t at) const {
         if (_maskmap != nullptr) {
             uint16_t *maskmap = this->_maskmap + word_offset;
             if (!(*maskmap & bit)) {
-                return cgmasked_cidx;
+                return MASKED_CIDX;
             }
         }
         uint8_t ci = 0;
@@ -59,11 +77,11 @@ uint8_t cgimage_c::get_pixel(cgpoint_t at) const {
         }
         return ci;
     }
-    return _maskmap != nullptr ? cgmasked_cidx : 0;
+    return _maskmap != nullptr ? MASKED_CIDX : 0;
 }
 
-void cgimage_c::remap_colors(cgcolor_remap_table_t table, cgrect_t rect) const {
-    with_clipping(false, [this, table, rect] {
+void cgimage_c::remap_colors(remap_table_t table, cgrect_t rect) const {
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, table, rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
                 const uint8_t c = get_pixel((cgpoint_t){ x, y});
@@ -77,7 +95,7 @@ void cgimage_c::remap_colors(cgcolor_remap_table_t table, cgrect_t rect) const {
 }
 
 void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
-    with_clipping(false, [this, ci, rect] {
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, ci, rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
                 put_pixel(ci, cgpoint_t{ x, y });
@@ -98,6 +116,10 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
             draw(src, rect, at);
             return;
         }
+    }
+    if (_dirtymap) {
+        const cgrect_t dirty_rect = (cgrect_t){ at, src.get_size() };
+        imp_update_dirtymap(dirty_rect);
     }
     imp_draw_aligned(src, at);
 }
@@ -136,7 +158,27 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
             if (rect.size.height <= 0) return;
         }
     }
+    if (_dirtymap) {
+        const cgrect_t dirty_rect = (cgrect_t){at, rect.size};
+        imp_update_dirtymap(dirty_rect);
+    }
     imp_draw_rect(src, &rect, at);
+}
+
+void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
+    assert(_dirtymap);
+    assert((_size.width & 0xf) == 0);
+    assert((_size.height & 0xf) == 0);
+    const int x1 = rect.origin.x / 16;
+    const int x2 = (rect.origin.x + rect.size.width - 1) / 16;
+    const int y1 = rect.origin.y / 16;
+    const int y2 = (rect.origin.y + rect.size.height - 1) / 16;
+    for (int y = y1; y <= y2; y++) {
+        const int line_offset = y * _line_words;
+        for (int x = x1; x <= x2; x++) {
+            _dirtymap[x + line_offset] = true;
+        }
+    }
 }
 
 #ifndef __M68000__
@@ -167,7 +209,7 @@ void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, c
     for (int y = 0; y < rect->size.height; y++) {
         for (int x = 0; x < rect->size.width; x++) {
             uint8_t color = srcImage.get_pixel(cgpoint_t{(int16_t)(rect->origin.x + x), (int16_t)(rect->origin.y + y)});
-            if (color != cgmasked_cidx) {
+            if (color != MASKED_CIDX) {
                 put_pixel(color, cgpoint_t{(int16_t)(point.x + x), (int16_t)(point.y + y)});
             }
         }

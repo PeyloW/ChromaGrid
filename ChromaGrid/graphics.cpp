@@ -170,7 +170,7 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
     assert(mask_type < mask_type_lasso); // Lasso not supported
     const compression_type_t compression_type = (compression_type_t)bmhd[2];
     assert(compression_type < compression_type_vertical); // DeluxePain ST format not supported
-    if (masked_cidx == cgmasked_cidx && masked) {
+    if (masked_cidx == MASKED_CIDX && masked) {
         uint16_t tmp_masked_cidx;
         if (!file.read(&tmp_masked_cidx, 1)) {
             return; // Failed to read color.
@@ -221,9 +221,9 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
             _maskmap = nullptr;
         } else if (mask_type == mask_type_color) {
             memset(_maskmap, -1, mask_words << 1);
-            cgcolor_remap_table_t table;
+            remap_table_t table;
             make_noremap_table(table);
-            table[masked_cidx] = cgmasked_cidx;
+            table[masked_cidx] = MASKED_CIDX;
             remap_colors(table, (cgrect_t){ {0, 0}, _size});
         }
     }

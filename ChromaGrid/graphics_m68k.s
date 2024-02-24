@@ -41,6 +41,7 @@ s_cgimage_superImage:            ds.l    1
 s_cgimage_palette:               ds.l    1
 s_cgimage_bitmap:                ds.l    1
 s_cgimage_maskmap:               ds.l    1
+s_cgimage_dirtymap:              ds.l    1
 s_cgimage_width:                 ds.w    1
 s_cgimage_height:                ds.w    1
 s_cgimage_x:                     ds.w    1

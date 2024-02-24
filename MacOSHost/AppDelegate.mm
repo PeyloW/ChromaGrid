@@ -134,7 +134,7 @@ static void _yieldFunction() {
             for (at.x = 0; at.x < 320; at.x++) {
                 const auto real_at = (cgpoint_t){ static_cast<int16_t>(at.x + offset.x), static_cast<int16_t>(at.y + offset.y) };
                 const auto c = pActiveImage->get_pixel(real_at);
-                if (c != cgmasked_cidx) {
+                if (c != cgimage_c::MASKED_CIDX) {
                     auto offset = (at.y * size.width + at.x);
                     buffer[offset] = palette[c];
                 }

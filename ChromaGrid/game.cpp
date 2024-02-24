@@ -16,7 +16,7 @@ extern "C" {
 }
 #endif
 
-static void remap_to(color_t col, cgcolor_remap_table_t table, uint8_t masked_idx = cgmasked_cidx) {
+static void remap_to(color_t col, cgimage_c::remap_table_t table, uint8_t masked_idx = cgimage_c::MASKED_CIDX) {
     switch (col) {
         case color_t::gold:
             table[0] = 1;
@@ -33,7 +33,7 @@ static void remap_to(color_t col, cgcolor_remap_table_t table, uint8_t masked_id
         default:
             break;
     }
-    table[masked_idx] = cgmasked_cidx;
+    table[masked_idx] = cgimage_c::MASKED_CIDX;
 }
 
 int32_t cggame_main(void) {
@@ -51,16 +51,16 @@ int32_t cggame_main(void) {
     tiles.set_offset((cgpoint_t){0, 0});
     for (int x = 1; x < 3; x++) {
         printf("  copy tiles %d.\n\r", x);
-        cgcolor_remap_table_t table;
-        cgimage_c::make_noremap_table(table);
         cgrect_t rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
         tiles.draw(tiles, (cgrect_t){{0, 0}, {48, 80}}, rect.origin);
+        printf("  remap tiles %d.\n\r", x);
+        cgimage_c::remap_table_t table;
+        cgimage_c::make_noremap_table(table);
         if (x == 1) {
             remap_to(color_t::gold, table);
         } else {
             remap_to(color_t::silver, table);
         }
-        printf("  remap tiles %d.\n\r", x);
         tiles.remap_colors(table, rect);
     }
 
@@ -104,6 +104,7 @@ int32_t cggame_main(void) {
     pPhysical.set_active();
         
         
+    cgcolor_c blue(0, 0, 63);
     while (true) {
         if (mouse.was_clicked(cgmouse_c::left)) {
             pLogical.put_pixel(9, mouse.get_postion());
@@ -113,7 +114,9 @@ int32_t cggame_main(void) {
         }
         pPhysical.draw_aligned(pLogical, (cgpoint_t){ 0, 0 } );
         pPhysical.draw(cursor, mouse.get_postion());
+        blue.set_at(0);
         vbl.wait();
+        background.get_palette()->colors[0].set_at(0);
     }
     
     return 0;
