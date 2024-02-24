@@ -42,10 +42,11 @@ Legend:
     * [x] __Blit any alignment with clipping__
         * [x] __With optional masking__
         * [x] Asm and HW optimized
+            * [ ] __BUG:__ Left edge clipping skews graphics
     * [ ] __Draw text__
         * [ ] Optimized numerics
-    * [ ] Add optional dirty mask to all draw operations
-        * [ ] Restore from dirty mask
+    * [x] Add optional dirty mask to all draw operations
+        * [x] Restore from dirty mask
         * [ ] Asm and HW optimized
 * [ ] __Sound__
     * [x] __Play SNDH music__

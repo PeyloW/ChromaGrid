@@ -48,7 +48,7 @@ s_cgimage_x:                     ds.w    1
 s_cgimage_y:                     ds.w    1
 s_cgimage_lineWords:             ds.w	1
 s_cgimage_owns_bitmap:           ds.b    1
-s_cgimage_clipped:               ds.b    1
+s_cgimage_clipping:              ds.b    1
 s_cgimage_sizeof:                ds.w	1
 
   .struct
@@ -350,7 +350,7 @@ _m68_cgimage_draw_rect:
     move.l	d3,(eBLITTER_BASE+sBLITTER_pSRC).w
 |      blitter->pDST = image->maskmap + (dstOffsYBase << 1)|
     move.l	a2,d7
-    sub.l	s_cgimage_maskmap(a0),d7
+    sub.l	d4,d7
     asr.l	#2,d7
     add.l	d7,d4
     move.l	d4,(eBLITTER_BASE+sBLITTER_pDST).w

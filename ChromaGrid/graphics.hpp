@@ -50,6 +50,10 @@ public:
         }
     }
     void set_active() const;
+private:
+    cgpalette_c() = delete;
+    cgpalette_c(const cgpalette_c &) = delete;
+    cgpalette_c(cgpalette_c &&) = delete;
 };
 
 
@@ -57,7 +61,7 @@ class cgimage_c {
 public:
     static const uint8_t MASKED_CIDX = 0x10;
     typedef uint8_t remap_table_t[17];
-
+    
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c &image, cgrect_t rect);
     cgimage_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
@@ -107,6 +111,10 @@ public:
     void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
     
 private:
+    cgimage_c() = delete;
+    cgimage_c(const cgimage_c &) = delete;
+    cgimage_c(cgimage_c &&) = delete;
+
     // Must be in sync with graphics_m68k.s implementation
     const cgimage_c *_super_image;
     cgpalette_c *_palette;

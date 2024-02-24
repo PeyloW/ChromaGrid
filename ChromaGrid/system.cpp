@@ -153,8 +153,8 @@ bool cgmouse_c::was_clicked(button_t button) {
 
 cgpoint_t cgmouse_c::get_postion() {
     cgpoint_t clamped_point = (cgpoint_t){
-        static_cast<int16_t>(MIN(pMosueLimit.origin.x + pMosueLimit.size.width - 1, MAX(pMousePosition.x, pMosueLimit.origin.x))),
-        static_cast<int16_t>(MIN(pMosueLimit.origin.y + pMosueLimit.size.height - 1, MAX(pMousePosition.y, pMosueLimit.origin.y)))
+        (int16_t)(MIN(pMosueLimit.origin.x + pMosueLimit.size.width - 1, MAX(pMousePosition.x, pMosueLimit.origin.x))),
+        (int16_t)(MIN(pMosueLimit.origin.y + pMosueLimit.size.height - 1, MAX(pMousePosition.y, pMosueLimit.origin.y)))
     };
     pMousePosition = clamped_point;
     return clamped_point;

@@ -11,17 +11,20 @@ void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) cons
     assert(_size == clean_image.get_size());
     assert((_size.width & 0xf) == 0);
     assert((_size.height & 0xf) == 0);
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, clean_image, dirtymap] {
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, &clean_image, dirtymap] {
         cgimage_c subimage(clean_image, (cgrect_t){{0, 0}, {16, 16}});
         const int row_count = _size.height / 16;
         const int row_words = _line_words * 16;
-        for (int row = row_count; --row != -1; ) {
+        int16_t y = _size.height - 16;
+        for (int row = row_count; --row != -1; y -= 16) {
             const int row_offset = row * _line_words;
             const int row_word_offset = row * row_words;
-            for (int col = _line_words; --col != 0; ) {
+            int16_t x = _size.width - 16;
+            for (int col = _line_words; --col != -1; x -= 16) {
                 if (dirtymap[col + row_offset]) {
                     dirtymap[col + row_offset] = false;
                     subimage._bitmap = clean_image._bitmap + (row_word_offset + col) * 4;
+                    draw_aligned(subimage, (cgpoint_t){x, y});
                 }
             }
         }
@@ -81,7 +84,7 @@ uint8_t cgimage_c::get_pixel(cgpoint_t at) const {
 }
 
 void cgimage_c::remap_colors(remap_table_t table, cgrect_t rect) const {
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, table, rect] {
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, table, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
                 const uint8_t c = get_pixel((cgpoint_t){ x, y});
@@ -95,7 +98,7 @@ void cgimage_c::remap_colors(remap_table_t table, cgrect_t rect) const {
 }
 
 void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, ci, rect] {
+    const_cast<cgimage_c*>(this)->with_clipping(false, [this, ci, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
                 put_pixel(ci, cgpoint_t{ x, y });
@@ -188,11 +191,11 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) con
     assert((point.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
     const auto size = srcImage.get_size();
-    const size_t word_offset = (point.x / 16) + point.y * _line_words;
+    const int word_offset = (point.x / 16) + point.y * _line_words;
     for (int y = 0; y < size.height; y++) {
         memcpy(_bitmap + (word_offset + _line_words * y) * 4,
-               srcImage._bitmap +(srcImage._line_words * y * 4),
-               srcImage._line_words * 8);
+               srcImage._bitmap + (srcImage._line_words * y * 4),
+               size.width / 2);
     }
 }
 

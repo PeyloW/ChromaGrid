@@ -38,9 +38,10 @@ static void remap_to(color_t col, cgimage_c::remap_table_t table, uint8_t masked
 
 int32_t cggame_main(void) {
     printf("create phys.\n\r");
-    cgimage_c pPhysical((cgsize_t){ 320, 208 }, false, nullptr);
+    cgimage_c pPhysical((cgsize_t){ 320, 224 }, false, nullptr);
     printf("create log.\n\r");
-    cgimage_c pLogical((cgsize_t){ 320, 208 }, false, nullptr);
+    cgimage_c pLogical((cgsize_t){ 320, 224 }, false, nullptr);
+    bool *dirtymap = (bool *)calloc(pPhysical.dirtymap_size(), 1);
 
     printf("load background.\n\r");
     cgimage_c background("BACKGRND.IFF", false);
@@ -76,35 +77,31 @@ int32_t cggame_main(void) {
     cgmusic_c music("music.snd");
     
     printf("draw initial screen.\n\r");
-    pLogical.draw_aligned(background, (cgpoint_t){0, 4});
-    pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 4 + 16});
-    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + (16 * 3) + 3});
-    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + (16 * 4) + 3});
-    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 4 + 100 });
-    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 4 + 100 });
-
+    pLogical.draw_aligned(background, (cgpoint_t){0, 12});
+    pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
+    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + (16 * 3) + 3});
+    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3});
+    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
+    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
+    pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
+    
     printf("setup vbl.\n\r");
     cgtimer_c vbl(cgtimer_c::vbl);
-
-    
     printf("start music.\n\r");
     music.set_active(2);
-    
     printf("setup mouse.\n\r");
-    cgmouse_c mouse((cgrect_t){ 0, 4, 320, 200 });
+    cgmouse_c mouse((cgrect_t){ 0, 12, 320, 200 });
     
     printf("set low rez.\n\r");
     cgset_screen(nullptr, nullptr, 0);
-
     printf("set palette.\n\r");
     background.get_palette()->set_active();
-
     printf("Activate phys.\n\r");
-    pPhysical.set_offset((cgpoint_t){ 0, 4 });
+    pPhysical.set_offset((cgpoint_t){ 0, 12 });
     pPhysical.set_active();
         
         
-    cgcolor_c blue(0, 0, 63);
+    cgcolor_c blue(0, 0, 95);
     while (true) {
         if (mouse.was_clicked(cgmouse_c::left)) {
             pLogical.put_pixel(9, mouse.get_postion());
@@ -112,8 +109,11 @@ int32_t cggame_main(void) {
         if (mouse.was_clicked(cgmouse_c::right)) {
             pLogical.put_pixel(10, mouse.get_postion());
         }
-        pPhysical.draw_aligned(pLogical, (cgpoint_t){ 0, 0 } );
-        pPhysical.draw(cursor, mouse.get_postion());
+        pPhysical.restore(pLogical, dirtymap);
+        pPhysical.with_dirtymap(dirtymap, [&pPhysical, &cursor, &mouse] {
+            pPhysical.draw(cursor, mouse.get_postion());
+        });
+        
         blue.set_at(0);
         vbl.wait();
         background.get_palette()->colors[0].set_at(0);
