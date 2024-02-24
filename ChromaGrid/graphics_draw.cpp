@@ -168,6 +168,29 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
     imp_draw_rect(src, &rect, at);
 }
 
+void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment) const {
+    int len = (int)strlen(text);
+    cgsize_t size = font.get_rect(text[1]).size;
+    for (int i = 1; i < len; i++) {
+        size.width += font.get_rect(text[i]).size.width;
+    }
+    switch (alignment) {
+        case align_right:
+            at.x -= size.width;
+            break;
+        case align_center:
+            at.x -= size.width / 2;
+            break;
+        default:
+            break;
+    }
+    for (int i = 0; i < len; i++) {
+        const cgrect_t &rect = font.get_rect(text[i]);
+        draw(font.get_image(), rect, at);
+        at.x += rect.size.width;
+    }
+}
+
 void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
     assert(_dirtymap);
     assert((_size.width & 0xf) == 0);

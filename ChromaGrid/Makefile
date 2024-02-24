@@ -7,6 +7,7 @@ CC=/opt/cross-mint-OLD/bin/m68k-atari-mint-c++
 
 FLAGS=-m68000 -mshort -mfastcall
 FLAGS+=-g1 -DNDEBUG
+#FLAGS+=-g0 -DNDEBUG
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -fno-rtti -fpermissive

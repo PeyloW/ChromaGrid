@@ -73,6 +73,10 @@ int32_t cggame_main(void) {
     cgimage_c cursor("CURSOR.IFF", true, 0);
     cursor.set_offset((cgpoint_t){1, 2});
 
+    printf("load font.\n\r");
+    cgimage_c font_image("FONT.IFF", true, 0);
+    cgfont_c font(font_image, (cgsize_t){8, 8});
+    
     printf("load music.\n\r");
     cgmusic_c music("music.snd");
     
@@ -83,6 +87,8 @@ int32_t cggame_main(void) {
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3});
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
+    pLogical.draw(font, "Hello World!", (cgpoint_t){256, 192}, cgimage_c::align_center);
+    printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
     
     printf("setup vbl.\n\r");

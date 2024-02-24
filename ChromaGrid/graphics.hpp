@@ -56,11 +56,17 @@ private:
     cgpalette_c(cgpalette_c &&) = delete;
 };
 
+class cgfont_c;
 
 class cgimage_c {
 public:
     static const uint8_t MASKED_CIDX = 0x10;
     typedef uint8_t remap_table_t[17];
+    typedef enum __packed {
+        align_left,
+        align_center,
+        align_right
+    } text_alignment;
     
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c &image, cgrect_t rect);
@@ -110,6 +116,8 @@ public:
     void draw(const cgimage_c &src, cgpoint_t at) const;
     void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
     
+    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment = align_left) const;
+    
 private:
     cgimage_c() = delete;
     cgimage_c(const cgimage_c &) = delete;
@@ -132,6 +140,30 @@ private:
     void imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
     void imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
 
+};
+
+class cgfont_c {
+public:
+    cgfont_c(const cgimage_c &image, cgsize_t character_size);
+
+    inline const cgimage_c &get_image() const {
+        return _image;
+    }
+    inline const cgrect_t &get_rect(const char c) const {
+        if (c < 32 || c > 127) {
+            return _rects[0];
+        } else {
+            return _rects[c - 32];
+        }
+    }
+    
+private:
+    cgfont_c() = delete;
+    cgfont_c(const cgfont_c &) = delete;
+    cgfont_c(cgfont_c &&) = delete;
+    
+    const cgimage_c &_image;
+    cgrect_t _rects[96];
 };
 
 #endif /* graphics_hpp */

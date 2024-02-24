@@ -28,7 +28,8 @@ Legend:
     * [x] __Mouse interups__
 * [ ] __Basic file loading__
     * [x] __IFF Image files, with masks__
-        * [ ] __Load fonts__
+        * [x] __Load fonts__
+        * [ ] _Proportinal fonts_
     * [x] __SNDH music files__
     * [ ] AIF samples
 * [ ] __Graphics__
@@ -43,8 +44,9 @@ Legend:
         * [x] __With optional masking__
         * [x] Asm and HW optimized
             * [ ] __BUG:__ Left edge clipping skews graphics
-    * [ ] __Draw text__
+    * [x] __Draw text__
         * [ ] Optimized numerics
+        * [ ] _Proportional fonts_
     * [x] Add optional dirty mask to all draw operations
         * [x] Restore from dirty mask
         * [ ] Asm and HW optimized
@@ -69,7 +71,7 @@ Legend:
         * [ ] __Small Chroma Grid Logo__
         * [ ] __Button shapes, on and off__
     * [ ] Level selection grid, center
-* [ ] __Gameplay screne__
+* [ ] __Gameplay scene__
     * Re-use right side background
     * [x] __16x16 tiles, 5x types__
         * [ ] Animations between states

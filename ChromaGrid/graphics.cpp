@@ -276,3 +276,12 @@ void cgimage_c::set_active() const {
     pActiveImage = this;
 #endif
 }
+
+cgfont_c::cgfont_c(const cgimage_c &image, cgsize_t character_size) : _image(image) {
+    const int cols = image.get_size().width / character_size.width;
+    for (int i = 0; i < 96; i++) {
+        const int col = i % cols;
+        const int row = i / cols;
+        _rects[i] = (cgrect_t){{(int16_t)(col * character_size.width), (int16_t)(row * character_size.height)}, character_size };
+    }
+}
