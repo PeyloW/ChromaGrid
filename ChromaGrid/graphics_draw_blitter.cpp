@@ -83,23 +83,26 @@ inline static void blitter_wait(struct cgblitter_t *blitter) {
 #endif
 }
 
-void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t at) const {
+void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
+    assert((rect.origin.x & 0xf) == 0);
+    assert((rect.size.width & 0xf) == 0);
     assert((at.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
     
     auto blitter = pBlitter;
-    const uint16_t copy_words = (srcImage._size.width / 16);
+    const uint16_t copy_words = (rect.size.width / 16);
 
     // Source
     blitter->srcIncX  = 2;
     blitter->srcIncY = (uint16_t)(srcImage._line_words - copy_words) * 8 + 2;
-    blitter->pSrc = srcImage._bitmap;
+    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
 
     // Dest
     blitter->dstIncX  = 2;
     blitter->dstIncY = (uint16_t)(_line_words - copy_words) * 8 + 2;
-    uint16_t dst_word_offset = at.y * (_line_words * 4) + (at.x / 16) * 4;
+    const uint16_t dst_word_offset = at.y * (_line_words * 4) + (at.x / 16) * 4;
     blitter->pDst = _bitmap + dst_word_offset;
 
     // Mask
@@ -109,7 +112,7 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t at) const 
 
     // Counts
     blitter->countX  = (uint16_t)(copy_words) * 4;
-    blitter->countY = srcImage._size.height;
+    blitter->countY = rect.size.height;
 
     // Operation flags
     blitter->HOP = cgblitter_hop_src;
@@ -119,12 +122,11 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t at) const 
     blitter_start(blitter);
     blitter_wait(blitter);
 #ifndef __M68000__
-    cgrect_t rect = (cgrect_t){ {0, 0}, srcImage._size };
     imp_draw_rect_SLOW(srcImage, rect, at);
 #endif
 }
 
-void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
+void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
     assert(srcImage.get_size().contains(rect.origin));
     auto blitter = pBlitter;
@@ -198,7 +200,7 @@ void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, const cgrect_t &rect, c
 #endif
 }
 
-void cgimage_c::imp_draw_rect_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
+void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
     assert(srcImage.get_size().contains(rect.origin));
     auto blitter = pBlitter;

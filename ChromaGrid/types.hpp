@@ -46,12 +46,30 @@ struct cgrect_t {
         if (origin.y + this->size.height > size.height) return false;
         return true;
     }
-    cgrect_t intersection(const cgrect_t rect) const {
-        const int16_t x = MAX(origin.x, rect.origin.x);
-        const int16_t y = MAX(origin.y, rect.origin.y);
-        const int16_t w = MAX(0, MIN(origin.x + size.width, rect.origin.x + rect.size.width) - x);
-        const int16_t h = MAX(0, MIN(origin.y + size.height, rect.origin.y + rect.size.height) - y);
-        return (cgrect_t){ {x, y},  {w, h} };
+    bool clip_to(const cgsize_t size, cgpoint_t &at) {
+        if (at.x < 0) {
+            this->size.width += at.x;
+            if (this->size.width <= 0) return false;
+            this->origin.x -= at.x;
+            at.x = 0;
+        }
+        if (at.y < 0) {
+            this->size.height += at.y;
+            if (this->size.height <= 0) return false;
+            this->origin.y -= at.y;
+            at.y = 0;
+        }
+        const auto dx = size.width - (at.x + this->size.width);
+        if (dx < 0) {
+            this->size.width += dx;
+            if (this->size.width <= 0) return false;
+        }
+        const auto dy = size.height - (at.y + this->size.height);
+        if (dy < 0) {
+            this->size.height += dy;
+            if (this->size.height <= 0) return false;
+        }
+        return true;
     }
 };
 

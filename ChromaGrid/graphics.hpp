@@ -113,6 +113,7 @@ public:
     void fill(uint8_t ci, cgrect_t rect) const;
     
     void draw_aligned(const cgimage_c &src, cgpoint_t at) const;
+    void draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
     void draw(const cgimage_c &src, cgpoint_t at) const;
     void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
     
@@ -137,9 +138,9 @@ private:
 
     inline void imp_update_dirtymap(cgrect_t rect) const;
     
-    void imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
-    void imp_draw_rect(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
-    void imp_draw_rect_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect_masked");
+    void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
+    void imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
+    void imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect_masked");
 
     void imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect_SLOW");
 };

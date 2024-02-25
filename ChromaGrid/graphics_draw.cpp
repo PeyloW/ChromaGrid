@@ -12,19 +12,18 @@ void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) cons
     assert((_size.width & 0xf) == 0);
     assert((_size.height & 0xf) == 0);
     const_cast<cgimage_c*>(this)->with_clipping(false, [this, &clean_image, dirtymap] {
-        cgimage_c subimage(clean_image, (cgrect_t){{0, 0}, {16, 16}});
         const int row_count = _size.height / 16;
         const int row_words = _line_words * 16;
         int16_t y = _size.height - 16;
         for (int row = row_count; --row != -1; y -= 16) {
             const int row_offset = row * _line_words;
-            const int row_word_offset = row * row_words;
             int16_t x = _size.width - 16;
             for (int col = _line_words; --col != -1; x -= 16) {
                 if (dirtymap[col + row_offset]) {
                     dirtymap[col + row_offset] = false;
-                    subimage._bitmap = clean_image._bitmap + (row_word_offset + col) * 4;
-                    draw_aligned(subimage, (cgpoint_t){x, y});
+                    cgpoint_t at = (cgpoint_t){x, y};
+                    cgrect_t rect = (cgrect_t){at, {16, 16}};
+                    draw_aligned(clean_image, rect, at);
                 }
             }
         }
@@ -110,14 +109,22 @@ void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
 void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
     assert((at.x & 0xf) == 0);
     assert(src._offset.x == 0);
-    assert(src._offset.x == 0);
+    assert(src._offset.y == 0);
+    assert((src._size.width & 0xf) == 0);
+    assert(_maskmap == nullptr);
+    assert(src._maskmap == nullptr);
+    cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
+    draw_aligned(src, rect, at);
+}
+
+void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
+    assert((at.x & 0xf) == 0);
+    assert((rect.origin.x &0xf) == 0);
+    assert((rect.size.width & 0xf) == 0);
     assert(_maskmap == nullptr);
     assert(src._maskmap == nullptr);
     if (_clipping) {
-        const cgrect_t rect = (cgrect_t){ at, src.get_size() };
-        if (!rect.contained_by(_size)) {
-            cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
-            draw(src, rect, at);
+        if (!rect.clip_to(_size, at)) {
             return;
         }
     }
@@ -125,7 +132,7 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
         const cgrect_t dirty_rect = (cgrect_t){ at, src.get_size() };
         imp_update_dirtymap(dirty_rect);
     }
-    imp_draw_aligned(src, at);
+    imp_draw_aligned(src, rect, at);
 }
 
 void cgimage_c::draw(const cgimage_c &src, cgpoint_t at) const {
@@ -140,28 +147,8 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
     assert(_maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
-        if (at.x < 0) {
-            rect.size.width += at.x;
-            if (rect.size.width <= 0) return;
-            rect.origin.x -= at.x;
-            at.x = 0;
-        }
-        if (at.y < 0) {
-            rect.size.height += at.y;
-            if (rect.size.height <= 0) return;
-            rect.origin.y -= at.y;
-            at.y = 0;
-        }
-        const auto size = this->get_size();
-        const auto dx = size.width - (at.x + rect.size.width);
-        if (dx < 0) {
-            rect.size.width += dx;
-            if (rect.size.width <= 0) return;
-        }
-        const auto dy = size.height - (at.y + rect.size.height);
-        if (dy < 0) {
-            rect.size.height += dy;
-            if (rect.size.height <= 0) return;
+        if (!rect.clip_to(_size, at)) {
+            return;
         }
     }
     if (_dirtymap) {
@@ -169,9 +156,9 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
         imp_update_dirtymap(dirty_rect);
     }
     if (src._maskmap) {
-        imp_draw_rect_masked(src, rect, at);
+        imp_draw_masked(src, rect, at);
     } else {
-        imp_draw_rect(src, rect, at);
+        imp_draw(src, rect, at);
     }
 }
 
