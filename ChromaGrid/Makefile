@@ -18,7 +18,8 @@ LDFLAGS+=-Wl,--traditional-format
 OBJECTS=main.o cpp_runtime.o
 OBJECTS+=system.o system_m68k.o
 OBJECTS+=iff_file.o
-OBJECTS+=graphics.o graphics_draw.o graphics_m68k.o
+#OBJECTS+=graphics.o graphics_draw.o graphics_m68k.o
+OBJECTS+=graphics.o graphics_draw.o graphics_draw_blitter.o
 OBJECTS+=audio.o
 OBJECTS+=game.o
 

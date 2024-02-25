@@ -88,6 +88,11 @@ int32_t cggame_main(void) {
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
     pLogical.draw(font, "Hello World!", (cgpoint_t){256, 192}, cgimage_c::align_center);
+     
+    for (int i = 0; i < 5; i++) {
+        pLogical.draw(cursor, (cgpoint_t){ (int16_t)(i * 5 - 4), int16_t(50 + i * 16) });
+    }
+    
     printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
     
@@ -105,8 +110,7 @@ int32_t cggame_main(void) {
     printf("Activate phys.\n\r");
     pPhysical.set_offset((cgpoint_t){ 0, 12 });
     pPhysical.set_active();
-        
-        
+
     cgcolor_c blue(0, 0, 95);
     while (true) {
         if (mouse.was_clicked(cgmouse_c::left)) {

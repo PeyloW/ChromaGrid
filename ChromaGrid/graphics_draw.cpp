@@ -207,6 +207,7 @@ void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
     }
 }
 
+#if 0
 #ifndef __M68000__
 
 void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const {
@@ -241,5 +242,7 @@ void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, c
         }
     }
 }
+
+#endif
 
 #endif
