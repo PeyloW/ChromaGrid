@@ -89,9 +89,20 @@ int32_t cggame_main(void) {
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
     pLogical.draw(font, "Hello World!", (cgpoint_t){256, 192}, cgimage_c::align_center);
      
-    for (int i = 0; i < 5; i++) {
-        pLogical.draw(cursor, (cgpoint_t){ (int16_t)(i * 5 - 4), int16_t(50 + i * 16) });
+    for (int i = 0; i < (4 * 2 * 4); i++) {
+        int16_t dstX = - 4 + (i % 4) * 8;
+        int16_t dstY = 16 + i * 6;
+        int16_t srcX = ((i / 4) % 2) * 8;
+        int16_t srcWidth = 12 + (i / 8) % 4 * 12;
+        cgpoint_t at = (cgpoint_t){dstX, dstY};
+        cgrect_t rect = (cgrect_t){ {srcX, 8}, {srcWidth, 6}};
+        printf("  Draw: {{%d,%d}{%d,%d}} at {%d,%d}\n\r", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, at.x, at.y);
+        if (srcWidth == 12 && srcX == 8) {
+            (void)0;
+        }
+        pLogical.draw(font.get_image(), rect, at);
     }
+    pLogical.draw(font.get_image(), (cgrect_t){{0,0}, {32,16}}, (cgpoint_t){-12, 160});
     
     printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});

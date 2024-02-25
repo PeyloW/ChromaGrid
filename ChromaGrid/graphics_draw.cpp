@@ -111,6 +111,7 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
     assert((at.x & 0xf) == 0);
     assert(src._offset.x == 0);
     assert(src._offset.x == 0);
+    assert(_maskmap == nullptr);
     assert(src._maskmap == nullptr);
     if (_clipping) {
         const cgrect_t rect = (cgrect_t){ at, src.get_size() };
@@ -128,6 +129,7 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
 }
 
 void cgimage_c::draw(const cgimage_c &src, cgpoint_t at) const {
+    assert(_maskmap == nullptr);
     const auto offset = src.get_offset();
     const cgpoint_t real_at = (cgpoint_t){ (int16_t)(at.x - offset.x), (int16_t)(at.y - offset.y)};
     cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
@@ -135,6 +137,7 @@ void cgimage_c::draw(const cgimage_c &src, cgpoint_t at) const {
 }
 
 void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
+    assert(_maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
         if (at.x < 0) {
@@ -165,7 +168,11 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
         const cgrect_t dirty_rect = (cgrect_t){at, rect.size};
         imp_update_dirtymap(dirty_rect);
     }
-    imp_draw_rect(src, &rect, at);
+    if (src._maskmap) {
+        imp_draw_rect_masked(src, rect, at);
+    } else {
+        imp_draw_rect(src, rect, at);
+    }
 }
 
 void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment) const {
@@ -222,14 +229,6 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) con
                size.width / 2);
     }
 }
-
-/*
-void cgimage_t::imp_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point) {
-    assert(image->get_size().contains(point));
-    cgrect_t rect = { { 0, 0 }, srcImage->get_size() };
-    imp_draw_rect(image, srcImage, &rect, point);
-}
-*/
 
 void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, cgpoint_t point) const {
     assert(get_size().contains(point));
