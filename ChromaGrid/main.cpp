@@ -22,5 +22,5 @@ int main(int argc, const char * argv[]) {
 }
 
 #else
-#error "For target mchine only"
+#error "For target machine only"
 #endif

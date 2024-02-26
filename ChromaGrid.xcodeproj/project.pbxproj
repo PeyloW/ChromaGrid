@@ -28,6 +28,7 @@
 		A69AE5172B88F53500EBA43D /* graphics_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5162B88F53500EBA43D /* graphics_draw.cpp */; };
 		A69AE51A2B8AA0EE00EBA43D /* font.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5192B8AA0EE00EBA43D /* font.iff */; };
 		A69AE51D2B8AC25300EBA43D /* graphics_draw_blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */; };
+		A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,7 +47,6 @@
 		A69AE4C52B6EC28800EBA43D /* cincludes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cincludes.hpp; sourceTree = "<group>"; };
 		A69AE4C92B6FEFE500EBA43D /* graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics.cpp; sourceTree = "<group>"; };
 		A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = graphics.hpp; sourceTree = "<group>"; };
-		A69AE4CE2B6FFA3700EBA43D /* graphics_m68k.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = graphics_m68k.s; sourceTree = "<group>"; };
 		A69AE4D32B701EF600EBA43D /* iff_file.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iff_file.cpp; sourceTree = "<group>"; };
 		A69AE4D42B701EF600EBA43D /* iff_file.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = iff_file.hpp; sourceTree = "<group>"; };
 		A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpp_runtime.cpp; sourceTree = "<group>"; };
@@ -67,6 +67,8 @@
 		A69AE5162B88F53500EBA43D /* graphics_draw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_draw.cpp; sourceTree = "<group>"; };
 		A69AE5192B8AA0EE00EBA43D /* font.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font.iff; sourceTree = "<group>"; };
 		A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_draw_blitter.cpp; sourceTree = "<group>"; };
+		A69AE51F2B8BB71E00EBA43D /* blitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blitter.cpp; sourceTree = "<group>"; };
+		A69AE5202B8BB71E00EBA43D /* blitter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +118,9 @@
 				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
 				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
 				A69AE5162B88F53500EBA43D /* graphics_draw.cpp */,
+				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
+				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
 				A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */,
-				A69AE4CE2B6FFA3700EBA43D /* graphics_m68k.s */,
 				A69AE5012B82983A00EBA43D /* audio.hpp */,
 				A69AE5002B82983A00EBA43D /* audio.cpp */,
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
@@ -232,6 +235,7 @@
 			files = (
 				A69AE51D2B8AC25300EBA43D /* graphics_draw_blitter.cpp in Sources */,
 				A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */,
+				A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */,
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,

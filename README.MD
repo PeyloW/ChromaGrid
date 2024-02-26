@@ -5,9 +5,10 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 ## Credits
 
 * Main Code: _Fredrik 'PeyloW' Olsson_
-* Blitter Code: _Leon 'Mr. Pink' O'Reilly_
+* Blitter Code: _Hatari 1.0 as reference_
 * Music: _Joakim 'AiO' Ekblad_
 * Graphics: ??
+* Font: _Damien Guard_
 
 ### Project Requirement
 
@@ -43,7 +44,7 @@ Legend:
     * [x] __Blit any alignment with clipping__
         * [x] __With optional masking__
         * [x] Asm and HW optimized
-            * [ ] __BUG:__ Left edge clipping skews graphics
+            * [x] ~~__BUG:__ Left edge clipping skews graphics~~
     * [x] __Draw text__
         * [ ] Optimized numerics
         * [ ] _Proportional fonts_

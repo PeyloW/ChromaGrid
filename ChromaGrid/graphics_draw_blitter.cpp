@@ -6,52 +6,7 @@
 //
 
 #include "graphics.hpp"
-
-enum {
-    cgblitter_hop_one = 0,
-    cgblitter_hop_src = 2
-} cgblitter_hop_t;
-
-enum {
-    cgblitter_lop_zero = 0,
-    cgblitter_lop_src_and_dts = 1,
-    cgblitter_lop_src = 3,
-    cgblitter_lop_notsrc_and_dst = 4,
-    cgblitter_lop_src_or_dst = 7,
-    cgblitter_lop_ = 15
-} cgblitter_lop_t;
-
-struct cgblitter_t {
-    uint16_t halftoneRAM[16];
-    uint16_t srcIncX;
-    uint16_t srcIncY;
-    uint16_t *pSrc;
-    uint16_t endMask[3];
-    uint16_t dstIncX;
-    uint16_t dstIncY;
-    uint16_t *pDst;
-    uint16_t countX;
-    uint16_t countY;
-    uint8_t  HOP;
-    uint8_t  LOP;
-    volatile uint8_t  mode;
-    uint8_t  skew;
-};
-
-static const uint8_t cgblitter_skew_mask = 0x0f;
-static const uint8_t cgblitter_nfsr_bit = (1<<6);
-static const uint8_t cgblitter_fxsr_bit = (1<<7);
-
-static const uint8_t cgblitter_hog_bit = (1<<6);
-static const uint8_t cgblitter_busy_bit = (1<<7);
-
-static const uint16_t pBlitter_mask[17] = {
-    0xffff, 0x7fff, 0x3fff, 0x1fff,
-    0x0fff, 0x07ff, 0x03ff, 0x01ff,
-    0x00ff, 0x007f, 0x003f, 0x001f,
-    0x000f, 0x0007, 0x0003, 0x0001,
-    0x0000
-};
+#include "blitter.hpp"
 
 static const uint8_t pBlitter_skewflags[4] = {
     cgblitter_nfsr_bit,
@@ -60,28 +15,13 @@ static const uint8_t pBlitter_skewflags[4] = {
     cgblitter_nfsr_bit|cgblitter_fxsr_bit,
 };
 
-#ifdef __M68000__
-static struct cgblitter_t *pBlitter = (struct cgblitter_t *)0xffff8a00;
-#else
-static struct cgblitter_t _Blitter;
-static struct cgblitter_t *pBlitter = &_Blitter;
-#endif
-
-inline static void blitter_start(struct cgblitter_t *blitter) {
-#ifdef __M68000__
-    blitter->mode = cgblitter_busy_bit | cgblitter_hog_bit;
-#else
-    // TODO: Implement this??
-#endif
-}
-
-inline static void blitter_wait(struct cgblitter_t *blitter) {
-#ifdef __M68000__
-    while(blitter->mode & cgblitter_busy_bit) {
-        __asm__ volatile ("nop" : : : );
-    };
-#endif
-}
+static const uint16_t pBlitter_mask[17] = {
+    0xffff, 0x7fff, 0x3fff, 0x1fff,
+    0x0fff, 0x07ff, 0x03ff, 0x01ff,
+    0x00ff, 0x007f, 0x003f, 0x001f,
+    0x000f, 0x0007, 0x0003, 0x0001,
+    0x0000
+};
 
 void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
@@ -119,11 +59,7 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
     blitter->LOP = cgblitter_lop_src;
     blitter->skew = 0;
 
-    blitter_start(blitter);
-    blitter_wait(blitter);
-#ifndef __M68000__
-    imp_draw_rect_SLOW(srcImage, rect, at);
-#endif
+    blitter->start();
 }
 
 void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
@@ -189,15 +125,11 @@ void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoin
         blitter->pSrc   = src_bitmap;
         blitter->countY = rect.size.height;
 
-        blitter_start(blitter);
-        blitter_wait(blitter);
+        blitter->start();
 
         src_bitmap++;
         dts_bitmap++;
     }
-#ifndef __M68000__
-    imp_draw_rect_SLOW(srcImage, rect, at);
-#endif
 }
 
 void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
@@ -263,8 +195,7 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
         blitter->pSrc   = src_maskmap;
         blitter->countY = rect.size.height;
 
-        blitter_start(blitter);
-        blitter_wait(blitter);
+        blitter->start();
 
         dts_bitmap++;
     }
@@ -286,15 +217,11 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
         blitter->pSrc   = src_bitmap;
         blitter->countY = rect.size.height;
 
-        blitter_start(blitter);
-        blitter_wait(blitter);
+        blitter->start();
 
         src_bitmap++;
         dts_bitmap++;
     }
-#ifndef __M68000__
-    imp_draw_rect_SLOW(srcImage, rect, at);
-#endif
 }
 
 void cgimage_c::imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const {
