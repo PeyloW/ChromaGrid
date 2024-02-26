@@ -285,3 +285,49 @@ cgfont_c::cgfont_c(const cgimage_c &image, cgsize_t character_size) : _image(ima
         _rects[i] = (cgrect_t){{(int16_t)(col * character_size.width), (int16_t)(row * character_size.height)}, character_size };
     }
 }
+
+cgfont_c::cgfont_c(const cgimage_c &image, cgsize_t max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_req_space) : _image(image)  {
+    const int cols = image.get_size().width / max_size.width;
+    for (int i = 0; i < 96; i++) {
+        const int col = i % cols;
+        const int row = i / cols;
+        cgrect_t rect = (cgrect_t){{(int16_t)(col * max_size.width), (int16_t)(row * max_size.height)}, max_size };
+        if (i == 0) {
+            rect.size.width = space_width;
+        } else {
+            // Find first non-empty column, count spaces from top
+            {
+                for (int fc = 0; fc < rect.size.width; fc++) {
+                    for (int fcc = 0; fcc < rect.size.height; fcc++) {
+                        const cgpoint_t at = (cgpoint_t){ (int16_t)(rect.origin.x + fc), (int16_t)(rect.origin.y + fcc)};
+                        if (image.get_pixel(at) != cgimage_c::MASKED_CIDX) {
+                            fc = MAX(0, fcc >= lead_req_space ? fc : fc - 1);
+                            rect.origin.x += fc;
+                            rect.size.width -= fc;
+                            goto leading_done;
+                        }
+                    }
+                }
+                rect.size.width = space_width;
+                goto trailing_done;
+            }
+        leading_done:
+            // Find last non-empty column, count spaces from bottom
+            {
+                const cgpoint_t max_at = (cgpoint_t){ (int16_t)(rect.origin.x + rect.size.width - 1), (int16_t)(rect.origin.y + rect.size.height - 1)};
+                for (int fc = 0; fc < rect.size.width; fc++) {
+                    for (int fcc = 0; fcc < rect.size.height; fcc++) {
+                        const cgpoint_t at = (cgpoint_t){ (int16_t)(max_at.x - fc), (int16_t)(max_at.y - fcc)};
+                        if (image.get_pixel(at) != cgimage_c::MASKED_CIDX) {
+                            fc = MAX(0, fcc >= trail_req_space ? fc : fc - 1);
+                            rect.size.width -= fc;
+                            goto trailing_done;
+                        }
+                    }
+                }
+            }
+        trailing_done: ;
+        }
+        _rects[i] = rect;
+    }
+}

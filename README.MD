@@ -30,7 +30,7 @@ Legend:
 * [ ] __Basic file loading__
     * [x] __IFF Image files, with masks__
         * [x] __Load fonts__
-        * [ ] _Proportinal fonts_
+        * [x] _Proportinal fonts_
     * [x] __SNDH music files__
     * [ ] AIF samples
 * [ ] __Graphics__
@@ -47,7 +47,7 @@ Legend:
             * [x] ~~__BUG:__ Left edge clipping skews graphics~~
     * [x] __Draw text__
         * [ ] Optimized numerics
-        * [ ] _Proportional fonts_
+        * [x] _Proportional fonts_
     * [x] Add optional dirty mask to all draw operations
         * [x] Restore from dirty mask
         * [ ] Asm and HW optimized

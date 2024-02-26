@@ -76,8 +76,8 @@ int32_t cggame_main(void) {
 
     printf("load font.\n\r");
     cgimage_c font_image("FONT.IFF", true, 0);
-    cgfont_c font(font_image, (cgsize_t){8, 8});
-    
+    cgfont_c font(font_image, (cgsize_t){8, 8}, 4, 2, 4);
+
     printf("load music.\n\r");
     cgmusic_c music("music.snd");
     
@@ -88,8 +88,17 @@ int32_t cggame_main(void) {
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3});
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
-    pLogical.draw(font, "Hello World!", (cgpoint_t){256, 192}, cgimage_c::align_center);
-     
+    
+#define BUTTON_SPACING 20
+#define BUTTON_BOTTOM 188
+    pLogical.draw(font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center);
+    pLogical.draw(font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1}, cgimage_c::align_center);
+    pLogical.draw(font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2}, cgimage_c::align_center);
+    pLogical.draw(font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3}, cgimage_c::align_center);
+    pLogical.draw(font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4}, cgimage_c::align_center);
+    pLogical.draw(font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5}, cgimage_c::align_center);
+
+    /*
     for (int i = 0; i < (4 * 2 * 4); i++) {
         int16_t dstX = - 4 + (i % 4) * 8;
         int16_t dstY = 16 + i * 6;
@@ -104,7 +113,11 @@ int32_t cggame_main(void) {
         pLogical.draw(font.get_image(), rect, at);
     }
     pLogical.draw(font.get_image(), (cgrect_t){{0,0}, {32,16}}, (cgpoint_t){-12, 160});
-    
+     */
+    pLogical.draw(font, "Welcome to Chroma Grid.", (cgpoint_t){96, 140 + 12 * 0}, cgimage_c::align_center);
+    pLogical.draw(font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 140 + 12 * 1}, cgimage_c::align_center);
+    pLogical.draw(font, "Released at Sommarhack.", (cgpoint_t){96, 140 + 12 * 2 + 6}, cgimage_c::align_center);
+
     printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
     

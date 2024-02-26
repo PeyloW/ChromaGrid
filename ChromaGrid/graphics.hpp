@@ -148,6 +148,7 @@ private:
 class cgfont_c {
 public:
     cgfont_c(const cgimage_c &image, cgsize_t character_size);
+    cgfont_c(const cgimage_c &image, cgsize_t max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
 
     inline const cgimage_c &get_image() const {
         return _image;
