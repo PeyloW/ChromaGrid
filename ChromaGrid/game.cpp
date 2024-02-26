@@ -9,6 +9,7 @@
 #include "system.hpp"
 #include "graphics.hpp"
 #include "audio.hpp"
+#include "blitter.hpp"
 
 #ifdef __M68000__
 extern "C" {
@@ -132,7 +133,13 @@ int32_t cggame_main(void) {
         }
         pPhysical.restore(pLogical, dirtymap);
         pPhysical.with_dirtymap(dirtymap, [&pPhysical, &cursor, &mouse] {
+#ifdef __M68000__
             pPhysical.draw(cursor, mouse.get_postion());
+#else
+            pBlitter->debug = true;
+            pPhysical.draw(cursor, mouse.get_postion());
+            pBlitter->debug = false;
+#endif
         });
         
         blue.set_at(0);
