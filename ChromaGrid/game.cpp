@@ -74,9 +74,11 @@ int32_t cggame_main(void) {
     cgimage_c cursor("CURSOR.IFF", true, 0);
     cursor.set_offset((cgpoint_t){1, 2});
 
-    printf("load font.\n\r");
+    printf("load fonts.\n\r");
     cgimage_c font_image("FONT.IFF", true, 0);
     cgfont_c font(font_image, (cgsize_t){8, 8}, 4, 2, 4);
+    cgimage_c small_font_image("FONT6.IFF", true, 0);
+    cgfont_c small_font(small_font_image, (cgsize_t){6, 6}, 3, 0, 6);
 
     printf("load button.\n\r");
     cgimage_c button("BUTTON.IFF", true, 6);
@@ -128,7 +130,7 @@ int32_t cggame_main(void) {
      */
     pLogical.draw(font, "Welcome to Chroma Grid.", (cgpoint_t){96, 140 + 12 * 0}, cgimage_c::align_center);
     pLogical.draw(font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 140 + 12 * 1}, cgimage_c::align_center);
-    pLogical.draw(font, "Released at Sommarhack.", (cgpoint_t){96, 140 + 12 * 2 + 6}, cgimage_c::align_center);
+    pLogical.draw(small_font, "Released at Sommarhack.", (cgpoint_t){96, 140 + 12 * 2 + 6}, cgimage_c::align_center);
 
     printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});

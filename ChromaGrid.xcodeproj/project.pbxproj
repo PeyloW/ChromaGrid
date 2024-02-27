@@ -30,6 +30,7 @@
 		A69AE51D2B8AC25300EBA43D /* graphics_draw_blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */; };
 		A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 		A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE52D2B8D76FA00EBA43D /* button.iff */; };
+		A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5302B8D9A2400EBA43D /* font6.iff */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		A69AE51F2B8BB71E00EBA43D /* blitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blitter.cpp; sourceTree = "<group>"; };
 		A69AE5202B8BB71E00EBA43D /* blitter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter.hpp; sourceTree = "<group>"; };
 		A69AE52D2B8D76FA00EBA43D /* button.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = button.iff; sourceTree = "<group>"; };
+		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 				A69AE52D2B8D76FA00EBA43D /* button.iff */,
 				A69AE4E82B77FED300EBA43D /* cursor.iff */,
 				A69AE5192B8AA0EE00EBA43D /* font.iff */,
+				A69AE5302B8D9A2400EBA43D /* font6.iff */,
 				A69AE50F2B85031400EBA43D /* orbs.iff */,
 				A69AE5102B85031400EBA43D /* tiles.iff */,
 				A69AE5052B82B1E300EBA43D /* music.snd */,
@@ -225,6 +228,7 @@
 				A69AE51A2B8AA0EE00EBA43D /* font.iff in Resources */,
 				A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
+				A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 				A69AE5122B85031400EBA43D /* tiles.iff in Resources */,
 			);
