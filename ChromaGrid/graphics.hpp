@@ -114,10 +114,13 @@ public:
     
     void draw_aligned(const cgimage_c &src, cgpoint_t at) const;
     void draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
-    void draw(const cgimage_c &src, cgpoint_t at) const;
-    void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const;
+    void draw(const cgimage_c &src, cgpoint_t at, const uint8_t color = MASKED_CIDX) const;
+    void draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const uint8_t color = MASKED_CIDX) const;
     
-    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment = align_left) const;
+    void draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const;
+    void draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const;
+    
+    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment = align_left, const uint8_t color = MASKED_CIDX) const;
     
 private:
     cgimage_c() = delete;
@@ -138,11 +141,12 @@ private:
 
     inline void imp_update_dirtymap(cgrect_t rect) const;
     
-    void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_aligned");
-    void imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect");
-    void imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect_masked");
-
-    void imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const asm("_m68_cgimage_draw_rect_SLOW");
+    void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
+    void imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
+    void imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
+    void imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point, uint16_t color) const;
+    
+    void imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
 };
 
 class cgfont_c {

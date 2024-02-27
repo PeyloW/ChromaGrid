@@ -135,15 +135,15 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) 
     imp_draw_aligned(src, rect, at);
 }
 
-void cgimage_c::draw(const cgimage_c &src, cgpoint_t at) const {
+void cgimage_c::draw(const cgimage_c &src, cgpoint_t at, const uint8_t color) const {
     assert(_maskmap == nullptr);
     const auto offset = src.get_offset();
     const cgpoint_t real_at = (cgpoint_t){ (int16_t)(at.x - offset.x), (int16_t)(at.y - offset.y)};
     cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
-    draw(src, rect, real_at);
+    draw(src, rect, real_at, color);
 }
 
-void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
+void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const uint8_t color) const {
     assert(_maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
@@ -156,13 +156,44 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
         imp_update_dirtymap(dirty_rect);
     }
     if (src._maskmap) {
-        imp_draw_masked(src, rect, at);
+        if (color == MASKED_CIDX) {
+            imp_draw_masked(src, rect, at);
+        } else {
+            imp_draw_color(src, rect, at, color);
+        }
     } else {
+        assert(color == MASKED_CIDX);
         imp_draw(src, rect, at);
     }
 }
 
-void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment) const {
+void cgimage_c::draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const {
+    cgrect_t rect = (cgrect_t){{0, 0}, src.get_size()};
+    draw_3_patch(src, rect, cap, in);
+}
+
+void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const {
+    assert(in.size.width >= cap * 2);
+    assert(rect.size.width > cap * 2);
+    assert(rect.size.height == in.size.height);
+    const cgrect_t left_rect = (cgrect_t){ rect.origin, {cap, rect.size.height}};
+    draw(src, left_rect, in.origin);
+    const cgrect_t right_rect = (cgrect_t){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
+    const cgpoint_t right_at = (cgpoint_t){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
+    draw(src, right_rect, right_at);
+    cgrect_t middle_rect = (cgrect_t){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
+    cgpoint_t at = (cgpoint_t){(int16_t)(in.origin.x + cap), in.origin.y };
+    int16_t to_draw = in.size.width - cap * 2;
+    while (to_draw > 0) {
+        const int16_t width = MIN(to_draw, middle_rect.size.width);
+        middle_rect.size.width = width;
+        draw(src, middle_rect, at);
+        to_draw -= width;
+        at.x += width;
+    }
+}
+
+void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment, const uint8_t color) const {
     int len = (int)strlen(text);
     cgsize_t size = font.get_rect(text[1]).size;
     for (int i = 1; i < len; i++) {
@@ -180,7 +211,7 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_
     }
     for (int i = 0; i < len; i++) {
         const cgrect_t &rect = font.get_rect(text[i]);
-        draw(font.get_image(), rect, at);
+        draw(font.get_image(), rect, at, color);
         at.x += rect.size.width;
     }
 }

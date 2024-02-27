@@ -45,9 +45,11 @@ Legend:
         * [x] __With optional masking__
         * [x] Asm and HW optimized
             * [x] ~~__BUG:__ Left edge clipping skews graphics~~
+            * [x] __BUG:__ Host blitter emu shifts wrong for 8+16 alignment
     * [x] __Draw text__
         * [ ] Optimized numerics
         * [x] _Proportional fonts_
+    * [x] Draw 3 patches
     * [x] Add optional dirty mask to all draw operations
         * [x] Restore from dirty mask
         * [ ] Asm and HW optimized
@@ -70,7 +72,7 @@ Legend:
     * [x] __12x16 mouse cursor__
     * [x] __Right side bar background 128px wide__
         * [ ] __Small Chroma Grid Logo__
-        * [ ] __Button shapes, on and off__
+        * [x] __Button shapes, on and off__
     * [ ] Level selection grid, center
 * [ ] __Gameplay scene__
     * Re-use right side background

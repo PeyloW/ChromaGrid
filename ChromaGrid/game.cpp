@@ -78,24 +78,36 @@ int32_t cggame_main(void) {
     cgimage_c font_image("FONT.IFF", true, 0);
     cgfont_c font(font_image, (cgsize_t){8, 8}, 4, 2, 4);
 
+    printf("load button.\n\r");
+    cgimage_c button("BUTTON.IFF", true, 6);
+
     printf("load music.\n\r");
     cgmusic_c music("music.snd");
     
     printf("draw initial screen.\n\r");
     pLogical.draw_aligned(background, (cgpoint_t){0, 12});
     pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
-    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + (16 * 3) + 3});
-    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3});
+    pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + (16 * 3) + 3}, 6);
+    pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3}, 0);
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + 100 });
     
 #define BUTTON_SPACING 20
 #define BUTTON_BOTTOM 188
-    pLogical.draw(font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center);
+    cgrect_t button_rect = (cgrect_t){{0,14},{32,14}};
+    cgrect_t in_rect = (cgrect_t){{200, BUTTON_BOTTOM - 3}, {112, 14}};
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw(font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center, 7);
+    button_rect.origin.y -= 14;
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1}, cgimage_c::align_center);
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2}, cgimage_c::align_center);
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3}, cgimage_c::align_center);
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4}, cgimage_c::align_center);
+    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5}, cgimage_c::align_center);
 
     /*

@@ -224,6 +224,80 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
     }
 }
 
+void cgimage_c::imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at, uint16_t color) const {
+    assert(get_size().contains(at));
+    assert(srcImage.get_size().contains(rect.origin));
+    auto blitter = pBlitter;
+
+    const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
+    const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
+    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
+    
+    // Source
+    blitter->srcIncX = 2;
+    blitter->srcIncY = (uint16_t)((srcImage._line_words - src_words_dec_1) * 2);
+    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    uint16_t *src_maskmap  = srcImage._maskmap + src_word_offset;
+    
+    // Dest
+    blitter->dstIncX  = 8;
+    blitter->dstIncY = (uint16_t)(_line_words * 8 - (dst_words_dec_1 * 8));
+    const uint16_t dst_word_offset = (at.y * _line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+
+    // Mask
+    uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
+    uint16_t end_mask_2 = ~pBlitter_mask[(dst_max_x & 15) + 1];
+    uint8_t skew = (uint8_t)(((at.x & 15) - (rect.origin.x & 15)) & 15);
+    if (dst_words_dec_1 == 0) {
+        end_mask_0 &= end_mask_2;
+        end_mask_2 = end_mask_0;
+        if (src_words_dec_1 != 0) {
+            skew |= cgblitter_fxsr_bit;
+        } else if ((rect.origin.x & 15) > (at.x & 15)) {
+            skew |= cgblitter_fxsr_bit;
+            blitter->srcIncY -= 2;
+        }
+    } else {
+        int idx = 0;
+        if ((rect.origin.x & 15) > (at.x & 15)) {
+            idx |= 1;
+        }
+        if (src_words_dec_1 == dst_words_dec_1) {
+            idx |= 2;
+        }
+        skew |= pBlitter_skewflags[idx];
+    }
+    blitter->endMask[0] = end_mask_0;
+    blitter->endMask[1] = 0xFFFF;
+    blitter->endMask[2] = end_mask_2;
+
+    // Counts
+    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    
+    // Operation flags
+    blitter->HOP = cgblitter_hop_src;
+    blitter->skew = skew;
+
+    // Color 4 planes
+    for (int i = 4; --i != -1; ) {
+        if ((color & 1) == 0) {
+            blitter->LOP = cgblitter_lop_notsrc_and_dst;
+        } else {
+            blitter->LOP = cgblitter_lop_src_or_dst;
+        }
+        blitter->pDst   = dts_bitmap;
+        blitter->pSrc   = src_maskmap;
+        blitter->countY = rect.size.height;
+
+        blitter->start();
+
+        color >>= 1;
+        dts_bitmap++;
+    }
+}
+
 void cgimage_c::imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const {
     assert(get_size().contains(point));
     for (int y = 0; y < rect.size.height; y++) {
