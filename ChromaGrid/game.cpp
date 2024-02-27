@@ -96,20 +96,20 @@ int32_t cggame_main(void) {
     
 #define BUTTON_SPACING 20
 #define BUTTON_BOTTOM 188
-    cgrect_t button_rect = (cgrect_t){{0,14},{32,14}};
+    cgrect_t button_rect = (cgrect_t){{8,14},{32,14}};
     cgrect_t in_rect = (cgrect_t){{200, BUTTON_BOTTOM - 3}, {112, 14}};
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center, 7);
     button_rect.origin.y -= 14;
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1}, cgimage_c::align_center);
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2}, cgimage_c::align_center);
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3}, cgimage_c::align_center);
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4}, cgimage_c::align_center);
-    pLogical.draw_3_patch(button, button_rect, 7, in_rect); in_rect.origin.y -= BUTTON_SPACING;
+    pLogical.draw_3_patch(button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
     pLogical.draw(font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5}, cgimage_c::align_center);
 
     /*
@@ -169,9 +169,9 @@ int32_t cggame_main(void) {
 #endif
         });
         
-        blue.set_at(0);
-        vbl.wait();
         background.get_palette()->colors[0].set_at(0);
+        vbl.wait();
+        blue.set_at(0);
     }
     
     return 0;

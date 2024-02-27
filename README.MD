@@ -45,7 +45,7 @@ Legend:
         * [x] __With optional masking__
         * [x] Asm and HW optimized
             * [x] ~~__BUG:__ Left edge clipping skews graphics~~
-            * [x] __BUG:__ Host blitter emu shifts wrong for 8+16 alignment
+            * [x] ~~__BUG:__ Host blitter emu shifts wrong for 8+16 alignment~~
     * [x] __Draw text__
         * [ ] Optimized numerics
         * [x] _Proportional fonts_

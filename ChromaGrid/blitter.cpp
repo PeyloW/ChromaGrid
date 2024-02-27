@@ -39,7 +39,11 @@ void cgblitter_t::start() {
             case cgblitter_lop_notsrc_and_dst: opd = ~src & dst; break;
             default: assert(0); opd = 0; break;
         }
-        *pDst = (opd & mask) | (dst & ~mask);
+        if (mask == 0xffff) {
+            *pDst = opd;
+        } else {
+            *pDst = (opd & mask) | (dst & ~mask);
+        }
     };
     const auto inc_dst = [this] (const bool is_last) {
         pDst += (is_last ? dstIncY : dstIncX) / 2;
@@ -52,7 +56,8 @@ void cgblitter_t::start() {
             read_src();
             inc_src(false);
             do_shift();
-            if (countX > 1) {
+            if (countX > 1 || countY > 1) {
+                // This is not how the blitter work, but unless skipepd we will read outside buffer
                 read_src();
             }
         } else {
