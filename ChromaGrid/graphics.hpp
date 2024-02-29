@@ -57,26 +57,21 @@ private:
 };
 
 
-class cgstencil_c {
-public:
-    static const int FULLY_TRANSPARENT = 0;
-    static const int FULLY_OPAQUE = 64;
-    typedef enum __packed {
-        orderred,
-        noise
-    } type;
-    cgstencil_c(type t, int shade);
-private:
-    uint16_t _mask[16];
-};
-
-
 class cgfont_c;
 
 class cgimage_c {
 public:
     static const uint8_t MASKED_CIDX = 0x10;
     typedef uint8_t remap_table_t[17];
+    
+    static const int STENCIL_FULLY_TRANSPARENT = 0;
+    static const int STENCIL_FULLY_OPAQUE = 64;
+    typedef uint16_t stencil_t[16];
+    typedef enum __packed {
+        orderred,
+        noise
+    } stencil_type;
+    
     typedef enum __packed {
         align_left,
         align_center,
@@ -104,8 +99,8 @@ public:
     }
 
     template<class Commands>
-    __forceinline void with_stencil(cgstencil_c *const stencil, Commands commands) {
-        cgstencil_c *const old_stencil = _stencil;
+    __forceinline void with_stencil(const stencil_t *const stencil, Commands commands) {
+        const auto old_stencil = _stencil;
         _stencil = stencil;
         commands();
         _stencil = old_stencil;
@@ -133,6 +128,8 @@ public:
     }
     void remap_colors(remap_table_t table, cgrect_t rect) const;
     
+    static void make_stencil(stencil_t stencil, stencil_type type, int shade);
+    
     void fill(uint8_t ci, cgrect_t rect) const;
     
     void draw_aligned(const cgimage_c &src, cgpoint_t at) const;
@@ -156,7 +153,7 @@ private:
     uint16_t *_bitmap;
     uint16_t *_maskmap;
     bool *_dirtymap;
-    cgstencil_c *_stencil;
+    const stencil_t *_stencil;
     cgsize_t _size;
     cgpoint_t _offset;
     uint16_t _line_words;

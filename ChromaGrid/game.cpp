@@ -83,17 +83,18 @@ int32_t cggame_main(void) {
     printf("load button.\n\r");
     cgimage_c button("BUTTON.IFF", true, 6);
 
+    printf("make stencils.\n\r");
+    cgimage_c::stencil_t stencils[cgimage_c::STENCIL_FULLY_OPAQUE + 1];
+    for (int i = 0; i <= cgimage_c::STENCIL_FULLY_OPAQUE; i++) {
+        cgimage_c::make_stencil(stencils[i], cgimage_c::noise, i);
+    }
+
     printf("load music.\n\r");
     cgmusic_c music("music.snd");
     
     printf("draw initial screen.\n\r");
     pLogical.draw_aligned(background, (cgpoint_t){0, 12});
-
-    cgstencil_c stencil(cgstencil_c::noise, 31);
-    pLogical.with_stencil(&stencil, [&pLogical, &tiles] {
-        pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
-    });
-
+    pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + (16 * 3) + 3}, 6);
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3}, 0);
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });
@@ -137,13 +138,15 @@ int32_t cggame_main(void) {
     pLogical.draw(font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 140 + 12 * 1}, cgimage_c::align_center);
     pLogical.draw(small_font, "Released at Sommarhack.", (cgpoint_t){96, 140 + 12 * 2 + 6}, cgimage_c::align_center);
 
+    /*
     printf("draw initial screen.\n\r");
     pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
-    
+    */
+     
     printf("setup vbl.\n\r");
     cgtimer_c vbl(cgtimer_c::vbl);
     printf("start music.\n\r");
-    music.set_active(2);
+    music.set_active(1);
     printf("setup mouse.\n\r");
     cgmouse_c mouse((cgrect_t){ 0, 12, 320, 200 });
     
@@ -156,24 +159,32 @@ int32_t cggame_main(void) {
     pPhysical.set_active();
 
     cgcolor_c blue(0, 0, 95);
+    vbl.reset_tick();
     while (true) {
-        if (mouse.was_clicked(cgmouse_c::left)) {
-            pLogical.put_pixel(9, mouse.get_postion());
-        }
-        if (mouse.was_clicked(cgmouse_c::right)) {
-            pLogical.put_pixel(10, mouse.get_postion());
-        }
-        pPhysical.restore(pLogical, dirtymap);
-        pPhysical.with_dirtymap(dirtymap, [&pPhysical, &cursor, &mouse] {
+        auto tick = vbl.tick();
+        if (tick <= cgimage_c::STENCIL_FULLY_OPAQUE) {
+            pPhysical.with_stencil(&stencils[tick], [&pPhysical, &pLogical] {
+                pPhysical.draw_aligned(pLogical, (cgpoint_t){0, 0});
+            });
+        } else {
+            if (mouse.was_clicked(cgmouse_c::left)) {
+                pLogical.put_pixel(9, mouse.get_postion());
+            }
+            if (mouse.was_clicked(cgmouse_c::right)) {
+                pLogical.put_pixel(10, mouse.get_postion());
+            }
+            pPhysical.restore(pLogical, dirtymap);
+            pPhysical.with_dirtymap(dirtymap, [&pPhysical, &cursor, &mouse] {
 #ifdef __M68000__
-            pPhysical.draw(cursor, mouse.get_postion());
+                pPhysical.draw(cursor, mouse.get_postion());
 #else
-            pBlitter->debug = true;
-            pPhysical.draw(cursor, mouse.get_postion());
-            pBlitter->debug = false;
+                pBlitter->debug = true;
+                pPhysical.draw(cursor, mouse.get_postion());
+                pBlitter->debug = false;
 #endif
-        });
-        
+            });
+        }
+
         background.get_palette()->colors[0].set_at(0);
         vbl.wait();
         blue.set_at(0);

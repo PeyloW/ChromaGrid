@@ -63,10 +63,12 @@ struct cgblitter_t {
     }
 #ifdef __M68000__
     inline void start() {
-        mode |= (cgblitter_busy_bit | cgblitter_hog_bit);
-        while (mode & cgblitter_busy_bit) {
-            __asm__ volatile ("nop" : : : );
-        };
+        __asm__ volatile (
+            "move.b #0x80,0xffff8A3C.w \n\t"
+            "nop \n"
+            ".Lwait: bset.b #7,0xffff8A3C.w \n\t"
+            "nop \n\t"
+            "bne.s .Lwait \n\t" : : : );
     }
 #else
     bool debug;

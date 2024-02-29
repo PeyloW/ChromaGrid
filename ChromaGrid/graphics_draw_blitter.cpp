@@ -23,11 +23,11 @@ static const uint16_t pBlitter_mask[17] = {
     0x0000
 };
 
-static cgstencil_c *pActiveStencil = nullptr;
+static const cgimage_c::stencil_t *pActiveStencil = nullptr;
 
-__forceinline static void set_active_stencil(struct cgblitter_t *blitter, cgstencil_c *stencil) {
+__forceinline static void set_active_stencil(struct cgblitter_t *blitter, const cgimage_c::stencil_t *const stencil) {
     if (pActiveStencil != stencil) {
-        memcpy(blitter->halftoneRAM, stencil, sizeof(cgstencil_c));
+        memcpy(blitter->halftoneRAM, stencil, 32);
         pActiveStencil = stencil;
     }
 }

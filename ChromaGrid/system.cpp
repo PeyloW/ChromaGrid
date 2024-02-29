@@ -111,6 +111,10 @@ uint32_t cgtimer_c::tick() {
     return pVBLTick;
 }
 
+void cgtimer_c::reset_tick() {
+    pVBLTick = 0;
+}
+
 void cgtimer_c::wait(int ticks) {
     const auto wait_tick = tick() + ticks;
     while (wait_tick >= tick()) {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */; };
 		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
 		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
 		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_stencil.cpp; sourceTree = "<group>"; };
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				A69AE4D32B701EF600EBA43D /* iff_file.cpp */,
 				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
 				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
+				A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */,
 				A69AE5162B88F53500EBA43D /* graphics_draw.cpp */,
 				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
 				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
@@ -246,6 +249,7 @@
 				A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */,
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
+				A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
 				A69AE5022B82983A00EBA43D /* audio.cpp in Sources */,
 				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,

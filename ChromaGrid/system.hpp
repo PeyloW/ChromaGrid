@@ -97,6 +97,7 @@ public:
     void remove_func(func_t func);
     
     uint32_t tick();
+    void reset_tick();
     void wait(int ticks = 0);
     
 private:
