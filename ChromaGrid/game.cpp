@@ -88,7 +88,12 @@ int32_t cggame_main(void) {
     
     printf("draw initial screen.\n\r");
     pLogical.draw_aligned(background, (cgpoint_t){0, 12});
-    pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
+
+    cgstencil_c stencil(cgstencil_c::noise, 31);
+    pLogical.with_stencil(&stencil, [&pLogical, &tiles] {
+        pLogical.draw_aligned(tiles, (cgpoint_t){0 + 16, 12 + 16});
+    });
+
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + (16 * 3) + 3}, 6);
     pLogical.draw(orbs, (cgrect_t){ {16, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 4, 12 + (16 * 4) + 3}, 0);
     pLogical.draw(orbs, (cgrect_t){ {0, 0}, { 16, 10} }, (cgpoint_t){0 + 16 * 2, 12 + 100 });

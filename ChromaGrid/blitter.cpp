@@ -28,7 +28,14 @@ void cgblitter_t::start() {
         pSrc += (is_last ? srcIncY : srcIncX) / 2;
     };
     const auto write_dst = [this, &buffer] (const uint16_t mask) {
-        const uint16_t src = buffer >> get_skew();
+        uint16_t src;
+        switch (HOP) {
+            case cgblitter_hop_one: src = 0xffff; break;
+            case cgblitter_hop_halftone: src = get_halftone(); break;
+            case cgblitter_hop_src: src = buffer >> get_skew(); break;
+            case cgblitter_hop_src_and_halftone: src = (buffer >> get_skew()) & get_halftone(); break;
+            default: assert(0); break;
+        }
         const uint16_t dst = *pDst;
         uint16_t opd;
         switch (LOP) {
@@ -89,6 +96,7 @@ void cgblitter_t::start() {
         // Next line
         inc_src(true);
         inc_dst(true);
+        mode = (mode + 1) & 0xf;
     } while (--countY > 0);
 }
 

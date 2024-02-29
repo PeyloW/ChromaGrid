@@ -23,13 +23,22 @@ static const uint16_t pBlitter_mask[17] = {
     0x0000
 };
 
+static cgstencil_c *pActiveStencil = nullptr;
+
+__forceinline static void set_active_stencil(struct cgblitter_t *blitter, cgstencil_c *stencil) {
+    if (pActiveStencil != stencil) {
+        memcpy(blitter->halftoneRAM, stencil, sizeof(cgstencil_c));
+        pActiveStencil = stencil;
+    }
+}
+
 void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
     assert((rect.origin.x & 0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
     assert((at.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
-    
+        
     auto blitter = pBlitter;
     const uint16_t copy_words = (rect.size.width / 16);
 
@@ -53,12 +62,27 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
     // Counts
     blitter->countX  = (uint16_t)(copy_words) * 4;
     blitter->countY = rect.size.height;
-
-    // Operation flags
-    blitter->HOP = cgblitter_hop_src;
-    blitter->LOP = cgblitter_lop_src;
     blitter->skew = 0;
 
+    // Operation flags
+    if (_stencil) {
+        set_active_stencil(blitter, _stencil);
+        blitter->HOP = cgblitter_hop_halftone;
+        blitter->LOP = cgblitter_lop_notsrc_and_dst;
+        blitter->mode = at.y & 0xf;
+        blitter->start();
+
+        blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
+        blitter->pDst = _bitmap + dst_word_offset;
+        blitter->countY = rect.size.height;
+
+        blitter->HOP = cgblitter_hop_src_and_halftone;
+        blitter->LOP = cgblitter_lop_src_or_dst;
+    } else {
+        blitter->HOP = cgblitter_hop_src;
+        blitter->LOP = cgblitter_lop_src;
+    }
+    
     blitter->start();
 }
 

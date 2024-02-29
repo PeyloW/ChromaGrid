@@ -56,6 +56,21 @@ private:
     cgpalette_c(cgpalette_c &&) = delete;
 };
 
+
+class cgstencil_c {
+public:
+    static const int FULLY_TRANSPARENT = 0;
+    static const int FULLY_OPAQUE = 64;
+    typedef enum __packed {
+        orderred,
+        noise
+    } type;
+    cgstencil_c(type t, int shade);
+private:
+    uint16_t _mask[16];
+};
+
+
 class cgfont_c;
 
 class cgimage_c {
@@ -88,6 +103,14 @@ public:
         _clipping = old_clip;
     }
 
+    template<class Commands>
+    __forceinline void with_stencil(cgstencil_c *const stencil, Commands commands) {
+        cgstencil_c *const old_stencil = _stencil;
+        _stencil = stencil;
+        commands();
+        _stencil = old_stencil;
+    }
+    
     size_t dirtymap_size() const {
         return _line_words * _size.height / 16;
     };
@@ -133,6 +156,7 @@ private:
     uint16_t *_bitmap;
     uint16_t *_maskmap;
     bool *_dirtymap;
+    cgstencil_c *_stencil;
     cgsize_t _size;
     cgpoint_t _offset;
     uint16_t _line_words;
@@ -140,7 +164,7 @@ private:
     bool _clipping;
 
     inline void imp_update_dirtymap(cgrect_t rect) const;
-    
+        
     void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
     void imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
     void imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;

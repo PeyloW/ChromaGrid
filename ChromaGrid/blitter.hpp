@@ -13,7 +13,9 @@
 
 enum {
     cgblitter_hop_one = 0,
-    cgblitter_hop_src = 2
+    cgblitter_hop_halftone = 1,
+    cgblitter_hop_src = 2,
+    cgblitter_hop_src_and_halftone = 3
 } cgblitter_hop_t;
 
 enum {
@@ -47,18 +49,21 @@ struct cgblitter_t {
     volatile uint8_t  mode;
     uint8_t  skew;
     
-    uint8_t get_skew() const {
+    __forceinline uint8_t get_skew() const {
         return skew & cgblitter_skew_mask;
     }
-    bool is_nfsr() const {
+    __forceinline bool is_nfsr() const {
         return (skew & cgblitter_nfsr_bit) != 0;
     }
-    bool is_fxsr() const {
+    __forceinline bool is_fxsr() const {
         return (skew & cgblitter_fxsr_bit) != 0;
+    }
+    __forceinline uint16_t get_halftone() const {
+        return halftoneRAM[mode & 0xf];
     }
 #ifdef __M68000__
     inline void start() {
-        mode = cgblitter_busy_bit | cgblitter_hog_bit;
+        mode |= (cgblitter_busy_bit | cgblitter_hog_bit);
         while (mode & cgblitter_busy_bit) {
             __asm__ volatile ("nop" : : : );
         };
