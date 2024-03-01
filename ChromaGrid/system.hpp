@@ -41,12 +41,11 @@ struct cgcodegen_t {
 
 #endif
 
-
-static int32_t cgexec_super(int32_t(*func)(void)) {
+static int32_t cgsuper(int32_t v) {
 #ifdef __M68000__
-    return Supexec(func);
+    return Super((void *)v);
 #else
-    return func();
+    return 0;
 #endif
 }
 
@@ -58,14 +57,17 @@ static int16_t cgget_screen_mode() {
 #endif
 }
 
-static void cgset_screen(void *log, void *phys, int16_t mode) {
+static int16_t cgset_screen(void *log, void *phys, int16_t mode) {
+    int16_t rez = 0;
 #ifdef __M68000__
     log = log ?: (void *)-1;
     phys = phys ?: (void *)-1;
+    rez = Getrez();
     Setscreen(log, phys, mode);
     void *new_phys = Physbase();
     //hard_assert(new_phys == phys);
 #endif
+    return rez;
 }
 
 class cgtimer_c : private cgnocopy_c {

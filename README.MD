@@ -17,10 +17,7 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 
 ### TODO: List
 
-Legend:
-* __Required__
-* Expected
-* _Optional_
+Legend: __Required__, Expected , _Optional_
 
 * [x] __System__
     * [x] __MacOS Host app harness__
@@ -59,10 +56,10 @@ Legend:
     * [ ] __Play LCM samples__
         * [ ] _Mix several channels_
 * [ ] __Scene management__
-    * [ ] __Shared resources manager__
-    * [ ] __A stage manager - push-pop scenes__
+    * [x] __Shared resources manager__
+    * [x] __A stage manager - push-pop scenes__
         * [ ] _Scene transitions_
-    * [ ] Generic scene
+    * [x] Generic scene
 * [ ] Introduction scene
     * [ ] T.O.Y.S. logo
     * [ ] Large Chroma Grid logo

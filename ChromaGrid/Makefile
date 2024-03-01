@@ -20,8 +20,9 @@ OBJECTS+=system.o system_m68k.o
 OBJECTS+=iff_file.o
 OBJECTS+=graphics.o graphics_stencil.o graphics_draw.o graphics_draw_blitter.o
 OBJECTS+=audio.o
+OBJECTS+=scene.o
 OBJECTS+=resources.o
-OBJECTS+=game.o
+OBJECTS+=game.o game_intro.o
 
 all: cgrid
 

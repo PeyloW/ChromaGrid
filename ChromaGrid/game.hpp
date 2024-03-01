@@ -8,9 +8,32 @@
 #ifndef game_hpp
 #define game_hpp
 
-#include "cincludes.hpp"
 #include "grid.hpp"
+#include "scene.hpp"
+#include "resources.hpp"
 
-int32_t cggame_main(void) asm("_game_main");
+class cggame_scene_c : public cgscene_c {
+public:
+    cggame_scene_c(cgmanager_c &manager) :
+        cgscene_c(manager),
+        rsc(cgresources_c::shared()) {};
+    const cgresources_c &rsc;
+};
+
+class cgroot_scene_c : public cggame_scene_c {
+public:
+    cgroot_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {}
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void will_disappear(bool obscured);
+    virtual void tick(cgimage_c &screen);
+};
+
+class cgintro_scene_c : public cggame_scene_c {
+public:
+    cgintro_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {}
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen);
+};
+
 
 #endif /* game_hpp */

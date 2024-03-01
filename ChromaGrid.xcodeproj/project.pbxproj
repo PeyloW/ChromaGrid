@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */; };
 		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
+		A682A3E72B92459500FF2E57 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E52B92459500FF2E57 /* scene.cpp */; };
+		A682A3EA2B92613F00FF2E57 /* game_intro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_intro.cpp */; };
 		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
 		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
 		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
@@ -39,6 +41,9 @@
 		A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_stencil.cpp; sourceTree = "<group>"; };
 		A682A3E12B9227AC00FF2E57 /* resources.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
 		A682A3E22B9227AC00FF2E57 /* resources.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = resources.hpp; sourceTree = "<group>"; };
+		A682A3E52B92459500FF2E57 /* scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
+		A682A3E62B92459500FF2E57 /* scene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = scene.hpp; sourceTree = "<group>"; };
+		A682A3E82B92613F00FF2E57 /* game_intro.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_intro.cpp; sourceTree = "<group>"; };
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -91,6 +96,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A682A3E42B92453200FF2E57 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
+				A69AE4F42B79253A00EBA43D /* types.hpp */,
+				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
+				A69AE4EC2B791FF100EBA43D /* system.hpp */,
+				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,
+				A69AE4EB2B791FF100EBA43D /* system.cpp */,
+				A69AE4EF2B79202A00EBA43D /* system_m68k.s */,
+				A69AE4D42B701EF600EBA43D /* iff_file.hpp */,
+				A69AE4D32B701EF600EBA43D /* iff_file.cpp */,
+				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
+				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
+				A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */,
+				A69AE5162B88F53500EBA43D /* graphics_draw.cpp */,
+				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
+				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
+				A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */,
+				A69AE5012B82983A00EBA43D /* audio.hpp */,
+				A69AE5002B82983A00EBA43D /* audio.cpp */,
+				A682A3E62B92459500FF2E57 /* scene.hpp */,
+				A682A3E52B92459500FF2E57 /* scene.cpp */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
 		A69AE4912B6EB9A900EBA43D = {
 			isa = PBXGroup;
 			children = (
@@ -112,31 +144,15 @@
 		A69AE49C2B6EB9A900EBA43D /* ChromaGrid */ = {
 			isa = PBXGroup;
 			children = (
-				A69AE5092B82CD6100EBA43D /* data */,
 				A69AE4BB2B6EBC4E00EBA43D /* Makefile */,
-				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
-				A69AE4F42B79253A00EBA43D /* types.hpp */,
-				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
-				A69AE4EC2B791FF100EBA43D /* system.hpp */,
-				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,
-				A69AE4EB2B791FF100EBA43D /* system.cpp */,
-				A69AE4EF2B79202A00EBA43D /* system_m68k.s */,
+				A682A3E42B92453200FF2E57 /* core */,
+				A69AE5092B82CD6100EBA43D /* data */,
 				A69AE4B02B6EB9EB00EBA43D /* grid.hpp */,
-				A69AE4D42B701EF600EBA43D /* iff_file.hpp */,
-				A69AE4D32B701EF600EBA43D /* iff_file.cpp */,
-				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,
-				A69AE4C92B6FEFE500EBA43D /* graphics.cpp */,
-				A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */,
-				A69AE5162B88F53500EBA43D /* graphics_draw.cpp */,
-				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
-				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
-				A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */,
-				A69AE5012B82983A00EBA43D /* audio.hpp */,
-				A69AE5002B82983A00EBA43D /* audio.cpp */,
 				A682A3E22B9227AC00FF2E57 /* resources.hpp */,
 				A682A3E12B9227AC00FF2E57 /* resources.cpp */,
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
+				A682A3E82B92613F00FF2E57 /* game_intro.cpp */,
 				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
 			);
 			path = ChromaGrid;
@@ -253,12 +269,14 @@
 				A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */,
 				A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */,
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
+				A682A3EA2B92613F00FF2E57 /* game_intro.cpp in Sources */,
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
 				A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
 				A69AE5022B82983A00EBA43D /* audio.cpp in Sources */,
 				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,
 				A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */,
+				A682A3E72B92459500FF2E57 /* scene.cpp in Sources */,
 				A69AE4D92B7062AC00EBA43D /* cpp_runtime.cpp in Sources */,
 				A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */,
 				A69AE5172B88F53500EBA43D /* graphics_draw.cpp in Sources */,

@@ -15,10 +15,9 @@ extern "C" {
 #ifdef __M68000__
 
 int main(int argc, const char * argv[]) {
-//    int16_t res = Dsetpath("C:\\CGRID\\");
-//    hard_assert(res >= 0);
-
-    return cgexec_super(&cggame_main);
+    cgmanager_c manager;
+    auto root_scene = new cgroot_scene_c(manager);
+    manager.run(root_scene);
 }
 
 #else
