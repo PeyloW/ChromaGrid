@@ -60,7 +60,7 @@ void make_dither_mask_blue_noise(cgimage_c::stencil_t stencil, int shade) {
     }
 }
 
-void cgimage_c::make_stencil(stencil_t stencil, stencil_type type, int shade) {
+void cgimage_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
     assert(shade >= STENCIL_FULLY_TRANSPARENT);
     assert(shade <= STENCIL_FULLY_OPAQUE);
     switch (type) {

@@ -10,6 +10,13 @@
 
 #include "cincludes.hpp"
 
+class cgnocopy_c {
+protected:
+    __forceinline cgnocopy_c() {}
+    cgnocopy_c(const cgnocopy_c&) = delete;
+    cgnocopy_c& operator=(const cgnocopy_c&) = delete;
+};
+
 struct cgpoint_t {
     int16_t x, y;
     bool operator==(const cgpoint_t &p) const {

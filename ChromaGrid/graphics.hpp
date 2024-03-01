@@ -39,7 +39,7 @@ private:
 };
 
 
-class cgpalette_c {
+class cgpalette_c : private cgnocopy_c {
 public:
     cgcolor_c colors[16];
     cgpalette_c(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
@@ -50,16 +50,12 @@ public:
         }
     }
     void set_active() const;
-private:
-    cgpalette_c() = delete;
-    cgpalette_c(const cgpalette_c &) = delete;
-    cgpalette_c(cgpalette_c &&) = delete;
 };
 
 
 class cgfont_c;
 
-class cgimage_c {
+class cgimage_c : private cgnocopy_c {
 public:
     static const uint8_t MASKED_CIDX = 0x10;
     typedef uint8_t remap_table_t[17];
@@ -70,13 +66,13 @@ public:
     typedef enum __packed {
         orderred,
         noise
-    } stencil_type;
+    } stencil_type_e;
     
     typedef enum __packed {
         align_left,
         align_center,
         align_right
-    } text_alignment;
+    } text_alignment_t;
     
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c &image, cgrect_t rect);
@@ -128,7 +124,7 @@ public:
     }
     void remap_colors(remap_table_t table, cgrect_t rect) const;
     
-    static void make_stencil(stencil_t stencil, stencil_type type, int shade);
+    static void make_stencil(stencil_t stencil, stencil_type_e type, int shade);
     
     void fill(uint8_t ci, cgrect_t rect) const;
     
@@ -140,14 +136,9 @@ public:
     void draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const;
     void draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const;
     
-    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment alignment = align_left, const uint8_t color = MASKED_CIDX) const;
+    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_t alignment = align_left, const uint8_t color = MASKED_CIDX) const;
     
 private:
-    cgimage_c() = delete;
-    cgimage_c(const cgimage_c &) = delete;
-    cgimage_c(cgimage_c &&) = delete;
-
-    // Must be in sync with graphics_m68k.s implementation
     const cgimage_c *_super_image;
     cgpalette_c *_palette;
     uint16_t *_bitmap;

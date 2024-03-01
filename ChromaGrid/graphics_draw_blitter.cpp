@@ -67,8 +67,8 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
     // Operation flags
     if (_stencil) {
         set_active_stencil(blitter, _stencil);
-        blitter->HOP = cgblitter_hop_halftone;
-        blitter->LOP = cgblitter_lop_notsrc_and_dst;
+        blitter->HOP = hop_halftone;
+        blitter->LOP = lop_notsrc_and_dst;
         blitter->mode = at.y & 0xf;
         blitter->start();
 
@@ -76,11 +76,11 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
         blitter->pDst = _bitmap + dst_word_offset;
         blitter->countY = rect.size.height;
 
-        blitter->HOP = cgblitter_hop_src_and_halftone;
-        blitter->LOP = cgblitter_lop_src_or_dst;
+        blitter->HOP = hop_src_and_halftone;
+        blitter->LOP = lop_src_or_dst;
     } else {
-        blitter->HOP = cgblitter_hop_src;
-        blitter->LOP = cgblitter_lop_src;
+        blitter->HOP = hop_src;
+        blitter->LOP = lop_src;
     }
     
     blitter->start();
@@ -139,8 +139,8 @@ void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoin
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = cgblitter_hop_src;
-    blitter->LOP = cgblitter_lop_src;
+    blitter->HOP = hop_src;
+    blitter->LOP = lop_src;
     blitter->skew = skew;
 
     // Move 4 planes
@@ -209,8 +209,8 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = cgblitter_hop_src;
-    blitter->LOP = cgblitter_lop_notsrc_and_dst;
+    blitter->HOP = hop_src;
+    blitter->LOP = lop_notsrc_and_dst;
     blitter->skew = skew;
 
     // Mask 4 planes
@@ -233,7 +233,7 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
     dts_bitmap -= 4;
     
     // Update operation flags
-    blitter->LOP = cgblitter_lop_src_or_dst;
+    blitter->LOP = lop_src_or_dst;
 
     // Draw 4 planes
     for (int i = 4; --i != -1; ) {
@@ -301,15 +301,15 @@ void cgimage_c::imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, 
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = cgblitter_hop_src;
+    blitter->HOP = hop_src;
     blitter->skew = skew;
 
     // Color 4 planes
     for (int i = 4; --i != -1; ) {
         if ((color & 1) == 0) {
-            blitter->LOP = cgblitter_lop_notsrc_and_dst;
+            blitter->LOP = lop_notsrc_and_dst;
         } else {
-            blitter->LOP = cgblitter_lop_src_or_dst;
+            blitter->LOP = lop_src_or_dst;
         }
         blitter->pDst   = dts_bitmap;
         blitter->pSrc   = src_maskmap;

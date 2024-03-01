@@ -16,26 +16,28 @@
 #define __append_int16(p,n) __asm__ volatile ("move.w %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
 #define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
 
-// Buffer must be 16 bytes
-static void cggenerate_safe_trampoline(void *buffer, void *func, bool all_regs) {
-    //movem.l d3-d7/a2-a6,-(sp)
-    //jsr     _pSystemVBLInterupt.l
-    //movem.l (sp)+,d3-d7/a2-a6
-    //rts
-    if (all_regs) {
-        __append_int32(buffer, 0x48e7fffe);
-    } else {
-        __append_int32(buffer, 0x48e71f3e);
+struct cgcodegen_t {
+    // Buffer must be 16 bytes
+    static void make_trampoline(void *buffer, void *func, bool all_regs) {
+        //movem.l d3-d7/a2-a6,-(sp)
+        //jsr     _pSystemVBLInterupt.l
+        //movem.l (sp)+,d3-d7/a2-a6
+        //rts
+        if (all_regs) {
+            __append_int32(buffer, 0x48e7fffe);
+        } else {
+            __append_int32(buffer, 0x48e71f3e);
+        }
+        __append_int16(buffer, 0x4eb9);
+        __append_int32(buffer, func);
+        if (all_regs) {
+            __append_int32(buffer, 0x4cdf7fff);
+        } else {
+            __append_int32(buffer, 0x4cdf7cf8);
+        }
+        __append_int16(buffer, 0x4e75);
     }
-    __append_int16(buffer, 0x4eb9);
-    __append_int32(buffer, func);
-    if (all_regs) {
-        __append_int32(buffer, 0x4cdf7fff);
-    } else {
-        __append_int32(buffer, 0x4cdf7cf8);
-    }
-    __append_int16(buffer, 0x4e75);
-}
+};
 
 #endif
 
@@ -66,16 +68,16 @@ static void cgset_screen(void *log, void *phys, int16_t mode) {
 #endif
 }
 
-class cgtimer_c {
+class cgtimer_c : private cgnocopy_c {
 public:
-    enum timer_t {
+    typedef enum __packed {
         vbl
-    };
+    } timer_e;
     typedef void(*func_t)(void);
     typedef void(*func_a_t)(void *);
     typedef void(*func_i_t)(int);
 
-    cgtimer_c(timer_t timer);
+    cgtimer_c(timer_e timer);
     ~cgtimer_c();
 
     template<class Commands>
@@ -101,20 +103,20 @@ public:
     void wait(int ticks = 0);
     
 private:
-    timer_t _timer;
+    timer_e _timer;
 };
 
-class cgmouse_c {
+class cgmouse_c : private cgnocopy_c {
 public:
-    enum button_t {
+    typedef enum __packed {
         right, left
-    };
+    } button_e;
     
     cgmouse_c(cgrect_t limit);
     ~cgmouse_c();
     
-    bool is_pressed(button_t button);
-    bool was_clicked(button_t button);
+    bool is_pressed(button_e button);
+    bool was_clicked(button_e button);
     
     cgpoint_t get_postion();
     

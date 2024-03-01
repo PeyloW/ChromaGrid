@@ -30,20 +30,20 @@ void cgblitter_t::start() {
     const auto write_dst = [this, &buffer] (const uint16_t mask) {
         uint16_t src;
         switch (HOP) {
-            case cgblitter_hop_one: src = 0xffff; break;
-            case cgblitter_hop_halftone: src = get_halftone(); break;
-            case cgblitter_hop_src: src = buffer >> get_skew(); break;
-            case cgblitter_hop_src_and_halftone: src = (buffer >> get_skew()) & get_halftone(); break;
+            case hop_one: src = 0xffff; break;
+            case hop_halftone: src = get_halftone(); break;
+            case hop_src: src = buffer >> get_skew(); break;
+            case hop_src_and_halftone: src = (buffer >> get_skew()) & get_halftone(); break;
             default: assert(0); break;
         }
         const uint16_t dst = *pDst;
         uint16_t opd;
         switch (LOP) {
-            case cgblitter_lop_zero: opd = 0; break;
-            case cgblitter_lop_one: opd = 0xffff; break;
-            case cgblitter_lop_src: opd = src; break;
-            case cgblitter_lop_src_or_dst: opd = src | dst; break;
-            case cgblitter_lop_notsrc_and_dst: opd = ~src & dst; break;
+            case lop_zero: opd = 0; break;
+            case lop_one: opd = 0xffff; break;
+            case lop_src: opd = src; break;
+            case lop_src_or_dst: opd = src | dst; break;
+            case lop_notsrc_and_dst: opd = ~src & dst; break;
             default: assert(0); opd = 0; break;
         }
         if (mask == 0xffff) {

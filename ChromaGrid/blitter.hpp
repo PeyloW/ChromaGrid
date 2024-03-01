@@ -11,20 +11,20 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
-enum {
-    cgblitter_hop_one = 0,
-    cgblitter_hop_halftone = 1,
-    cgblitter_hop_src = 2,
-    cgblitter_hop_src_and_halftone = 3
-} cgblitter_hop_t;
+typedef enum {
+    hop_one = 0,
+    hop_halftone = 1,
+    hop_src = 2,
+    hop_src_and_halftone = 3
+} hop_e;
 
-enum {
-    cgblitter_lop_zero = 0,
-    cgblitter_lop_src = 3,
-    cgblitter_lop_notsrc_and_dst = 4,
-    cgblitter_lop_src_or_dst = 7,
-    cgblitter_lop_one = 15
-} cgblitter_lop_t;
+typedef enum {
+    lop_zero = 0,
+    lop_src = 3,
+    lop_notsrc_and_dst = 4,
+    lop_src_or_dst = 7,
+    lop_one = 15
+} lop_e;
 
 static const uint8_t cgblitter_skew_mask = 0x0f;
 static const uint8_t cgblitter_nfsr_bit = (1<<6);

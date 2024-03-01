@@ -17,15 +17,15 @@ extern "C" {
 }
 #endif
 
-static void remap_to(color_t col, cgimage_c::remap_table_t table, uint8_t masked_idx = cgimage_c::MASKED_CIDX) {
+static void remap_to(color_e col, cgimage_c::remap_table_t table, uint8_t masked_idx = cgimage_c::MASKED_CIDX) {
     switch (col) {
-        case color_t::gold:
+        case color_e::gold:
             table[0] = 1;
             table[2] = 1;
             table[7] = 9;
             table[10] = 14;
             break;
-        case color_t::silver:
+        case color_e::silver:
             table[0] = 2;
             table[2] = 2;
             table[7] = 8;
@@ -59,9 +59,9 @@ int32_t cggame_main(void) {
         cgimage_c::remap_table_t table;
         cgimage_c::make_noremap_table(table);
         if (x == 1) {
-            remap_to(color_t::gold, table);
+            remap_to(color_e::gold, table);
         } else {
-            remap_to(color_t::silver, table);
+            remap_to(color_e::silver, table);
         }
         tiles.remap_colors(table, rect);
     }

@@ -14,31 +14,31 @@ extern "C" {
 #include "system_host.hpp"
 #endif
 
-static int pTimerRefCount[1] = { 0 };
+static int cgg_timer_ref_counts[1] = { 0 };
 
 #define VBL_FUNC_MAX_CNT 4
-cgtimer_c::func_t pVBLFuncs[VBL_FUNC_MAX_CNT+1] = { nullptr };
-volatile uint32_t pVBLTick = 0;
-static cgrect_t pMosueLimit;
-static bool pLastButtonState[2];
-uint8_t pMouseButtons;
-cgpoint_t pMousePosition;
+cgtimer_c::func_t cgg_vbl_functions[VBL_FUNC_MAX_CNT+1] = { nullptr };
+volatile uint32_t cgg_vbl_tick = 0;
+static cgrect_t cgg_mouse_limit;
+static bool cgg_prev_mouse_buton_state[2];
+uint8_t cgg_mouse_buttons;
+cgpoint_t cgg_mouse_position;
 
 #ifdef __M68000__
     extern cgtimer_c::func_t pSystemVBLInterupt;
-    extern void pVBLInterupt();
+    extern void cgg_vbl_interupt();
     extern cgtimer_c::func_a_t pSystemMouseInterupt;
     extern void pMouseInterupt(void *);
     static _KBDVECS *pKeyboardVectors = nullptr;
 #else
-    void (*pYieldFunction)() = nullptr;
+    void (*cgg_yield_function)() = nullptr;
 
-    void pVBLInterupt() {
-        if (pTimerRefCount[cgtimer_c::vbl] > 0) {
-            pVBLTick++;
+    void cgg_vbl_interupt() {
+        if (cgg_timer_ref_counts[cgtimer_c::vbl] > 0) {
+            cgg_vbl_tick++;
             for (int i = 0; i < 8; i++) {
-                if (pVBLFuncs[i]) {
-                    pVBLFuncs[i]();
+                if (cgg_vbl_functions[i]) {
+                    cgg_vbl_functions[i]();
                 } else {
                     break;
                 }
@@ -47,31 +47,31 @@ cgpoint_t pMousePosition;
     }
 
     // Host must call when mouse state changes
-    void pUpdateMouse(cgpoint_t position, bool left, bool right) {
-        pMousePosition = position;
-        pMouseButtons = (left ? 2 : 0) | (right ? 1 : 0);
+    void cgg_update_mouse(cgpoint_t position, bool left, bool right) {
+        cgg_mouse_position = position;
+        cgg_mouse_buttons = (left ? 2 : 0) | (right ? 1 : 0);
     }
 #endif
 }
 
 
-cgtimer_c::cgtimer_c(timer_t timer) : _timer(timer) {
+cgtimer_c::cgtimer_c(timer_e timer) : _timer(timer) {
     assert(timer == vbl);
-    pTimerRefCount[timer]++;
-    if (pTimerRefCount[0] == 1) {
+    cgg_timer_ref_counts[timer]++;
+    if (cgg_timer_ref_counts[0] == 1) {
         with_paused_timers([] {
 #ifdef __M68000__
         pSystemVBLInterupt = *((func_t *)0x0070);
-        *((func_t *)0x0070) = &pVBLInterupt;
+        *((func_t *)0x0070) = &cgg_vbl_interupt;
 #endif
         });
     }
 }
 
 cgtimer_c::~cgtimer_c() {
-    pTimerRefCount[cgtimer_c::vbl]--;
-    assert(pTimerRefCount[cgtimer_c::vbl] >= 0);
-    if (pTimerRefCount[cgtimer_c::vbl] == 0) {
+    cgg_timer_ref_counts[cgtimer_c::vbl]--;
+    assert(cgg_timer_ref_counts[cgtimer_c::vbl] >= 0);
+    if (cgg_timer_ref_counts[cgtimer_c::vbl] == 0) {
         with_paused_timers([] {
 #ifdef __M68000__
             *((func_t *)0x0070) = pSystemVBLInterupt;
@@ -83,8 +83,8 @@ cgtimer_c::~cgtimer_c() {
 void cgtimer_c::add_func(func_t func) {
     with_paused_timers([func] {
         for (int i = 0; i < VBL_FUNC_MAX_CNT; i++) {
-            if (pVBLFuncs[i] == nullptr) {
-                pVBLFuncs[i] = func;
+            if (cgg_vbl_functions[i] == nullptr) {
+                cgg_vbl_functions[i] = func;
                 return;
             }
         }
@@ -96,38 +96,38 @@ void cgtimer_c::remove_func(func_t func) {
     with_paused_timers([func] {
         int i;
         for (i = 0; i < VBL_FUNC_MAX_CNT; i++) {
-            if (pVBLFuncs[i] == func) {
-                pVBLFuncs[i] = func;
+            if (cgg_vbl_functions[i] == func) {
+                cgg_vbl_functions[i] = func;
                 break;
             }
         }
         for ( ; i < VBL_FUNC_MAX_CNT; i++) {
-            pVBLFuncs[i] = pVBLFuncs[i+1];
+            cgg_vbl_functions[i] = cgg_vbl_functions[i+1];
         }
     });
 }
 
 uint32_t cgtimer_c::tick() {
-    return pVBLTick;
+    return cgg_vbl_tick;
 }
 
 void cgtimer_c::reset_tick() {
-    pVBLTick = 0;
+    cgg_vbl_tick = 0;
 }
 
 void cgtimer_c::wait(int ticks) {
     const auto wait_tick = tick() + ticks;
     while (wait_tick >= tick()) {
 #ifndef __M68000__
-        pYieldFunction();
+        cgg_yield_function();
 #endif
     }
 }
 
 
 cgmouse_c::cgmouse_c(cgrect_t limit) {
-    pMosueLimit = limit;
-    pMousePosition = (cgpoint_t){
+    cgg_mouse_limit = limit;
+    cgg_mouse_position = (cgpoint_t){
         static_cast<int16_t>(limit.origin.x + limit.size.width / 2),
         static_cast<int16_t>(limit.origin.y + limit.size.height / 2)
     };
@@ -144,22 +144,22 @@ cgmouse_c::~cgmouse_c() {
 #endif
 }
 
-bool cgmouse_c::is_pressed(button_t button) {
-    return (pMouseButtons & (1 << button)) != 0;
+bool cgmouse_c::is_pressed(button_e button) {
+    return (cgg_mouse_buttons & (1 << button)) != 0;
 }
 
-bool cgmouse_c::was_clicked(button_t button) {
+bool cgmouse_c::was_clicked(button_e button) {
     bool pressed = is_pressed(button);
-    bool clicked = pLastButtonState[button] != pressed && pressed == false;
-    pLastButtonState[button] = pressed;
+    bool clicked = cgg_prev_mouse_buton_state[button] != pressed && pressed == false;
+    cgg_prev_mouse_buton_state[button] = pressed;
     return clicked;
 }
 
 cgpoint_t cgmouse_c::get_postion() {
     cgpoint_t clamped_point = (cgpoint_t){
-        (int16_t)(MIN(pMosueLimit.origin.x + pMosueLimit.size.width - 1, MAX(pMousePosition.x, pMosueLimit.origin.x))),
-        (int16_t)(MIN(pMosueLimit.origin.y + pMosueLimit.size.height - 1, MAX(pMousePosition.y, pMosueLimit.origin.y)))
+        (int16_t)(MIN(cgg_mouse_limit.origin.x + cgg_mouse_limit.size.width - 1, MAX(cgg_mouse_position.x, cgg_mouse_limit.origin.x))),
+        (int16_t)(MIN(cgg_mouse_limit.origin.y + cgg_mouse_limit.size.height - 1, MAX(cgg_mouse_position.y, cgg_mouse_limit.origin.y)))
     };
-    pMousePosition = clamped_point;
+    cgg_mouse_position = clamped_point;
     return clamped_point;
 }

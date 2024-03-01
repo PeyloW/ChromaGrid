@@ -17,19 +17,19 @@
 extern "C" {
 
 // Host must call on a 50hz interval
-extern void pVBLInterupt();
+extern void cgg_vbl_interupt();
 
 // Host must provide a yield function
-extern void (*pYieldFunction)();
+extern void (*cgg_yield_function)();
     
 // Host must call when mouse state changes
-extern void pUpdateMouse(cgpoint_t position, bool left, bool right);
+extern void cgg_update_mouse(cgpoint_t position, bool left, bool right);
 
 class cgpalette_c;
 class cgimage_c;
 
-extern cgpalette_c *pActivePalette;
-extern cgimage_c *pActiveImage;
+extern cgpalette_c *cgg_active_palette;
+extern cgimage_c *cgg_active_image;
 
 }
 

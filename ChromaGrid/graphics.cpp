@@ -10,14 +10,9 @@
 #include "system.hpp"
 
 extern "C" {
-    //void m68_cgimage_set(cgimage_t *image, cgpoint_t point);
-    //colorindex_t m68_cgimage_get(cgimage_t *image, cgpoint_t point);
-    //void m68_cgimage_draw_aligned(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point);
-    //void m68_cgimage_draw(cgimage_t *image, cgimage_t *srcImage, cgpoint_t point);
-    //void m68_cgimage_draw_rect(cgimage_t *image, cgimage_t *srcImage, cgrect_t *const rect, cgpoint_t point);
 #ifndef __M68000__
-    const cgpalette_c *pActivePalette = NULL;
-    const cgimage_c *pActiveImage = NULL;
+    const cgpalette_c *cgg_active_palette = NULL;
+    const cgimage_c *cgg_active_image = NULL;
 #endif
 }
 
@@ -25,7 +20,7 @@ void cgpalette_c::set_active() const {
 #ifdef __M68000__
     memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
 #else
-    pActivePalette = this;
+    cgg_active_palette = this;
 #endif
 }
 
@@ -129,17 +124,17 @@ static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int h
 }
 
 cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
-    typedef enum  {
+    typedef enum __packed {
         mask_type_none,
         mask_type_plane,
         mask_type_color,
         mask_type_lasso,
-    } mask_type_t;
-    typedef enum {
+    } mask_type_e;
+    typedef enum __packed {
         compression_type_none,
         compression_type_packbits,
         compression_type_vertical
-    } compression_type_t;
+    } compression_type_e;
     
     memset(this, 0, sizeof(cgimage_c));
 
@@ -166,9 +161,9 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
         return; // Failed to read header
     }
     assert(bmhd[0] == 4); // Only 4 bitplanes supported
-    const mask_type_t mask_type = (mask_type_t)bmhd[1];
+    const mask_type_e mask_type = (mask_type_e)bmhd[1];
     assert(mask_type < mask_type_lasso); // Lasso not supported
-    const compression_type_t compression_type = (compression_type_t)bmhd[2];
+    const compression_type_e compression_type = (compression_type_e)bmhd[2];
     assert(compression_type < compression_type_vertical); // DeluxePain ST format not supported
     if (masked_cidx == MASKED_CIDX && masked) {
         uint16_t tmp_masked_cidx;
@@ -273,7 +268,7 @@ void cgimage_c::set_active() const {
     cgtimer_c vbl(cgtimer_c::vbl);
     vbl.add_func((cgtimer_c::func_t)pSetActiveVBLCode);
 #else
-    pActiveImage = this;
+    cgg_active_image = this;
 #endif
 }
 

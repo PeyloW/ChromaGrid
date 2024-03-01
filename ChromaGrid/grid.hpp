@@ -10,25 +10,25 @@
 
 #include "cincludes.hpp"
 
-typedef enum color_t {
+typedef enum __packed {
     none, gold, silver, both
-} color_t;
+} color_e;
 
-typedef enum tiletype_t {
+typedef enum __packed {
     empty,
     blocked,
     broken,
     glass,
     regular,
     magnetic
-} tiletype_t;
+} tiletype_e;
 
 union __packed tilestate_t {
     struct __packed {
-        color_t target:2;
-        color_t current:2;
-        color_t orb:2;
-        tiletype_t type:4;
+        color_e target:2;
+        color_e current:2;
+        color_e orb:2;
+        tiletype_e type:4;
         uint8_t _reserved:3; // Reserved for step in gfx lookup
     };
     uint16_t index;
@@ -66,11 +66,11 @@ public:
         return d;
     }
     
-    color_t orb_color() const {
+    color_e orb_color() const {
         return _state.orb;
     }
     
-    bool is_orb_color(color_t c) const {
+    bool is_orb_color(color_e c) const {
         return (_state.orb & c) == c;
     }
     
@@ -78,7 +78,7 @@ public:
         return _transition.step == 0 && _state.target == _state.current;
     }
     
-    bool try_add_orb(color_t c) {
+    bool try_add_orb(color_e c) {
         if (_transition.step == 0 && _state.orb == none && _state.type >= glass) {
             _state.orb = c;
             _dirty = true;
@@ -88,7 +88,7 @@ public:
         }
     }
     
-    color_t try_remove_orb() {
+    color_e try_remove_orb() {
         if (_transition.step == 0 && _state.orb != none && _state.type != magnetic) {
             const auto c = _state.orb;
             _state.orb = none;
@@ -122,7 +122,7 @@ class __packed grid_c {
     static const int GRID_MAX = 12;
     tile_c _tiles[GRID_MAX][GRID_MAX];
         
-    bool is_orb_at(color_t c, int x, int y) {
+    bool is_orb_at(color_e c, int x, int y) {
         if (x >= 0 && x < GRID_MAX && y >= 0 && y < GRID_MAX) {
             return _tiles[x][y].is_orb_color(c);
         }
@@ -139,7 +139,7 @@ class __packed grid_c {
     }
     
     bool is_orb_solved_at(int x, int y) {
-        const color_t c = _tiles[x][y].orb_color();
+        const color_e c = _tiles[x][y].orb_color();
         assert(c != none);
         int cnt = 0;
         visit_adjecent_at(x, y, [&cnt, c] (const tile_c &tile, int x, int y) {
@@ -152,7 +152,7 @@ class __packed grid_c {
     
 public:
     
-    bool try_add_orb_at(color_t c, int x, int y) {
+    bool try_add_orb_at(color_e c, int x, int y) {
         assert(c >= gold && c <= silver);
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
@@ -160,7 +160,7 @@ public:
         return tile.try_add_orb(c);
     }
     
-    color_t try_remove_orb_at(int x, int y) {
+    color_e try_remove_orb_at(int x, int y) {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
         auto &tile = _tiles[x][y];

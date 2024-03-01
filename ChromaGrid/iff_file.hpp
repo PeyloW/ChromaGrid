@@ -9,6 +9,7 @@
 #define iff_file_hpp
 
 #include "cincludes.hpp"
+#include "types.hpp"
 
 typedef uint32_t cgiff_id_t;
 
@@ -42,7 +43,7 @@ typedef struct {
     cgiff_id_t subtype;
 } cgiff_header_t;
 
-class cgiff_file_c {
+class cgiff_file_c : private cgnocopy_c {
 public:
     cgiff_file_c(FILE *file);
     cgiff_file_c(const char *path);

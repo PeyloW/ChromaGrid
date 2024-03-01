@@ -11,7 +11,7 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
-class cgsount_c {
+class cgsount_c : private cgnocopy_c {
 public:
     cgsount_c(char *path);
     ~cgsount_c();
@@ -23,7 +23,7 @@ private:
     size_t _length;
 };
 
-class cgmusic_c {
+class cgmusic_c : private cgnocopy_c {
 public:
     cgmusic_c(const char *path);
     ~cgmusic_c();
