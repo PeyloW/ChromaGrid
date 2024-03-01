@@ -25,8 +25,6 @@ public:
     cgfont_c font;
     cgfont_c small_font;
     cgmusic_c music;
-
-    cgimage_c::stencil_t stencils[2][cgimage_c::STENCIL_FULLY_OPAQUE + 1];
     
     static const cgresources_c& shared();
 private:

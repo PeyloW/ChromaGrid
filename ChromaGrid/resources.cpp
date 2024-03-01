@@ -80,11 +80,6 @@ cgresources_c::cgresources_c() :
     orbs.set_offset((cgpoint_t){0, 0});
     cursor.set_offset((cgpoint_t){1, 2});
 
-    printf("Initialize stencils.\n\r");
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j <= cgimage_c::STENCIL_FULLY_OPAQUE; j++) {
-            cgimage_c::make_stencil(stencils[i][j], (cgimage_c::stencil_type_e)i, j);
-        }
-    }
-
+    printf("Pre-warm stencils.\n\r");
+    cgimage_c::get_stencil(cgimage_c::orderred, 0);
 }

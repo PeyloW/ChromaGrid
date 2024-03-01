@@ -64,6 +64,7 @@ public:
     static const int STENCIL_FULLY_OPAQUE = 64;
     typedef uint16_t stencil_t[16];
     typedef enum __packed {
+        none,
         orderred,
         noise
     } stencil_type_e;
@@ -101,6 +102,7 @@ public:
         commands();
         _stencil = old_stencil;
     }
+    static const cgimage_c::stencil_t *const get_stencil(stencil_type_e type, int shade);
     
     size_t dirtymap_size() const {
         return _line_words * _size.height / 16;

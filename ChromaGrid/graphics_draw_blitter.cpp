@@ -63,7 +63,7 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
     blitter->countX  = (uint16_t)(copy_words) * 4;
     blitter->countY = rect.size.height;
     blitter->skew = 0;
-
+    
     // Operation flags
     if (_stencil) {
         set_active_stencil(blitter, _stencil);
@@ -74,6 +74,7 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
 
         blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
         blitter->pDst = _bitmap + dst_word_offset;
+        blitter->countX  = (uint16_t)(copy_words) * 4;
         blitter->countY = rect.size.height;
 
         blitter->HOP = hop_src_and_halftone;

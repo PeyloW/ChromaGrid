@@ -33,6 +33,7 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Graphics__
     * [x] __Display physical screen__
         * [x] _STe HW scrolling_
+        * [ ] __NEW: Double buffered__
     * [x] __Set & Get pixel__
         * [ ] Asm optimized
         * [x] _Color replacement_
@@ -58,7 +59,7 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Scene management__
     * [x] __Shared resources manager__
     * [x] __A stage manager - push-pop scenes__
-        * [ ] _Scene transitions_
+        * [x] _Scene transitions_
     * [x] Generic scene
 * [ ] Introduction scene
     * [ ] T.O.Y.S. logo
@@ -81,7 +82,7 @@ Legend: __Required__, Expected , _Optional_
         * [ ] __Count down timer__
     * [ ] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
-* [ ] Game over screne
+* [ ] Game over scene
     * [ ] Large Game Over logo
     * [ ] Game over game music 
 * [ ] _Highscore screne_

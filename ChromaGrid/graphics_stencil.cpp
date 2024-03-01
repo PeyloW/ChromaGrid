@@ -75,3 +75,24 @@ void cgimage_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) 
             break;
     }
 }
+
+const cgimage_c::stencil_t *const cgimage_c::get_stencil(stencil_type_e type, int shade) {
+    assert(shade >= cgimage_c::STENCIL_FULLY_TRANSPARENT);
+    assert(shade <= cgimage_c::STENCIL_FULLY_OPAQUE);
+    static cgimage_c::stencil_t _none_stencil = { 0 };
+    static bool _initialized = false;
+    static stencil_t _stencils[2][cgimage_c::STENCIL_FULLY_OPAQUE + 1];
+    if (!_initialized) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j <= cgimage_c::STENCIL_FULLY_OPAQUE; j++) {
+                cgimage_c::make_stencil(_stencils[i][j], (cgimage_c::stencil_type_e)(i + 1), j);
+            }
+        }
+        _initialized = true;
+    }
+    if (type == none) {
+        return &_none_stencil;
+    } else {
+        return &_stencils[type - 1][shade];
+    }
+}

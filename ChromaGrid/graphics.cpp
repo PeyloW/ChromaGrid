@@ -36,7 +36,6 @@ cgimage_c::cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette) {
         _maskmap = _bitmap + bitmap_words;
     }
     _owns_bitmap = true;
-    _clipping = true;
 }
 
 cgimage_c::cgimage_c(const cgimage_c &image, cgrect_t rect) {

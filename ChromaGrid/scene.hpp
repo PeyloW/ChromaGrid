@@ -38,13 +38,15 @@ public:
         assert(_scene_count > 0);
         return *_scene_stack[_scene_count - 1];
     };
-    void push(cgscene_c *scene);
-    void pop(int count = 1);
-    void replace(cgscene_c *scene);
+    void push(cgscene_c *scene, cgimage_c::stencil_type_e transition = cgimage_c::noise);
+    void pop(cgimage_c::stencil_type_e transition = cgimage_c::noise, int count = 1);
+    void replace(cgscene_c *scene, cgimage_c::stencil_type_e transition = cgimage_c::noise);
 
     cgtimer_c vbl;
     cgmouse_c mouse;
 
+    cgimage_c &get_logical_screen() { return _logical_screen; }
+    
 private:
     inline void enqueue_delete(cgscene_c *scene) {
         _deletion_stack[_delete_count++] = scene;
@@ -58,6 +60,8 @@ private:
     cgimage_c _logical_screen;
     bool *_dirtymap;
     bool _full_restore;
+    cgimage_c::stencil_type_e _transion_type;
+    int _transition_shade;
 };
 
 #endif /* scene_hpp */
