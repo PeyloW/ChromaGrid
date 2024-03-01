@@ -11,7 +11,7 @@
 
 extern "C" {
     
-#define __forceinline __attribute__((__visibility__("default"), __always_inline__))
+#define __forceinline __attribute__((__always_inline__))
 #define __packed __attribute__((packed))
 
 #ifndef MAX

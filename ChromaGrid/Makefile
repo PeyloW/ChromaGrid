@@ -10,7 +10,7 @@ FLAGS+=-g1 -DNDEBUG
 #FLAGS+=-g0 -DNDEBUG
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
-CFLAGS+=-fno-exceptions -Wno-write-strings -fno-rtti -fpermissive
+CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti -fpermissive
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) $(FLAGS)
 LDFLAGS=-nostdlib -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format
