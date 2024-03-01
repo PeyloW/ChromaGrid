@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */; };
+		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
 		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
 		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
 		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
@@ -36,6 +37,8 @@
 
 /* Begin PBXFileReference section */
 		A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_stencil.cpp; sourceTree = "<group>"; };
+		A682A3E12B9227AC00FF2E57 /* resources.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
+		A682A3E22B9227AC00FF2E57 /* resources.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = resources.hpp; sourceTree = "<group>"; };
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -130,6 +133,8 @@
 				A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */,
 				A69AE5012B82983A00EBA43D /* audio.hpp */,
 				A69AE5002B82983A00EBA43D /* audio.cpp */,
+				A682A3E22B9227AC00FF2E57 /* resources.hpp */,
+				A682A3E12B9227AC00FF2E57 /* resources.cpp */,
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
 				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
@@ -253,6 +258,7 @@
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
 				A69AE5022B82983A00EBA43D /* audio.cpp in Sources */,
 				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,
+				A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */,
 				A69AE4D92B7062AC00EBA43D /* cpp_runtime.cpp in Sources */,
 				A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */,
 				A69AE5172B88F53500EBA43D /* graphics_draw.cpp in Sources */,

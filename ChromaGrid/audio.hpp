@@ -28,12 +28,11 @@ public:
     cgmusic_c(const char *path);
     ~cgmusic_c();
     
-    void set_active(int track);
+    void set_active(int track) const;
 
 private:
     void *_sndh;
-    int _track;
-    
+    mutable int _track;
 };
 
 #endif /* audio_hpp */

@@ -193,7 +193,7 @@ void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, c
     }
 }
 
-void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_t alignment, const uint8_t color) const {
+void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment, const uint8_t color) const {
     int len = (int)strlen(text);
     cgsize_t size = font.get_rect(text[1]).size;
     for (int i = 1; i < len; i++) {

@@ -72,7 +72,7 @@ public:
         align_left,
         align_center,
         align_right
-    } text_alignment_t;
+    } text_alignment_e;
     
     cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette);
     cgimage_c(const cgimage_c &image, cgrect_t rect);
@@ -136,7 +136,7 @@ public:
     void draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const;
     void draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const;
     
-    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_t alignment = align_left, const uint8_t color = MASKED_CIDX) const;
+    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment = align_left, const uint8_t color = MASKED_CIDX) const;
     
 private:
     const cgimage_c *_super_image;

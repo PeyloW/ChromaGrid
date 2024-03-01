@@ -51,7 +51,7 @@ cgmusic_c::~cgmusic_c() {
     }
 }
 
-void cgmusic_c::set_active(int track) {
+void cgmusic_c::set_active(int track) const {
     if (_track != track) {
         cgtimer_c::with_paused_timers([this, track] {
 #ifdef __M68000__
