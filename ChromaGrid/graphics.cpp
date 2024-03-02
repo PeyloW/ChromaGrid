@@ -11,9 +11,9 @@
 
 extern "C" {
 #ifndef __M68000__
-    const cgpalette_c *cgg_active_palette = NULL;
-    const cgimage_c *cgg_active_image = NULL;
+    const cgpalette_c *cgg_active_palette = nullptr;
 #endif
+    const cgimage_c *cgg_active_image = nullptr;
 }
 
 void cgpalette_c::set_active() const {
@@ -237,38 +237,9 @@ static uint16_t pSetActiveVBLCode[20];
 #endif
 
 void cgimage_c::set_active() const {
-#ifdef __M68000__
-    uint16_t word_offset = _offset.y * _line_words + (_offset.x >> 4);
-    uint32_t high_bytes = (uint32_t)(_bitmap + (word_offset << 2));
-    uint8_t low_byte = (uint8_t)high_bytes;
-    __asm__ ("lsr.w #8,%[hb]" : [hb] "+d" (high_bytes) : :);
-    uint8_t bit_shift = _offset.x & 0x0f;
-    uint8_t word_skip = _line_words - 20;
-    if (bit_shift != 0) {
-        word_skip--;
-    }
-    word_skip <<= 2;
-    
-    // move.l #highBytes,$ffff8204.w
-    // move.b #lowByte,$ffff8209.w
-    // move.b #wordSkip,$ffff820f.w
-    // move.b #shift,$ffff8265.w
-    // rts
-    uint16_t *code = pSetActiveVBLCode;
-    __append_int16(code, 0x21fc);
-    __append_int32(code, high_bytes);
-    __append_int32(code, 0x820411fcl);
-    __append_int16(code, low_byte);
-    __append_int32(code, 0x820911fcl);
-    __append_int16(code, word_skip);
-    __append_int32(code, 0x820f11fcl);
-    __append_int16(code, bit_shift);
-    __append_int32(code, 0x82654e75);
-    cgtimer_c vbl(cgtimer_c::vbl);
-    vbl.add_func((cgtimer_c::func_t)pSetActiveVBLCode);
-#else
-    cgg_active_image = this;
-#endif
+    cgtimer_c::with_paused_timers([this] {
+        cgg_active_image = this;
+    });
 }
 
 cgfont_c::cgfont_c(const cgimage_c &image, cgsize_t character_size) : _image(image) {

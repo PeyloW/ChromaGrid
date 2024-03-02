@@ -3,35 +3,59 @@
 |
     .extern _cgg_vbl_functions
     .extern _cgg_vbl_tick
+    .extern _cgg_active_image
     .global _cgg_vbl_interupt
-    .global _pSystemVBLInterupt
+    .global _cgg_system_vbl_interupt
 
     .extern _cgg_mouse_buttons
     .extern _cgg_mouse_position
-    .global _pMouseInterupt
-    .global _pSystemMouseInterupt
+    .global _cgg_mouse_interupt
+    .global _cgg_system_mouse_interupt
+
+
+    .struct
+cgimage_super_image:            ds.l    1
+cgimage_palette:                ds.l    1
+cgimage_bitmap:                  ds.l    1
+cgimage_maskmap:                 ds.l    1
+cgimage_dirtymap:                ds.l    1
+cgimage_stencil:                 ds.l    1
+cgimage_size:                    ds.w    2
+cgimage_offset:                  ds.w    2
+cgimage_line_words:              ds.w    1
+cgimage_owns_bitmap:             ds.b    1
+cgimage_clipping:                ds.b    1
 
     .text
 
     .even
 _cgg_vbl_interupt:
     movem.l d0-d2/a0-a2,-(sp)
+    move.l  _cgg_active_image,d0
+    beq.s   .no_active_image
+    move.l  d0,a0
+    move.l  cgimage_bitmap(a0),d0   ||| MUST MATCH cgimage_c::_bitmap offset!!!
+    move.b  d0,d1
+    lsr.w #8,d0
+    move.l  d0,0xffff8204.w
+    move.b  d1,0xffff8209.w
+.no_active_image:
     add.l   #1,_cgg_vbl_tick
     lea     _cgg_vbl_functions, a2
-.L1:
+.next_vbl_func:
     move.l  (a2)+,d0
-    beq.s   .L2
+    beq.s   .no_more_vbl_funcs
     move.l  d0,a0
     jsr     (a0)
-    bra.s   .L1
-.L2:
+    bra.s   .next_vbl_func
+.no_more_vbl_funcs:
     movem.l (sp)+,d0-d2/a0-a2
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
-_pSystemVBLInterupt:
+_cgg_system_vbl_interupt:
     .dc.l    0x0
 
     .even
-_pMouseInterupt:
+_cgg_mouse_interupt:
     move.w  d0, -(sp)
     move.b  (a0),d0
     and.b   #0x3,d0
@@ -44,5 +68,5 @@ _pMouseInterupt:
     add.w   d0,_cgg_mouse_position+2
     move.w  (sp)+,d0
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
-_pSystemMouseInterupt:
+_cgg_system_mouse_interupt:
     .dc.l    0x0

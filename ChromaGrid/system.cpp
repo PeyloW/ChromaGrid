@@ -25,11 +25,11 @@ uint8_t cgg_mouse_buttons;
 cgpoint_t cgg_mouse_position;
 
 #ifdef __M68000__
-    extern cgtimer_c::func_t pSystemVBLInterupt;
+    extern cgtimer_c::func_t cgg_system_vbl_interupt;
     extern void cgg_vbl_interupt();
-    extern cgtimer_c::func_a_t pSystemMouseInterupt;
-    extern void pMouseInterupt(void *);
-    static _KBDVECS *pKeyboardVectors = nullptr;
+    extern cgtimer_c::func_a_t cgg_system_mouse_interupt;
+    extern void cgg_mouse_interupt(void *);
+    static _KBDVECS *cgg_keyboard_vectors = nullptr;
 #else
     void (*cgg_yield_function)() = nullptr;
 
@@ -61,7 +61,7 @@ cgtimer_c::cgtimer_c(timer_e timer) : _timer(timer) {
     if (cgg_timer_ref_counts[0] == 1) {
         with_paused_timers([] {
 #ifdef __M68000__
-        pSystemVBLInterupt = *((func_t *)0x0070);
+        cgg_system_vbl_interupt = *((func_t *)0x0070);
         *((func_t *)0x0070) = &cgg_vbl_interupt;
 #endif
         });
@@ -74,7 +74,7 @@ cgtimer_c::~cgtimer_c() {
     if (cgg_timer_ref_counts[cgtimer_c::vbl] == 0) {
         with_paused_timers([] {
 #ifdef __M68000__
-            *((func_t *)0x0070) = pSystemVBLInterupt;
+            *((func_t *)0x0070) = cgg_system_vbl_interupt;
 #endif
         });
     }
@@ -132,15 +132,15 @@ cgmouse_c::cgmouse_c(cgrect_t limit) {
         static_cast<int16_t>(limit.origin.y + limit.size.height / 2)
     };
 #ifdef __M68000__
-    pKeyboardVectors = Kbdvbase();
-    pSystemMouseInterupt = pKeyboardVectors->mousevec;
-    pKeyboardVectors->mousevec = &pMouseInterupt;
+    cgg_keyboard_vectors = Kbdvbase();
+    cgg_system_mouse_interupt = cgg_keyboard_vectors->mousevec;
+    cgg_keyboard_vectors->mousevec = &cgg_mouse_interupt;
 #endif
 }
 
 cgmouse_c::~cgmouse_c() {
 #ifdef __M68000__
-    pKeyboardVectors->mousevec = pSystemMouseInterupt;
+    cgg_keyboard_vectors->mousevec = cgg_system_mouse_interupt;
 #endif
 }
 

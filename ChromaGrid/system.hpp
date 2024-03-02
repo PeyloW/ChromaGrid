@@ -20,7 +20,7 @@ struct cgcodegen_t {
     // Buffer must be 16 bytes
     static void make_trampoline(void *buffer, void *func, bool all_regs) {
         //movem.l d3-d7/a2-a6,-(sp)
-        //jsr     _pSystemVBLInterupt.l
+        //jsr     _cgg_system_vbl_interupt.l
         //movem.l (sp)+,d3-d7/a2-a6
         //rts
         if (all_regs) {
@@ -55,6 +55,12 @@ static int16_t cgget_screen_mode() {
 #else
     return 0;
 #endif
+}
+
+
+extern "C" {
+    class cgimage_c;
+    extern const cgimage_c *cgg_active_image;
 }
 
 static int16_t cgset_screen(void *log, void *phys, int16_t mode) {

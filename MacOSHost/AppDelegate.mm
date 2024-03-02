@@ -130,7 +130,7 @@ static void _yieldFunction() {
             buffer[i]._ = 0;
         }
     }
-    cgg_active_image->with_clipping(false, [self, size, offset, &palette, &buffer] () {
+    const_cast<cgimage_c*>(cgg_active_image)->with_clipping(false, [self, size, offset, &palette, &buffer] () {
         cgpoint_t at;
         for (at.y = 0; at.y < 200; at.y++) {
             for (at.x = 0; at.x < 320; at.x++) {

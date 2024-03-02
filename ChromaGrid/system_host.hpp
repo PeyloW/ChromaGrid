@@ -29,7 +29,6 @@ class cgpalette_c;
 class cgimage_c;
 
 extern cgpalette_c *cgg_active_palette;
-extern cgimage_c *cgg_active_image;
 
 }
 
