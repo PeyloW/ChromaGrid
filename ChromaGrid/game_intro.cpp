@@ -50,19 +50,21 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     screen.draw(rsc.font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center, 7);
     button_rect.origin.y -= 14;
     screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1}, cgimage_c::align_center);
+    screen.draw(rsc.font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1});
     screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2}, cgimage_c::align_center);
+    screen.draw(rsc.font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2});
     screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3}, cgimage_c::align_center);
+    screen.draw(rsc.font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3});
     screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4}, cgimage_c::align_center);
+    screen.draw(rsc.font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4});
     screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5}, cgimage_c::align_center);
+    screen.draw(rsc.font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5});
+    
+    screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 64 + 12 * 0});
+    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 64 + 20 * 1});
+//    screen.draw(rsc.small_font, "Released at Sommarhack.", (cgpoint_t){96, 64 + 20 * 3});
 
-    screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 64 + 12 * 0}, cgimage_c::align_center);
-    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 64 + 20 * 1}, cgimage_c::align_center);
-    screen.draw(rsc.small_font, "Released at Sommarhack.", (cgpoint_t){96, 64 + 20 * 3}, cgimage_c::align_center);
+    screen.draw(rsc.small_font, "Released at Sommarhack.\nA game concep by Peter 'Eagle' Nyman of Friendchip, realized 30 years later.", (cgrect_t){{16, 64 + 20 * 3}, {160, 7 * 4}}, 1);
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {

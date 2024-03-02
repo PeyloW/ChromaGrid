@@ -216,6 +216,57 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_
     }
 }
 
+#define MAX_LINES 8
+static char draw_text_buffer[80 * MAX_LINES];
+
+void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
+    strcpy(draw_text_buffer, text);
+    const char *lines[MAX_LINES];
+    int line_count = 0;
+    uint16_t line_width = 0;
+    int start = 0;
+    int last_good_pos = 0;
+    bool done = false;
+    for (int i = 0; !done; i++) {
+        bool emit = false;
+        const char c = text[i];
+        if (c == 0) {
+            last_good_pos = i;
+            emit = true;
+            done = true;
+        } else if (c == ' ') {
+            last_good_pos = i;
+        } else if (c == '\n') {
+            last_good_pos = i;
+            emit = true;
+        }
+        if (!emit) {
+            line_width += font.get_rect(text[i]).size.width;
+            if (line_width  > in.size.width) {
+                emit = true;
+            }
+        }
+        
+        if (emit) {
+            draw_text_buffer[last_good_pos] = 0;
+            lines[line_count++] = draw_text_buffer + start;
+            line_width = 0;
+            start = last_good_pos + 1;
+            i = start;
+        }
+    }
+    cgpoint_t at;
+    switch (alignment) {
+        case align_left: at = in.origin; break;
+        case align_center: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
+        case align_right: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
+    }
+    for (int line = 0; line < line_count; line++) {
+        draw(font, lines[line], at, alignment, color);
+        at.y += font.get_rect(' ').size.height + line_spacing;
+    }
+}
+
 void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
     assert(_dirtymap);
     assert((_size.width & 0xf) == 0);
