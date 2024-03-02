@@ -221,8 +221,8 @@ static char draw_text_buffer[80 * MAX_LINES];
 
 void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
     strcpy(draw_text_buffer, text);
-    const char *lines[MAX_LINES];
-    int line_count = 0;
+    cgvector_c<const char *, 8> lines;
+
     uint16_t line_width = 0;
     int start = 0;
     int last_good_pos = 0;
@@ -249,7 +249,7 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16
         
         if (emit) {
             draw_text_buffer[last_good_pos] = 0;
-            lines[line_count++] = draw_text_buffer + start;
+            lines.push_back(draw_text_buffer + start);
             line_width = 0;
             start = last_good_pos + 1;
             i = start;
@@ -261,8 +261,8 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16
         case align_center: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
         case align_right: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
     }
-    for (int line = 0; line < line_count; line++) {
-        draw(font, lines[line], at, alignment, color);
+    for (auto line = lines.begin(); line != lines.end(); line++) {
+        draw(font, *line, at, alignment, color);
         at.y += font.get_rect(' ').size.height + line_spacing;
     }
 }

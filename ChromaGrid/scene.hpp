@@ -35,8 +35,7 @@ public:
     void run(cgscene_c *rootscene);
 
     cgscene_c &top_scene() const {
-        assert(_scene_count > 0);
-        return *_scene_stack[_scene_count - 1];
+        return *_scene_stack.back();
     };
     void push(cgscene_c *scene, cgimage_c::stencil_type_e transition = cgimage_c::noise);
     void pop(cgimage_c::stencil_type_e transition = cgimage_c::noise, int count = 1);
@@ -48,12 +47,11 @@ public:
     cgimage_c &get_logical_screen() { return _logical_screen; }
     
 private:
-    int _scene_count;
-    cgscene_c *_scene_stack[8];
-    int _delete_count;
-    cgscene_c *_deletion_stack[8];
+    cgvector_c<cgscene_c *, 8> _scene_stack;
+    cgvector_c<cgscene_c *, 8> _deletion_stack;
+    
     inline void enqueue_delete(cgscene_c *scene) {
-        _deletion_stack[_delete_count++] = scene;
+        _deletion_stack.push_back(scene);
     }
 
     cgimage_c _physical_screen_0;

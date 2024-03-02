@@ -16,6 +16,19 @@ extern "C" {
 }
 #endif
 
+void cgbutton_t::draw_in(cgimage_c &image) const {
+    static const cgrect_t button_rect_normal = (cgrect_t){{8,0},{32,14}};
+    static const cgrect_t button_rect_disabled = (cgrect_t){{8,14},{32,14}};
+
+    const auto &rsc = cgresources_c::shared();
+    image.draw_3_patch(rsc.button, state != disabled ? button_rect_normal : button_rect_disabled, 8, rect);
+    cgpoint_t at = (cgpoint_t){
+        (int16_t)(rect.origin.x + rect.size.width / 2),
+        (int16_t)(rect.origin.y + (state != pressed ? 3 : 4))
+    };
+    image.draw(rsc.font, text, at, cgimage_c::align_center, state != disabled ? cgimage_c::MASKED_CIDX : 7);
+}
+
 void cgroot_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     rsc.music.set_active(1);
     printf("set palette.\n\r");

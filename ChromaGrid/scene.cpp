@@ -16,8 +16,6 @@ cgmanager_c::cgmanager_c() :
     _logical_screen((cgsize_t){320, 208}, false, nullptr)
 {
     _active_physical_screen = 0;
-    _scene_count = 0;
-    _delete_count = 0;
     _transition_state.full_restores_left = 0;
     _dirtymap_0 = (bool *)calloc(_physical_screen_0.dirtymap_size(), 1);
     _dirtymap_1 = (bool *)calloc(_physical_screen_1.dirtymap_size(), 1);
@@ -46,7 +44,7 @@ void cgmanager_c::run(cgscene_c *rootscene) {
     cgcolor_c color_done(0, 0, 0);
 #endif
     vbl.reset_tick();
-    while (_scene_count > 0) {
+    while (_scene_stack.size() > 0) {
         auto &physical_screen = (_active_physical_screen == 0) ? _physical_screen_0 : _physical_screen_1;
         auto &dirtymap = (_active_physical_screen == 0) ? _dirtymap_0 : _dirtymap_1;
         if (_transition_state.full_restores_left > 0) {
@@ -69,7 +67,7 @@ void cgmanager_c::run(cgscene_c *rootscene) {
                 _transition_state.shade += ticks;
             }
         } else {
-            if (_scene_count > 1) {
+            if (_scene_stack.size() > 1) {
 #if DEBUG_COLORS
             color_in_top_tick.set_at(0);
 #endif
@@ -87,9 +85,10 @@ void cgmanager_c::run(cgscene_c *rootscene) {
             physical_screen.with_dirtymap(dirtymap, [this, &physical_screen] {
                 _scene_stack[0]->tick(physical_screen);
             });
-            while (_delete_count-- > 0) {
-                delete _deletion_stack[_delete_count];
+            for (auto scene = _deletion_stack.begin(); scene != _deletion_stack.end(); scene++) {
+                delete *scene;
             }
+            _deletion_stack.clear();
         }
 #if DEBUG_COLORS
             color_done.set_at(0);
@@ -106,10 +105,10 @@ void cgmanager_c::run(cgscene_c *rootscene) {
 }
 
 void cgmanager_c::push(cgscene_c *scene, cgimage_c::stencil_type_e transition) {
-    if (_scene_count > 0) {
+    if (_scene_stack.size() > 0) {
         top_scene().will_disappear(true);
     }
-    _scene_stack[_scene_count++] = scene;
+    _scene_stack.push_back(scene);
     _logical_screen.with_dirtymap(nullptr, [this] {
         top_scene().will_appear(_logical_screen, false);
     });
@@ -120,7 +119,7 @@ void cgmanager_c::pop(cgimage_c::stencil_type_e transition, int count) {
     while (--count > 0) {
         top_scene().will_disappear(false);
         enqueue_delete(&top_scene());
-        _scene_count--;
+        _scene_stack.pop_back();
     }
     _logical_screen.with_dirtymap(nullptr, [this, count] {
         top_scene().will_appear(_logical_screen, true);
@@ -131,7 +130,7 @@ void cgmanager_c::pop(cgimage_c::stencil_type_e transition, int count) {
 void cgmanager_c::replace(cgscene_c *scene, cgimage_c::stencil_type_e transition) {
     top_scene().will_disappear(false);
     enqueue_delete(&top_scene());
-    _scene_stack[_scene_count - 1] = scene;
+    _scene_stack.back() = scene;
     _logical_screen.with_dirtymap(nullptr, [this] {
         top_scene().will_appear(_logical_screen, false);
     });

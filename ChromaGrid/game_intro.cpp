@@ -7,6 +7,18 @@
 
 #include "game.hpp"
 
+cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {
+#define BUTTON_SPACING 20
+#define BUTTON_BOTTOM 176
+    cgrect_t button_rect = (cgrect_t){{200, BUTTON_BOTTOM - 3}, {112, 14}};
+    const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
+    for (int i = 0; i < 6; i++) {
+        _buttons.emplace_back(button_titles[i], button_rect);
+        button_rect.origin.y -= BUTTON_SPACING;
+    }
+    _buttons[0].state = cgbutton_t::disabled;
+}
+
 void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     printf("draw initial screen.\n\r");
     screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
@@ -42,29 +54,15 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
         }
     }
     
-#define BUTTON_SPACING 20
-#define BUTTON_BOTTOM 176
-    cgrect_t button_rect = (cgrect_t){{8,14},{32,14}};
-    cgrect_t in_rect = (cgrect_t){{200, BUTTON_BOTTOM - 3}, {112, 14}};
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Exit", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 0}, cgimage_c::align_center, 7);
-    button_rect.origin.y -= 14;
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Credits", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 1});
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Help", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 2});
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Editor", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 3});
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "Hi-Scores", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 4});
-    screen.draw_3_patch(rsc.button, button_rect, 8, in_rect); in_rect.origin.y -= BUTTON_SPACING;
-    screen.draw(rsc.font, "PLAY", (cgpoint_t){256, BUTTON_BOTTOM - BUTTON_SPACING * 5});
+    for (auto button = _buttons.begin(); button != _buttons.end(); button++) {
+        button->draw_in(screen);
+    }
     
     screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 64 + 12 * 0});
     screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 64 + 20 * 1});
 //    screen.draw(rsc.small_font, "Released at Sommarhack.", (cgpoint_t){96, 64 + 20 * 3});
 
-    screen.draw(rsc.small_font, "Released at Sommarhack.\nA game concep by Peter 'Eagle' Nyman of Friendchip, realized 30 years later.", (cgrect_t){{16, 64 + 20 * 3}, {160, 7 * 4}}, 1);
+    screen.draw(rsc.small_font, "Released at Sommarhack.\nA game concep by Peter 'Eagle' Nyman of Friendchip, realized 30 years later.", (cgrect_t){{16, 64 + 20 * 3}, {160, 7 * 4}}, 3);
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {
