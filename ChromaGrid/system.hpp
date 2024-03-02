@@ -57,6 +57,13 @@ static int16_t cgget_screen_mode() {
 #endif
 }
 
+static int32_t cgrand() {
+#ifdef __M68000__
+    return Random();
+#else
+    return rand();
+#endif
+}
 
 extern "C" {
     class cgimage_c;

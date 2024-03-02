@@ -19,6 +19,10 @@ extern "C" {
 #   define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #endif
 
+#ifndef ABS
+#   define ABS(X) (((X) < 0) ? -(X) : (X))
+#endif
+      
 #ifdef __M68000__
 #define hard_assert(expr)\
     ((void)((expr)||(fprintf(stderr, \
