@@ -35,6 +35,7 @@
 		A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 		A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE52D2B8D76FA00EBA43D /* button.iff */; };
 		A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5302B8D9A2400EBA43D /* font6.iff */; };
+		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,7 @@
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
+		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +159,7 @@
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
 				A682A3E82B92613F00FF2E57 /* game_intro.cpp */,
+				A6F766AA2B9509EB00325754 /* game_credits.cpp */,
 				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
 			);
 			path = ChromaGrid;
@@ -277,6 +280,7 @@
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
 				A682A3E02B90CEE700FF2E57 /* graphics_stencil.cpp in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
+				A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */,
 				A69AE5022B82983A00EBA43D /* audio.cpp in Sources */,
 				A69AE4D52B701EF600EBA43D /* iff_file.cpp in Sources */,
 				A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */,

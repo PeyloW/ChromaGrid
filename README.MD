@@ -9,6 +9,7 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 * Music: _Joakim 'AiO' Ekblad_
 * Graphics: ??
 * Font: _Damien Guard_
+* Concept: Peter 'Eagle' Nyman
 
 ### Project Requirement
 
@@ -33,7 +34,7 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Graphics__
     * [x] __Display physical screen__
         * [x] _STe HW scrolling_
-        * [ ] __NEW: Double buffered__
+        * [x] __NEW: Double buffered__
     * [x] __Set & Get pixel__
         * [ ] Asm optimized
         * [x] _Color replacement_
@@ -72,6 +73,13 @@ Legend: __Required__, Expected , _Optional_
         * [ ] __Small Chroma Grid Logo__
         * [x] __Button shapes, on and off__
     * [ ] Level selection grid, center
+* [x] __Credits scene__
+    * [x] Credits
+* [ ] __Help scene__
+    * [ ] Goal of the game
+        * [ ] Tile types
+        * [ ] Orb fusing        
+    * [ ] _Scoring_
 * [ ] __Gameplay scene__
     * Re-use right side background
     * [x] __16x16 tiles, 5x types__

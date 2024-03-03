@@ -38,5 +38,13 @@ private:
     cgbutton_group_c<6> _menu_buttons;
 };
 
+class cgcredits_scene_c : public cggame_scene_c {
+public:
+    cgcredits_scene_c(cgmanager_c &manager);
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen);
+private:
+    cgbutton_group_c<1> _menu_buttons;
+};
 
 #endif /* game_hpp */

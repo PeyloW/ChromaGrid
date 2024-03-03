@@ -12,15 +12,18 @@ cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) :
     _menu_buttons((cgpoint_t){200, 184}, (cgsize_t){112, 14}, -6)
 {
     const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
+    bool enabled[6] = { false, true, false, false, false, false };
     for (int i = 0; i < 6; i++) {
         _menu_buttons.add_button(button_titles[i]);
+        if (!enabled[i]) {
+            _menu_buttons.buttons[i].state = cgbutton_t::disabled;
+        }
     }
-    _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
 void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
-    printf("draw initial screen.\n\r");
     screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
+    
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
             int dx = ABS(x * 2 - 11);
@@ -55,11 +58,8 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     
     _menu_buttons.draw_all(screen);
     
-    screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 64 + 12 * 0});
-    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 64 + 20 * 1});
-//    screen.draw(rsc.small_font, "Released at Sommarhack.", (cgpoint_t){96, 64 + 20 * 3});
-
-    screen.draw(rsc.small_font, "Released at Sommarhack.\nA game concep by Peter 'Eagle' Nyman of Friendchip, realized 30 years later.", (cgrect_t){{16, 64 + 20 * 3}, {160, 7 * 4}}, 3);
+    screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 150 });
+    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 170});
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {
@@ -70,6 +70,7 @@ void cgintro_scene_c::tick(cgimage_c &screen) {
             break;
         case 1:
             // Show credits
+            manager.push(new cgcredits_scene_c(manager));
             break;
         case 2:
             // Show help

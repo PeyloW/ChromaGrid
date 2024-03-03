@@ -40,7 +40,7 @@ void cgmanager_c::run_transition(screen_t &physical_screen) {
         if (shade == cgimage_c::STENCIL_FULLY_OPAQUE) {
             _transition_state.full_restores_left--;
         }
-        auto ticks = MAX(1, vbl.tick() - old_tick);
+        auto ticks = 1 + MAX(1, vbl.tick() - old_tick);
         _transition_state.shade += ticks;
     }
 }
