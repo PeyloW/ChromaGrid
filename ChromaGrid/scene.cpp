@@ -27,7 +27,7 @@ cgmanager_c::~cgmanager_c() {
 #define DEBUG_NO_SET_SCREEN 0
 
 void cgmanager_c::run_transition(screen_t &physical_screen) {
-    debug_cpu_color(0x400);
+    debug_cpu_color(0x100);
     if (_transition_state.type == cgimage_c::none) {
         physical_screen.image.draw_aligned(get_logical_screen(), (cgpoint_t){0,0});
         _transition_state.full_restores_left--;
@@ -62,11 +62,11 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
         if (_transition_state.full_restores_left > 0) {
             run_transition(physical_screen);
         } else {
-            debug_cpu_color(0x050);
+            debug_cpu_color(0x030);
             logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, &logical_screen] {
                 top_scene().tick(logical_screen.image);
             });
-            debug_cpu_color(0x404);
+            debug_cpu_color(0x202);
             // Merge dirty maps here!
             logical_screen.image.merge_dirtymap(_screens[0].dirtymap, logical_screen.dirtymap);
             logical_screen.image.merge_dirtymap(_screens[1].dirtymap, logical_screen.dirtymap);
@@ -75,11 +75,11 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
             logical_screen.image.debug_dirtymap(physical_screen.dirtymap, "AF");
 #endif
             memset(logical_screen.dirtymap, 0, logical_screen.image.dirtymap_size());
-            debug_cpu_color(0x005);
+            debug_cpu_color(0x004);
             physical_screen.image.restore(logical_screen.image, physical_screen.dirtymap);
 
             if (_overlay_scene) {
-                debug_cpu_color(0x020);
+                debug_cpu_color(0x010);
                 physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &physical_screen] {
                     _overlay_scene->tick(physical_screen.image);
                 });

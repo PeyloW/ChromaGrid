@@ -83,6 +83,7 @@
 		A69AE5202B8BB71E00EBA43D /* blitter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter.hpp; sourceTree = "<group>"; };
 		A69AE52D2B8D76FA00EBA43D /* button.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = button.iff; sourceTree = "<group>"; };
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
+		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
+				A6F766A62B94F66700325754 /* stdlib.hpp */,
 				A69AE4F42B79253A00EBA43D /* types.hpp */,
 				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
 				A69AE4EC2B791FF100EBA43D /* system.hpp */,
