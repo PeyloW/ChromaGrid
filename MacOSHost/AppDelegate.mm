@@ -43,9 +43,15 @@ static void _yieldFunction() {
     NSString *path = [[NSBundle mainBundle] resourcePath];
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
-        cgmanager_c manager;
-        auto root_scene = new cgroot_scene_c(manager);
-        manager.run(root_scene);
+        {
+            cgmanager_c manager;
+            auto intro_scene = new cgintro_scene_c(manager);
+            auto overlay_scene = new cgoverlay_scene_c(manager);
+            manager.run(intro_scene, overlay_scene);
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSApp terminate:nil];
+        });
     });
 }
 

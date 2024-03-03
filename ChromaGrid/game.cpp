@@ -31,21 +31,18 @@ void cgbutton_t::draw_in(cgimage_c &image) const {
     });
 }
 
-void cgroot_scene_c::will_appear(cgimage_c &screen, bool obsured) {
+void cgoverlay_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     rsc.music.set_active(1);
-    printf("set palette.\n\r");
     rsc.background.get_palette()->set_active();
-
-    manager.push(new cgintro_scene_c(manager));
 }
 
-void cgroot_scene_c::will_disappear(bool obscured) {
+void cgoverlay_scene_c::will_disappear(bool obscured) {
     if (obscured == false) {
         rsc.music.set_active(0);
     }
 }
 
-void cgroot_scene_c::tick(cgimage_c &screen) {
+void cgoverlay_scene_c::tick(cgimage_c &screen) {
     screen.with_clipping(true, [this, &screen] {
         if (manager.mouse.is_pressed(cgmouse_c::left)) {
             auto &logical = manager.get_logical_screen();

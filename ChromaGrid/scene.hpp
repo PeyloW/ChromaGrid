@@ -31,8 +31,11 @@ private:
 public:
     cgmanager_c();
     ~cgmanager_c();
-    
-    void run(cgscene_c *rootscene);
+        
+    void run(cgscene_c *rootscene, cgscene_c *overlay_scene = nullptr, cgimage_c::stencil_type_e transition = cgimage_c::noise);
+
+    void set_overlay_scene(cgscene_c *overlay_cene);
+    cgscene_c *overlay_scene() const { return _overlay_scene; };
 
     cgscene_c &top_scene() const {
         return *_scene_stack.back();
@@ -47,6 +50,16 @@ public:
     cgimage_c &get_logical_screen() { return _logical_screen; }
     
 private:
+#ifdef __M68000__
+    __forceinline void debug_cpu_color(uint16_t c) const {
+        cgcolor_c(c).set_at(0);
+    }
+#else
+    inline void debug_cpu_color(uint16_t) { }
+#endif
+    void run_transition(cgimage_c &physical_screen);
+    
+    cgscene_c *_overlay_scene;
     cgvector_c<cgscene_c *, 8> _scene_stack;
     cgvector_c<cgscene_c *, 8> _deletion_stack;
     

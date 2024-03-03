@@ -155,6 +155,7 @@ void cgmouse_c::update_state() {
             cgg_mouse_button_states[button] = released;
         }
     }
+    cgg_prev_mouse_butons = cgg_mouse_buttons;
 }
 
 bool cgmouse_c::is_pressed(button_e button) const {

@@ -84,7 +84,7 @@ void cgintro_scene_c::tick(cgimage_c &screen) {
             // Show Hi-Scores
             break;
         case 5:
-            // Start game
+            manager.pop();
             break;
         default:
             break;

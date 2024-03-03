@@ -16,8 +16,9 @@ extern "C" {
 
 int main(int argc, const char * argv[]) {
     cgmanager_c manager;
-    auto root_scene = new cgroot_scene_c(manager);
-    manager.run(root_scene);
+    auto intro_scene = new cgintro_scene_c(manager);
+    auto overlay_scene = new cgoverlay_scene_c(manager);
+    manager.run(intro_scene, overlay_scene);
 }
 
 #else

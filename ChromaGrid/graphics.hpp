@@ -15,6 +15,7 @@ class cgcolor_c {
 public:
     uint16_t color;
     cgcolor_c() = default;
+    cgcolor_c(uint16_t c) : color(c) {}
     cgcolor_c(const uint8_t r, const uint8_t g, const uint8_t b) : color(to_ste(r, 8) | to_ste(g, 4) | to_ste(b, 0)) {}
     void set_at(const int i) const {
 #ifdef __M68000__

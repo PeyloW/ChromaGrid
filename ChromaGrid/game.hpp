@@ -84,9 +84,9 @@ private:
     int _tracked_button;
 };
 
-class cgroot_scene_c : public cggame_scene_c<0> {
+class cgoverlay_scene_c : public cggame_scene_c<0> {
 public:
-    cgroot_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {}
+    cgoverlay_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {}
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void will_disappear(bool obscured);
     virtual void tick(cgimage_c &screen);
