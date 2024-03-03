@@ -44,6 +44,7 @@ void cgoverlay_scene_c::will_disappear(bool obscured) {
 
 void cgoverlay_scene_c::tick(cgimage_c &screen) {
     screen.with_clipping(true, [this, &screen] {
+        /*
         if (manager.mouse.is_pressed(cgmouse_c::left)) {
             auto &logical = manager.get_logical_screen();
             logical.put_pixel(9, manager.mouse.get_postion());
@@ -52,6 +53,7 @@ void cgoverlay_scene_c::tick(cgimage_c &screen) {
             auto &logical = manager.get_logical_screen();
             logical.put_pixel(10, manager.mouse.get_postion());
         }
+         */
         screen.draw(rsc.cursor, manager.mouse.get_postion());
     });
 }

@@ -7,16 +7,15 @@
 
 #include "game.hpp"
 
-cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {
-#define BUTTON_SPACING 20
-#define BUTTON_BOTTOM 176
-    cgrect_t button_rect = (cgrect_t){{200, BUTTON_BOTTOM - 3}, {112, 14}};
+cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) : 
+    cggame_scene_c(manager),
+    _menu_buttons((cgpoint_t){200, 184}, (cgsize_t){112, 14}, -6)
+{
     const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
     for (int i = 0; i < 6; i++) {
-        _buttons.emplace_back(button_titles[i], button_rect);
-        button_rect.origin.y -= BUTTON_SPACING;
+        _menu_buttons.add_button(button_titles[i]);
     }
-    _buttons[0].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
 void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
@@ -54,9 +53,7 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
         }
     }
     
-    for (auto button = _buttons.begin(); button != _buttons.end(); button++) {
-        button->draw_in(screen);
-    }
+    _menu_buttons.draw_all(screen);
     
     screen.draw(rsc.font, "Welcome to Chroma Grid.", (cgpoint_t){96, 64 + 12 * 0});
     screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 64 + 20 * 1});
@@ -66,7 +63,7 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {
-    int button = update_buttons(screen);
+    int button = _menu_buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(cgmouse_c::left));
     switch (button) {
         case 0:
             manager.pop();

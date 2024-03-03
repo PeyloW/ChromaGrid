@@ -84,6 +84,7 @@
 		A69AE52D2B8D76FA00EBA43D /* button.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = button.iff; sourceTree = "<group>"; };
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
+		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +153,7 @@
 				A69AE4B02B6EB9EB00EBA43D /* grid.hpp */,
 				A682A3E22B9227AC00FF2E57 /* resources.hpp */,
 				A682A3E12B9227AC00FF2E57 /* resources.cpp */,
+				A6F766A82B94FC8600325754 /* button.hpp */,
 				A69AE4C12B6EBFCA00EBA43D /* game.hpp */,
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
 				A682A3E82B92613F00FF2E57 /* game_intro.cpp */,
