@@ -11,6 +11,12 @@
 #include "system.hpp"
 #include "graphics.hpp"
 
+#ifdef __M68000__
+#   define DEBUG_RESTORE_SCREEN 0
+#else
+#   define DEBUG_RESTORE_SCREEN 1
+#endif
+
 class cgmanager_c;
 
 class cgscene_c : private cgnocopy_c {
@@ -47,7 +53,7 @@ public:
     cgtimer_c vbl;
     cgmouse_c mouse;
 
-    cgimage_c &get_logical_screen() { return _logical_screen; }
+    cgimage_c &get_logical_screen() { return _screens.back().image; }
     
 private:
 #ifdef __M68000__
@@ -57,8 +63,6 @@ private:
 #else
     inline void debug_cpu_color(uint16_t) { }
 #endif
-    void run_transition(cgimage_c &physical_screen);
-    
     cgscene_c *_overlay_scene;
     cgvector_c<cgscene_c *, 8> _scene_stack;
     cgvector_c<cgscene_c *, 8> _deletion_stack;
@@ -67,13 +71,19 @@ private:
         _deletion_stack.push_back(scene);
     }
 
-    cgimage_c _physical_screen_0;
-    bool *_dirtymap_0;
-    cgimage_c _physical_screen_1;
-    bool *_dirtymap_1;
+    class screen_t {
+    public:
+        cgimage_c image;
+        bool *dirtymap;
+        screen_t() : image((cgsize_t){320, 208}, false, nullptr) {
+            dirtymap = (bool *)calloc(1, image.dirtymap_size());
+        }
+    };
+    cgvector_c<screen_t, 3> _screens;
     int _active_physical_screen;
-    cgimage_c _logical_screen;
 
+    void run_transition(screen_t &physical_screen);
+    
     struct {
         int full_restores_left;
         cgimage_c::stencil_type_e type;

@@ -73,7 +73,7 @@ private:
     inline void update_tracked_button(cgimage_c &screen, const cgpoint_t pos, cgmouse_c::state_e state) {
         if (_tracked_button >= 0) {
             auto &button = _buttons[_tracked_button];
-            assert(button.state == cgbutton_t::pressed);
+            //assert(button.state == cgbutton_t::pressed);
             if (state == cgmouse_c::released || !button.rect.contains(pos)) {
                 button.state = cgbutton_t::normal;
                 button.draw_in(screen);

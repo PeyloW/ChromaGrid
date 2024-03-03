@@ -118,6 +118,9 @@ public:
     }
     void restore(const cgimage_c &clean_image, bool *const dirtymap) const;
     void merge_dirtymap(bool *dest, const bool *source) const;
+#ifndef __M68000__
+    void debug_dirtymap(bool *const dirtymap, const char *name) const;
+#endif
     
     void put_pixel(uint8_t ci, cgpoint_t at) const;
     uint8_t get_pixel(cgpoint_t at) const;

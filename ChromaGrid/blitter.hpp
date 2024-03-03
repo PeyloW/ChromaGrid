@@ -63,7 +63,6 @@ struct cgblitter_t {
     }
 #ifdef __M68000__
     inline void start() {
-//        printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
 #if 1
         __asm__ volatile (
             "bset.b #7,0xffff8A3C.w \n\t"

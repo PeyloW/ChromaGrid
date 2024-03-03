@@ -9,6 +9,8 @@
 
 #ifndef __M68000__
 
+#define DEBUG_BLITTER 0
+
 static struct cgblitter_t _Blitter;
 struct cgblitter_t *pBlitter = &_Blitter;
 
@@ -17,7 +19,9 @@ struct cgblitter_t *pBlitter = &_Blitter;
 // Details borrowed from Hatari 1.0 sources (https://github.com/hatari/hatari)
 //
 void cgblitter_t::start() {
-    //printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
+#if DEBUG_BLITTER
+    printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
+#endif
     
     uint32_t buffer;
     const auto do_shift = [this, &buffer] {

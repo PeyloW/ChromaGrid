@@ -34,9 +34,9 @@ void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
     int l_count = count / 4;
     if (l_count * 4 == count) {
         uint32_t *l_dest = (uint32_t*)dest;
-        uint32_t *l_source = (uint32_t*)source;
+        const uint32_t *l_source = (uint32_t*)source;
         while (--l_count != -1) {
-            register uint16_t v = *l_source++;
+            register uint32_t v = *l_source++;
             if (v) {
                 *l_dest++ |= v;
             } else {
@@ -51,6 +51,22 @@ void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
     }
 }
 
+#ifndef __M68000__
+void cgimage_c::debug_dirtymap(bool *const dirtymap, const char *name) const {
+    const int row_count = _size.height / 16;
+    int16_t y = _size.height - 16;
+    printf("Dirtymap %d cols [%s]\n", _line_words, name);
+    for (int row = 0; row < row_count; row++) {
+        char buf[_line_words + 1];
+        const int row_offset = row * _line_words;
+        for (int col = 0; col < _line_words; col++) {
+            buf[col] = dirtymap[col + row_offset] ? 'X' : '-';
+        }
+        buf[_line_words] = 0;
+        printf("  row %2d: %s\n", row, buf);
+    }
+}
+#endif
 
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     if (_clipping) {
@@ -309,7 +325,6 @@ void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
     const int x2 = (rect.origin.x + rect.size.width - 1) / 16;
     const int y1 = rect.origin.y / 16;
     const int y2 = (rect.origin.y + rect.size.height - 1) / 16;
-    //printf("Dirty: %d x %d -> %d x %d\n", x1, y1, x2, y2);
     for (int y = y1; y <= y2; y++) {
         const int line_offset = y * _line_words;
         for (int x = x1; x <= x2; x++) {
