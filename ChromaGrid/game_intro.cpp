@@ -66,5 +66,27 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {
-    
+    int button = update_buttons(screen);
+    switch (button) {
+        case 0:
+            manager.pop();
+            break;
+        case 1:
+            // Show credits
+            break;
+        case 2:
+            // Show help
+            break;
+        case 3:
+            // Start editor
+            break;
+        case 4:
+            // Show Hi-Scores
+            break;
+        case 5:
+            // Start game
+            break;
+        default:
+            break;
+    }
 }
