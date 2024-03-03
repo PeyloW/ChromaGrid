@@ -325,8 +325,8 @@ void cgimage_c::imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, 
 
 void cgimage_c::imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const {
     assert(get_size().contains(point));
-    for (int y = 0; y < rect.size.height; y++) {
-        for (int x = 0; x < rect.size.width; x++) {
+    for (int y = rect.size.height; --y != -1; ) {
+        for (int x = rect.size.width; --x != -1 ; ) {
             uint8_t color = srcImage.get_pixel(cgpoint_t{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
             if (color != MASKED_CIDX) {
                 put_pixel(color, cgpoint_t{(int16_t)(point.x + x), (int16_t)(point.y + y)});

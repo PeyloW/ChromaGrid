@@ -83,8 +83,8 @@ const cgimage_c::stencil_t *const cgimage_c::get_stencil(stencil_type_e type, in
     static bool _initialized = false;
     static stencil_t _stencils[2][cgimage_c::STENCIL_FULLY_OPAQUE + 1];
     if (!_initialized) {
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j <= cgimage_c::STENCIL_FULLY_OPAQUE; j++) {
+        for (int i = 2; --i != -1; ) {
+            for (int j = cgimage_c::STENCIL_FULLY_OPAQUE + 1; --j != -1; ) {
                 cgimage_c::make_stencil(_stencils[i][j], (cgimage_c::stencil_type_e)(i + 1), j);
             }
         }

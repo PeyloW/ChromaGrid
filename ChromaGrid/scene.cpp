@@ -45,6 +45,7 @@ void cgmanager_c::run(cgscene_c *rootscene) {
 #endif
     vbl.reset_tick();
     while (_scene_stack.size() > 0) {
+        mouse.update_state();
         auto &physical_screen = (_active_physical_screen == 0) ? _physical_screen_0 : _physical_screen_1;
         auto &dirtymap = (_active_physical_screen == 0) ? _dirtymap_0 : _dirtymap_1;
         if (_transition_state.full_restores_left > 0) {

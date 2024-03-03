@@ -20,8 +20,9 @@ static int cgg_timer_ref_counts[1] = { 0 };
 cgtimer_c::func_t cgg_vbl_functions[VBL_FUNC_MAX_CNT+1] = { nullptr };
 volatile uint32_t cgg_vbl_tick = 0;
 static cgrect_t cgg_mouse_limit;
-static bool cgg_prev_mouse_buton_state[2];
+static uint8_t cgg_prev_mouse_butons;
 uint8_t cgg_mouse_buttons;
+static cgmouse_c::state_e cgg_mouse_button_states[2];
 cgpoint_t cgg_mouse_position;
 
 #ifdef __M68000__
@@ -144,15 +145,24 @@ cgmouse_c::~cgmouse_c() {
 #endif
 }
 
-bool cgmouse_c::is_pressed(button_e button) {
+void cgmouse_c::update_state() {
+    for (int button = 2; --button != -1; ) {
+        if (cgg_mouse_buttons & (1 << button)) {
+            cgg_mouse_button_states[button] = pressed;
+        } else if (cgg_prev_mouse_butons & (1 << button)) {
+            cgg_mouse_button_states[button] = clicked;
+        } else {
+            cgg_mouse_button_states[button] = released;
+        }
+    }
+}
+
+bool cgmouse_c::is_pressed(button_e button) const {
     return (cgg_mouse_buttons & (1 << button)) != 0;
 }
 
-bool cgmouse_c::was_clicked(button_e button) {
-    bool pressed = is_pressed(button);
-    bool clicked = cgg_prev_mouse_buton_state[button] != pressed && pressed == false;
-    cgg_prev_mouse_buton_state[button] = pressed;
-    return clicked;
+cgmouse_c::state_e cgmouse_c::get_state(button_e button) const {
+    return cgg_mouse_button_states[button];
 }
 
 cgpoint_t cgmouse_c::get_postion() {

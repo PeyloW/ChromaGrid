@@ -126,12 +126,19 @@ public:
     typedef enum __packed {
         right, left
     } button_e;
+    typedef enum __packed {
+        released,
+        pressed,
+        clicked
+    } state_e;
     
     cgmouse_c(cgrect_t limit);
     ~cgmouse_c();
+
+    void update_state();  // Call once per vbl
     
-    bool is_pressed(button_e button);
-    bool was_clicked(button_e button);
+    bool is_pressed(button_e button) const;
+    state_e get_state(button_e button) const;
     
     cgpoint_t get_postion();
     

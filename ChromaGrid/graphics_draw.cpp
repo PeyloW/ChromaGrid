@@ -176,44 +176,56 @@ void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, c
     assert(in.size.width >= cap * 2);
     assert(rect.size.width > cap * 2);
     assert(rect.size.height == in.size.height);
-    const cgrect_t left_rect = (cgrect_t){ rect.origin, {cap, rect.size.height}};
-    draw(src, left_rect, in.origin);
-    const cgrect_t right_rect = (cgrect_t){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
-    const cgpoint_t right_at = (cgpoint_t){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
-    draw(src, right_rect, right_at);
-    cgrect_t middle_rect = (cgrect_t){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
-    cgpoint_t at = (cgpoint_t){(int16_t)(in.origin.x + cap), in.origin.y };
-    int16_t to_draw = in.size.width - cap * 2;
-    while (to_draw > 0) {
-        const int16_t width = MIN(to_draw, middle_rect.size.width);
-        middle_rect.size.width = width;
-        draw(src, middle_rect, at);
-        to_draw -= width;
-        at.x += width;
+    if (_dirtymap) {
+        imp_update_dirtymap(in);
     }
+    const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
+        const cgrect_t left_rect = (cgrect_t){ rect.origin, {cap, rect.size.height}};
+        draw(src, left_rect, in.origin);
+        const cgrect_t right_rect = (cgrect_t){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
+        const cgpoint_t right_at = (cgpoint_t){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
+        draw(src, right_rect, right_at);
+        cgrect_t middle_rect = (cgrect_t){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
+        cgpoint_t at = (cgpoint_t){(int16_t)(in.origin.x + cap), in.origin.y };
+        int16_t to_draw = in.size.width - cap * 2;
+        while (to_draw > 0) {
+            const int16_t width = MIN(to_draw, middle_rect.size.width);
+            middle_rect.size.width = width;
+            draw(src, middle_rect, at);
+            to_draw -= width;
+            at.x += width;
+        }
+    });
 }
 
 void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment, const uint8_t color) const {
     int len = (int)strlen(text);
-    cgsize_t size = font.get_rect(text[1]).size;
-    for (int i = 1; i < len; i++) {
+    cgsize_t size = font.get_rect(' ').size;
+    size.width = 0;
+    for (int i = len; --i != -1; ) {
         size.width += font.get_rect(text[i]).size.width;
     }
     switch (alignment) {
-        case align_right:
-            at.x -= size.width;
+        case align_left:
+            at.x += size.width;
             break;
         case align_center:
-            at.x -= size.width / 2;
+            at.x += size.width / 2;
             break;
         default:
             break;
     }
-    for (int i = 0; i < len; i++) {
-        const cgrect_t &rect = font.get_rect(text[i]);
-        draw(font.get_image(), rect, at, color);
-        at.x += rect.size.width;
+    if (_dirtymap) {
+        cgrect_t rect = (cgrect_t){{(int16_t)(at.x - size.width), at.y}, size};
+        imp_update_dirtymap(rect);
     }
+    const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
+        for (int i = len; --i != -1; ) {
+            const cgrect_t &rect = font.get_rect(text[i]);
+            at.x -= rect.size.width;
+            draw(font.get_image(), rect, at, color);
+        }
+    });
 }
 
 #define MAX_LINES 8

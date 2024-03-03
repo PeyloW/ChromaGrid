@@ -44,9 +44,10 @@ public:
     cgcolor_c colors[16];
     cgpalette_c(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
     cgpalette_c(uint8_t *c) {
-        for (int i = 0; i < 16; i++) {
+        c += 3 * 16;
+        for (int i = 16; --i != -1; ) {
+            c -= 3;
             colors[i] = cgcolor_c(c[0], c[1], c[2]);
-            c += 3;
         }
     }
     void set_active() const;
