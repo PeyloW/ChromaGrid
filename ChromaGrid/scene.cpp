@@ -38,6 +38,7 @@ void cgmanager_c::run(cgscene_c *rootscene) {
 #if DEBUG_COLORS
     cgcolor_c color_in_transition(31, 0, 0);
     cgcolor_c color_in_top_tick(0, 191, 0);
+    cgcolor_c color_in_merge_dirty(95, 0, 95);
     cgcolor_c color_in_restore(0, 00, 95);
     cgcolor_c color_in_root_tick(0, 47, 0);
     
@@ -76,6 +77,11 @@ void cgmanager_c::run(cgscene_c *rootscene) {
                     top_scene().tick(_logical_screen);
                 });
             }
+#if DEBUG_COLORS
+            color_in_merge_dirty.set_at(0);
+#endif
+            auto &other_dirtymap = (_active_physical_screen == 1) ? _dirtymap_0 : _dirtymap_1;
+            physical_screen.merge_dirtymap(other_dirtymap, dirtymap);
 #if DEBUG_COLORS
             color_in_restore.set_at(0);
 #endif

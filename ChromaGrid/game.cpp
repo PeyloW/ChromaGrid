@@ -26,7 +26,9 @@ void cgbutton_t::draw_in(cgimage_c &image) const {
         (int16_t)(rect.origin.x + rect.size.width / 2),
         (int16_t)(rect.origin.y + (state != pressed ? 3 : 4))
     };
-    image.draw(rsc.font, text, at, cgimage_c::align_center, state != disabled ? cgimage_c::MASKED_CIDX : 7);
+    image.with_dirtymap(nullptr, [&] {
+        image.draw(rsc.font, text, at, cgimage_c::align_center, state != disabled ? cgimage_c::MASKED_CIDX : 7);
+    });
 }
 
 void cgroot_scene_c::will_appear(cgimage_c &screen, bool obsured) {

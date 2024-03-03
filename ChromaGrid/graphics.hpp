@@ -116,7 +116,8 @@ public:
         _dirtymap = old_dirtymap;
     }
     void restore(const cgimage_c &clean_image, bool *const dirtymap) const;
-
+    void merge_dirtymap(bool *dest, const bool *source) const;
+    
     void put_pixel(uint8_t ci, cgpoint_t at) const;
     uint8_t get_pixel(cgpoint_t at) const;
 

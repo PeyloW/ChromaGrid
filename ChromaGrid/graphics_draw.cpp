@@ -13,7 +13,6 @@ void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) cons
     assert((_size.height & 0xf) == 0);
     const_cast<cgimage_c*>(this)->with_clipping(false, [this, &clean_image, dirtymap] {
         const int row_count = _size.height / 16;
-        const int row_words = _line_words * 16;
         int16_t y = _size.height - 16;
         for (int row = row_count; --row != -1; y -= 16) {
             const int row_offset = row * _line_words;
@@ -29,6 +28,29 @@ void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) cons
         }
     });
 }
+
+void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
+    int count = (int)dirtymap_size();
+    int l_count = count / 4;
+    if (l_count * 4 == count) {
+        uint32_t *l_dest = (uint32_t*)dest;
+        uint32_t *l_source = (uint32_t*)source;
+        while (--l_count != -1) {
+            register uint16_t v = *l_source++;
+            if (v) {
+                *l_dest++ |= v;
+            } else {
+                l_dest++;
+            }
+        }
+    } else {
+        // slow path
+        while (--count != -1) {
+            *dest++ |= *source++;
+        }
+    }
+}
+
 
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     if (_clipping) {
@@ -287,6 +309,7 @@ void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
     const int x2 = (rect.origin.x + rect.size.width - 1) / 16;
     const int y1 = rect.origin.y / 16;
     const int y2 = (rect.origin.y + rect.size.height - 1) / 16;
+    //printf("Dirty: %d x %d -> %d x %d\n", x1, y1, x2, y2);
     for (int y = y1; y <= y2; y++) {
         const int line_offset = y * _line_words;
         for (int x = x1; x <= x2; x++) {

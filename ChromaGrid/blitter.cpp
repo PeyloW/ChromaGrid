@@ -17,7 +17,7 @@ struct cgblitter_t *pBlitter = &_Blitter;
 // Details borrowed from Hatari 1.0 sources (https://github.com/hatari/hatari)
 //
 void cgblitter_t::start() {
-    printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
+    //printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
     
     uint32_t buffer;
     const auto do_shift = [this, &buffer] {
