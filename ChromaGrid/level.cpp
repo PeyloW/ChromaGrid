@@ -13,7 +13,7 @@ public:
     tilestate_t state;
 
 public:
-    static const uint8_t STEP_MAX = 7;
+    static const uint8_t STEP_MAX = 31;
     
     void tick() {
         if (_transition.step > 0) {
@@ -67,6 +67,14 @@ public:
         }
     }
     
+    void try_make_regular() {
+        if (state.type == empty) {
+            _transition.from_state = state;
+            _transition.step = STEP_MAX;
+            state.type = regular;
+        }
+    }
+    
     void solve_remove_orb() {
         assert(state.orb != none && state.orb != both);
         _transition.from_state = state;
@@ -74,6 +82,9 @@ public:
         state.orb = none;
         if (state.type == glass) {
             state.type = broken;
+        }
+        if (state.current != state.target) {
+            state.current = none;
         }
         _dirty = true;
     }
@@ -106,22 +117,33 @@ private:
     
     template<class V>
     void visit_adjecent_at(int x, int y, V visitor) {
-        for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 1); ay++) {
-            for (int ax = x - 1; ax < x + 1; ax++) {
+        for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 2); ay++) {
+            for (int ax = MAX(0, x - 1); ax < MIN(GRID_MAX, x + 2); ax++) {
                 visitor(tiles[ax][ay], ax, ay);
             }
+        }
+    }
+
+    template<class V>
+    void visit_across_at(int x, int y, V visitor) {
+        for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 2); ay++) {
+            visitor(tiles[x][ay], x, ay);
+        }
+        for (int ax = MAX(0, x - 1); ax < MIN(GRID_MAX, x + 2); ax++) {
+            visitor(tiles[ax][y], ax, y);
         }
     }
     
     bool is_orb_solved_at(int x, int y) {
         const color_e c = tiles[x][y].orb_color();
-        assert(c != none);
         int cnt = 0;
-        visit_adjecent_at(x, y, [&cnt, c] (const tile_c &tile, int x, int y) {
-            if (tile.is_orb_color(c)) {
-                cnt++;
-            }
-        });
+        if (c != none) {
+            visit_adjecent_at(x, y, [&cnt, c] (tile_c &tile, int x, int y) {
+                if (tile.is_orb_color(c)) {
+                    cnt++;
+                }
+            });
+        }
         return cnt >= 4;
     }
     
@@ -132,7 +154,14 @@ public:
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
         auto &tile = tiles[x][y];
-        return tile.try_add_orb(c);
+        if (tile.try_add_orb(c)) {
+            visit_across_at(x, y, [this] (tile_c &tile, int x, int y) {
+                tile.try_make_regular();
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
     
     color_e try_remove_orb_at(int x, int y) {
@@ -145,16 +174,15 @@ public:
     void resolve_at(int x, int y) {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        struct { int x; int y; } updates[9];
-        int update_count = 0;
-        visit_adjecent_at(x, y, [this, &updates, &update_count] (const tile_c &tile, int x, int y) {
-            if (is_orb_solved_at(x, x)) {
-                updates[update_count++] = { x, y };
+        cgvector_c<cgpoint_t, 9> updates;
+        visit_adjecent_at(x, y, [this, &updates] (tile_c &tile, int x, int y) {
+            if (is_orb_solved_at(x, y)) {
+                tile.state.current = tile.state.orb;
+                updates.push_back((cgpoint_t){(int16_t)x, (int16_t)y});
             }
         });
-        for (int i = 0; i < update_count; i++) {
-            auto &update = updates[i];
-            auto &tile = tiles[update.x][update.y];
+        for (auto update = updates.begin(); update != updates.end(); update++) {
+            auto &tile = tiles[update->x][update->y];
             tile.solve_remove_orb();
         }
     }
@@ -290,16 +318,52 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
         buf[1] = '0' + _orbs[i] % 10;
         buf[2] = 0;
         cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
+        cgrect_t rect = (cgrect_t){ at, {16, 8}};
+        screen.draw(rsc.background, rect, at);
         screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
     }
 }
 
-level_t::state_e level_t::update_tick(cgimage_c &screen, int ticks) {
+level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int ticks) {
     _time_count += ticks;
     if (_time_count >= 50) {
         _time--;
         _time_count -= 50;
         draw_time(screen);
     }
+    
+    auto at = mouse.get_postion();
+    at.x /= 16; at.y /= 16;
+
+    if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
+        bool lb = mouse.get_state(cgmouse_c::left) == cgmouse_c::clicked;
+        bool rb = mouse.get_state(cgmouse_c::right) == cgmouse_c::clicked;
+        if (lb || rb) {
+            // Try remove an orb
+            auto color = _grid->try_remove_orb_at(at.x, at.y);
+            if (color != color_e::none) {
+                _orbs[color - 1] += 1;
+                draw_orb_counts(screen);
+                goto done;
+            }
+            // Try add an orb
+            color = lb ? color_e::gold : color_e::silver;
+            if (_orbs[color - 1] > 0) {
+                if (_grid->try_add_orb_at(color, at.x, at.y)) {
+                    _orbs[color - 1] -= 1;
+                    draw_orb_counts(screen);
+                    _grid->resolve_at(at.x, at.y);
+                }
+            }
+        }
+    done:;
+        auto completed = _grid->tick([this, &screen] (int x, int y) {
+            draw_tile(screen, x, y);
+        });
+        if (completed) {
+            return success;
+        }
+    }
+    
     return _time > 0 ? normal : failed;
 }

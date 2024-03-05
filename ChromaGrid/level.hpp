@@ -56,7 +56,7 @@ public:
     level_t(recipe_t *recipe);
     ~level_t();
 
-    state_e update_tick(cgimage_c &screen, int delta_ticks);
+    state_e update_tick(cgimage_c &screen, cgmouse_c &mouse, int delta_ticks);
 
     void draw_all(cgimage_c &screen) const;
 private:

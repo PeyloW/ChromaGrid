@@ -36,7 +36,7 @@ void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
             break;
     }
     auto tick = manager.vbl.tick();
-    auto state = _level.update_tick(screen, ticks);
+    auto state = _level.update_tick(screen, manager.mouse, ticks);
     switch (state) {
         case level_t::failed:
             manager.pop();

@@ -89,8 +89,8 @@ cgresources_c::cgresources_c() :
     recipe->width = 2;
     recipe->height = 2;
     recipe->time = 75;
-    recipe->orbs[0] = 1;
-    recipe->orbs[1] = 2;
+    recipe->orbs[0] = 3;
+    recipe->orbs[1] = 4;
     recipe->tiles[0] = { tiletype_e::regular, color_e::none, color_e::none, color_e::none };
     recipe->tiles[1] = { tiletype_e::glass, color_e::gold, color_e::none, color_e::none };
     recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
