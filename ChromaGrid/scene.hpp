@@ -26,7 +26,7 @@ public:
     
     virtual void will_appear(cgimage_c &screen, bool obsured) = 0;
     virtual void will_disappear(bool obscured) {};
-    virtual void tick(cgimage_c &screen) = 0;
+    virtual void tick(cgimage_c &screen, int ticks) = 0;
 protected:
     cgmanager_c &manager;
 };
@@ -82,7 +82,7 @@ private:
     cgvector_c<screen_t, 3> _screens;
     int _active_physical_screen;
 
-    void run_transition(screen_t &physical_screen);
+    void run_transition(screen_t &physical_screen, int ticks);
     
     struct {
         int full_restores_left;

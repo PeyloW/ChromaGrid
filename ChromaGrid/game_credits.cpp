@@ -55,7 +55,7 @@ void cgcredits_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 
-void cgcredits_scene_c::tick(cgimage_c &screen) {
+void cgcredits_scene_c::tick(cgimage_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:

@@ -26,13 +26,12 @@ cgmanager_c::~cgmanager_c() {
 
 #define DEBUG_NO_SET_SCREEN 0
 
-void cgmanager_c::run_transition(screen_t &physical_screen) {
+void cgmanager_c::run_transition(screen_t &physical_screen, int ticks) {
     debug_cpu_color(0x100);
     if (_transition_state.type == cgimage_c::none) {
         physical_screen.image.draw_aligned(get_logical_screen(), (cgpoint_t){0,0});
         _transition_state.full_restores_left--;
     } else {
-        auto old_tick = vbl.tick();
         auto shade = MIN(cgimage_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
         physical_screen.image.with_stencil(cgimage_c::get_stencil(_transition_state.type, shade), [this, &physical_screen] {
             physical_screen.image.draw_aligned(get_logical_screen(), (cgpoint_t){0, 0});
@@ -40,8 +39,7 @@ void cgmanager_c::run_transition(screen_t &physical_screen) {
         if (shade == cgimage_c::STENCIL_FULLY_OPAQUE) {
             _transition_state.full_restores_left--;
         }
-        auto ticks = 1 + MAX(1, vbl.tick() - old_tick);
-        _transition_state.shade += ticks;
+        _transition_state.shade += 1 + MAX(1, ticks);
     }
 }
 
@@ -54,17 +52,23 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
     push(rootscene, transition);
 
     vbl.reset_tick();
+    int32_t previous_tick = vbl.tick();
     while (_scene_stack.size() > 0) {
+        vbl.wait();
+        int32_t tick = vbl.tick();
+        int32_t ticks = tick - previous_tick;
+        previous_tick = tick;
+        
         mouse.update_state();
         screen_t &physical_screen = _screens[_active_physical_screen];
         screen_t &logical_screen = _screens.back();
         
         if (_transition_state.full_restores_left > 0) {
-            run_transition(physical_screen);
+            run_transition(physical_screen, ticks);
         } else {
             debug_cpu_color(0x030);
-            logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, &logical_screen] {
-                top_scene().tick(logical_screen.image);
+            logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, ticks, &logical_screen] {
+                top_scene().tick(logical_screen.image, ticks);
             });
             debug_cpu_color(0x202);
             // Merge dirty maps here!
@@ -80,8 +84,8 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
 
             if (_overlay_scene) {
                 debug_cpu_color(0x010);
-                physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &physical_screen] {
-                    _overlay_scene->tick(physical_screen.image);
+                physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, ticks, &physical_screen] {
+                    _overlay_scene->tick(physical_screen.image, ticks);
                 });
             }
 #if DEBUG_RESTORE_SCREEN
@@ -98,7 +102,6 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
             physical_screen.image.set_active();
             _active_physical_screen = (_active_physical_screen + 1) & 0x1;
         });
-        vbl.wait();
     }
 #if !DEBUG_NO_SET_SCREEN
     (void)cgset_screen(nullptr, nullptr, old_mode);

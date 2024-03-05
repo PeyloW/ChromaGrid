@@ -30,14 +30,14 @@ public:
     cgoverlay_scene_c(cgmanager_c &manager) : cggame_scene_c(manager) {}
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void will_disappear(bool obscured);
-    virtual void tick(cgimage_c &screen);
+    virtual void tick(cgimage_c &screen, int ticks);
 };
 
 class cgintro_scene_c : public cggame_scene_c {
 public:
     cgintro_scene_c(cgmanager_c &manager);
     virtual void will_appear(cgimage_c &screen, bool obsured);
-    virtual void tick(cgimage_c &screen);
+    virtual void tick(cgimage_c &screen, int ticks);
 private:
     cgbutton_group_c<6> _menu_buttons;
 };
@@ -46,7 +46,7 @@ class cgcredits_scene_c : public cggame_scene_c {
 public:
     cgcredits_scene_c(cgmanager_c &manager);
     virtual void will_appear(cgimage_c &screen, bool obsured);
-    virtual void tick(cgimage_c &screen);
+    virtual void tick(cgimage_c &screen, int ticks);
 private:
     cgbutton_group_c<1> _menu_buttons;
 };
@@ -56,10 +56,9 @@ public:
     cglevel_scene_c(cgmanager_c &manager, int level);
 
     virtual void will_appear(cgimage_c &screen, bool obsured);
-    virtual void tick(cgimage_c &screen);
+    virtual void tick(cgimage_c &screen, int ticks);
 private:
     cgbutton_group_c<2> _menu_buttons;
-    int32_t _previous_tick;
     int _level_num;
     level_t _level;
 };

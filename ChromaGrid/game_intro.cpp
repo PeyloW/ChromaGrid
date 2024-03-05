@@ -62,7 +62,7 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (cgpoint_t){96, 170});
 }
 
-void cgintro_scene_c::tick(cgimage_c &screen) {
+void cgintro_scene_c::tick(cgimage_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:

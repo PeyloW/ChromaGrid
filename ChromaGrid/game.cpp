@@ -42,7 +42,7 @@ void cgoverlay_scene_c::will_disappear(bool obscured) {
     }
 }
 
-void cgoverlay_scene_c::tick(cgimage_c &screen) {
+void cgoverlay_scene_c::tick(cgimage_c &screen, int ticks) {
     screen.with_clipping(true, [this, &screen] {
         /*
         if (manager.mouse.is_pressed(cgmouse_c::left)) {

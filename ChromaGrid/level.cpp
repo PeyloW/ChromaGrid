@@ -294,8 +294,8 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
     }
 }
 
-level_t::state_e level_t::update_tick(cgimage_c &screen, int delta_ticks) {
-    _time_count += delta_ticks;
+level_t::state_e level_t::update_tick(cgimage_c &screen, int ticks) {
+    _time_count += ticks;
     if (_time_count >= 50) {
         _time--;
         _time_count -= 50;
