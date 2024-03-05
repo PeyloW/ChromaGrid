@@ -12,7 +12,7 @@ cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) :
     _menu_buttons((cgpoint_t){200, 184}, (cgsize_t){112, 14}, -6)
 {
     const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
-    bool enabled[6] = { false, true, false, false, false, false };
+    bool enabled[6] = { false, true, false, false, false, true };
     for (int i = 0; i < 6; i++) {
         _menu_buttons.add_button(button_titles[i]);
         if (!enabled[i]) {
@@ -63,7 +63,7 @@ void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 void cgintro_scene_c::tick(cgimage_c &screen) {
-    int button = _menu_buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(cgmouse_c::left));
+    int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
             manager.pop();
@@ -82,7 +82,7 @@ void cgintro_scene_c::tick(cgimage_c &screen) {
             // Show Hi-Scores
             break;
         case 5:
-            manager.pop();
+            manager.push(new cglevel_scene_c(manager, 0));
             break;
         default:
             break;

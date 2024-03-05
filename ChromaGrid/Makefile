@@ -21,8 +21,8 @@ OBJECTS+=iff_file.o
 OBJECTS+=graphics.o graphics_stencil.o graphics_draw.o graphics_draw_blitter.o
 OBJECTS+=audio.o
 OBJECTS+=scene.o
-OBJECTS+=resources.o
-OBJECTS+=game.o game_intro.o game_credits.o
+OBJECTS+=resources.o level.o
+OBJECTS+=game.o game_intro.o game_credits.o game_level.o
 
 all: cgrid
 

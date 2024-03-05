@@ -56,7 +56,7 @@ void cgcredits_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 
 
 void cgcredits_scene_c::tick(cgimage_c &screen) {
-    int button = _menu_buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(cgmouse_c::left));
+    int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
             manager.pop();

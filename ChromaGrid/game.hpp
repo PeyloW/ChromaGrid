@@ -8,7 +8,7 @@
 #ifndef game_hpp
 #define game_hpp
 
-#include "grid.hpp"
+#include "level.hpp"
 #include "scene.hpp"
 #include "resources.hpp"
 #include "button.hpp"
@@ -19,6 +19,10 @@ public:
         cgscene_c(manager),
         rsc(cgresources_c::shared()) {};
     const cgresources_c &rsc;
+    template<class BG>
+    int update_button_group(cgimage_c &screen, BG &buttons) const {
+        return buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(cgmouse_c::left));
+    }
 };
 
 class cgoverlay_scene_c : public cggame_scene_c {
@@ -45,6 +49,19 @@ public:
     virtual void tick(cgimage_c &screen);
 private:
     cgbutton_group_c<1> _menu_buttons;
+};
+
+class cglevel_scene_c : public cggame_scene_c {
+public:
+    cglevel_scene_c(cgmanager_c &manager, int level);
+
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen);
+private:
+    cgbutton_group_c<2> _menu_buttons;
+    int32_t _previous_tick;
+    int _level_num;
+    level_t _level;
 };
 
 #endif /* game_hpp */

@@ -59,6 +59,7 @@ cgresources_c::cgresources_c() :
     _font_image(data_path("FONT.IFF", "Load fonts"), true, 0),
     _small_font_image(data_path("FONT6.IFF"), true, 0),
     font(_font_image, (cgsize_t){8, 8}, 4, 2, 4),
+    mono_font(_font_image, (cgsize_t){8, 8}),
     small_font(_small_font_image, (cgsize_t){6, 6}, 3, 0, 6),
     music(data_path("music.snd", "Load music"))
 {
@@ -82,4 +83,17 @@ cgresources_c::cgresources_c() :
 
     printf("Pre-warm stencils.\n\r");
     cgimage_c::get_stencil(cgimage_c::orderred, 0);
+    
+    printf("Loading levels.\n\r");
+    level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 4);
+    recipe->width = 2;
+    recipe->height = 2;
+    recipe->time = 75;
+    recipe->orbs[0] = 1;
+    recipe->orbs[1] = 2;
+    recipe->tiles[0] = { tiletype_e::regular, color_e::none, color_e::none, color_e::none };
+    recipe->tiles[1] = { tiletype_e::glass, color_e::gold, color_e::none, color_e::none };
+    recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
+    recipe->tiles[3] = { tiletype_e::regular, color_e::silver, color_e::none, color_e::gold };
+    levels.push_back(recipe);
 }

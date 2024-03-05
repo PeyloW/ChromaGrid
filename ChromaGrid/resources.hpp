@@ -10,6 +10,7 @@
 
 #include "graphics.hpp"
 #include "audio.hpp"
+#include "level.hpp"
 
 class cgresources_c : private cgnocopy_c {
 public:
@@ -23,8 +24,11 @@ private:
     cgimage_c _small_font_image;
 public:
     cgfont_c font;
+    cgfont_c mono_font;
     cgfont_c small_font;
     cgmusic_c music;
+    
+    cgvector_c<level_t::recipe_t*, 100> levels;
     
     static const cgresources_c& shared();
 private:
