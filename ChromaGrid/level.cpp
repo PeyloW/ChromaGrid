@@ -10,22 +10,19 @@
 
 class tile_c {
 public:
-    tilestate_t state;
-
-public:
-    static const uint8_t STEP_MAX = 31;
+    static const uint8_t STEP_MAX = 16;
     
     void tick() {
-        if (_transition.step > 0) {
-            _transition.step--;
+        if (transition.step > 0) {
+            transition.step--;
             _dirty = true;
         }
     }
 
     uint8_t get_drawstate(tilestate_t *current, tilestate_t *from) const {
         *current = state;
-        *from = _transition.from_state;
-        return _transition.step;
+        *from = transition.from_state;
+        return transition.step;
     }
     
     bool check_dirty() {
@@ -43,11 +40,11 @@ public:
     }
     
     bool at_target() const {
-        return _transition.step == 0 && state.target == state.current;
+        return transition.step == 0 && state.target == state.current;
     }
     
     bool try_add_orb(color_e c) {
-        if (_transition.step == 0 && state.orb == none && state.type >= glass) {
+        if (transition.step == 0 && state.orb == none && state.type >= glass) {
             state.orb = c;
             _dirty = true;
             return true;
@@ -57,7 +54,7 @@ public:
     }
     
     color_e try_remove_orb() {
-        if (_transition.step == 0 && state.orb != none && state.type != magnetic) {
+        if (transition.step == 0 && state.orb != none && state.type != magnetic) {
             const auto c = state.orb;
             state.orb = none;
             _dirty = true;
@@ -69,16 +66,16 @@ public:
     
     void try_make_regular() {
         if (state.type == empty) {
-            _transition.from_state = state;
-            _transition.step = STEP_MAX;
+            transition.from_state = state;
+            transition.step = STEP_MAX;
             state.type = regular;
         }
     }
     
     void solve_remove_orb() {
         assert(state.orb != none && state.orb != both);
-        _transition.from_state = state;
-        _transition.step = STEP_MAX;
+        transition.from_state = state;
+        transition.step = STEP_MAX;
         state.orb = none;
         if (state.type == glass) {
             state.type = broken;
@@ -89,11 +86,11 @@ public:
         _dirty = true;
     }
         
-private:
+    tilestate_t state;
     struct transition_t {
         tilestate_t from_state;
         uint8_t step;
-    } _transition;
+    } transition;
     bool _dirty;
 };
 
@@ -270,22 +267,46 @@ void level_t::draw_all(cgimage_c &screen) const {
     draw_orb_counts(screen);
 }
 
+inline static void draw_tilestate(cgimage_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
+    if (state.type == empty) {
+        return;
+    }
+    int16_t tx = state.target * 16;
+    tx += state.current * 48;
+    int16_t ty = (state.type - 1) * 16;
+    const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 16}};
+    const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16)};
+    screen.draw_aligned(rsc.tiles, rect, at);
+}
+
+inline static void draw_orb(cgimage_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
+    int16_t tx = (color - 1) * 16;
+    int16_t ty = 10 * shade;
+    const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 10}};
+    const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
+    screen.draw(rsc.orbs, rect, at);
+}
+
 void level_t::draw_tile(cgimage_c &screen, int x, int y) const {
     auto &rsc = cgresources_c::shared();
     auto &tile = _grid->tiles[x][y];
     if (tile.state.type != tiletype_e::empty) {
-        int16_t tx = tile.state.target * 16;
-        tx += tile.state.current * 48;
-        int16_t ty = (tile.state.type - 1) * 16;
-        const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 16}};
-        const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16)};
-        screen.draw_aligned(rsc.tiles, rect, at);
+        if (tile.transition.step > 0) {
+            draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
+            const int shade = cgimage_c::STENCIL_FULLY_OPAQUE - tile.transition.step * cgimage_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
+            auto stencil = cgimage_c::get_stencil(cgimage_c::orderred, shade);
+            screen.with_stencil(stencil, [&, this] {
+                draw_tilestate(screen, rsc, tile.state, x, y);
+            });
+        } else {
+            draw_tilestate(screen, rsc, tile.state, x, y);
+        }
+        
         if (tile.state.orb != color_e::none) {
-            int16_t tx = (tile.state.orb - 1) * 16;
-            int16_t ty = 0;
-            const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 10}};
-            const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
-            screen.draw(rsc.orbs, rect, at);
+            draw_orb(screen, rsc, tile.state.orb, 0, x, y);
+        } else if (tile.transition.step > 0 && tile.transition.from_state.orb != color_e::none) {
+            const int shade = 7 - tile.transition.step * 7 / tile_c::STEP_MAX;
+            draw_orb(screen, rsc, tile.transition.from_state.orb, shade, x, y);
         }
     }
 }

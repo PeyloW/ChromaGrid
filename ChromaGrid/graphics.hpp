@@ -11,6 +11,8 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
+#define DEBUG_DIRTYMAP 0
+
 class cgcolor_c {
 public:
     uint16_t color;
@@ -119,7 +121,11 @@ public:
     void restore(const cgimage_c &clean_image, bool *const dirtymap) const;
     void merge_dirtymap(bool *dest, const bool *source) const;
 #ifndef __M68000__
+#if DEBUG_DIRTYMAP
     void debug_dirtymap(bool *const dirtymap, const char *name) const;
+#else
+    void debug_dirtymap(bool *const dirtymap, const char *name) const {};
+#endif
 #endif
     
     void put_pixel(uint8_t ci, cgpoint_t at) const;

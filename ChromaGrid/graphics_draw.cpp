@@ -52,6 +52,7 @@ void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
 }
 
 #ifndef __M68000__
+#if DEBUG_DIRTYMAP
 void cgimage_c::debug_dirtymap(bool *const dirtymap, const char *name) const {
     const int row_count = _size.height / 16;
     int16_t y = _size.height - 16;
@@ -66,6 +67,7 @@ void cgimage_c::debug_dirtymap(bool *const dirtymap, const char *name) const {
         printf("  row %2d: %s\n", row, buf);
     }
 }
+#endif
 #endif
 
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
