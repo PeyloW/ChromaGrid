@@ -59,6 +59,11 @@ public:
     state_e update_tick(cgimage_c &screen, cgmouse_c &mouse, int delta_ticks);
 
     void draw_all(cgimage_c &screen) const;
+    
+    void get_remaining(uint8_t *orbs, uint8_t *time) const {
+        *orbs = _orbs[0] + _orbs[1];
+        *time = _time;
+    }
 private:
     void draw_tile(cgimage_c &screen, int x, int y) const;
     void draw_time(cgimage_c &screen) const;

@@ -29,7 +29,7 @@ void cgcredits_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     
     struct { const char *credit; const char *person; } credits[5] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
-        {"Graphics:", "???"},
+        {"Graphics:", "Herve 'Exocet' Piton"},
         {"Music:", "Joakim 'AiO' Ekblad"},
         {"Fonts:", "Damien Guard"},
         {"Concept:", "Peter 'Eagle' Nyman"}

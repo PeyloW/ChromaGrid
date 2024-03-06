@@ -63,4 +63,22 @@ private:
     level_t _level;
 };
 
+class cglevel_ended_scene_c : public cggame_scene_c {
+public:
+    typedef struct {
+        int level_num;
+        level_t::state_e state;
+        uint8_t orbs_left;
+        uint8_t time_left;
+    } level_state_t;
+    
+    cglevel_ended_scene_c(cgmanager_c &manager, level_state_t &state);
+
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen, int ticks);
+private:
+    cgbutton_group_c<2> _menu_buttons;
+    level_state_t _state;
+};
+
 #endif /* game_hpp */

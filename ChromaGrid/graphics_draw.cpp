@@ -169,7 +169,7 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) 
         }
     }
     if (_dirtymap) {
-        const cgrect_t dirty_rect = (cgrect_t){ at, src.get_size() };
+        const cgrect_t dirty_rect = (cgrect_t){ at, rect.size };
         imp_update_dirtymap(dirty_rect);
     }
     imp_draw_aligned(src, rect, at);
