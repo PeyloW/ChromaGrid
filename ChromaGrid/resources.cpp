@@ -56,6 +56,7 @@ cgresources_c::cgresources_c() :
     orbs(data_path("ORBS.IFF"), true, 6),
     cursor(data_path("CURSOR.IFF"), true, 0),
     button(data_path("BUTTON.IFF"), true, 6),
+    selection(data_path("SELECT.IFF"), true, 6),
     _font_image(data_path("FONT.IFF", "Load fonts"), true, 0),
     _small_font_image(data_path("FONT6.IFF"), true, 0),
     font(_font_image, (cgsize_t){8, 8}, 4, 2, 4),
@@ -65,6 +66,7 @@ cgresources_c::cgresources_c() :
 {
     background.set_offset((cgpoint_t){0, 0});
     tiles.set_offset((cgpoint_t){0, 0});
+    selection.set_offset((cgpoint_t){0, 0});
     for (int x = 1; x < 3; x++) {
         printf("Initialize tiles %d.\n\r", x);
         cgrect_t rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};

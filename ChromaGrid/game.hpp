@@ -81,4 +81,20 @@ private:
     level_state_t _state;
 };
 
+class cglevel_edit_scene_c : public cggame_scene_c {
+public:
+    cglevel_edit_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe);
+    
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen, int ticks);
+private:
+    void draw_tile_templates(cgimage_c &screen) const;
+    void draw_level_grid(cgimage_c &screen, int x, int y) const;
+    
+    cgbutton_group_c<4> _menu_buttons;
+    cgvector_c<tilestate_t, 15> _tile_templates;
+    int _selected_template;
+    tilestate_t _level_grid[12][12];
+};
+
 #endif /* game_hpp */

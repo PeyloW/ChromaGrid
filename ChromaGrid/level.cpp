@@ -261,22 +261,44 @@ void level_t::draw_all(cgimage_c &screen) const {
     cgrect_t rect = (cgrect_t){{0, 0}, {16, 10}};
     for (int i = 0; i < 2; i++) {
         cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + i * ORB_X_SPACING), ORB_Y_INSET - 1};
-        screen.draw(rsc.orbs, rect, at);
+        draw_orb(screen, (color_e)(i + 1), at);
         rect.origin.x += 16;
     }
     draw_orb_counts(screen);
+}
+
+inline static const cgrect_t tilestate_src_rect(const tilestate_t &state) {
+    int16_t tx = state.target * 16;
+    tx += state.current * 48;
+    int16_t ty = (state.type - 1) * 16;
+    return (cgrect_t){{tx, ty}, {16, 16}};
 }
 
 inline static void draw_tilestate(cgimage_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
     if (state.type == empty) {
         return;
     }
-    int16_t tx = state.target * 16;
-    tx += state.current * 48;
-    int16_t ty = (state.type - 1) * 16;
-    const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 16}};
+    const cgrect_t rect = tilestate_src_rect(state);
     const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16)};
     screen.draw_aligned(rsc.tiles, rect, at);
+}
+
+void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected) {
+    auto &rsc = cgresources_c::shared();
+    if (state.type == empty) {
+        cgrect_t rect = (cgrect_t){at, {16, 16}};
+        screen.draw(rsc.background, rect, at);
+    } else {
+        const cgrect_t rect = tilestate_src_rect(state);
+        screen.draw(rsc.tiles, rect, at);
+    }
+    if (selected) {
+        screen.draw(rsc.selection, at);
+    }
+    if (state.orb != none) {
+        at.y += 3;
+        draw_orb(screen, state.orb, at);
+    }
 }
 
 inline static void draw_orb(cgimage_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
@@ -284,6 +306,13 @@ inline static void draw_orb(cgimage_c &screen, const cgresources_c &rsc, color_e
     int16_t ty = 10 * shade;
     const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 10}};
     const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
+    screen.draw(rsc.orbs, rect, at);
+}
+
+void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at) {
+    auto &rsc = cgresources_c::shared();
+    int16_t tx = (color - 1) * 16;
+    const cgrect_t rect = (cgrect_t){{tx, 0}, {16, 10}};
     screen.draw(rsc.orbs, rect, at);
 }
 

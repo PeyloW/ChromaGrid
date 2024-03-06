@@ -35,6 +35,8 @@ struct __attribute__((aligned (4))) tilestate_t  {
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
 
+void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
+void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);
 
 class grid_c;
 

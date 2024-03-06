@@ -19,6 +19,7 @@ public:
     cgimage_c orbs;
     cgimage_c cursor;
     cgimage_c button;
+    cgimage_c selection;
 private:
     cgimage_c _font_image;
     cgimage_c _small_font_image;

@@ -52,6 +52,22 @@ public:
         _group_rect.size.height += expand;
         buttons.emplace_back(title, rect);
     }
+
+    void add_buttons(const char *left_title, const char *right_title) {
+        cgrect_t rect = (cgrect_t){{_group_rect.origin.x, 0}, _size};
+        int16_t expand = _size.height + (buttons.size() ? ABS(_spacing) : 0);
+        if (_spacing < 0) {
+            rect.origin.y = _group_rect.origin.y - expand;
+            _group_rect.origin.y -= expand;
+        } else {
+            rect.origin.y = _group_rect.origin.y + _group_rect.size.height + expand - _spacing;
+        }
+        _group_rect.size.height += expand;
+        rect.size.width = rect.size.width / 2 - 4;
+        buttons.emplace_back(left_title, rect);
+        rect.origin.x += rect.size.width + 8;
+        buttons.emplace_back(right_title, rect);
+    }
     
     void draw_all(cgimage_c &screen) {
         for (auto button = buttons.begin(); button != buttons.end(); button++) {
