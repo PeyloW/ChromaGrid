@@ -23,7 +23,7 @@ void cgblitter_t::start() {
     printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
 #endif
     
-    uint32_t buffer;
+    uint32_t buffer = 0;
     const auto do_shift = [this, &buffer] {
         buffer <<= 16;
     };

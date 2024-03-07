@@ -9,7 +9,7 @@
 
 cgcredits_scene_c::cgcredits_scene_c(cgmanager_c &manager) :
     cggame_scene_c(manager),
-    _menu_buttons((cgpoint_t){200, 184}, (cgsize_t){112, 14}, -6)
+    _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
     _menu_buttons.add_button("Back");
 }

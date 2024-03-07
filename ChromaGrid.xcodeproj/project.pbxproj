@@ -35,6 +35,7 @@
 		A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 		A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE52D2B8D76FA00EBA43D /* button.iff */; };
 		A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5302B8D9A2400EBA43D /* font6.iff */; };
+		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
@@ -87,6 +88,7 @@
 		A69AE5202B8BB71E00EBA43D /* blitter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter.hpp; sourceTree = "<group>"; };
 		A69AE52D2B8D76FA00EBA43D /* button.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = button.iff; sourceTree = "<group>"; };
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
+		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				A682A3E82B92613F00FF2E57 /* game_intro.cpp */,
 				A6F766AA2B9509EB00325754 /* game_credits.cpp */,
 				A6F766AE2B96AA9F00325754 /* game_level.cpp */,
+				A6A4192D2B9954DD0062339B /* game_level_edit.cpp */,
 				A69AE4B72B6EBC4100EBA43D /* main.cpp */,
 			);
 			path = ChromaGrid;
@@ -300,6 +303,7 @@
 				A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */,
 				A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */,
 				A69AE5172B88F53500EBA43D /* graphics_draw.cpp in Sources */,
+				A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */,
 				A69AE4CB2B6FEFE500EBA43D /* graphics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

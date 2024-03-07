@@ -44,7 +44,7 @@ public:
     }
     
     bool try_add_orb(color_e c) {
-        if (transition.step == 0 && state.orb == none && state.type >= glass) {
+        if (transition.step == 0 && state.orb == none && state.can_have_orb()) {
             state.orb = c;
             _dirty = true;
             return true;
@@ -364,7 +364,7 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
     for (int i = 0; i < 2; i++) {
         char buf[3];
         auto d1 = _orbs[i] / 10;
-        buf[0] = d1 ? '9' : '0' + d1;
+        buf[0] = d1 ? '0' + d1 :  ' ';
         buf[1] = '0' + _orbs[i] % 10;
         buf[2] = 0;
         cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};

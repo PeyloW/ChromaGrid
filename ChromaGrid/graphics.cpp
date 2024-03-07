@@ -194,6 +194,7 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
     const bool needs_mask_words = masked || (mask_type == mask_type_plane);
     const uint16_t mask_words = needs_mask_words ? (bitmap_words >> 2) : 0;
     _bitmap = reinterpret_cast<uint16_t*>(malloc((bitmap_words + mask_words) << 1));
+    assert(_bitmap);
     if (needs_mask_words) {
         _maskmap = _bitmap + bitmap_words;
     } else {

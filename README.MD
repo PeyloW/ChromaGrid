@@ -7,7 +7,7 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 * Main Code: _Fredrik 'PeyloW' Olsson_
 * Blitter Code: _Hatari 1.0 as reference_
 * Music: _Joakim 'AiO' Ekblad_
-* Graphics: ??
+* Graphics: Hervé 'Exocet' Piton
 * Font: _Damien Guard_
 * Concept: Peter 'Eagle' Nyman
 
@@ -60,7 +60,8 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Scene management__
     * [x] __Shared resources manager__
     * [x] __A stage manager - push-pop scenes__
-        * [x] _Scene transitions_
+        * [x] **Scene transitions**
+        * [ ] Transition through black
     * [x] Generic scene
 * [ ] Introduction scene
     * [ ] T.O.Y.S. logo
@@ -75,10 +76,14 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Level selection grid, center
 * [x] __Credits scene__
     * [x] Credits
+    * [ ] Acknowledgements
+    * [ ] Dedications
+    * [ ] Greetings
 * [ ] __Help scene__
     * [ ] Goal of the game
         * [ ] Tile types
-        * [ ] Orb fusing        
+        * [ ] Orb fusing    
+    * [ ] _Editing levels_
     * [ ] _Scoring_
 * [ ] __Gameplay scene__
     * Re-use right side background
@@ -86,17 +91,22 @@ Legend: __Required__, Expected , _Optional_
         * [ ] Animations between states
     * [x] __8x8 orbs sprites__
         * [x] Animations between states
-    * [ ] __Game logic ;)__
-        * [ ] __Count down timer__
+    * [x] __Game logic ;)__
+        * [x] __Count down timer__
     * [ ] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
 * [ ] Game over scene
-    * [ ] Large Game Over logo
+    * [x] Scoring summary
+    * [ ] Large success logo
+    * [ ] Large failure logo
     * [ ] Game over game music 
 * [ ] _Highscore screne_
+    * [ ] Per level scores
     * [ ] _Name entry_
     * [ ] _High score per level_
 * [ ] _Level editor screne_
     * [ ] _Editor logic ;)_
-    * [ ] _Test play_
-    * [ ] _Save support_
+    * [ ] Edit times
+    * [ ] Edit orb counts
+    * [x] _Test play_
+    * [ ] Save support

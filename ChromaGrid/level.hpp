@@ -32,6 +32,9 @@ struct __attribute__((aligned (4))) tilestate_t  {
     color_e target;
     color_e current;
     color_e orb;
+    inline bool can_have_orb() const {
+        return type >= glass;
+    }
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
 

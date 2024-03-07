@@ -9,7 +9,7 @@
 
 cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) : 
     cggame_scene_c(manager),
-    _menu_buttons((cgpoint_t){200, 184}, (cgsize_t){112, 14}, -6)
+    _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
     const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
     bool enabled[6] = { false, true, false, true, false, true };
