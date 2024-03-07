@@ -32,6 +32,66 @@ __forceinline static void set_active_stencil(struct cgblitter_t *blitter, const 
     }
 }
 
+void cgimage_c::imp_fill(uint8_t color, cgrect_t rect) const {
+    uint16_t dummy_src = 0;
+    auto blitter = pBlitter;
+
+    const uint16_t dst_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (rect.origin.x / 16));
+    
+    // Source
+    blitter->srcIncX = 0;
+    blitter->srcIncY = 0;
+    blitter->pSrc   = &dummy_src;
+
+    // Dest
+    blitter->dstIncX  = 8;
+    blitter->dstIncY = (uint16_t)(_line_words * 8 - (dst_words_dec_1 * 8));
+    const uint16_t dst_word_offset = (rect.origin.y * _line_words) + (rect.origin.x / 16);
+    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+
+    // Mask
+    uint16_t end_mask_0 = pBlitter_mask[rect.origin.x & 15];
+    uint16_t end_mask_2 = ~pBlitter_mask[(dst_max_x & 15) + 1];
+    if (dst_words_dec_1 == 0) {
+        end_mask_0 &= end_mask_2;
+        end_mask_2 = end_mask_0;
+    }
+    blitter->endMask[0] = end_mask_0;
+    blitter->endMask[1] = 0xFFFF;
+    blitter->endMask[2] = end_mask_2;
+
+    // Counts
+    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    
+    // Operation flags
+    if (_stencil) {
+        set_active_stencil(blitter, _stencil);
+        blitter->HOP = hop_halftone;
+    } else {
+        blitter->HOP = hop_one;
+    }
+    blitter->skew = 0;
+    
+
+    // Color 4 planes
+    for (int i = 4; --i != -1; ) {
+        if ((color & 1) == 0) {
+            blitter->LOP = lop_notsrc_and_dst;
+        } else {
+            blitter->LOP = lop_src_or_dst;
+        }
+        blitter->pDst   = dts_bitmap;
+        blitter->countY = rect.size.height;
+
+        blitter->start();
+
+        color >>= 1;
+        dts_bitmap++;
+    }
+
+}
+
 void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
     assert(get_size().contains(at));
     assert((rect.origin.x & 0xf) == 0);

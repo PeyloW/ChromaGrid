@@ -13,6 +13,57 @@
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_X (MAIN_MENU_ORIGIN_X + (MAIN_MENU_SIZE_WIDTH - LEVEL_EDIT_TEMPLATE_SIZE_WIDTH) / 2)
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_Y (72)
 
+class cglevel_edit_persistence_scene_c : public cggame_scene_c {
+public:
+    cglevel_edit_persistence_scene_c(cgmanager_c &manager) :
+        cggame_scene_c(manager),
+        _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
+        _recipe(nullptr)
+    {
+        add_buttons();
+    }
+
+    cglevel_edit_persistence_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe) :
+        cggame_scene_c(manager),
+        _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
+        _recipe(recipe)
+    {
+        add_buttons();
+    }
+
+    virtual void will_appear(cgimage_c &screen, bool obsured) {
+        cgrect_t rect = (cgrect_t) {
+            {0,0},
+            {MAIN_MENU_ORIGIN_X, 200}
+        };
+        screen.with_stencil(cgimage_c::get_stencil(cgimage_c::orderred, 32), [this, &screen, &rect] {
+            screen.draw_aligned(rsc.background, rect, rect.origin);
+        });
+        rect = (cgrect_t){
+            (cgpoint_t){MAIN_MENU_ORIGIN_X, 0},
+            (cgsize_t){MAIN_MENU_SIZE_WIDTH, 200}
+        };
+        screen.draw_aligned(rsc.background, rect, rect.origin);
+        _menu_buttons.draw_all(screen);
+    }
+    
+    virtual void tick(cgimage_c &screen, int ticks) {
+    }
+    
+private:
+    void add_buttons() {
+        static char buf[3*10];
+        _menu_buttons.add_button("Cancel");
+        for (int i = 0; i < 5; i++) {
+            sprintf(buf + i * 6, "%1d", 9 - (i * 2));
+            sprintf(buf + i * 6 + 3, "%1d", 10 - (i * 2));
+            _menu_buttons.add_buttons(buf + i * 6, buf + i * 6 + 3);
+        }
+    }
+    cgbutton_group_c<11> _menu_buttons;
+    level_t::recipe_t *_recipe;
+};
+
 cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
@@ -23,9 +74,6 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_t::recipe
     _menu_buttons.add_button("Main Menu");
     _menu_buttons.add_buttons("Load", "Save");
     _menu_buttons.add_button("Try Level");
-    for (int i = 1; i < 3; i++) {
-        _menu_buttons.buttons[i].state = cgbutton_t::disabled;
-    }
     
     _tile_templates.push_back((tilestate_t){ tiletype_e::regular, color_e::none, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::regular, color_e::gold, color_e::none, color_e::none});
@@ -66,8 +114,10 @@ void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.pop();
             break;
         case 1: // Load level
+            manager.push(new cglevel_edit_persistence_scene_c(manager));
             break;
         case 2: // Save level
+            manager.push(new cglevel_edit_persistence_scene_c(manager, make_recipe()));
             break;
         case 3: // Try level
             manager.push(new cglevel_scene_c(manager, make_recipe()));

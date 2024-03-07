@@ -167,6 +167,7 @@ private:
 
     inline void imp_update_dirtymap(cgrect_t rect) const;
         
+    void imp_fill(uint8_t ci, cgrect_t rect) const;
     void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
     void imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
     void imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;

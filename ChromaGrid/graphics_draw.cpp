@@ -137,13 +137,17 @@ void cgimage_c::remap_colors(remap_table_t table, cgrect_t rect) const {
 }
 
 void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, ci, &rect] {
-        for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
-            for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                put_pixel(ci, cgpoint_t{ x, y });
-            }
+    assert(_maskmap == nullptr);
+    assert(rect.contained_by(get_size()));
+    if (_clipping) {
+        if (!rect.clip_to(_size, rect.origin)) {
+            return;
         }
-    });
+    }
+    if (_dirtymap) {
+        imp_update_dirtymap(rect);
+    }
+    imp_fill(ci, rect);
 }
 
 void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
