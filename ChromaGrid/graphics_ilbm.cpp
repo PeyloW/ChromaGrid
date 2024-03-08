@@ -122,15 +122,15 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
     memset(this, 0, sizeof(cgimage_c));
 
     cgiff_file_c file(path);
-    cgiff_group_t header;
-    if (!file.find(CGIFF_FORM, cgiff_id_make("ILBM"), header)) {
+    cgiff_group_t form;
+    if (!file.first(CGIFF_FORM, "ILBM", form)) {
         hard_assert(0);
         return; // Not a ILBM
     }
     cgiff_chunk_t chunk;
     ilbm_header_t bmhd;
-    while (file.read(chunk)) {
-        if (cgiff_id_equals(chunk.id, "BMHD")) {
+    while (file.next(form, "*", chunk)) {
+        if (cgiff_id_match(chunk.id, "BMHD")) {
             if (!file.read(bmhd)) {
                 return;
             }
@@ -142,13 +142,13 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
             if (masked_cidx != MASKED_CIDX && masked) {
                 bmhd.mask_color = masked_cidx;
             }
-        } else if (cgiff_id_equals(chunk.id, "CMAP")) {
+        } else if (cgiff_id_match(chunk.id, "CMAP")) {
             uint8_t cmpa[48];
             if (!file.read(cmpa, 48)) {
                 return; // Could not read palette
             }
             _palette = new cgpalette_c(&cmpa[0]);
-        } else if (cgiff_id_equals(chunk.id, "BODY")) {
+        } else if (cgiff_id_match(chunk.id, "BODY")) {
             _line_words = ((_size.width + 15) / 16);
             const uint16_t bitmap_words = (_line_words * _size.height) << 2;
             const bool needs_mask_words = masked || (bmhd.mask_type == mask_type_plane);
@@ -183,9 +183,10 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
                 }
             }
         } else {
+#ifndef __M68000__
             printf("Skipping '%c%c%c%c'\n", (chunk.id >> 24) & 0xff, (chunk.id >> 16) & 0xff, (chunk.id >> 8) & 0xff, chunk.id & 0xff);
+#endif
             file.skip(chunk);
         }
-        file.align();
     }
 }
