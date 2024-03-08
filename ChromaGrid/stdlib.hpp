@@ -34,14 +34,6 @@ __forceinline T&& cgforward(typename cgremove_reference<T>::type&& t) {
     return static_cast<T&&>(t);
 }
 
-// Base class enforcing no copy constructor or assignment.
-class cgnocopy_c {
-protected:
-    __forceinline cgnocopy_c() {}
-    cgnocopy_c(const cgnocopy_c&) = delete;
-    cgnocopy_c& operator=(const cgnocopy_c&) = delete;
-};
-
 // Minimal std::vector replacement with static size
 template<class TYPE, int COUNT>
 class cgvector_c : cgnocopy_c {

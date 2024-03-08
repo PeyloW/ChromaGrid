@@ -37,11 +37,25 @@
 		A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5302B8D9A2400EBA43D /* font6.iff */; };
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6A419442B9ABA610062339B /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
+		A6A4194C2B9B6D530062339B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4194B2B9B6D530062339B /* main.cpp */; };
+		A6A419502B9B6D750062339B /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
 		A6F766B12B98BC2600325754 /* select.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6F766B02B98BC2600325754 /* select.iff */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A6A419472B9B6D530062339B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_stencil.cpp; sourceTree = "<group>"; };
@@ -91,6 +105,8 @@
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
 		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6A419432B9ABA610062339B /* graphics_ilbm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_ilbm.cpp; sourceTree = "<group>"; };
+		A6A419492B9B6D530062339B /* iffutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iffutil; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6A4194B2B9B6D530062339B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -101,6 +117,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		A69AE4972B6EB9A900EBA43D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6A419462B9B6D530062339B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -143,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				A69AE50B2B82CDB500EBA43D /* README.MD */,
+				A6A4194A2B9B6D530062339B /* iffutil */,
 				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
 				A69AE49C2B6EB9A900EBA43D /* ChromaGrid */,
 				A69AE49B2B6EB9A900EBA43D /* Products */,
@@ -153,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */,
+				A6A419492B9B6D530062339B /* iffutil */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -209,6 +234,14 @@
 			path = data;
 			sourceTree = "<group>";
 		};
+		A6A4194A2B9B6D530062339B /* iffutil */ = {
+			isa = PBXGroup;
+			children = (
+				A6A4194B2B9B6D530062339B /* main.cpp */,
+			);
+			path = iffutil;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -229,6 +262,23 @@
 			productReference = A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A6A419482B9B6D530062339B /* iffutil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6A4194D2B9B6D530062339B /* Build configuration list for PBXNativeTarget "iffutil" */;
+			buildPhases = (
+				A6A419452B9B6D530062339B /* Sources */,
+				A6A419462B9B6D530062339B /* Frameworks */,
+				A6A419472B9B6D530062339B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iffutil;
+			productName = iffutil;
+			productReference = A6A419492B9B6D530062339B /* iffutil */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -239,6 +289,9 @@
 				TargetAttributes = {
 					A69AE4992B6EB9A900EBA43D = {
 						CreatedOnToolsVersion = 12.3;
+					};
+					A6A419482B9B6D530062339B = {
+						CreatedOnToolsVersion = 15.3;
 					};
 				};
 			};
@@ -256,6 +309,7 @@
 			projectRoot = "";
 			targets = (
 				A69AE4992B6EB9A900EBA43D /* ChromaGrid */,
+				A6A419482B9B6D530062339B /* iffutil */,
 			);
 		};
 /* End PBXProject section */
@@ -309,6 +363,15 @@
 				A69AE5172B88F53500EBA43D /* graphics_draw.cpp in Sources */,
 				A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */,
 				A69AE4CB2B6FEFE500EBA43D /* graphics.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6A419452B9B6D530062339B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6A4194C2B9B6D530062339B /* main.cpp in Sources */,
+				A6A419502B9B6D750062339B /* iff_file.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +532,34 @@
 			};
 			name = Release;
 		};
+		A6A4194E2B9B6D530062339B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A6A4194F2B9B6D530062339B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -486,6 +577,15 @@
 			buildConfigurations = (
 				A69AE4AC2B6EB9B000EBA43D /* Debug */,
 				A69AE4AD2B6EB9B000EBA43D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A6A4194D2B9B6D530062339B /* Build configuration list for PBXNativeTarget "iffutil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6A4194E2B9B6D530062339B /* Debug */,
+				A6A4194F2B9B6D530062339B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

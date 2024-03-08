@@ -9,7 +9,7 @@
 
 
 cgiff_file_c::cgiff_file_c(FILE *file) : _file(file), _owns_file(false) { hard_assert(file); };
-cgiff_file_c::cgiff_file_c(const char *path) : _file(fopen(path, "r")), _owns_file(true) { hard_assert(_file); }
+cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : _file(fopen(path, mode)), _owns_file(true) { hard_assert(_file); }
 cgiff_file_c::~cgiff_file_c() {
     if (_owns_file) {
         fclose(_file);

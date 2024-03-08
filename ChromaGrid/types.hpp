@@ -9,7 +9,9 @@
 #define types_h
 
 #include "cincludes.hpp"
+#ifndef __NO_GCSTDLIB__
 #include "stdlib.hpp"
+#endif
 
 struct cgpoint_t {
     int16_t x, y;

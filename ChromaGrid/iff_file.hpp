@@ -49,6 +49,9 @@ __forceinline static cgiff_id_t cgiff_id_make(const char *const str) {
     assert(strlen(str) == 4);
     return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
 }
+__forceinline static void cgiff_id_str(cgiff_id_t id, char buf[5]) {
+    buf[0] = id >> 24; buf[1] = id >> 16; buf[2] = id >> 8; buf[3] = id; buf[4] = 0;
+}
 __forceinline static bool cgiff_id_match(const cgiff_id_t id, const char *const str) {
     if (strcmp(str, "*") != 0) {
         return cgiff_id_make(str) == id;
@@ -75,7 +78,7 @@ struct cgiff_group_t : public cgiff_chunk_t {
 class cgiff_file_c : private cgnocopy_c {
 public:
     cgiff_file_c(FILE *file);
-    cgiff_file_c(const char *path);
+    cgiff_file_c(const char *path, const char *mode = "r");
     ~cgiff_file_c();
     
     bool first(const char *const id, const char *const subtype, cgiff_group_t &group);
