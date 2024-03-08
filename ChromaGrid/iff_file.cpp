@@ -16,101 +16,61 @@ cgiff_file_c::~cgiff_file_c() {
     }
 }
 
-bool cgiff_file_c::read(cgiff_header_t *header) {
-    size_t read = fread(header, sizeof(cgiff_header_t), 1, _file);
-#ifndef __M68000__
-    if (read == 1) {
-        header->chunk.size = cg_htons(header->chunk.size);
-#else
-    if (read == sizeof(cgiff_header_t)) {
-#endif
-        return true;
-    }
-    printf("read: %d\n\r", (int)read);
-    return false;
-}
-
-bool cgiff_file_c::find(const cgiff_id_t id, cgiff_chunk_t *chunk) {
-    if (fseek(_file, sizeof(cgiff_header_t), SEEK_SET) == 0) {
-        while (read(chunk)) {
-            if (chunk->id == id) {
-                return true;
-            }
-            size_t size = (chunk->size + 1) & 0xfffffffe;
-            if (fseek(_file, size, SEEK_CUR) != 0) {
-                break;
-            }
+bool cgiff_file_c::find(const cgiff_id_t id, const cgiff_id_t type, cgiff_group_t &header) {
+    while (read(header)) {
+        if (header.chunk.id == id && header.subtype) {
+            return true;
+        }
+        if (!skip(header)) {
+            break;
         }
     }
     return false;
 }
 
-bool cgiff_file_c::read(cgiff_chunk_t *chunk) {
-    size_t read = fread(chunk, sizeof(cgiff_chunk_t), 1, _file);
-#ifndef __M68000__
-    if (read == 1) {
-        chunk->size = cg_htons(chunk->size);
-#else
-    if (read == sizeof(cgiff_chunk_t)) {
-#endif
-        return true;
+bool cgiff_file_c::find(const cgiff_id_t id, cgiff_chunk_t &chunk) {
+    while (read(chunk)) {
+        if (chunk.id == id) {
+            return true;
+        }
+        if (!skip(chunk)) {
+            break;
+        }
     }
     return false;
 }
 
-#ifndef __M68000__
-template<size_t S>
-__forceinline static void swap(uint8_t bytes[S]) {
-    for (int i = 0; i < S / 2; i++) {
-        uint8_t t = bytes[i];
-        bytes[i] = bytes[S - (i + 1)];
-        bytes[S - (i + 1)] = t;
+bool cgiff_file_c::expand(const cgiff_chunk_t &chunk, cgiff_group_t &group) {
+    group.chunk = chunk;
+    return read(group.subtype);
+}
+
+bool cgiff_file_c::skip(const cgiff_group_t &header) {
+    return skip(header.chunk);
+}
+
+bool cgiff_file_c::skip(const cgiff_chunk_t &chunk) {
+    if (fseek(_file, chunk.size - sizeof(cgiff_id_t), SEEK_CUR)) {
+        return align();
     }
+    return false;
 }
 
-uint16_t cg_htons(uint16_t v) {
-    union {
-        uint8_t bytes[2];
-        uint16_t val;
-    };
-    val = v;
-    swap<2>(bytes);
-    return val;
+bool cgiff_file_c::align() {
+    long pos = ftell(_file);
+    if (pos >= 0) {
+        if ((pos & 1) != 0) {
+            return fseek(_file, 1, SEEK_CUR);
+        }
+        return true;
+    }
+    return false;
 }
-uint32_t cg_htons(uint32_t v) {
-    union {
-        uint8_t bytes[4];
-        uint32_t val;
-    };
-    val = v;
-    swap<4>(bytes);
-    return val;
-}
-
-#endif
 
 bool cgiff_file_c::read(void *data, size_t s, size_t n) {
     size_t read = fread(data, s, n, _file);
 #ifndef __M68000__
     bool r = read == n;
-    for (int i = 0; i < n; i++) {
-        uint8_t *ptr = reinterpret_cast<uint8_t*>(data) + s * i;
-        switch (s) {
-            case 1:
-                break;
-            case 2:
-                swap<2>(ptr);
-                break;
-            case 4:
-                swap<4>(ptr);
-                break;
-            case 8:
-                swap<8>(ptr);
-                break;
-            default:
-                assert(0);
-        }
-    }
 #else
     bool r = read == (s * n);
 #endif
