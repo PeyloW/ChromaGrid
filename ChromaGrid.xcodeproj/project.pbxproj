@@ -107,6 +107,7 @@
 		A6A419432B9ABA610062339B /* graphics_ilbm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_ilbm.cpp; sourceTree = "<group>"; };
 		A6A419492B9B6D530062339B /* iffutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iffutil; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6A4194B2B9B6D530062339B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A6E484AA2B9D0172004CCA7D /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -166,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				A69AE50B2B82CDB500EBA43D /* README.MD */,
+				A6E484AA2B9D0172004CCA7D /* Assets */,
 				A6A4194A2B9B6D530062339B /* iffutil */,
 				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
 				A69AE49C2B6EB9A900EBA43D /* ChromaGrid */,
