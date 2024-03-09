@@ -81,6 +81,7 @@ public:
     cgiff_file_c(const char *path, const char *mode = "r");
     ~cgiff_file_c();
     
+    bool first(const char *const id, cgiff_chunk_t &chunk);
     bool first(const char *const id, const char *const subtype, cgiff_group_t &group);
     bool next(const cgiff_group_t &in_group, const char *const id, cgiff_chunk_t &chunk);
     bool expand(const cgiff_chunk_t &chunk, cgiff_group_t &group);
@@ -107,14 +108,38 @@ public:
     template<typename T>
     bool read(T *data, size_t n) {
         if (read(data, sizeof(T), n)) {
-            for (int i = 0; i < n; i++) {
-                cghton(data[i]);
-            }
+            for (int i = 0; i < n; i++) cghton(data[i]);
             return true;
         }
         return false;
     }
     bool read(void *data, size_t s, size_t n);
+    
+    bool begin(cgiff_chunk_t &chunk, const char *const id);
+    bool end(cgiff_chunk_t &chunk);
+    
+    template<typename T>
+    bool write(T &value) {
+        cghton(value);
+        bool r = write(&value, sizeof(T), 1);
+        cghton(value);
+        return r;
+    }
+    template<typename T, size_t C>
+    bool write(T (&value)[C]) {
+        cghton(value);
+        bool r = write(&value, sizeof(T), C);
+        cghton(value);
+        return r;
+    }
+    template<typename T>
+    bool write(T *data, size_t n) {
+        for (int i = 0; i < n; i++) cghton(data[i]);
+        bool r = write(data, sizeof(T), n);
+        for (int i = 0; i < n; i++) cghton(data[i]);
+        return r;
+    }
+    bool write(void *data, size_t s, size_t n);
     
 private:
     bool read(cgiff_group_t &group);
@@ -127,6 +152,7 @@ private:
         bool is_group;
     };
     FILE *_file;
+    bool _for_writing;
     bool _owns_file;
 };
 

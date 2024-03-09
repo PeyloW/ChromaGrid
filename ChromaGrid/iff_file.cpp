@@ -9,11 +9,22 @@
 
 
 cgiff_file_c::cgiff_file_c(FILE *file) : _file(file), _owns_file(false) { hard_assert(file); };
-cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : _file(fopen(path, mode)), _owns_file(true) { hard_assert(_file); }
+cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : _file(fopen(path, mode)), _owns_file(true) { hard_assert(_file);
+    _for_writing = strstr(mode, "w") != nullptr;
+}
 cgiff_file_c::~cgiff_file_c() {
     if (_owns_file) {
         fclose(_file);
     }
+}
+
+bool cgiff_file_c::first(const char *const id, cgiff_chunk_t &chunk) {
+    if (fseek(_file, 0, SEEK_SET) == 0) {
+        if (read(chunk)) {
+            return cgiff_id_match(chunk.id, id);
+        }
+    }
+    return false;
 }
 
 bool cgiff_file_c::first(const char *const id, const char *const subtype, cgiff_group_t &group) {
@@ -42,7 +53,10 @@ bool cgiff_file_c::expand(const cgiff_chunk_t &chunk, cgiff_group_t &group) {
     group.offset = chunk.offset;
     group.id = chunk.id;
     group.size = chunk.size;
-    return read(group.subtype);
+    if (fseek(_file, group.offset + 8, SEEK_SET) >= 0) {
+        return read(group.subtype);
+    }
+    return false;
 }
 
 bool cgiff_file_c::skip(const cgiff_chunk_t &chunk) {
@@ -57,7 +71,12 @@ bool cgiff_file_c::align() {
     long pos = ftell(_file);
     if (pos >= 0) {
         if ((pos & 1) != 0) {
-            return fseek(_file, 1, SEEK_CUR);
+            if (_for_writing) {
+                uint8_t zero = 0;
+                return write(zero);
+            } else {
+                return fseek(_file, 1, SEEK_CUR);
+            }
         }
         return true;
     }
@@ -66,6 +85,39 @@ bool cgiff_file_c::align() {
 
 bool cgiff_file_c::read(void *data, size_t s, size_t n) {
     size_t read = fread(data, s, n, _file);
+#ifndef __M68000__
+    bool r = read == n;
+#else
+    bool r = read == (s * n);
+#endif
+    return r;
+}
+
+bool cgiff_file_c::begin(cgiff_chunk_t &chunk, const char *const id) {
+    if (align()) {
+        chunk.offset = ftell(_file);
+        chunk.id = cgiff_id_make(id);
+        chunk.size = -1;
+        return write(chunk.id) && write(chunk.size);
+    }
+    return false;
+}
+
+bool cgiff_file_c::end(cgiff_chunk_t &chunk) {
+    long pos = ftell(_file);
+    if (pos >= 0) {
+        uint32_t size = pos - (chunk.offset + 8);
+        chunk.size = size;
+        fseek(_file, chunk.offset + 4, SEEK_SET);
+        if (write(size)) {
+            return fseek(_file, pos, SEEK_SET) >= 0;
+        }
+    }
+    return false;
+}
+
+bool cgiff_file_c::write(void *data, size_t s, size_t n) {
+    size_t read = fwrite(data, s, n, _file);
 #ifndef __M68000__
     bool r = read == n;
 #else
