@@ -546,6 +546,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             }
             std::string text = args.front();
             data.insert(data.end(), text.begin(), text.end());
+            data.push_back(0);
             args.pop_front();
         }}}
     };
@@ -581,7 +582,7 @@ static void handle_insert(arguments_t &args) {
         if (iff_in.first("*", top_chunk)) {
             do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
-                    if (time != visit_before_data) {
+                    if (time == visit_before_data) {
                         cgiff_chunk_t chunk_out;
                         if (!c4id.empty()) {
                             auto split = split_string(c4id, '.');
@@ -594,7 +595,7 @@ static void handle_insert(arguments_t &args) {
                         iff_out.write(data.data(), 1, data.size());
                         if (!c4id.empty()) {
                             iff_out.end(chunk_out);
-                         }
+                        }
                         printf("Inserted before matched chunk.\n");
                     }
                 }
