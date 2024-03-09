@@ -114,6 +114,63 @@ static void do_unknown_arg(const char *arg) {
     exit(-1);
 }
 
+static chunk_path_t split_string(const std::string &str, char delimiter) {
+    std::stringstream sstream(str);
+    std::string segment;
+    chunk_path_t segments;
+    while(std::getline(sstream, segment, delimiter)) {
+        segments.push_back(segment);
+    }
+    return segments;
+}
+
+static bool is_valid_c4id(std::string &c4id) {
+    auto split = split_string(c4id, '.');
+    switch (split.size()) {
+        case 1: {
+            if (c4id.length() > 1) {
+                if (c4id[0] == '@') {
+                    for (int i = 1; i < c4id.length(); i++) {
+                        if (c4id[i] < '0' || c4id[i] > '9') {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else if (c4id.length() == 4) {
+                    return true;
+                }
+            }
+            break;
+        }
+        case 2:
+            return is_valid_c4id(split[0]) && is_valid_c4id(split[1]);
+    }
+    return false;
+}
+
+static chunk_path_t do_c4id_path_arg(arguments_t &args) {
+    if (args.size() < 1) {
+        printf("No c4id_path path given.\n");
+        exit(-1);
+    }
+    auto path = chunk_path_t(split_string(args.front(), ':'));
+    args.pop_front();
+    for (auto &c4id : path) {
+        if (!is_valid_c4id(c4id)) {
+            printf("Invalid c4id '%s'.\n", c4id.c_str());
+            exit(-1);
+        }
+    }
+    return path;
+}
+
+static void do_require_iff_in_path() {
+    if (iff_in_path.empty()) {
+        printf("Input iff file required for command.\n");
+        exit(-1);
+    }
+}
+
 #pragma mark - Handle options
 
 static void handle_verbose(arguments_t &args) {
@@ -202,16 +259,6 @@ static void do_handle_args(arguments_t &args, const arg_handlers_t &arg_handlers
             return;
         }
     }
-}
-
-static chunk_path_t split_string(const std::string &str, char delimiter) {
-    std::stringstream sstream(str);
-    std::string segment;
-    chunk_path_t segments;
-    while(std::getline(sstream, segment, delimiter)) {
-        segments.push_back(segment);
-    }
-    return segments;
 }
 
 static void do_copy_chunk_content(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk_in, bool is_group) {
@@ -336,73 +383,65 @@ static void handle_list(arguments_t &args) {
         }}}
     };
     do_handle_args(args, arg_handlers);
-    
-    if (iff_in_path.empty()) {
-        printf("Input iff file required fro remove command.\n");
-        exit(-1);
-    }
+    do_require_iff_in_path();
 
-    cgiff_file_c iff_in(iff_in_path.c_str());
-    cgiff_file_c iff_out(stdout);
-    int level = 0;
-    const auto do_list_indentation = [&] {
-        for (int l = 0; l < level; l++) {
-            printf("    ");
-        }
-    };
-    cgiff_chunk_t top_chunk;
-    if (iff_in.first("*", top_chunk)) {
-        chunk_path_t path = {};
-        do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
-            bool is_group = known_groups.contains(chunk.id);
-            if (time == visit_before_data) {
-                do_list_indentation();
-                char id[5]; cgiff_id_str(chunk.id, id);
-                printf("%s %d bytes", id, chunk.size);
-                if (is_group) {
-                    cgiff_group_t group;
-                    iff_in.expand(chunk, group);
-                    char subtype[5]; cgiff_id_str(group.subtype, subtype);
-                    printf(" { %s", subtype);
-                    level++;
+    {
+        cgiff_file_c iff_in(iff_in_path.c_str());
+        cgiff_file_c iff_out(stdout);
+        int level = 0;
+        const auto do_list_indentation = [&] {
+            for (int l = 0; l < level; l++) {
+                printf("    ");
+            }
+        };
+        cgiff_chunk_t top_chunk;
+        if (iff_in.first("*", top_chunk)) {
+            chunk_path_t path = {};
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+                bool is_group = known_groups.contains(chunk.id);
+                if (time == visit_before_data) {
+                    do_list_indentation();
+                    char id[5]; cgiff_id_str(chunk.id, id);
+                    printf("%s %d bytes", id, chunk.size);
+                    if (is_group) {
+                        cgiff_group_t group;
+                        iff_in.expand(chunk, group);
+                        char subtype[5]; cgiff_id_str(group.subtype, subtype);
+                        printf(" { %s", subtype);
+                        level++;
+                    }
+                    printf("\n");
+                } else if (is_group) {
+                    level--;
+                    do_list_indentation();
+                    printf("}\n");
                 }
-                printf("\n");
-            } else if (is_group) {
-                level--;
-                do_list_indentation();
-                printf("}\n");
-           }
-            return action_traverse;
-        });
-    } else {
-        printf("Could not find first chunk.\n");
+                return action_traverse;
+            });
+        } else {
+            printf("Could not find first chunk.\n");
+        }
     }
 }
 
 static void handle_remove(arguments_t &args) {
     const arg_handlers_t arg_handlers = {
         {"-h", {"Show this help and exit.", [&] (arguments_t &args) {
-            do_print_help("iffutil remove - Remove a chunk from EA IFF 84 file\nusage: iffutil -i input_iff remove c3id_path [options]\n" C4ID_PATH_HELP, arg_handlers);
+            do_print_help("iffutil remove - Remove a chunk from EA IFF 84 file\n"
+                          "usage: iffutil -i input_iff remove [options] c4id_path\n"
+                          C4ID_PATH_HELP,
+                          arg_handlers);
             exit(0);
         }}}
     };
     do_handle_args(args, arg_handlers);
-
-    if (iff_in_path.empty()) {
-        printf("Input iff file required fro remove command.\n");
-        exit(-1);
-    }
+    auto path = do_c4id_path_arg(args);
+    do_require_iff_in_path();
     
     {
         cgiff_file_c iff_in(iff_in_path.c_str(), "r");
         cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
-        if (args.size() < 1) {
-            printf("No path to remove given.\n");
-            exit(-1);
-        }
-        auto path = chunk_path_t(split_string(args.front(), ':'));
-        args.pop_front();
-        
+
         cgiff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
             do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
@@ -428,14 +467,75 @@ static void handle_append(arguments_t &args) {
     exit(-1);
 }
 
-static void handle_extract(arguments_t &args) {
+static void handle_insert(arguments_t &args) {
     printf("Not implemented.\n");
     exit(-1);
 }
 
-static void handle_insert(arguments_t &args) {
-    printf("Not implemented.\n");
-    exit(-1);
+static void handle_extract(arguments_t &args) {
+    bool data_only = false;
+    std::string output_file_path;
+    const arg_handlers_t arg_handlers = {
+        {"-h", {"Show this help and exit.", [&] (arguments_t &args) {
+            do_print_help("iffutil extract - Extract a chunk from EA IFF 85 file\n"
+                          "usage: iffutil -i input_iff extract [options] c4id_path\n"
+                          C4ID_PATH_HELP,
+                          arg_handlers);
+            exit(0);
+        }}},
+        {"-d", {"Extract data only.", [&] (arguments_t &args) {
+            data_only = true;
+        }}},
+        {"-o", {"Output file for extracted data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No output file.\n");
+                exit(-1);
+            }
+            output_file_path = args.front();
+            args.pop_front();
+        }}}
+    };
+    do_handle_args(args, arg_handlers);
+    if (output_file_path.empty()) {
+        output_file_path = get_iff_out_path();
+    }
+    auto path = do_c4id_path_arg(args);
+    do_require_iff_in_path();
+
+    {
+        cgiff_file_c iff_in(iff_in_path.c_str());
+        cgiff_file_c iff_out(stdout);
+        cgiff_chunk_t top_chunk;
+        if (iff_in.first("*", top_chunk)) {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+                if (matched) {
+                    if (time != visit_before_data) {
+                        cgiff_file_c iff_ext_out(output_file_path.c_str(), "w+");
+                        cgiff_chunk_t chunk_out;
+                        if (!data_only) {
+                            char buf[5]; cgiff_id_str(chunk.id, buf);
+                            iff_ext_out.begin(chunk_out, buf);
+                        }
+                        uint8_t data[chunk.size];
+                        iff_in.read(data, 1, chunk.size);
+                        iff_ext_out.write(data, 1, chunk.size);
+                        if (!data_only) {
+                            iff_ext_out.end(chunk_out);
+                        }
+                        printf("Extracted matched chunk.\n");
+                    }
+                    return action_skip;
+                }
+                return action_traverse;
+            });
+        } else {
+            printf("Could not find first chunk.\n");
+        }
+    }
+    
+    if (iff_out_path_is_temp) {
+        move_file(iff_in_path.c_str(), get_iff_out_path().c_str());
+    }
 }
 
 static void handle_help(arguments_t &args) {
