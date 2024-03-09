@@ -124,28 +124,32 @@ static chunk_path_t split_string(const std::string &str, char delimiter) {
     return segments;
 }
 
-static bool is_valid_c4id(std::string &c4id) {
+static void validate_c4id(std::string &c4id, bool allow_index = true) {
     auto split = split_string(c4id, '.');
     switch (split.size()) {
         case 1: {
             if (c4id.length() > 1) {
-                if (c4id[0] == '@') {
+                if (c4id[0] == '@' && allow_index) {
                     for (int i = 1; i < c4id.length(); i++) {
                         if (c4id[i] < '0' || c4id[i] > '9') {
-                            return false;
+                            goto failed;
                         }
                     }
-                    return true;
+                    return;
                 } else if (c4id.length() == 4) {
-                    return true;
+                    return;
                 }
             }
             break;
         }
         case 2:
-            return is_valid_c4id(split[0]) && is_valid_c4id(split[1]);
+            validate_c4id(split[0], allow_index);
+            validate_c4id(split[1], allow_index);
+            return;
     }
-    return false;
+failed:
+    printf("Invalid c4id '%s'.\n", c4id.c_str());
+    exit(-1);
 }
 
 static chunk_path_t do_c4id_path_arg(arguments_t &args) {
@@ -156,10 +160,7 @@ static chunk_path_t do_c4id_path_arg(arguments_t &args) {
     auto path = chunk_path_t(split_string(args.front(), ':'));
     args.pop_front();
     for (auto &c4id : path) {
-        if (!is_valid_c4id(c4id)) {
-            printf("Invalid c4id '%s'.\n", c4id.c_str());
-            exit(-1);
-        }
+        validate_c4id(c4id);
     }
     return path;
 }
@@ -168,6 +169,27 @@ static void do_require_iff_in_path() {
     if (iff_in_path.empty()) {
         printf("Input iff file required for command.\n");
         exit(-1);
+    }
+}
+
+template<class T>
+static void do_text_input_data(const char *text, std::vector<uint8_t> &data) {
+    auto strs = split_string(text, ',');
+    for (auto str : strs) {
+        uint32_t l = strtol(str.c_str(), nullptr, 0);
+        union {
+            T v;
+            uint8_t bytes[sizeof(T)];
+        };
+        v = (T)l;
+        if (v != l) {
+            printf("Losing precission.\n");
+            exit(-1);
+        }
+        cghton(v);
+        for (int i = 0; i < sizeof(T); i++) {
+            data.push_back(bytes[i]);
+        }
     }
 }
 
@@ -462,14 +484,130 @@ static void handle_remove(arguments_t &args) {
     }
 }
 
+static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t> &data, arg_handlers_t &arg_handlers) {
+    const arg_handlers_t common_arg_handlers = {
+        {"-c", {"c4id to wrap inserted data by.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No c4id for inserted data.\n");
+                exit(-1);
+            }
+            c4id = args.front();
+            validate_c4id(c4id, false);
+            args.pop_front();
+        }}},
+        {"-i", {"Input file for data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No input file.\n");
+                exit(-1);
+            }
+            FILE *file = fopen(args.front(), "r");
+            if (!file) {
+                printf("Could not open input file");
+                exit(-1);
+            }
+            int size = ftell(file);
+            auto old_size = data.size();
+            data.resize(data.size() + size);
+            if (fread(data.data() + old_size, 1, size, file) != size) {
+                printf("Could not read input file");
+                exit(-1);
+            }
+            fclose(file);
+            args.pop_front();
+        }}},
+        {"-b", {"Input bytes for data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No input bytes.\n");
+                exit(-1);
+            }
+            do_text_input_data<uint8_t>(args.front(), data);
+            args.pop_front();
+        }}},
+        {"-w", {"Input words for data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No input bytes.\n");
+                exit(-1);
+            }
+            do_text_input_data<uint16_t>(args.front(), data);
+            args.pop_front();
+        }}},
+        {"-l", {"Input longs for data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No input bytes.\n");
+                exit(-1);
+            }
+            do_text_input_data<uint32_t>(args.front(), data);
+            args.pop_front();
+        }}},
+        {"-t", {"Input text for data.", [&] (arguments_t &args) {
+            if (args.size() < 1) {
+                printf("No input text.\n");
+                exit(-1);
+            }
+            std::string text = args.front();
+            data.insert(data.end(), text.begin(), text.end());
+            args.pop_front();
+        }}}
+    };
+    arg_handlers.insert(common_arg_handlers.begin(), common_arg_handlers.end());
+}
+
 static void handle_append(arguments_t &args) {
     printf("Not implemented.\n");
     exit(-1);
 }
 
 static void handle_insert(arguments_t &args) {
-    printf("Not implemented.\n");
-    exit(-1);
+    std::string c4id;
+    std::vector<uint8_t> data;
+    arg_handlers_t arg_handlers = {
+        {"-h", {"Show this help and exit.", [&] (arguments_t &args) {
+            do_print_help("iffutil extract - Extract a chunk from EA IFF 85 file\n"
+                          "usage: iffutil -i input_iff extract [options] c4id_path\n"
+                          C4ID_PATH_HELP,
+                          arg_handlers);
+            exit(0);
+        }}}
+    };
+    do_add_common_insert_options(c4id, data, arg_handlers);
+    do_handle_args(args, arg_handlers);
+    auto path = do_c4id_path_arg(args);
+    do_require_iff_in_path();
+
+    {
+        cgiff_file_c iff_in(iff_in_path.c_str());
+        cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
+        cgiff_chunk_t top_chunk;
+        if (iff_in.first("*", top_chunk)) {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+                if (matched) {
+                    if (time != visit_before_data) {
+                        cgiff_chunk_t chunk_out;
+                        if (!c4id.empty()) {
+                            auto split = split_string(c4id, '.');
+                            iff_out.begin(chunk_out, split[0].c_str());
+                            if (split.size() > 1) {
+                                cgiff_id_t subtype = cgiff_id_make(split[1].c_str());
+                                iff_out.write(subtype);
+                            }
+                        }
+                        iff_out.write(data.data(), 1, data.size());
+                        if (!c4id.empty()) {
+                            iff_out.end(chunk_out);
+                         }
+                        printf("Inserted before matched chunk.\n");
+                    }
+                }
+                return action_traverse_copy;
+            });
+        } else {
+            printf("Could not find first chunk.\n");
+        }
+    }
+    
+    if (iff_out_path_is_temp) {
+        move_file(iff_in_path.c_str(), get_iff_out_path().c_str());
+    }
 }
 
 static void handle_extract(arguments_t &args) {
