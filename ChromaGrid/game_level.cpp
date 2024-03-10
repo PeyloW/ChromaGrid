@@ -88,6 +88,7 @@ cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, int level) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(level),
+    _recipe(nullptr),
     _level(rsc.levels[level])
 {
     _menu_buttons.add_button("Main Menu");
@@ -98,6 +99,7 @@ cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(TEST_LEVEL),
+    _recipe(recipe),
     _level(recipe)
 {
     _menu_buttons.add_button("Back");
@@ -117,7 +119,11 @@ void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.pop();
             return;
         case 1:
-            manager.replace(new cglevel_scene_c(manager, _level_num));
+            if (_level_num == -1) {
+                manager.replace(new cglevel_scene_c(manager, _recipe));
+            } else {
+                manager.replace(new cglevel_scene_c(manager, _level_num));
+            }
             return;;
         default:
             break;

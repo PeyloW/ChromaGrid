@@ -54,6 +54,7 @@ public:
         const char *text;
         tilestate_t tiles[];
         static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
+        bool empty() const;
         int get_size() const;
         bool save(cgiff_file_c &iff);
         bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);

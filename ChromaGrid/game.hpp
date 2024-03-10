@@ -69,6 +69,7 @@ public:
 private:
     cgbutton_group_c<2> _menu_buttons;
     int _level_num;
+    level_t::recipe_t *_recipe;
     level_t _level;
 };
 
@@ -83,7 +84,7 @@ private:
     void draw_tile_templates(cgimage_c &screen) const;
     void draw_level_grid(cgimage_c &screen, int x, int y) const;
     
-    level_t::recipe_t *make_recipe() const;
+    void make_recipe(level_t::recipe_t &recipe) const;
     
     cgbutton_group_c<4> _menu_buttons;
     cgvector_c<tilestate_t, 15> _tile_templates;

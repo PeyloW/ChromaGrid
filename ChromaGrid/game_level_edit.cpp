@@ -108,6 +108,10 @@ void cglevel_edit_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
+    static union {
+        level_t::recipe_t recipe;
+        uint8_t _dummy[level_t::recipe_t::MAX_SIZE];
+    } temp;
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
@@ -117,10 +121,12 @@ void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.push(new cglevel_edit_persistence_scene_c(manager));
             break;
         case 2: // Save level
-            manager.push(new cglevel_edit_persistence_scene_c(manager, make_recipe()));
+            make_recipe(temp.recipe);
+            manager.push(new cglevel_edit_persistence_scene_c(manager, &temp.recipe));
             break;
         case 3: // Try level
-            manager.push(new cglevel_scene_c(manager, make_recipe()));
+            make_recipe(temp.recipe);
+            manager.push(new cglevel_scene_c(manager, &temp.recipe));
             break;
         default:
             break;
@@ -189,19 +195,17 @@ void cglevel_edit_scene_c::draw_level_grid(cgimage_c &screen, int x, int y) cons
     draw_tilestate(screen, _level_grid[x][y], at);
 }
 
-level_t::recipe_t *cglevel_edit_scene_c::make_recipe() const {
-    level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 12 * 12);
-    recipe->header.width = 12;
-    recipe->header.height = 12;
-    recipe->header.time = 60;
-    recipe->header.orbs[0] = 10;
-    recipe->header.orbs[1] = 10;
-    recipe->text = nullptr;
+void cglevel_edit_scene_c::make_recipe(level_t::recipe_t &recipe) const {
+    recipe.header.width = 12;
+    recipe.header.height = 12;
+    recipe.header.time = 60;
+    recipe.header.orbs[0] = 10;
+    recipe.header.orbs[1] = 10;
+    recipe.text = nullptr;
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
             int i = x + y * 12;
-            recipe->tiles[i] = _level_grid[x][y];
+            recipe.tiles[i] = _level_grid[x][y];
         }
     }
-    return recipe;
 }

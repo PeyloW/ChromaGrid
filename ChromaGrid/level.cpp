@@ -429,6 +429,9 @@ static void cghton(level_t::recipe_t::header_t &header) {
 };
 #endif
 
+bool level_t::recipe_t::empty() const {
+    return header.width == 0 || header.height == 0;
+}
 
 int level_t::recipe_t::get_size() const {
     return sizeof(recipe_t) + sizeof(tilestate_t) * header.width * header.height;
