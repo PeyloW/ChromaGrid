@@ -62,9 +62,14 @@ __forceinline static bool cgiff_id_match(const cgiff_id_t id, const char *const 
 #define CGDEFINE_ID(ID) \
 static const char *const CGIFF_ ## ID = #ID; \
 static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+#define CGDEFINE_ID_EX(ID, STR) \
+static const char *const CGIFF_ ## ID = STR; \
+static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
 
 CGDEFINE_ID (FORM);
 CGDEFINE_ID (LIST);
+CGDEFINE_ID_EX (CAT, "CAT ");
+CGDEFINE_ID_EX (NULL, "    ");
 CGDEFINE_ID (TEXT);
 CGDEFINE_ID (NAME);
 
@@ -85,12 +90,22 @@ public:
     cgiff_file_c(const char *path, const char *mode = "r");
     ~cgiff_file_c();
     
+    template<class Commands>
+    __forceinline void with_hard_asserts(bool asserts, Commands commands) {
+        auto old_state = _hard_assert;
+        _hard_assert = asserts;
+        commands();
+        _hard_assert = old_state;
+    };
+    
+    long get_pos() const;
+    
     bool first(const char *const id, cgiff_chunk_t &chunk);
     bool first(const char *const id, const char *const subtype, cgiff_group_t &group);
     bool next(const cgiff_group_t &in_group, const char *const id, cgiff_chunk_t &chunk);
     bool expand(const cgiff_chunk_t &chunk, cgiff_group_t &group);
 
-    bool rest(const cgiff_chunk_t &chunk);
+    bool reset(const cgiff_chunk_t &chunk);
     bool skip(const cgiff_chunk_t &chunk);
     bool align();
     
@@ -157,6 +172,7 @@ private:
         bool is_group;
     };
     FILE *_file;
+    bool _hard_assert;
     bool _for_writing;
     bool _owns_file;
 };

@@ -210,7 +210,7 @@ public:
 };
 
 
-level_t::level_t(recipe_t *recipe) :
+level_t::level_t(level_recipe_t *recipe) :
     _time(recipe->header.time),
     _time_count(0),
     _grid((grid_c*)calloc(1, sizeof(grid_c)))
@@ -419,31 +419,36 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
 }
 
 
-CGDEFINE_ID (LEVL);
-CGDEFINE_ID (HEAD);
-CGDEFINE_ID (TILE);
-
 #ifndef __M68000__
-static void cghton(level_t::recipe_t::header_t &header) {
+static void cghton(level_recipe_t::header_t &header) {
     cghton(header.time);
 };
 #endif
 
-bool level_t::recipe_t::empty() const {
+#ifndef __M68000__
+static void cghton(level_result_t &result) {
+    cghton(result.score);
+    cghton(result.time);
+    cghton(result.moves);
+};
+#endif
+
+
+bool level_recipe_t::empty() const {
     return header.width == 0 || header.height == 0;
 }
 
-int level_t::recipe_t::get_size() const {
-    return sizeof(recipe_t) + sizeof(tilestate_t) * header.width * header.height;
+int level_recipe_t::get_size() const {
+    return sizeof(level_recipe_t) + sizeof(tilestate_t) * header.width * header.height;
 }
 
-bool level_t::recipe_t::save(cgiff_file_c &iff) {
+bool level_recipe_t::save(cgiff_file_c &iff) {
     cgiff_group_t group;
     cgiff_chunk_t chunk;
     if (iff.begin(group, CGIFF_FORM)) {
-        iff.write(CGIFF_LEVL_ID);
+        iff.write(CGIFF_CGLV_ID);
         
-        iff.begin(chunk, CGIFF_HEAD);
+        iff.begin(chunk, CGIFF_LVHD);
         iff.write(header);
         iff.end(chunk);
         
@@ -453,7 +458,7 @@ bool level_t::recipe_t::save(cgiff_file_c &iff) {
             iff.end(chunk);
         }
         
-        iff.begin(chunk, CGIFF_TILE);
+        iff.begin(chunk, CGIFF_TSTS);
         iff.write((void *)tiles, sizeof(tilestate_t), header.width * header.height);
         iff.end(chunk);
         
@@ -462,12 +467,12 @@ bool level_t::recipe_t::save(cgiff_file_c &iff) {
     return false;
 }
 
-bool level_t::recipe_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
+bool level_recipe_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
     assert(start_chunk.id == CGIFF_FORM_ID);
     cgiff_group_t group;
-    if (iff.expand(start_chunk, group) && group.subtype == CGIFF_LEVL_ID) {
+    if (iff.expand(start_chunk, group) && group.subtype == CGIFF_CGLV_ID) {
         cgiff_chunk_t chunk;
-        iff.next(group, CGIFF_HEAD, chunk);
+        iff.next(group, CGIFF_LVHD, chunk);
         iff.read(header);
         
         if (iff.next(group, CGIFF_TEXT, chunk)) {
@@ -475,8 +480,22 @@ bool level_t::recipe_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
             iff.read((void *)text, 1, chunk.size);
         }
 
-        iff.next(group, CGIFF_TILE, chunk);
+        iff.next(group, CGIFF_TSTS, chunk);
         return iff.read(tiles, sizeof(tilestate_t), header.width * header.height);
     }
     return false;
+}
+
+bool level_result_t::save(cgiff_file_c &iff) {
+    cgiff_chunk_t chunk;
+    if (iff.begin(chunk, CGIFF_CGLR)) {
+        iff.write(*this);
+        return iff.end(chunk);
+    }
+    return false;
+}
+
+bool level_result_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
+    assert(start_chunk.id == CGIFF_CGLR_ID);
+    return iff.read(*this);
 }

@@ -13,6 +13,11 @@
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_X (MAIN_MENU_ORIGIN_X + (MAIN_MENU_SIZE_WIDTH - LEVEL_EDIT_TEMPLATE_SIZE_WIDTH) / 2)
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_Y (72)
 
+static int button_to_level_idx(int button_idx) {
+    int i = (10 - button_idx);
+    return (i & 1) ? i - 1 : i + 1;
+};
+
 class cglevel_edit_persistence_scene_c : public cggame_scene_c {
 public:
     cglevel_edit_persistence_scene_c(cgmanager_c &manager) :
@@ -23,7 +28,7 @@ public:
         add_buttons();
     }
 
-    cglevel_edit_persistence_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe) :
+    cglevel_edit_persistence_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
         cggame_scene_c(manager),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _recipe(recipe)
@@ -48,29 +53,83 @@ public:
     }
     
     virtual void tick(cgimage_c &screen, int ticks) {
+        int button = update_button_group(screen, _menu_buttons);
+        if (button == 0) {
+            manager.pop();
+        } else if (button > 0) {
+            if (_recipe) {
+                memcpy(rsc.user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
+                rsc.save_user_levels();
+                manager.pop();
+            } else {
+                manager.pop();
+                manager.replace(new cglevel_edit_scene_c(manager, rsc.user_levels[button_to_level_idx(button)]));
+            }
+        }
     }
     
 private:
     void add_buttons() {
-        static char buf[3*10];
+        bool save = _recipe != nullptr;
+        static char buf[4*10];
         _menu_buttons.add_button("Cancel");
-        for (int i = 0; i < 5; i++) {
-            sprintf(buf + i * 6, "%1d", 9 - (i * 2));
-            sprintf(buf + i * 6 + 3, "%1d", 10 - (i * 2));
-            _menu_buttons.add_buttons(buf + i * 6, buf + i * 6 + 3);
+        char *start = buf;
+        char *prev_start;
+        for (int button_idx = 1; button_idx < 11; button_idx++) {
+            int level_idx = button_to_level_idx(button_idx);
+            bool empty = rsc.user_levels[level_idx]->empty();
+            int pair_idx = level_idx & 0x1;
+            
+            if (save && !empty) {
+                sprintf(start, "#%1d", level_idx + 1);
+            } else {
+                sprintf(start, "%1d", level_idx + 1);
+            }
+            if (pair_idx == 1) {
+                _menu_buttons.add_buttons(prev_start, start);
+                if (!save) {
+                    if (rsc.user_levels[level_idx - 1]->empty()) {
+                        _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;
+                    }
+                    if (empty) {
+                        _menu_buttons.buttons[button_idx].state = cgbutton_t::disabled;
+                    }
+                }
+            }
+            prev_start = start;
+            start += 4;
         }
     }
     cgbutton_group_c<11> _menu_buttons;
-    level_t::recipe_t *_recipe;
+    level_recipe_t *_recipe;
 };
 
-cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe) :
+cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
-    _selected_template(0),
-    _tested_recipe(nullptr)
+    _selected_template(0)
 {
     memset(_level_grid, 0, sizeof(_level_grid));
+    if (recipe) {
+        _header = recipe->header;
+        
+        int off_x = (12 - recipe->header.width) / 2;
+        int off_y = (12 - recipe->header.height) / 2;
+
+        for (int y = 0; y < recipe->header.height; y++) {
+            for (int x = 0; x < recipe->header.width; x++) {
+                auto &src_tile = recipe->tiles[x + y * recipe->header.width];
+                auto &dst_tile = _level_grid[off_x + x][off_y + y];
+                dst_tile = src_tile;
+            }
+        }
+    } else {
+        _header.width = 12;
+        _header.height = 12;
+        _header.orbs[0] = 5;
+        _header.orbs[1] = 5;
+        _header.time = 60;
+    }
     _menu_buttons.add_button("Main Menu");
     _menu_buttons.add_buttons("Load", "Save");
     _menu_buttons.add_button("Try Level");
@@ -101,16 +160,12 @@ void cglevel_edit_scene_c::will_appear(cgimage_c &screen, bool obsured) {
             draw_level_grid(screen, x, y);
         }
     }
-    if (_tested_recipe) {
-        free(_tested_recipe);
-        _tested_recipe = nullptr;
-    }
 }
 
 void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
     static union {
-        level_t::recipe_t recipe;
-        uint8_t _dummy[level_t::recipe_t::MAX_SIZE];
+        level_recipe_t recipe;
+        uint8_t _dummy[level_recipe_t::MAX_SIZE];
     } temp;
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
@@ -195,7 +250,7 @@ void cglevel_edit_scene_c::draw_level_grid(cgimage_c &screen, int x, int y) cons
     draw_tilestate(screen, _level_grid[x][y], at);
 }
 
-void cglevel_edit_scene_c::make_recipe(level_t::recipe_t &recipe) const {
+void cglevel_edit_scene_c::make_recipe(level_recipe_t &recipe) const {
     recipe.header.width = 12;
     recipe.header.height = 12;
     recipe.header.time = 60;

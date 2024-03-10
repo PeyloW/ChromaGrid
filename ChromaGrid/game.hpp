@@ -62,21 +62,21 @@ class cglevel_scene_c : public cggame_scene_c {
 public:
     static const int TEST_LEVEL = -1;
     cglevel_scene_c(cgmanager_c &manager, int level);
-    cglevel_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe);
+    cglevel_scene_c(cgmanager_c &manager, level_recipe_t *recipe);
 
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void tick(cgimage_c &screen, int ticks);
 private:
     cgbutton_group_c<2> _menu_buttons;
     int _level_num;
-    level_t::recipe_t *_recipe;
+    level_recipe_t *_recipe;
     level_t _level;
 };
 
 
 class cglevel_edit_scene_c : public cggame_scene_c {
 public:
-    cglevel_edit_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe);
+    cglevel_edit_scene_c(cgmanager_c &manager, level_recipe_t *recipe);
     
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void tick(cgimage_c &screen, int ticks);
@@ -84,13 +84,13 @@ private:
     void draw_tile_templates(cgimage_c &screen) const;
     void draw_level_grid(cgimage_c &screen, int x, int y) const;
     
-    void make_recipe(level_t::recipe_t &recipe) const;
+    void make_recipe(level_recipe_t &recipe) const;
     
     cgbutton_group_c<4> _menu_buttons;
     cgvector_c<tilestate_t, 15> _tile_templates;
     int _selected_template;
+    level_recipe_t::header_t _header;
     tilestate_t _level_grid[12][12];
-    level_t::recipe_t *_tested_recipe;
 };
 
 #endif /* game_hpp */

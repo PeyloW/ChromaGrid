@@ -105,8 +105,63 @@ Legend: __Required__, Expected , _Optional_
     * [ ] _Name entry_
     * [ ] _High score per level_
 * [ ] _Level editor screne_
-    * [ ] _Editor logic ;)_
+    * [x] _Editor logic ;)_
     * [ ] Edit times
     * [ ] Edit orb counts
     * [x] _Test play_
     * [ ] Save support
+
+
+### File Format
+
+#### `levels.dat` - An EA IFF 85 format
+
+Same format is used for builtin levels and user levels. User levels may contain
+a maximum of ten level forms.
+
+```
+// List of ChromaGrid LeVels
+LIST # { CGLV       
+    // Zero or more ChromaGrid LeVel forms
+    FORM # { CGLV
+        // Required LeVel HeaDer
+        LVHD # {
+            ubyte width
+            ubyte height
+            ubyte[2] orbs
+            uword time
+        }
+        // Optional text
+        TEXT # {
+            string
+        } ?
+        // One or more Tile STateS, count defined by header width * height
+        TSTS # {
+            {
+                ubyte type
+                ubyte target
+                ubyte current
+                ubyte orb
+            } +
+        }
+    } *
+}
+```
+
+#### `scores.dat` - An EA IFF 85 format
+If the number of scores chunks are less than available built in levels the 
+remainders are all zero. Having more score chunks than evailable built in levels
+is an error :/.
+
+```
+// List of ChromaGrid Level Scores
+LIST # { CGLR       
+    // Zero or more ChromaGrid Level Result chunks
+    CGLR # {
+        ulong score
+        ubyte[2] orbs
+        uword time
+        uword moves
+    } *
+}
+```

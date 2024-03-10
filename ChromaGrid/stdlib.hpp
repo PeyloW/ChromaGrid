@@ -46,6 +46,7 @@ public:
     
     inline TYPE& operator[](const int i) const {
         assert(i < _size);
+        assert(i >= 0);
         return begin()[i];
     }
     inline TYPE& front() const {
@@ -57,6 +58,10 @@ public:
         return *(end() - 1);
     }
 
+    inline void push_back() {
+        assert(_size < COUNT);
+        memset(begin() + _size++, 0, sizeof(TYPE));
+    }
     inline void push_back(const TYPE& value) {
         assert(_size < COUNT);
         begin()[_size++] = value;

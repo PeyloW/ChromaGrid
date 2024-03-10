@@ -99,11 +99,11 @@ cgresources_c::cgresources_c() :
     printf("Pre-warm stencils.\n\r");
     cgimage_c::get_stencil(cgimage_c::orderred, 0);
     
-    int max_recipe_size = sizeof(level_t::recipe_t) + sizeof(tilestate_t) * (12 * 12);
+    int max_recipe_size = sizeof(level_recipe_t) + sizeof(tilestate_t) * (12 * 12);
     
-    uint8_t *recipes = (uint8_t *)calloc(10, level_t::recipe_t::MAX_SIZE);
+    uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
-        user_levels.push_back((level_t::recipe_t *)(recipes + i * max_recipe_size));
+        user_levels.push_back((level_recipe_t *)(recipes + i * max_recipe_size));
     }
     load_user_levels();
 
@@ -111,7 +111,7 @@ cgresources_c::cgresources_c() :
     printf("Loading levels.\n\r");
     if (!load_levels()) {
         // Make one, if we cannot load.
-        level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 4);
+        level_recipe_t *recipe = (level_recipe_t *)calloc(1, sizeof(level_recipe_t) + sizeof(tilestate_t) * 4);
         recipe->header.width = 2;
         recipe->header.height = 2;
         recipe->header.time = 75;
@@ -126,8 +126,6 @@ cgresources_c::cgresources_c() :
     }
 }
 
-CGDEFINE_ID (LVLS);
-
 template<class Vector>
 static bool load_levels(FILE *file, Vector &levels) {
     
@@ -138,19 +136,60 @@ bool cgresources_c::load_levels() const {
 }
 
 bool cgresources_c::load_user_levels() const {
-    bool success = false;
     FILE *file =  fopen(user_path("levels.dat"), "r");
+    if (!file) {
+        return false;
+    }
+    cgiff_file_c iff(file);
+    iff.with_hard_asserts(true, [&] {
+        cgiff_group_t list;
+        iff.first(CGIFF_LIST, CGIFF_CGLV, list);
+        int index = 0;
+        cgiff_group_t level_group;
+        while (iff.next(list, CGIFF_FORM, level_group)) {
+            auto recipe = user_levels[index++];
+            recipe->load(iff, level_group);
+        }
+    });
+    fclose(file);
+    return true;
+}
+
+bool cgresources_c::save_user_levels() const {
+    cgiff_file_c iff(user_path("levels.dat"), "w+");
+    if (iff.get_pos() < 0) {
+        return false;
+    }
+    iff.with_hard_asserts(true, [&] {
+        cgiff_group_t list;
+        iff.begin(list, CGIFF_LIST);
+        iff.write(CGIFF_CGLV_ID);
+        for (int index = 0; index < user_levels.size(); index++) {
+            auto &recipe = user_levels[index];
+            if (!recipe->empty()) {
+                recipe->save(iff);
+            }
+        }
+        iff.end(list);
+    });
+    return true;
+}
+
+bool cgresources_c::load_level_results() {
+    bool success = false;
+    FILE *file =  fopen(user_path("scores.dat"), "r");
     if (file) {
         cgiff_file_c iff(file);
         cgiff_group_t list;
-        if (!iff.first(CGIFF_LIST, list)) {
+        if (!iff.first(CGIFF_LIST, CGIFF_CGLR, list)) {
             goto done;
         } else {
             int index = 0;
-            cgiff_group_t level_group;
-            while (iff.next(list, CGIFF_FORM, level_group)) {
-                auto recipe = user_levels[index++];
-                recipe->load(iff, level_group);
+            cgiff_chunk_t level_chunk;
+            while (iff.next(list, CGIFF_CGLR, level_chunk)) {
+                level_results.push_back();
+                auto &level_result = level_results.back();
+                level_result.load(iff, level_chunk);
             }
         }
     done:
@@ -159,14 +198,14 @@ bool cgresources_c::load_user_levels() const {
     return success;
 }
 
-bool cgresources_c::save_user_levels() const {
-    cgiff_file_c iff(user_path("levels.dat"), "w+");
+bool cgresources_c::save_level_results() const {
+    cgiff_file_c iff(user_path("scores.dat"), "w+");
     cgiff_group_t list;
     if (iff.begin(list, CGIFF_LIST)) {
-        iff.write(CGIFF_LVLS_ID);
-        for (int index = 0; index < 10; index++) {
-            auto &recipe = user_levels[index++];
-            recipe->save(iff);
+        iff.write(CGIFF_CGLR_ID);
+        for (int index = 0; level_results.size(); index++) {
+            auto &level_result = level_results[index];
+            level_result.save(iff);
         }
         return iff.end(list);
     }

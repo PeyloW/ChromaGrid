@@ -102,9 +102,8 @@ static cgiff_file_c *iff_in = nullptr;
 static cgiff_file_c *iff_out = nullptr;
 
 static std::set<cgiff_id_t> known_groups = {
-    cgiff_id_make(CGIFF_FORM),
-    cgiff_id_make(CGIFF_LIST),
-    cgiff_id_make(CGIFF_CAT)
+    CGIFF_FORM_ID,
+    CGIFF_LIST_ID,
 };
 
 static void do_unknown_arg(const char *arg) {

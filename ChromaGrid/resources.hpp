@@ -29,14 +29,17 @@ public:
     cgfont_c small_font;
     cgmusic_c music;
     
-    cgvector_c<level_t::recipe_t*, 100> levels;
-    cgvector_c<level_t::recipe_t*, 10> user_levels;
+    cgvector_c<level_recipe_t*, 100> levels;
+    cgvector_c<level_result_t, 100> level_results;
+    cgvector_c<level_recipe_t*, 10> user_levels;
 
     bool save_user_levels() const;
+    bool save_level_results() const;
     
     static const cgresources_c& shared();
 private:
     bool load_levels() const;
+    bool load_level_results();
     bool load_user_levels() const;
     cgresources_c();
 };

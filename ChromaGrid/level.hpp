@@ -14,6 +14,12 @@
 #include "system.hpp"
 #include "iff_file.hpp"
 
+
+CGDEFINE_ID (CGLV); // ChromaGrid LeVel
+CGDEFINE_ID (LVHD); // LeVel HeaDer
+CGDEFINE_ID (TSTS); // Tile STateS
+CGDEFINE_ID (CGLR);  // ChromaGrid Level Results
+
 typedef enum __packed {
     none, gold, silver, both
 } color_e;
@@ -38,6 +44,30 @@ struct __attribute__((aligned (4))) tilestate_t  {
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
 
+struct level_recipe_t {
+    struct header_t {
+        uint8_t width, height;
+        uint8_t orbs[2];
+        uint16_t time;
+    } header;
+    const char *text;
+    tilestate_t tiles[];
+    static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
+    bool empty() const;
+    int get_size() const;
+    bool save(cgiff_file_c &iff);
+    bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
+};
+
+struct level_result_t {
+    uint32_t score;
+    uint8_t orbs[2];
+    uint16_t time;
+    uint16_t moves;
+    bool save(cgiff_file_c &iff);
+    bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
+};
+
 void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
 void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);
 
@@ -45,28 +75,13 @@ class grid_c;
 
 class level_t : cgnocopy_c {
 public:
-    typedef struct recipe_t {
-        struct header_t {
-            uint8_t width, height;
-            uint8_t orbs[2];
-            uint16_t time;
-        } header;
-        const char *text;
-        tilestate_t tiles[];
-        static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
-        bool empty() const;
-        int get_size() const;
-        bool save(cgiff_file_c &iff);
-        bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
-    } recipe_t;
-    
     typedef enum __packed {
         normal,
         failed,
         success
     } state_e;
     
-    level_t(recipe_t *recipe);
+    level_t(level_recipe_t *recipe);
     ~level_t();
 
     state_e update_tick(cgimage_c &screen, cgmouse_c &mouse, int delta_ticks);

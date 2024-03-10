@@ -95,7 +95,7 @@ cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, int level) :
     _menu_buttons.add_button("Restart");
 }
 
-cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, level_t::recipe_t *recipe) :
+cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(TEST_LEVEL),
