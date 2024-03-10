@@ -59,10 +59,14 @@ __forceinline static bool cgiff_id_match(const cgiff_id_t id, const char *const 
     return true;
 }
 
-static const char *const CGIFF_FORM = "FORM";
-static const char *const CGIFF_LIST = "LIST";
-static const char *const CGIFF_CAT  = "CAT ";
-static const char *const CGIFF_NULL = "    ";
+#define CGDEFINE_ID(ID) \
+static const char *const CGIFF_ ## ID = #ID; \
+static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+
+CGDEFINE_ID (FORM);
+CGDEFINE_ID (LIST);
+CGDEFINE_ID (TEXT);
+CGDEFINE_ID (NAME);
 
 struct cgiff_chunk_t {
     long offset;
@@ -86,6 +90,7 @@ public:
     bool next(const cgiff_group_t &in_group, const char *const id, cgiff_chunk_t &chunk);
     bool expand(const cgiff_chunk_t &chunk, cgiff_group_t &group);
 
+    bool rest(const cgiff_chunk_t &chunk);
     bool skip(const cgiff_chunk_t &chunk);
     bool align();
     

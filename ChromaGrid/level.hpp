@@ -12,7 +12,7 @@
 #include "types.hpp"
 #include "graphics.hpp"
 #include "system.hpp"
-
+#include "iff_file.hpp"
 
 typedef enum __packed {
     none, gold, silver, both
@@ -45,11 +45,18 @@ class grid_c;
 
 class level_t : cgnocopy_c {
 public:
-    typedef struct {
-        uint8_t width, height;
-        uint8_t orbs[2];
-        uint8_t time;
+    typedef struct recipe_t {
+        struct header_t {
+            uint8_t width, height;
+            uint8_t orbs[2];
+            uint16_t time;
+        } header;
+        const char *text;
         tilestate_t tiles[];
+        static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
+        int get_size() const;
+        bool save(cgiff_file_c &iff);
+        bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
     } recipe_t;
     
     typedef enum __packed {

@@ -30,9 +30,14 @@ public:
     cgmusic_c music;
     
     cgvector_c<level_t::recipe_t*, 100> levels;
+    cgvector_c<level_t::recipe_t*, 10> user_levels;
+
+    bool save_user_levels() const;
     
     static const cgresources_c& shared();
 private:
+    bool load_levels() const;
+    bool load_user_levels() const;
     cgresources_c();
 };
 

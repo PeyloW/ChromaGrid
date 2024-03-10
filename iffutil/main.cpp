@@ -554,17 +554,70 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
 }
 
 static void handle_append(arguments_t &args) {
-    printf("Not implemented.\n");
-    exit(-1);
-}
+    std::string c4id;
+    std::vector<uint8_t> data;
+    arg_handlers_t arg_handlers = {
+        {"-h", {"Show this help and exit.", [&] (arguments_t &args) {
+            do_print_help("iffutil append - Append a chunk to a group chunk in an EA IFF 85 file\n"
+                          "usage: iffutil -i input_iff append [options] c4id_path\n"
+                          "  c4id_path defines the group to append new chunk at end of.\n"
+                          C4ID_PATH_HELP,
+                          arg_handlers);
+            exit(0);
+        }}}
+    };
+    do_add_common_insert_options(c4id, data, arg_handlers);
+    do_handle_args(args, arg_handlers);
+    auto path = do_c4id_path_arg(args);
+    if (split_string(path.back(), '.').size() != 2) {
+        printf("Last path component is not a group.\n");
+        exit(-1);
+    }
+    do_require_iff_in_path();
+
+    {
+        cgiff_file_c iff_in(iff_in_path.c_str());
+        cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
+        cgiff_chunk_t top_chunk;
+        if (iff_in.first("*", top_chunk)) {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+                if (matched) {
+                    if (time == visit_after_last_group_data) {
+                        cgiff_chunk_t chunk_out;
+                        if (!c4id.empty()) {
+                            auto split = split_string(c4id, '.');
+                            iff_out.begin(chunk_out, split[0].c_str());
+                            if (split.size() > 1) {
+                                cgiff_id_t subtype = cgiff_id_make(split[1].c_str());
+                                iff_out.write(subtype);
+                            }
+                        }
+                        iff_out.write(data.data(), 1, data.size());
+                        if (!c4id.empty()) {
+                            iff_out.end(chunk_out);
+                        }
+                        printf("Appended in matched group.\n");
+                    }
+                }
+                return action_traverse_copy;
+            });
+        } else {
+            printf("Could not find first chunk.\n");
+        }
+    }
+    
+    if (iff_out_path_is_temp) {
+        move_file(iff_in_path.c_str(), get_iff_out_path().c_str());
+    }}
 
 static void handle_insert(arguments_t &args) {
     std::string c4id;
     std::vector<uint8_t> data;
     arg_handlers_t arg_handlers = {
         {"-h", {"Show this help and exit.", [&] (arguments_t &args) {
-            do_print_help("iffutil extract - Extract a chunk from EA IFF 85 file\n"
-                          "usage: iffutil -i input_iff extract [options] c4id_path\n"
+            do_print_help("iffutil insert - Insert a chunk into a EA IFF 85 file\n"
+                          "usage: iffutil -i input_iff insert [options] c4id_path\n"
+                          "  c4id_path defines the chunk to insert new chunk before.\n"
                           C4ID_PATH_HELP,
                           arg_handlers);
             exit(0);

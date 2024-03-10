@@ -7,6 +7,7 @@
 
 #include "resources.hpp"
 #include "game.hpp"
+#include "iff_file.hpp"
 
 static void remap_to(color_e col, cgimage_c::remap_table_t table, uint8_t masked_idx = cgimage_c::MASKED_CIDX) {
     switch (col) {
@@ -50,6 +51,18 @@ static const char *data_path(const char *file, const char *m = nullptr) {
     return buffer;
 }
 
+static const char *user_path(const char *file, const char *m = nullptr) {
+#ifdef __M68000__
+    return file;
+#else
+    static char buffer[256];
+    strcpy(buffer, "/tmp/");
+    strcat(buffer, file);
+    return buffer;
+#endif
+}
+
+
 cgresources_c::cgresources_c() :
     background(data_path("BACKGRND.IFF", "Load images"), false),
     tiles(data_path("TILES.IFF"), false),
@@ -86,16 +99,76 @@ cgresources_c::cgresources_c() :
     printf("Pre-warm stencils.\n\r");
     cgimage_c::get_stencil(cgimage_c::orderred, 0);
     
+    int max_recipe_size = sizeof(level_t::recipe_t) + sizeof(tilestate_t) * (12 * 12);
+    
+    uint8_t *recipes = (uint8_t *)calloc(10, level_t::recipe_t::MAX_SIZE);
+    for (int i = 0; i < 10; i++) {
+        user_levels.push_back((level_t::recipe_t *)(recipes + i * max_recipe_size));
+    }
+    load_user_levels();
+
+    
     printf("Loading levels.\n\r");
-    level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 4);
-    recipe->width = 2;
-    recipe->height = 2;
-    recipe->time = 75;
-    recipe->orbs[0] = 3;
-    recipe->orbs[1] = 4;
-    recipe->tiles[0] = { tiletype_e::regular, color_e::none, color_e::none, color_e::none };
-    recipe->tiles[1] = { tiletype_e::glass, color_e::gold, color_e::none, color_e::none };
-    recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
-    recipe->tiles[3] = { tiletype_e::regular, color_e::silver, color_e::none, color_e::gold };
-    levels.push_back(recipe);
+    if (!load_levels()) {
+        // Make one, if we cannot load.
+        level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 4);
+        recipe->header.width = 2;
+        recipe->header.height = 2;
+        recipe->header.time = 75;
+        recipe->header.orbs[0] = 3;
+        recipe->header.orbs[1] = 4;
+        recipe->text = nullptr;
+        recipe->tiles[0] = { tiletype_e::regular, color_e::none, color_e::none, color_e::none };
+        recipe->tiles[1] = { tiletype_e::glass, color_e::gold, color_e::none, color_e::none };
+        recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
+        recipe->tiles[3] = { tiletype_e::regular, color_e::silver, color_e::none, color_e::gold };
+        levels.push_back(recipe);
+    }
+}
+
+CGDEFINE_ID (LVLS);
+
+template<class Vector>
+static bool load_levels(FILE *file, Vector &levels) {
+    
+}
+
+bool cgresources_c::load_levels() const {
+    return false;
+}
+
+bool cgresources_c::load_user_levels() const {
+    bool success = false;
+    FILE *file =  fopen(user_path("levels.dat"), "r");
+    if (file) {
+        cgiff_file_c iff(file);
+        cgiff_group_t list;
+        if (!iff.first(CGIFF_LIST, list)) {
+            goto done;
+        } else {
+            int index = 0;
+            cgiff_group_t level_group;
+            while (iff.next(list, CGIFF_FORM, level_group)) {
+                auto recipe = user_levels[index++];
+                recipe->load(iff, level_group);
+            }
+        }
+    done:
+        fclose(file);
+    }
+    return success;
+}
+
+bool cgresources_c::save_user_levels() const {
+    cgiff_file_c iff(user_path("levels.dat"), "w+");
+    cgiff_group_t list;
+    if (iff.begin(list, CGIFF_LIST)) {
+        iff.write(CGIFF_LVLS_ID);
+        for (int index = 0; index < 10; index++) {
+            auto &recipe = user_levels[index++];
+            recipe->save(iff);
+        }
+        return iff.end(list);
+    }
+    return false;
 }

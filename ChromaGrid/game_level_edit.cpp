@@ -191,11 +191,12 @@ void cglevel_edit_scene_c::draw_level_grid(cgimage_c &screen, int x, int y) cons
 
 level_t::recipe_t *cglevel_edit_scene_c::make_recipe() const {
     level_t::recipe_t *recipe = (level_t::recipe_t *)calloc(1, sizeof(level_t::recipe_t) + sizeof(tilestate_t) * 12 * 12);
-    recipe->width = 12;
-    recipe->height = 12;
-    recipe->time = 60;
-    recipe->orbs[0] = 10;
-    recipe->orbs[1] = 10;
+    recipe->header.width = 12;
+    recipe->header.height = 12;
+    recipe->header.time = 60;
+    recipe->header.orbs[0] = 10;
+    recipe->header.orbs[1] = 10;
+    recipe->text = nullptr;
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
             int i = x + y * 12;

@@ -59,9 +59,13 @@ bool cgiff_file_c::expand(const cgiff_chunk_t &chunk, cgiff_group_t &group) {
     return false;
 }
 
+bool cgiff_file_c::rest(const cgiff_chunk_t &chunk) {
+    return fseek(_file, chunk.offset + sizeof(uint32_t) * 2, SEEK_SET);
+}
+
 bool cgiff_file_c::skip(const cgiff_chunk_t &chunk) {
     long end = chunk.offset + sizeof(uint32_t) * 2 + chunk.size;
-    if (fseek(_file, end, SEEK_SET)) {
+    if (fseek(_file, end, SEEK_SET) >= 0) {
         return align();
     }
     return false;
