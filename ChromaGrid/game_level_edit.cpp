@@ -251,16 +251,32 @@ void cglevel_edit_scene_c::draw_level_grid(cgimage_c &screen, int x, int y) cons
 }
 
 void cglevel_edit_scene_c::make_recipe(level_recipe_t &recipe) const {
-    recipe.header.width = 12;
-    recipe.header.height = 12;
-    recipe.header.time = 60;
-    recipe.header.orbs[0] = 10;
-    recipe.header.orbs[1] = 10;
-    recipe.text = nullptr;
+    int x1 = 12, x2 = -1;
+    int y1 = 12, y2 = -1;
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
-            int i = x + y * 12;
-            recipe.tiles[i] = _level_grid[x][y];
+            if (_level_grid[x][y].type != empty) {
+                x1 = MIN(x1, x);
+                x2 = MAX(x2, x);
+                y1 = MIN(y1, y);
+                y2 = MAX(y2, y);
+            }
+        }
+    }
+    if (x2 == -1) {
+        memset(&recipe, 0, level_recipe_t::MAX_SIZE);
+    } else {
+        recipe.header.width = x2 - x1 + 1;
+        recipe.header.height = y2 - y1 + 1;
+        recipe.header.time = 60;
+        recipe.header.orbs[0] = 10;
+        recipe.header.orbs[1] = 10;
+        recipe.text = nullptr;
+        int i = 0;
+        for (int y = y1; y <= y2; y++) {
+            for (int x = x1; x <= x2; x++) {
+                recipe.tiles[i++] = _level_grid[x][y];
+            }
         }
     }
 }
