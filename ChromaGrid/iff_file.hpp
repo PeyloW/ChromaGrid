@@ -45,10 +45,16 @@ static inline void cghton(cgpoint_t &point) {
 #endif
 
 
-__forceinline static cgiff_id_t cgiff_id_make(const char *const str) {
+#ifdef __M68000__
+__forceinline static constexpr cgiff_id_t cgiff_id_make(const char *const str) {
+    return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
+}
+#else
+__forceinline static const cgiff_id_t cgiff_id_make(const char *const str) {
     assert(strlen(str) == 4);
     return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
 }
+#endif
 __forceinline static void cgiff_id_str(cgiff_id_t id, char buf[5]) {
     buf[0] = id >> 24; buf[1] = id >> 16; buf[2] = id >> 8; buf[3] = id; buf[4] = 0;
 }
@@ -59,14 +65,27 @@ __forceinline static bool cgiff_id_match(const cgiff_id_t id, const char *const 
     return true;
 }
 
-#define CGDEFINE_ID(ID) \
-static const char *const CGIFF_ ## ID = #ID; \
-static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
-#define CGDEFINE_ID_EX(ID, STR) \
-static const char *const CGIFF_ ## ID = STR; \
-static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+
+#ifdef __M68000__
+#   define CGDEFINE_ID(ID) \
+        static constexpr const char * CGIFF_ ## ID = #ID; \
+        static constexpr cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+#   define CGDEFINE_ID_EX(ID, STR) \
+        static constexpr char * CGIFF_ ## ID = STR; \
+        static constexpr cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+#else
+#   define CGDEFINE_ID(ID) \
+        static const char *const CGIFF_ ## ID = #ID; \
+        static cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+#   define CGDEFINE_ID_EX(ID, STR) \
+        static const char *const CGIFF_ ## ID = STR; \
+        static const cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
+#endif
 
 CGDEFINE_ID (FORM);
+//static constexpr const char * CGIFF_FORM = "FORM";
+//static constexpr cgiff_id_t CGIFF_FORM_ID = cgiff_id_make(CGIFF_FORM);
+
 CGDEFINE_ID (LIST);
 CGDEFINE_ID_EX (CAT, "CAT ");
 CGDEFINE_ID_EX (NULL, "    ");
@@ -141,14 +160,14 @@ public:
     template<typename T>
     bool write(T &value) {
         cghton(value);
-        bool r = write(&value, sizeof(T), 1);
+        bool r = write((void *)&value, sizeof(T), 1);
         cghton(value);
         return r;
     }
     template<typename T, size_t C>
     bool write(T (&value)[C]) {
         cghton(value);
-        bool r = write(&value, sizeof(T), C);
+        bool r = write((void *)&value, sizeof(T), C);
         cghton(value);
         return r;
     }

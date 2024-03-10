@@ -51,7 +51,7 @@ Legend: __Required__, Expected , _Optional_
     * [x] Draw 3 patches
     * [x] Add optional dirty mask to all draw operations
         * [x] Restore from dirty mask
-        * [ ] Asm and HW optimized
+        * [ ] _Asm and HW optimized_
 * [ ] __Sound__
     * [x] __Play SNDH music__
         * [x] Change tracks
@@ -88,7 +88,7 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Gameplay scene__
     * Re-use right side background
     * [x] __16x16 tiles, 5x types__
-        * [ ] Animations between states
+        * [x] Animations between states
     * [x] __8x8 orbs sprites__
         * [x] Animations between states
     * [x] __Game logic ;)__
@@ -109,7 +109,7 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Edit times
     * [ ] Edit orb counts
     * [x] _Test play_
-    * [ ] Save support
+    * [x] Load/Save support
 
 
 ### File Format

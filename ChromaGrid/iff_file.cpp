@@ -8,8 +8,19 @@
 #include "iff_file.hpp"
 
 
-cgiff_file_c::cgiff_file_c(FILE *file) : _file(file), _hard_assert(false), _owns_file(false) { hard_assert(file); };
-cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : _file(fopen(path, mode)), _hard_assert(false), _owns_file(true) {     _for_writing = strstr(mode, "w") != nullptr;
+cgiff_file_c::cgiff_file_c(FILE *file) : 
+    _file(file), _hard_assert(false), _owns_file(false)
+{
+    hard_assert(CGIFF_FORM_ID != 0);
+    hard_assert(file);
+    _for_writing = true;
+};
+cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : 
+    _file(fopen(path, mode)), _hard_assert(false), _owns_file(true)
+{
+    hard_assert(CGIFF_FORM_ID != 0);
+    hard_assert(_file);
+    _for_writing = strstr(mode, "w") != nullptr;
 }
 cgiff_file_c::~cgiff_file_c() {
     if (_owns_file) {

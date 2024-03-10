@@ -163,7 +163,7 @@ void cglevel_edit_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
-    static union {
+    static union __attribute__((aligned(2))) {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
     } temp;

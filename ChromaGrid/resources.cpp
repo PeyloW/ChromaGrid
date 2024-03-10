@@ -99,14 +99,13 @@ cgresources_c::cgresources_c() :
     printf("Pre-warm stencils.\n\r");
     cgimage_c::get_stencil(cgimage_c::orderred, 0);
     
+    printf("Loading user levels.\n\r");
     int max_recipe_size = sizeof(level_recipe_t) + sizeof(tilestate_t) * (12 * 12);
-    
     uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
         user_levels.push_back((level_recipe_t *)(recipes + i * max_recipe_size));
     }
     load_user_levels();
-
     
     printf("Loading levels.\n\r");
     if (!load_levels()) {
