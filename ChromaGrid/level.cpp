@@ -292,12 +292,26 @@ void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, b
         const cgrect_t rect = tilestate_src_rect(state);
         screen.draw(rsc.tiles, rect, at);
     }
+    cgpoint_t o_at = at;
+    switch (state.orb) {
+        case none:
+            break;
+        case both: {
+            o_at.x += 3;
+            o_at.y += 6;
+            draw_orb(screen, color_e::silver, o_at);
+            o_at.x -= 6;
+            o_at.y -= 6;
+            draw_orb(screen, color_e::gold, o_at);
+            break;
+        }
+        default:
+            o_at.y += 3;
+            draw_orb(screen, state.orb, o_at);
+            break;
+    }
     if (selected) {
         screen.draw(rsc.selection, at);
-    }
-    if (state.orb != none) {
-        at.y += 3;
-        draw_orb(screen, state.orb, at);
     }
 }
 

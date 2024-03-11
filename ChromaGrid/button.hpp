@@ -53,19 +53,20 @@ public:
         buttons.emplace_back(title, rect);
     }
 
-    void add_buttons(const char *left_title, const char *right_title) {
+    void add_buttons(const char *left_title, const char *right_title, int16_t spacing = 8) {
         cgrect_t rect = (cgrect_t){{_group_rect.origin.x, 0}, _size};
-        int16_t expand = _size.height + (buttons.size() ? ABS(_spacing) : 0);
+        int16_t extra = buttons.size() ? ABS(_spacing) : 0;
+        int16_t step = _size.height + ABS(_spacing);
         if (_spacing < 0) {
-            rect.origin.y = _group_rect.origin.y - expand;
-            _group_rect.origin.y -= expand;
+            rect.origin.y = _group_rect.origin.y - (_size.height + extra);
+            _group_rect.origin.y -= (_size.height + extra);
         } else {
-            rect.origin.y = _group_rect.origin.y + _group_rect.size.height + expand - _spacing;
+            rect.origin.y = _group_rect.origin.y + _group_rect.size.height + extra;
         }
-        _group_rect.size.height += expand;
-        rect.size.width = rect.size.width / 2 - 4;
+        _group_rect.size.height += _size.height + extra;
+        rect.size.width = rect.size.width / 2 - (spacing / 2);
         buttons.emplace_back(left_title, rect);
-        rect.origin.x += rect.size.width + 8;
+        rect.origin.x += rect.size.width + spacing;
         buttons.emplace_back(right_title, rect);
     }
     

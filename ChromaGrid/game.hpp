@@ -81,13 +81,17 @@ public:
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void tick(cgimage_c &screen, int ticks);
 private:
+    tilestate_t next_state(const tilestate_t &current, cgmouse_c::button_e button) const;
+    void draw_counts(cgimage_c &screen) const;
+    void draw_tile_template_at(cgimage_c &screen, tilestate_t &state, int index) const;
     void draw_tile_templates(cgimage_c &screen) const;
     void draw_level_grid(cgimage_c &screen, int x, int y) const;
     
     void make_recipe(level_recipe_t &recipe) const;
     
     cgbutton_group_c<4> _menu_buttons;
-    cgvector_c<tilestate_t, 15> _tile_templates;
+    cgbutton_group_c<6> _count_buttons;
+    cgvector_c<tilestate_t, 6> _tile_templates;
     int _selected_template;
     level_recipe_t::header_t _header;
     tilestate_t _level_grid[12][12];

@@ -93,6 +93,7 @@ Legend: __Required__, Expected , _Optional_
         * [x] Animations between states
     * [x] __Game logic ;)__
         * [x] __Count down timer__
+        * [ ] Count moves
     * [ ] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
 * [ ] Game over scene
@@ -102,14 +103,16 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Game over game music 
 * [ ] _Highscore screne_
     * [ ] Per level scores
+        * [ ] Load/Save scores
     * [ ] _Name entry_
     * [ ] _High score per level_
-* [ ] _Level editor screne_
+* [x] Level editor screne
     * [x] _Editor logic ;)_
-    * [ ] Edit times
-    * [ ] Edit orb counts
+    * [x] Edit times
+    * [x] Edit orb counts
     * [x] _Test play_
     * [x] Load/Save support
+    * [ ] _Check for invalid states_
 
 
 ### File Format
