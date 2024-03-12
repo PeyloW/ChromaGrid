@@ -36,7 +36,7 @@ void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
         uint32_t *l_dest = (uint32_t*)dest;
         const uint32_t *l_source = (uint32_t*)source;
         while (--l_count != -1) {
-            register uint32_t v = *l_source++;
+            uint32_t v = *l_source++;
             if (v) {
                 *l_dest++ |= v;
             } else {

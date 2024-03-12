@@ -11,7 +11,7 @@
 #include "cincludes.hpp"
 
 // Required for inplace new
-extern void* operator new (size_t count, void *p);
+extern void* operator new (size_t count, void *p) noexcept;
 
 // Require for range for loops
 /*

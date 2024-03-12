@@ -84,6 +84,10 @@ public:
     cgimage_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
     ~cgimage_c();
     
+#ifdef CGIMAGE_SUPPORT_SAVE
+    bool save(const char *path, bool compressed, bool masked, uint8_t masked_cidx = MASKED_CIDX);
+#endif
+    
     void set_active() const;
     
     __forceinline cgpalette_c *get_palette() const { return _palette; }

@@ -15,6 +15,7 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 
 * GCC-4.6.4 with fastcall support (https://github.com/PeyloW/gcc-4.6.4)
 * libcmini-0.47 (https://github.com/freemint/libcmini)
+* libpng (http://www.libpng.org)
 
 ### TODO: List
 

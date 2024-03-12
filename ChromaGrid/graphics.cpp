@@ -25,7 +25,7 @@ void cgpalette_c::set_active() const {
 
 cgimage_c::cgimage_c(const cgsize_t size, bool masked, cgpalette_c *palette) {
     memset(this, 0, sizeof(cgimage_c));
-    palette = palette;
+    _palette = palette;
     this->_size = size;
     _line_words = ((size.width + 15) / 16);
     uint16_t bitmap_words = (_line_words * size.height) << 2;

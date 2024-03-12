@@ -9,20 +9,12 @@
 #include "types.hpp"
 #include "iff_file.hpp"
 
-#include <vector>
-#include <string>
-#include <deque>
+#include "arguments.hpp"
+
 #include <set>
-#include <map>
-#include <functional>
-#include <string>
 #include <algorithm>
 #include <sstream>
 
-typedef std::deque<const char *> arguments_t;
-typedef std::function<void(arguments_t&)> handler_t;
-typedef std::pair<const char *, handler_t> arg_handler_t;
-typedef std::map<std::string, arg_handler_t> arg_handlers_t;
 
 typedef std::deque<std::string> chunk_path_t;
 typedef enum {
@@ -105,13 +97,6 @@ static std::set<cgiff_id_t> known_groups = {
     CGIFF_FORM_ID,
     CGIFF_LIST_ID,
 };
-
-static void do_unknown_arg(const char *arg) {
-    printf("Unknown %s '%s'.\n", arg[0] == '-' ? "option" : "command", arg);
-    arguments_t args;
-    handle_help(args);
-    exit(-1);
-}
 
 static chunk_path_t split_string(const std::string &str, char delimiter) {
     std::stringstream sstream(str);
@@ -226,61 +211,6 @@ static void handle_group(arguments_t &args) {
 }
 
 #pragma mark - Common helpers
-
-static void do_print_help(const char *usage, const arg_handlers_t &arg_handlers) {
-    size_t max_len = 0;
-    for (const auto &com : arg_handlers) {
-        max_len = std::max(max_len, com.first.length());
-    }
-    printf("%s\n", usage);
-    const auto do_print = [&] (const arg_handlers_t::value_type &cmd) {
-        printf("  %s", cmd.first.c_str());
-        for (size_t i = cmd.first.length(); i < max_len + 2; i++) {
-            printf(" ");
-        }
-        printf("%s\n", cmd.second.first);
-    };
-    arg_handlers_t options;
-    for (auto &command : arg_handlers) {
-        if (command.first[0] == '-') {
-            options.insert(command);
-        }
-    }
-    if (options.size() > 0) {
-        printf("options:\n");
-        for (auto &option : options) {
-            do_print(option);
-        }
-    }
-    
-    arg_handlers_t commands;
-    for (auto &command : arg_handlers) {
-        if (command.first[0] != '-') {
-            commands.insert(command);
-        }
-    }
-    if (commands.size() > 0) {
-        printf("command:\n");
-        for (auto &option : commands) {
-            do_print(option);
-        }
-    }
-}
-
-static void do_handle_args(arguments_t &args, const arg_handlers_t &arg_handlers, bool fail_on_unknown = false) {
-    while (args.size() > 0) {
-        auto arg = args.front();
-        const auto command = arg_handlers.find(arg);
-        if (command != arg_handlers.end()) {
-            args.pop_front();
-            command->second.second(args);
-        } else if (fail_on_unknown) {
-            do_unknown_arg(arg);
-        } else {
-            return;
-        }
-    }
-}
 
 static void do_copy_chunk_content(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk_in, bool is_group) {
     uint32_t size = chunk_in.size - (is_group ? 4 : 0);
