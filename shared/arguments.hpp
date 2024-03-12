@@ -18,7 +18,25 @@
 typedef std::deque<const char *> arguments_t;
 typedef std::function<void(arguments_t&)> handler_t;
 typedef std::pair<const char *, handler_t> arg_handler_t;
-typedef std::map<std::string, arg_handler_t> arg_handlers_t;
+struct arg_compare_t;
+typedef std::map<std::string, arg_handler_t, arg_compare_t> arg_handlers_t;
+#include <sstream>
+
+static std::deque<std::string> split_string(const std::string &str, char delimiter) {
+    std::stringstream sstream(str);
+    std::string segment;
+    std::deque<std::string> segments;
+    while(std::getline(sstream, segment, delimiter)) {
+        segments.push_back(segment);
+    }
+    return segments;
+}
+
+struct arg_compare_t {
+    bool operator()(const std::string& a, const std::string& b) const {
+        return split_string(a, ' ').front() < split_string(b, ' ').front();
+    }
+};
 
 static void do_unknown_arg(const char *arg) {
     printf("Unknown %s '%s'.\n", arg[0] == '-' ? "option" : "command", arg);

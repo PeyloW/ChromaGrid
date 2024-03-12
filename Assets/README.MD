@@ -3,7 +3,7 @@
 ## Graphics
 
 All in game image files are EA IFF 85 ILBM files. Asset files preferred as:
-    1. Indexed PNG
+    1. Indexed PNG - Index 0..15 used as is, index 16 as transaparency.
     2. Indexed GIF
     3. Indexed Asesprite
 

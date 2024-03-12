@@ -38,10 +38,7 @@
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6A419442B9ABA610062339B /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
 		A6A4194C2B9B6D530062339B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4194B2B9B6D530062339B /* main.cpp */; };
-		A6A419502B9B6D750062339B /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
 		A6E484B22B9FE5D7004CCA7D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484B12B9FE5D7004CCA7D /* main.cpp */; };
-		A6E484BC2B9FEB00004CCA7D /* graphics_draw_blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */; };
-		A6E484BD2B9FEB03004CCA7D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 		A6E484BE2B9FEE81004CCA7D /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
 		A6E484BF2B9FEEA5004CCA7D /* graphics_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5162B88F53500EBA43D /* graphics_draw.cpp */; };
 		A6E484C02B9FEEB5004CCA7D /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
@@ -49,6 +46,7 @@
 		A6E484C22B9FEEE0004CCA7D /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
 		A6E484C72B9FFCE2004CCA7D /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */; };
 		A6E484C82BA00F1C004CCA7D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C92B6FEFE500EBA43D /* graphics.cpp */; };
+		A6E484C92BA09CA4004CCA7D /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
@@ -454,10 +452,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6E484BC2B9FEB00004CCA7D /* graphics_draw_blitter.cpp in Sources */,
 				A6A4194C2B9B6D530062339B /* main.cpp in Sources */,
-				A6E484BD2B9FEB03004CCA7D /* blitter.cpp in Sources */,
-				A6A419502B9B6D750062339B /* iff_file.cpp in Sources */,
+				A6E484C92BA09CA4004CCA7D /* iff_file.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,7 +536,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -593,7 +589,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -641,7 +637,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -655,7 +650,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -679,7 +673,6 @@
 					/opt/homebrew/Cellar/libpng/1.6.43/lib,
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -702,7 +695,6 @@
 					/opt/homebrew/Cellar/libpng/1.6.43/lib,
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

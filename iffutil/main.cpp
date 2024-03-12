@@ -13,7 +13,6 @@
 
 #include <set>
 #include <algorithm>
-#include <sstream>
 
 
 typedef std::deque<std::string> chunk_path_t;
@@ -42,16 +41,16 @@ static void handle_extract(arguments_t &args);
 static void handle_append(arguments_t &args);
 static void handle_insert(arguments_t &args);
 const arg_handlers_t top_arg_handlers {
-    {"-g",     {"Add known group by C4ID.", &handle_group}},
-    {"-h",     {"Show this help and exit.", &handle_help}},
-    {"-i",     {"Input iff file.", &handle_input}},
-    {"-o",     {"Output iff file.", &handle_output}},
-    {"-v",     {"Verbose output.", &handle_verbose}},
-    {"append", {"Append chunk to iff file.", &handle_append}},
-    {"extract",{"Extract chunk from iff file.", &handle_extract}},
-    {"insert", {"Insert chunk into iff file.", &handle_insert}},
-    {"list",   {"List contents of iff file.", &handle_list}},
-    {"remove", {"Remove chunk from iff file.", &handle_remove}},
+    {"-g c4id",     {"Add known group by C4ID.", &handle_group}},
+    {"-h",          {"Show this help and exit.", &handle_help}},
+    {"-i in_file",  {"Input iff file.", &handle_input}},
+    {"-o out_file", {"Output iff file.", &handle_output}},
+    {"-v",          {"Verbose output.", &handle_verbose}},
+    {"append",      {"Append chunk to iff file.", &handle_append}},
+    {"extract",     {"Extract chunk from iff file.", &handle_extract}},
+    {"insert",      {"Insert chunk into iff file.", &handle_insert}},
+    {"list",        {"List contents of iff file.", &handle_list}},
+    {"remove",      {"Remove chunk from iff file.", &handle_remove}},
 };
 
 #define C4ID_PATH_HELP "c4id_path: A ':' separated path of group and chunk IDs.\n  A group ID is two c4ids separated by a '.', for example \"FORM:ILBM\".\n  A chunk ID is a c4id or an index, such as \"CMAP\" or \"@1\".\n  A fully qualified path to the body of an ilbm file is \"FORM.ILBM:BODY\"."
@@ -97,16 +96,6 @@ static std::set<cgiff_id_t> known_groups = {
     CGIFF_FORM_ID,
     CGIFF_LIST_ID,
 };
-
-static chunk_path_t split_string(const std::string &str, char delimiter) {
-    std::stringstream sstream(str);
-    std::string segment;
-    chunk_path_t segments;
-    while(std::getline(sstream, segment, delimiter)) {
-        segments.push_back(segment);
-    }
-    return segments;
-}
 
 static void validate_c4id(std::string &c4id, bool allow_index = true) {
     auto split = split_string(c4id, '.');
@@ -415,7 +404,7 @@ static void handle_remove(arguments_t &args) {
 
 static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t> &data, arg_handlers_t &arg_handlers) {
     const arg_handlers_t common_arg_handlers = {
-        {"-c", {"c4id to wrap inserted data by.", [&] (arguments_t &args) {
+        {"-c c4id", {"c4id to wrap inserted data by.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No c4id for inserted data.\n");
                 exit(-1);
@@ -424,7 +413,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             validate_c4id(c4id, false);
             args.pop_front();
         }}},
-        {"-i", {"Input file for data.", [&] (arguments_t &args) {
+        {"-i in_file", {"Input file for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input file.\n");
                 exit(-1);
@@ -444,7 +433,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             fclose(file);
             args.pop_front();
         }}},
-        {"-b", {"Input bytes for data.", [&] (arguments_t &args) {
+        {"-b bytes", {"Comma separated input bytes for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input bytes.\n");
                 exit(-1);
@@ -452,7 +441,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             do_text_input_data<uint8_t>(args.front(), data);
             args.pop_front();
         }}},
-        {"-w", {"Input words for data.", [&] (arguments_t &args) {
+        {"-w words", {"Comma separated input words for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input bytes.\n");
                 exit(-1);
@@ -460,7 +449,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             do_text_input_data<uint16_t>(args.front(), data);
             args.pop_front();
         }}},
-        {"-l", {"Input longs for data.", [&] (arguments_t &args) {
+        {"-l longs", {"Comma separated input longs for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input bytes.\n");
                 exit(-1);
@@ -468,7 +457,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             do_text_input_data<uint32_t>(args.front(), data);
             args.pop_front();
         }}},
-        {"-t", {"Input text for data.", [&] (arguments_t &args) {
+        {"-t text", {"Input text for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input text.\n");
                 exit(-1);
@@ -607,7 +596,7 @@ static void handle_extract(arguments_t &args) {
         {"-d", {"Extract data only.", [&] (arguments_t &args) {
             data_only = true;
         }}},
-        {"-o", {"Output file for extracted data.", [&] (arguments_t &args) {
+        {"-o out_file", {"Output file for extracted data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No output file.\n");
                 exit(-1);

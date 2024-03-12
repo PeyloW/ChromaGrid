@@ -22,16 +22,21 @@ static bool save_palette = true;
 static bool save_masked = false;
 static uint8_t masked_idx = cgimage_c::MASKED_CIDX;
 static bool save_compressed = false;
+static cgpoint_t grab_point = {0,0};
 
 const arg_handlers_t arg_handlers {
-    {"-h",     {"Show this help and exit.", &handle_help}},
-    {"-np",    {"Do not save palette.", [] (arguments_t &) { save_palette = false; }}},
-    {"-m",     {"Save masked.", [] (arguments_t &) { save_masked = true; }}},
-    {"-mi",    {"Masked index.", [] (arguments_t &args) {
+    {"-h",          {"Show this help and exit.", &handle_help}},
+    {"-np",         {"Do not save palette.", [] (arguments_t &) { save_palette = false; }}},
+    {"-m",          {"Save masked.", [] (arguments_t &) { save_masked = true; }}},
+    {"-mi index",   {"Masked index.", [] (arguments_t &args) {
         masked_idx = atoi(args.front());
         args.pop_front();
     }}},
-    {"-c",     {"Save compressed.", [] (arguments_t &) { save_compressed = true; }}},
+    {"-c",          {"Save compressed.", [] (arguments_t &) { save_compressed = true; }}},
+    {"-g x,y",      {"Add grab point.", [] (arguments_t &args) {
+        auto split = split_string(args.front(), ',');
+        grab_point = {(int16_t)atoi(split[0].c_str()), (int16_t)atoi(split[1].c_str())};
+    }}},
 };
 
 static void handle_help(arguments_t &args) {
@@ -105,6 +110,8 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
             }
         }
     }
+    
+    cgimage.set_offset(grab_point);
     
     cgimage.save(ilbm_file.c_str(), save_compressed, save_masked);
     
