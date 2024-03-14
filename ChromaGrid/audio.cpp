@@ -96,14 +96,16 @@ cgsount_c::cgsount_c(const char *path) :
             assert(data.offset == 0);
             assert(chunk.size - 8 == common.num_sample_frames);
 #ifndef __M68000__
+            // For target we hack, and make _sample point to full AIFF file.
             _length = form.size + 8;
             _sample = (int8_t *)malloc(_length);
             file.set_pos(0);
             file.read(_sample, 1, _length);
             return;
-#endif
+#else
             _sample = (int8_t *)malloc(_length);
             file.read(_sample, 1, _length);
+#endif
         } else {
 #ifndef __M68000__
             printf("Skipping '%c%c%c%c'\n", (chunk.id >> 24) & 0xff, (chunk.id >> 16) & 0xff, (chunk.id >> 8) & 0xff, chunk.id & 0xff);

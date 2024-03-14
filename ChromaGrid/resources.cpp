@@ -188,7 +188,6 @@ bool cgresources_c::load_level_results() {
         if (!iff.first(CGIFF_LIST, CGIFF_CGLR, list)) {
             goto done;
         } else {
-            int index = 0;
             cgiff_chunk_t level_chunk;
             while (iff.next(list, CGIFF_CGLR, level_chunk)) {
                 level_results.push_back();

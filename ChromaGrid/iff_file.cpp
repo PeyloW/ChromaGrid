@@ -181,7 +181,7 @@ bool cgiff_file_c::end(cgiff_chunk_t &chunk) {
     bool result = false;
     long pos = get_pos();
     if (pos >= 0) {
-        uint32_t size = pos - (chunk.offset + 8);
+        uint32_t size = (uint32_t)(pos - (chunk.offset + 8));
         chunk.size = size;
         fseek(_file, chunk.offset + 4, SEEK_SET);
         if (write(size)) {
