@@ -23,6 +23,17 @@ __forceinline tile_changes_e &operator|=(tile_changes_e &a, const tile_changes_e
 
 static tile_changes_e cgp_tile_changes = no_changes;
 
+void level_result_t::calculate_scores(bool succes) {
+    if (succes) {
+        orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
+        time_score = time * PER_SECOND_SCORE;
+        score = orbs_score + time_score;
+    } else {
+        score = orbs_score = time_score = 0;
+    }
+}
+
+
 class tile_c {
 public:
     static const uint8_t STEP_MAX = 16;
@@ -231,14 +242,17 @@ public:
 
 
 level_t::level_t(level_recipe_t *recipe) :
-    _time(recipe->header.time),
     _time_count(0),
     _grid((grid_c*)calloc(1, sizeof(grid_c)))
 {
     assert(recipe->header.width <= grid_c::GRID_MAX);
     assert(recipe->header.height <= grid_c::GRID_MAX);
-    _orbs[0] = recipe->header.orbs[0];
-    _orbs[1] = recipe->header.orbs[1];
+
+    _results.score = 0;
+    _results.orbs[0] = recipe->header.orbs[0];
+    _results.orbs[1] = recipe->header.orbs[1];
+    _results.time = recipe->header.time;
+    _results.moves = 0;
     
     int off_x = (grid_c::GRID_MAX - recipe->header.width) / 2;
     int off_y = (grid_c::GRID_MAX - recipe->header.height) / 2;
@@ -376,8 +390,8 @@ void level_t::draw_tile(cgimage_c &screen, int x, int y) const {
 
 void level_t::draw_time(cgimage_c &screen) const {
     auto &rsc = cgresources_c::shared();
-    int min = _time / 60;
-    int sec = _time % 60;
+    int min = _results.time / 60;
+    int sec = _results.time % 60;
     char buf[5];
     buf[0] = '0' + min;
     buf[1] = ':';
@@ -397,9 +411,9 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
 
     for (int i = 0; i < 2; i++) {
         char buf[3];
-        auto d1 = _orbs[i] / 10;
+        auto d1 = _results.orbs[i] / 10;
         buf[0] = d1 ? '0' + d1 :  ' ';
-        buf[1] = '0' + _orbs[i] % 10;
+        buf[1] = '0' + _results.orbs[i] % 10;
         buf[2] = 0;
         cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
         cgrect_t rect = (cgrect_t){ at, {16, 8}};
@@ -411,7 +425,7 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
 level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int ticks) {
     _time_count += ticks;
     if (_time_count >= 50) {
-        _time--;
+        _results.time--;
         _time_count -= 50;
         draw_time(screen);
     }
@@ -427,20 +441,23 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
             // Try remove an orb
             auto color = _grid->try_remove_orb_at(at.x, at.y);
             if (color != color_e::none) {
-                _orbs[color - 1] += 1;
-                draw_orb_counts(screen);
+                _results.orbs[color - 1] += 1;
                 goto done;
             }
             // Try add an orb
             color = lb ? color_e::gold : color_e::silver;
-            if (_orbs[color - 1] > 0) {
+            if (_results.orbs[color - 1] > 0) {
                 if (_grid->try_add_orb_at(color, at.x, at.y)) {
-                    _orbs[color - 1] -= 1;
-                    draw_orb_counts(screen);
+                    _results.orbs[color - 1] -= 1;
                     _grid->resolve_at(at.x, at.y);
                 }
             }
         done:
+            if ((cgp_tile_changes & added_orb) || cgp_tile_changes & removed_orb) {
+                _results.moves += 1;
+                draw_orb_counts(screen);
+                // TODO: Draw moves
+            }
             auto &rsc = cgresources_c::shared();
             if (cgp_tile_changes >= broke_glass) {
                 rsc.break_tile.set_active();
@@ -462,9 +479,8 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
         }
     }
     
-    return _time > 0 ? normal : failed;
+    return _results.time > 0 ? normal : failed;
 }
-
 
 #ifndef __M68000__
 static void cghton(level_recipe_t::header_t &header) {

@@ -60,10 +60,16 @@ struct level_recipe_t {
 };
 
 struct level_result_t {
+    static const uint32_t FAILED_SCORE = 0;
+    static const uint32_t PER_ORB_SCORE = 100;
+    static const uint32_t PER_SECOND_SCORE = 10;
     uint32_t score;
+    uint32_t orbs_score;
+    uint32_t time_score;
     uint8_t orbs[2];
     uint16_t time;
     uint16_t moves;
+    void calculate_scores(bool succes);
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
@@ -88,18 +94,15 @@ public:
 
     void draw_all(cgimage_c &screen) const;
     
-    void get_remaining(uint8_t *orbs, uint8_t *time) const {
-        *orbs = _orbs[0] + _orbs[1];
-        *time = _time;
+    void get_results(level_result_t *results) const {
+        *results = _results;
     }
 private:
     void draw_tile(cgimage_c &screen, int x, int y) const;
     void draw_time(cgimage_c &screen) const;
     void draw_orb_counts(cgimage_c &screen) const;
 
-    
-    uint8_t _orbs[2];
-    uint8_t _time;
+    level_result_t _results;
     int _time_count;
     grid_c *_grid;
 };

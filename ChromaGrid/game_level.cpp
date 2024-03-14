@@ -10,23 +10,18 @@
 
 class cglevel_ended_scene_c : public cggame_scene_c {
 public:
-    typedef struct {
-        int level_num;
-        level_t::state_e state;
-        uint8_t orbs_left;
-        uint8_t time_left;
-    } level_state_t;
     
-    cglevel_ended_scene_c(cgmanager_c &manager, level_state_t &state) :
+    cglevel_ended_scene_c(cgmanager_c &manager, int level_num, level_result_t &results) :
         cggame_scene_c(manager),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
-        _state(state)
+        _level_num(level_num),
+        _results(results)
     {
-        if (state.level_num == cglevel_scene_c::TEST_LEVEL) {
+        if (_level_num == cglevel_scene_c::TEST_LEVEL) {
             _menu_buttons.add_button("Back");
         } else {
             _menu_buttons.add_button("Main Menu");
-            if (state.state == level_t::failed) {
+            if (_results.score == level_result_t::FAILED_SCORE) {
                 _menu_buttons.add_button("Retry Level");
             } else {
                 _menu_buttons.add_button("Next Level");
@@ -49,16 +44,16 @@ public:
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
 
-        const char *title = _state.state == level_t::failed ? "Level Failed" : "Level Completed";
+        const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
         screen.draw(rsc.font, title, (cgpoint_t){96, 32});
         
-        if (_state.state == level_t::success) {
+        if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];
-            sprintf(buf, "Time: %d x 10 = %d", _state.time_left, _state.time_left * 10);
+            sprintf(buf, "Time: %d x 10 = %d", _results.time, _results.time_score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 64});
-            sprintf(buf, "Orbs: %d x 100 = %d", _state.orbs_left, _state.orbs_left * 100);
+            sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], _results.orbs_score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 84});
-            sprintf(buf, "Total: %d pts", _state.time_left * 10 + _state.orbs_left * 100);
+            sprintf(buf, "Total: %d pts", _results.score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 114});
         }
     }
@@ -70,7 +65,7 @@ public:
                 manager.pop();
                 return;
             case 1: {
-                auto next_level = (_state.state == level_t::failed) ? _state.level_num : (_state.level_num + 1) % rsc.levels.size();
+                auto next_level = (_results.score == level_result_t::FAILED_SCORE) ? _level_num: (_level_num + 1) % rsc.levels.size();
                 manager.replace(new cglevel_scene_c(manager, next_level));
                 return;
             }
@@ -80,7 +75,8 @@ public:
     }
 private:
     cgbutton_group_c<2> _menu_buttons;
-    level_state_t _state;
+    int _level_num;
+    level_result_t _results;
 };
 
 
@@ -130,10 +126,9 @@ void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
     }
     auto state = _level.update_tick(screen, manager.mouse, ticks);
     if (state != level_t::normal) {
-        cglevel_ended_scene_c::level_state_t level_state = {
-            _level_num, state
-        };
-        _level.get_remaining(&level_state.orbs_left, &level_state.time_left);
-        manager.replace(new cglevel_ended_scene_c(manager, level_state));
+        level_result_t results;
+        _level.get_results(&results);
+        results.calculate_scores(state == level_t::success);
+        manager.replace(new cglevel_ended_scene_c(manager, _level_num, results));
     }
 }
