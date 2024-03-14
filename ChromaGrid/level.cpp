@@ -8,6 +8,21 @@
 #include "level.hpp"
 #include "resources.hpp"
 
+typedef enum __packed {
+    no_changes = 0,
+    added_tile = 1 << 0,
+    removed_orb = 1 << 1,
+    added_orb = 1 << 2,
+    fused_orb = 1 << 3,
+    broke_glass = 1 << 4
+} tile_changes_e;
+__forceinline tile_changes_e &operator|=(tile_changes_e &a, const tile_changes_e &b) {
+    a = static_cast<tile_changes_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+    return a;
+}
+
+static tile_changes_e cgp_tile_changes = no_changes;
+
 class tile_c {
 public:
     static const uint8_t STEP_MAX = 16;
@@ -46,6 +61,7 @@ public:
     bool try_add_orb(color_e c) {
         if (transition.step == 0 && state.orb == none && state.can_have_orb()) {
             state.orb = c;
+            cgp_tile_changes |= added_orb;
             _dirty = true;
             return true;
         } else {
@@ -57,6 +73,7 @@ public:
         if (transition.step == 0 && state.orb != none && state.type != magnetic) {
             const auto c = state.orb;
             state.orb = none;
+            cgp_tile_changes |= removed_orb;
             _dirty = true;
             return c;
         } else {
@@ -69,6 +86,7 @@ public:
             transition.from_state = state;
             transition.step = STEP_MAX;
             state.type = regular;
+            cgp_tile_changes |= added_tile;
         }
     }
     
@@ -77,8 +95,10 @@ public:
         transition.from_state = state;
         transition.step = STEP_MAX;
         state.orb = none;
+        cgp_tile_changes |= fused_orb;
         if (state.type == glass) {
             state.type = broken;
+            cgp_tile_changes |= broke_glass;
         }
         if (state.current != state.target) {
             state.current = none;
@@ -403,6 +423,7 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
         bool lb = mouse.get_state(cgmouse_c::left) == cgmouse_c::clicked;
         bool rb = mouse.get_state(cgmouse_c::right) == cgmouse_c::clicked;
         if (lb || rb) {
+            cgp_tile_changes = no_changes;
             // Try remove an orb
             auto color = _grid->try_remove_orb_at(at.x, at.y);
             if (color != color_e::none) {
@@ -419,8 +440,20 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
                     _grid->resolve_at(at.x, at.y);
                 }
             }
+        done:
+            auto &rsc = cgresources_c::shared();
+            if (cgp_tile_changes >= broke_glass) {
+                rsc.break_tile.set_active();
+            } else if (cgp_tile_changes >= fused_orb) {
+                rsc.fuse_orb.set_active();
+            } else if (cgp_tile_changes >= added_orb) {
+                rsc.drop_orb.set_active();
+            } else if (cgp_tile_changes >= removed_orb) {
+                rsc.take_orb.set_active();
+            } else {
+                rsc.no_drop_orb.set_active();
+            }
         }
-    done:;
         auto completed = _grid->tick([this, &screen] (int x, int y) {
             draw_tile(screen, x, y);
         });

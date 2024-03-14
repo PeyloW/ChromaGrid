@@ -76,6 +76,7 @@ cgresources_c::cgresources_c() :
     mono_font(_font_image, (cgsize_t){8, 8}),
     small_font(_small_font_image, (cgsize_t){6, 6}, 3, 0, 6),
     drop_orb(data_path("drop.aif", "Load audio")),
+    take_orb(data_path("take.aif")),
     fuse_orb(data_path("fuse.aif")),
     no_drop_orb(data_path("tock.aif")),
     break_tile(data_path("break.aif")),

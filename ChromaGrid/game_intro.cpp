@@ -70,7 +70,6 @@ void cgintro_scene_c::tick(cgimage_c &screen, int ticks) {
             break;
         case 1:
             // Show credits
-            rsc.fuse_orb.set_active();
             manager.push(new cgcredits_scene_c(manager));
             break;
         case 2:
