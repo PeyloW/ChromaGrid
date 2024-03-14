@@ -39,6 +39,8 @@ struct cgcodegen_t {
     }
 };
 
+extern "C" void cgg_microwire_write(uint16_t value);
+
 #endif
 
 static int32_t cgsuper(int32_t v) {

@@ -26,12 +26,12 @@ Legend: __Required__, Expected , _Optional_
     * [x] __Target machine bootstrap__
     * [x] __VBL timer support__
     * [x] __Mouse interups__
-* [ ] __Basic file loading__
-    * [x] __IFF Image files, with masks__
+* [x] __Basic file loading__
+    * [x] __ILBM Image files, with masks__
         * [x] __Load fonts__
         * [x] _Proportinal fonts_
     * [x] __SNDH music files__
-    * [ ] AIF samples
+    * [x] AIFF samples
 * [ ] __Graphics__
     * [x] __Display physical screen__
         * [x] _STe HW scrolling_
@@ -56,7 +56,7 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Sound__
     * [x] __Play SNDH music__
         * [x] Change tracks
-    * [ ] __Play LCM samples__
+    * [x] __Play LCM samples__
         * [ ] _Mix several channels_
 * [ ] __Scene management__
     * [x] __Shared resources manager__

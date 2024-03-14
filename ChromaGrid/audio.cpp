@@ -8,7 +8,9 @@
 #include "audio.hpp"
 #include "system.hpp"
 #include "iff_file.hpp"
+#ifndef __M68000__
 #include "system_host.hpp"
+#endif
 
 CGDEFINE_ID (AIFF);
 CGDEFINE_ID (COMM);
@@ -118,7 +120,29 @@ cgsount_c::~cgsount_c() {
 
 void cgsount_c::set_active() const {
 #ifdef __M68000__
-    // TODO: Do this!
+    cgg_microwire_write(0x4c | 40); // Max master volume (0 to 40)
+    cgg_microwire_write(0x50 | 20); // Right volume (0 to 20)
+    cgg_microwire_write(0x54 | 20); // Left volume (0 to 20)
+
+    uint8_t * ste_dma_control  = (uint8_t*)0xffff8901;
+    uint8_t * ste_dmo_mode  = (uint8_t*)0xffff8921;
+    uint8_t * ste_dma_start = (uint8_t*)0xffff8903;
+    uint8_t * ste_dms_end   = (uint8_t*)0xffff890f;
+    // Stop audio
+    *ste_dma_control &= 0xFE;
+    // Set start address, high to low byte
+    size_t tmp = (size_t)_sample;
+    ste_dma_start[0] = (uint8_t)((tmp >> 16)&0xff);
+    ste_dma_start[2] = (uint8_t)((tmp >>  8)&0xff);
+    ste_dma_start[4] = (uint8_t)((tmp       )&0xff);
+    // Set end address, high to low byte
+    tmp += _length;
+    ste_dms_end[0] = (uint8_t)((tmp >> 16)&0xff);
+    ste_dms_end[2] = (uint8_t)((tmp >>  8)&0xff);
+    ste_dms_end[4] = (uint8_t)((tmp       )&0xff);
+    // Set mode, and start
+    *ste_dmo_mode = 0x81; // 8 bit mono @ 12.5kHz
+    *ste_dma_control = 1; // Play once
 #else
     cgg_active_sound = (cgsount_c *)this;
 #endif

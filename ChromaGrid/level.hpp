@@ -33,7 +33,7 @@ typedef enum __packed {
     magnetic
 } tiletype_e;
 
-struct __attribute__((aligned (4))) tilestate_t  {
+struct __attribute__((aligned (2))) tilestate_t  {
     tiletype_e type;
     color_e target;
     color_e current;

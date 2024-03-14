@@ -209,7 +209,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse
 }
 
 void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
-    static union __attribute__((aligned(2))) {
+    static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
     } temp;

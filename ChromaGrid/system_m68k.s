@@ -12,6 +12,8 @@
     .global _cgg_mouse_interupt
     .global _cgg_system_mouse_interupt
 
+    .global _cgg_microwire_write
+
 
     .struct
 cgimage_super_image:            ds.l    1
@@ -25,6 +27,7 @@ cgimage_offset:                  ds.w    2
 cgimage_line_words:              ds.w    1
 cgimage_owns_bitmap:             ds.b    1
 cgimage_clipping:                ds.b    1
+
 
     .text
 
@@ -70,3 +73,12 @@ _cgg_mouse_interupt:
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _cgg_system_mouse_interupt:
     .dc.l    0x0
+
+_cgg_microwire_write:
+    move.w  #0x07ff,0xffff8924.w
+    move.w  d0,0xffff8922.w
+.wait:
+    cmp.w   #0x07ff,0xffff8924.w
+    bne.s   .wait
+    move.w  d0,0xffff8922.w
+    rts
