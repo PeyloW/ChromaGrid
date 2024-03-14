@@ -75,6 +75,10 @@ cgresources_c::cgresources_c() :
     font(_font_image, (cgsize_t){8, 8}, 4, 2, 4),
     mono_font(_font_image, (cgsize_t){8, 8}),
     small_font(_small_font_image, (cgsize_t){6, 6}, 3, 0, 6),
+    drop_orb(data_path("drop.aif", "Load audio")),
+    fuse_orb(data_path("fuse.aif")),
+    no_drop_orb(data_path("tock.aif")),
+    break_tile(data_path("break.aif")),
     music(data_path("music.snd", "Load music"))
 {
     background.set_offset((cgpoint_t){0, 0});

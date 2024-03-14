@@ -94,10 +94,11 @@ All in game image files are EA IFF 85 ILBM files. Asset files preferred as:
 
 All in game image files are EA IFF 85 AIFF files, 8bit 12.5kHz.
 
-* `click.aif` - Button clicked.
-* `tock.aif` - Failed to place orb.
-* `drop.aif` - Orb was placed
-* `fuse.aif` - Orb was fused
+* [ ] `click.aif` - Button clicked?
+* [x] `tock.aif` - Failed to place orb.
+* [x] `drop.aif` - Orb was placed
+* [x] `break.aif` - Glass tile breaks
+* [x] `fuse.aif` - Orb was fused
 
 ## Other
 

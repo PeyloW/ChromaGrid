@@ -39,6 +39,17 @@ long cgiff_file_c::get_pos() const {
     return result;
 }
 
+#ifndef __M68000__
+bool cgiff_file_c::set_pos(long pos) const {
+    bool result = fseek(_file, pos, SEEK_SET) >= 0;
+    if (_hard_assert) {
+        hard_assert(result >= 0);
+    }
+    return result;
+}
+#endif
+
+
 bool cgiff_file_c::first(const char *const id, cgiff_chunk_t &chunk) {
     bool result = false;
     if (_file && fseek(_file, 0, SEEK_SET) == 0) {

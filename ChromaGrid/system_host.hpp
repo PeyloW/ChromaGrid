@@ -27,8 +27,10 @@ extern void cgg_update_mouse(cgpoint_t position, bool left, bool right);
 
 class cgpalette_c;
 class cgimage_c;
-
+class cgsount_c;
+    
 extern cgpalette_c *cgg_active_palette;
+extern cgsount_c *cgg_active_sound;
 
 }
 

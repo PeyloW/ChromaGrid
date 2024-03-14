@@ -6,11 +6,13 @@
 //
 
 #include "graphics.hpp"
+#include "audio.hpp"
 #include "system.hpp"
 
 extern "C" {
 #ifndef __M68000__
     const cgpalette_c *cgg_active_palette = nullptr;
+    const cgsount_c *cgg_active_sound = nullptr;
 #endif
     const cgimage_c *cgg_active_image = nullptr;
 }

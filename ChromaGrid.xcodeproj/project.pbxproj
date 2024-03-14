@@ -47,6 +47,10 @@
 		A6E484C72B9FFCE2004CCA7D /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */; };
 		A6E484C82BA00F1C004CCA7D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C92B6FEFE500EBA43D /* graphics.cpp */; };
 		A6E484C92BA09CA4004CCA7D /* iff_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4D32B701EF600EBA43D /* iff_file.cpp */; };
+		A6E484CE2BA1ED02004CCA7D /* break.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484CA2BA1ED02004CCA7D /* break.aif */; };
+		A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484CB2BA1ED02004CCA7D /* tock.aif */; };
+		A6E484D02BA1ED02004CCA7D /* fuse.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484CC2BA1ED02004CCA7D /* fuse.aif */; };
+		A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484CD2BA1ED02004CCA7D /* drop.aif */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
@@ -130,6 +134,10 @@
 		A6E484B72B9FE63A004CCA7D /* arguments.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = arguments.hpp; sourceTree = "<group>"; };
 		A6E484C42B9FFCC5004CCA7D /* 1.6.43 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = 1.6.43; path = ../../../../../opt/homebrew/Cellar/libpng/1.6.43; sourceTree = "<group>"; };
 		A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = ../../../../../opt/homebrew/Cellar/libpng/1.6.43/lib/libpng16.16.dylib; sourceTree = "<group>"; };
+		A6E484CA2BA1ED02004CCA7D /* break.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = break.aif; sourceTree = "<group>"; };
+		A6E484CB2BA1ED02004CCA7D /* tock.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tock.aif; sourceTree = "<group>"; };
+		A6E484CC2BA1ED02004CCA7D /* fuse.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuse.aif; sourceTree = "<group>"; };
+		A6E484CD2BA1ED02004CCA7D /* drop.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = drop.aif; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -265,6 +273,10 @@
 				A69AE50F2B85031400EBA43D /* orbs.iff */,
 				A6F766B02B98BC2600325754 /* select.iff */,
 				A69AE5102B85031400EBA43D /* tiles.iff */,
+				A6E484CA2BA1ED02004CCA7D /* break.aif */,
+				A6E484CD2BA1ED02004CCA7D /* drop.aif */,
+				A6E484CC2BA1ED02004CCA7D /* fuse.aif */,
+				A6E484CB2BA1ED02004CCA7D /* tock.aif */,
 				A69AE5052B82B1E300EBA43D /* music.snd */,
 			);
 			path = data;
@@ -404,10 +416,14 @@
 				A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */,
 				A69AE5112B85031400EBA43D /* orbs.iff in Resources */,
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
+				A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
+				A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */,
+				A6E484CE2BA1ED02004CCA7D /* break.aif in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
 				A69AE50C2B82CDB500EBA43D /* README.MD in Resources */,
 				A69AE51A2B8AA0EE00EBA43D /* font.iff in Resources */,
+				A6E484D02BA1ED02004CCA7D /* fuse.aif in Resources */,
 				A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */,

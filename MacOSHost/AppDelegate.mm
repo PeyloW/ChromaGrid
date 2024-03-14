@@ -23,6 +23,7 @@
     bool _left;
     bool _right;
     NSTrackingRectTag _trackingRect;
+    NSSound *_sound;
 }
 
 static NSConditionLock *_gameLock;
@@ -66,6 +67,12 @@ static void _yieldFunction() {
 - (void)fireVBLTimer:(NSTimer *)timer {
     cgg_vbl_interupt();
     [self setNeedsDisplay:YES];
+    if (cgg_active_sound) {
+        NSData *data = [NSData dataWithBytesNoCopy:(void *)cgg_active_sound->get_sample() length:cgg_active_sound->get_length() freeWhenDone:NO];
+        _sound = [[NSSound alloc] initWithData:data];
+        [_sound play];
+        cgg_active_sound = nullptr;
+    }
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {

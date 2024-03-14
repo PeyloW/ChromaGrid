@@ -13,14 +13,19 @@
 
 class cgsount_c : private cgnocopy_c {
 public:
-    cgsount_c(char *path);
+    cgsount_c(const char *path);
     ~cgsount_c();
   
-    void set_active();
+    void set_active() const;
     
+    const int8_t *get_sample() const { return _sample; }
+    uint32_t get_length() const { return _length; }
+    uint16_t get_rate() const { return _rate; }
+
 private:
     int8_t *_sample;
-    size_t _length;
+    uint32_t _length;
+    uint16_t _rate;
 };
 
 class cgmusic_c : private cgnocopy_c {

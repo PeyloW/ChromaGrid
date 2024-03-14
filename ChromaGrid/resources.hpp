@@ -27,6 +27,10 @@ public:
     cgfont_c font;
     cgfont_c mono_font;
     cgfont_c small_font;
+    cgsount_c drop_orb;
+    cgsount_c fuse_orb;
+    cgsount_c no_drop_orb;
+    cgsount_c break_tile;
     cgmusic_c music;
     
     cgvector_c<level_recipe_t*, 100> levels;

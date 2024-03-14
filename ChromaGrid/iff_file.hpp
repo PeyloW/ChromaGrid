@@ -118,6 +118,9 @@ public:
     };
     
     long get_pos() const;
+#ifndef __M68000__
+    bool set_pos(long pos) const;
+#endif
     
     bool first(const char *const id, cgiff_chunk_t &chunk);
     bool first(const char *const id, const char *const subtype, cgiff_group_t &group);
