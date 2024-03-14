@@ -93,7 +93,7 @@ private:
                 sprintf(start, "%1d", level_idx + 1);
             }
             if (pair_idx == 1) {
-                _menu_buttons.add_buttons(prev_start, start);
+                _menu_buttons.add_button_pair(prev_start, start);
                 if (!save) {
                     if (rsc.user_levels[level_idx - 1]->empty()) {
                         _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;
@@ -139,11 +139,11 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_recipe_t 
         _header.time = 60;
     }
     _menu_buttons.add_button("Main Menu");
-    _menu_buttons.add_buttons("Load", "Save");
+    _menu_buttons.add_button_pair("Load", "Save");
     _menu_buttons.add_button("Try Level");
     
     for (int i = 0; i < 3; i++) {
-        _count_buttons.add_buttons("+", "-", 2);
+        _count_buttons.add_button_pair("+", "-", 2);
     }
     
     _tile_templates.push_back((tilestate_t){ tiletype_e::regular, color_e::none, color_e::none, color_e::none});

@@ -6,8 +6,8 @@ LIBCMINI=${LIBCMINI_LIBRARY_PATH}/mshort/mfastcall
 CC=/opt/cross-mint-OLD/bin/m68k-atari-mint-c++
 
 FLAGS=-m68000 -mshort -mfastcall
-FLAGS+=-g1 -DNDEBUG
-#FLAGS+=-g0 -DNDEBUG
+#FLAGS+=-g1 -DNDEBUG
+FLAGS+=-g0 -DNDEBUG
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti -fpermissive
@@ -21,7 +21,7 @@ OBJECTS+=iff_file.o
 OBJECTS+=graphics.o graphics_ilbm.o graphics_stencil.o graphics_draw.o graphics_draw_blitter.o
 OBJECTS+=audio.o
 OBJECTS+=scene.o
-OBJECTS+=resources.o level.o
+OBJECTS+=resources.o level.o button.o
 OBJECTS+=game.o game_intro.o game_credits.o game_level.o game_level_edit.o
 
 all: cgrid

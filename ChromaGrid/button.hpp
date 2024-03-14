@@ -28,46 +28,42 @@ struct cgbutton_t : cgnocopy_c {
     state_t state;
 };
 
-
-template<int BUTTON_COUNT>
-class cgbutton_group_c : public cgnocopy_c {
-public:
-    cgbutton_group_c(cgpoint_t origin, cgsize_t size, int16_t spacing) :
+class cgbutton_group_base_c : public cgnocopy_c {
+    protected:
+    cgbutton_group_base_c(cgpoint_t origin, cgsize_t size, int16_t spacing) :
         _tracked_button(-1),
         _size(size),
         _spacing(spacing)
     {
         _group_rect = (cgrect_t){ origin, { size.width, 0 }};
     }
+
+    cgrect_t next_button_rect(bool first);
+    void next_button_pair_rects(bool first, cgrect_t &left_rect, cgrect_t &right_rect, int16_t spacing);
+    int update_button_range(cgbutton_t *begin, cgbutton_t *end, const cgpoint_t &pos, cgimage_c &screen, cgmouse_c::state_e state);
     
+    int _tracked_button;
+    cgsize_t _size;
+    int16_t _spacing;
+    cgrect_t _group_rect;
+};
+
+template<int BUTTON_COUNT>
+class cgbutton_group_c : private cgbutton_group_base_c {
+public:
+    cgbutton_group_c(cgpoint_t origin, cgsize_t size, int16_t spacing) : 
+        cgbutton_group_base_c(origin, size, spacing) {}
+        
     void add_button(const char *title) {
-        cgrect_t rect = (cgrect_t){{_group_rect.origin.x, 0}, _size};
-        int16_t expand = _size.height + (buttons.size() ? ABS(_spacing) : 0);
-        if (_spacing < 0) {
-            rect.origin.y = _group_rect.origin.y - expand;
-            _group_rect.origin.y -= expand;
-        } else {
-            rect.origin.y = _group_rect.origin.y + _group_rect.size.height + expand - _spacing;
-        }
-        _group_rect.size.height += expand;
+        cgrect_t rect = next_button_rect(buttons.size() == 0);
         buttons.emplace_back(title, rect);
     }
-
-    void add_buttons(const char *left_title, const char *right_title, int16_t spacing = 8) {
-        cgrect_t rect = (cgrect_t){{_group_rect.origin.x, 0}, _size};
-        int16_t extra = buttons.size() ? ABS(_spacing) : 0;
-        int16_t step = _size.height + ABS(_spacing);
-        if (_spacing < 0) {
-            rect.origin.y = _group_rect.origin.y - (_size.height + extra);
-            _group_rect.origin.y -= (_size.height + extra);
-        } else {
-            rect.origin.y = _group_rect.origin.y + _group_rect.size.height + extra;
-        }
-        _group_rect.size.height += _size.height + extra;
-        rect.size.width = rect.size.width / 2 - (spacing / 2);
-        buttons.emplace_back(left_title, rect);
-        rect.origin.x += rect.size.width + spacing;
-        buttons.emplace_back(right_title, rect);
+    
+    void add_button_pair(const char *left_title, const char *right_title, int16_t spacing = 8) {
+        cgrect_t left_rect, right_rect;
+        next_button_pair_rects(buttons.size() == 0, left_rect, right_rect, spacing);
+        buttons.emplace_back(left_title, left_rect);
+        buttons.emplace_back(right_title, right_rect);
     }
     
     void draw_all(cgimage_c &screen) {
@@ -75,55 +71,12 @@ public:
             button->draw_in(screen);
         }
     }
-    
+        
     int update_buttons(cgimage_c &screen, cgpoint_t pos, cgmouse_c::state_e state) {
-        update_tracked_button(screen, pos, state);
-        if (_group_rect.contains(pos)) {
-            if (state != cgmouse_c::released) {
-                int idx = 0;
-                for (cgbutton_t *button = buttons.begin(); button != buttons.end(); button++, idx++) {
-                    if (button->state == cgbutton_t::disabled) {
-                        continue;
-                    }
-                    if (button->rect.contains(pos)) {
-                        if (state == cgmouse_c::pressed) {
-                            if (button->state == cgbutton_t::normal) {
-                                button->state = cgbutton_t::pressed;
-                                button->draw_in(screen);
-                                _tracked_button = idx;
-                            }
-                            break;
-                        } else {
-                            assert(button->state == cgbutton_t::pressed);
-                            button->state = cgbutton_t::normal;
-                            button->draw_in(screen);
-                            return idx;
-                        }
-                    }
-                }
-            }
-        }
-        return -1;
+        return update_button_range(buttons.begin(), buttons.end(), pos, screen, state);
     }
 
     cgvector_c<cgbutton_t, BUTTON_COUNT> buttons;
-
-private:
-    inline void update_tracked_button(cgimage_c &screen, const cgpoint_t pos, cgmouse_c::state_e state) {
-        if (_tracked_button >= 0) {
-            auto &button = buttons[_tracked_button];
-            //assert(button.state == cgbutton_t::pressed);
-            if (state == cgmouse_c::released || !button.rect.contains(pos)) {
-                button.state = cgbutton_t::normal;
-                button.draw_in(screen);
-                _tracked_button = -1;
-            }
-        }
-    }
-    int _tracked_button;
-    cgsize_t _size;
-    int16_t _spacing;
-    cgrect_t _group_rect;
 };
 
 
