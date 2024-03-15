@@ -55,6 +55,8 @@ public:
             screen.draw(rsc.font, buf, (cgpoint_t){96, 84});
             sprintf(buf, "Total: %d pts", _results.score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 114});
+            sprintf(buf, "Moves: %d", _results.moves);
+            screen.draw(rsc.font, buf, (cgpoint_t){96, 144});
         }
     }
 
@@ -120,7 +122,7 @@ void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
             } else {
                 manager.replace(new cglevel_scene_c(manager, _level_num));
             }
-            return;;
+            return;
         default:
             break;
     }

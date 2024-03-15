@@ -279,6 +279,7 @@ level_t::~level_t() {
 #define ORB_X_LEAD 16
 #define ORB_X_SPACING 40
 #define ORB_Y_INSET 90
+#define MOVES_Y_INSET 110
 
 void level_t::draw_all(cgimage_c &screen) const {
     auto &rsc = cgresources_c::shared();
@@ -287,7 +288,6 @@ void level_t::draw_all(cgimage_c &screen) const {
             draw_tile(screen, x, y);
         }
     }
-    draw_orb_counts(screen);
     screen.draw(rsc.font, "TIME:", (cgpoint_t){LABEL_X_INSET, TIME_Y_INSET}, cgimage_c::align_left);
     draw_time(screen);
     
@@ -299,6 +299,9 @@ void level_t::draw_all(cgimage_c &screen) const {
         rect.origin.x += 16;
     }
     draw_orb_counts(screen);
+    
+    screen.draw(rsc.font, "MOVES:", (cgpoint_t){LABEL_X_INSET, MOVES_Y_INSET}, cgimage_c::align_left);
+    draw_move_count(screen);
 }
 
 inline static const cgrect_t tilestate_src_rect(const tilestate_t &state) {
@@ -422,6 +425,23 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
     }
 }
 
+void level_t::draw_move_count(cgimage_c &screen) const {
+    auto &rsc = cgresources_c::shared();
+    int moves = _results.moves;
+    char buf[4];
+    buf[3] = 0;
+    for (int i = 3; --i != -1; ) {
+        uint8_t r = moves % 10;
+        moves /= 10;
+        buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
+    }
+    const cgpoint_t at = (cgpoint_t){ TIME_X_TRAIL - 24, MOVES_Y_INSET };
+    const cgrect_t rect = (cgrect_t){at, (cgsize_t){24, 8}};
+
+    screen.draw(rsc.background, rect, at);
+    screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+}
+
 level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int ticks) {
     _time_count += ticks;
     if (_time_count >= 50) {
@@ -456,7 +476,7 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
             if ((cgp_tile_changes & added_orb) || cgp_tile_changes & removed_orb) {
                 _results.moves += 1;
                 draw_orb_counts(screen);
-                // TODO: Draw moves
+                draw_move_count(screen);
             }
             auto &rsc = cgresources_c::shared();
             if (cgp_tile_changes >= broke_glass) {

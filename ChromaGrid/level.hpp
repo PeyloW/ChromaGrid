@@ -101,6 +101,7 @@ private:
     void draw_tile(cgimage_c &screen, int x, int y) const;
     void draw_time(cgimage_c &screen) const;
     void draw_orb_counts(cgimage_c &screen) const;
+    void draw_move_count(cgimage_c &screen) const;
 
     level_result_t _results;
     int _time_count;
