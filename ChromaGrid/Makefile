@@ -22,7 +22,7 @@ OBJECTS+=graphics.o graphics_ilbm.o graphics_stencil.o graphics_draw.o graphics_
 OBJECTS+=audio.o
 OBJECTS+=scene.o
 OBJECTS+=resources.o level.o button.o
-OBJECTS+=game.o game_intro.o game_credits.o game_level.o game_level_edit.o
+OBJECTS+=game.o game_intro.o game_scores.o game_credits.o game_level.o game_level_edit.o
 
 all: cgrid
 

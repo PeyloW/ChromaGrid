@@ -58,6 +58,19 @@ private:
     cgbutton_group_c<1> _menu_buttons;
 };
 
+class cgscores_scene_c : public cggame_scene_c {
+public:
+    typedef enum __packed {
+        score, time, moves
+    } scoring_e;
+    cgscores_scene_c(cgmanager_c &manager, scoring_e scoring = score);
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen, int ticks);
+private:
+    scoring_e _scoring;
+    cgbutton_group_c<4> _menu_buttons;
+};
+
 class cglevel_scene_c : public cggame_scene_c {
 public:
     static const int TEST_LEVEL = -1;

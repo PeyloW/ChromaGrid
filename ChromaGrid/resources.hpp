@@ -27,6 +27,7 @@ public:
     cgfont_c font;
     cgfont_c mono_font;
     cgfont_c small_font;
+    cgfont_c small_mono_font;
     cgsount_c drop_orb;
     cgsount_c take_orb;
     cgsount_c fuse_orb;
@@ -34,8 +35,8 @@ public:
     cgsount_c break_tile;
     cgmusic_c music;
     
-    cgvector_c<level_recipe_t*, 100> levels;
-    cgvector_c<level_result_t, 100> level_results;
+    cgvector_c<level_recipe_t*, 45> levels;
+    cgvector_c<level_result_t, 45> level_results;
     cgvector_c<level_recipe_t*, 10> user_levels;
 
     bool save_user_levels() const;

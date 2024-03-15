@@ -12,7 +12,7 @@ cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) :
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
     const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
-    bool enabled[6] = { false, true, false, true, false, true };
+    bool enabled[6] = { false, true, false, true, true, true };
     for (int i = 0; i < 6; i++) {
         _menu_buttons.add_button(button_titles[i]);
         if (!enabled[i]) {
@@ -69,7 +69,6 @@ void cgintro_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.pop();
             break;
         case 1:
-            // Show credits
             manager.push(new cgcredits_scene_c(manager));
             break;
         case 2:
@@ -79,7 +78,7 @@ void cgintro_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.push(new cglevel_edit_scene_c(manager, nullptr));
             break;
         case 4:
-            // Show Hi-Scores
+            manager.push(new cgscores_scene_c(manager));
             break;
         case 5:
             manager.push(new cglevel_scene_c(manager, 0));
