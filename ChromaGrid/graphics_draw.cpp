@@ -242,7 +242,7 @@ void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, c
     });
 }
 
-void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment, const uint8_t color) const {
+cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment, const uint8_t color) const {
     int len = (int)strlen(text);
     cgsize_t size = font.get_rect(' ').size;
     size.width = 0;
@@ -270,14 +270,15 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_
             draw(font.get_image(), rect, at, color);
         }
     });
+    return size;
 }
 
 #define MAX_LINES 8
 static char draw_text_buffer[80 * MAX_LINES];
 
-void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
+cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
     strcpy(draw_text_buffer, text);
-    cgvector_c<const char *, 8> lines;
+    cgvector_c<const char *, 12> lines;
 
     uint16_t line_width = 0;
     int start = 0;
@@ -317,10 +318,16 @@ void cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16
         case align_center: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
         case align_right: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
     }
+    cgsize_t max_size = {0,0};
+    bool first = true;
     for (auto line = lines.begin(); line != lines.end(); line++) {
-        draw(font, *line, at, alignment, color);
-        at.y += font.get_rect(' ').size.height + line_spacing;
+        const auto size = draw(font, *line, at, alignment, color);
+        at.y += size.height + line_spacing;
+        max_size.width = MAX(max_size.width, size.width);
+        max_size.height += size.height + (!first ? line_spacing : 0);
+        first = false;
     }
+    return  max_size;
 }
 
 void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {

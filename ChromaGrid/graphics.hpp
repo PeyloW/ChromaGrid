@@ -154,8 +154,8 @@ public:
     void draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const;
     void draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const;
     
-    void draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment = align_center, const uint8_t color = MASKED_CIDX) const;
-    void draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing = 0, text_alignment_e alignment = align_center, const uint8_t color = MASKED_CIDX) const;
+    cgsize_t draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment = align_center, const uint8_t color = MASKED_CIDX) const;
+    cgsize_t draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing = 0, text_alignment_e alignment = align_center, const uint8_t color = MASKED_CIDX) const;
 private:
     const cgimage_c *_super_image;
     cgpalette_c *_palette;

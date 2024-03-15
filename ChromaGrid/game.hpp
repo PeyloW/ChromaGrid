@@ -51,11 +51,15 @@ private:
 
 class cgcredits_scene_c : public cggame_scene_c {
 public:
-    cgcredits_scene_c(cgmanager_c &manager);
+    typedef enum __packed {
+        credits, recognitions, dedications, greetings
+    } page_e;
+    cgcredits_scene_c(cgmanager_c &manager, page_e page = credits);
     virtual void will_appear(cgimage_c &screen, bool obsured);
     virtual void tick(cgimage_c &screen, int ticks);
 private:
-    cgbutton_group_c<1> _menu_buttons;
+    page_e _page;
+    cgbutton_group_c<5> _menu_buttons;
 };
 
 class cgscores_scene_c : public cggame_scene_c {

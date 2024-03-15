@@ -12,10 +12,10 @@ cgscores_scene_c::cgscores_scene_c(cgmanager_c &manager, scoring_e scoring) :
     _scoring(scoring),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
-    _menu_buttons.add_button("Back");
-    _menu_buttons.add_button("Least Moves");
-    _menu_buttons.add_button("Best Times");
-    _menu_buttons.add_button("Hi-Scores");
+    const char *button_titles[5] = { "Back", "Least Moves", "Best Times", "Hi-Scores" };
+    for (int i = 0; i < 5; i++) {
+        _menu_buttons.add_button(button_titles[i]);
+    }
     _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
 }
 
