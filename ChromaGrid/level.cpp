@@ -33,6 +33,31 @@ void level_result_t::calculate_scores(bool succes) {
     }
 }
 
+bool level_result_t::merge_from(const level_result_t &new_result) {
+    bool improved = false;
+    if (new_result.score != 0) {
+        if (time == 0 || new_result.time < time) {
+            time = new_result.time;
+            improved = true;
+        }
+        if (new_result.score > score) {
+            score = new_result.score;
+            orbs_score = new_result.orbs_score;
+            time_score = new_result.time_score;
+            improved = true;
+        }
+        if (moves == 0 || new_result.moves < moves) {
+            moves = new_result.moves;
+            improved = true;
+        }
+        if (improved) {
+            orbs[0] = new_result.orbs[0];
+            orbs[1] = new_result.orbs[1];
+        }
+    }
+    return improved;
+}
+
 
 class tile_c {
 public:
@@ -275,9 +300,9 @@ level_t::~level_t() {
 #define LABEL_X_INSET 200
 #define TIME_Y_INSET 70
 #define TIME_X_TRAIL (320 - 8)
-#define ORB_X_INSET 240
+#define ORB_X_INSET 248
 #define ORB_X_LEAD 16
-#define ORB_X_SPACING 40
+#define ORB_X_SPACING 32
 #define ORB_Y_INSET 90
 #define MOVES_Y_INSET 110
 

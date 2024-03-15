@@ -25,6 +25,9 @@ public:
                 _menu_buttons.add_button("Retry Level");
             } else {
                 _menu_buttons.add_button("Next Level");
+                if (rsc.level_results[level_num].merge_from(results)) {
+                    rsc.save_level_results();
+                }
             }
         }
     };

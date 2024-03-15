@@ -18,7 +18,7 @@
 CGDEFINE_ID (CGLV); // ChromaGrid LeVel
 CGDEFINE_ID (LVHD); // LeVel HeaDer
 CGDEFINE_ID (TSTS); // Tile STateS
-CGDEFINE_ID (CGLR);  // ChromaGrid Level Results
+CGDEFINE_ID (CGLR); // ChromaGrid Level Results
 
 typedef enum __packed {
     none, gold, silver, both
@@ -70,6 +70,7 @@ struct level_result_t {
     uint16_t time;
     uint16_t moves;
     void calculate_scores(bool succes);
+    bool merge_from(const level_result_t &new_result);
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };

@@ -113,7 +113,9 @@ cgresources_c::cgresources_c() :
     load_user_levels();
     
     printf("Loading levels.\n\r");
-    if (!load_levels()) {
+    load_levels();
+    load_level_results();
+    /*
         // Make one, if we cannot load.
         level_recipe_t *recipe = (level_recipe_t *)calloc(1, sizeof(level_recipe_t) + sizeof(tilestate_t) * 4);
         recipe->header.width = 2;
@@ -127,19 +129,26 @@ cgresources_c::cgresources_c() :
         recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
         recipe->tiles[3] = { tiletype_e::regular, color_e::silver, color_e::none, color_e::gold };
         levels.push_back(recipe);
-    }
+    */
 }
 
-template<class Vector>
-static bool load_levels(FILE *file, Vector &levels) {
-    
+void cgresources_c::load_levels() {
+    cgiff_file_c  iff(data_path("levels.dat"));
+    assert(iff.get_pos() == 0);
+    iff.with_hard_asserts(true, [&] {
+        cgiff_group_t list;
+        iff.first(CGIFF_LIST, CGIFF_CGLV, list);
+        uint8_t *data = (uint8_t *)calloc(1, list.size);
+        cgiff_group_t level_group;
+        while (iff.next(list, CGIFF_FORM, level_group)) {
+            level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
+            recipe->load(iff, level_group);
+            levels.emplace_back(recipe);
+        }
+    });
 }
 
-bool cgresources_c::load_levels() const {
-    return false;
-}
-
-bool cgresources_c::load_user_levels() const {
+bool cgresources_c::load_user_levels() {
     FILE *file =  fopen(user_path("levels.dat"), "r");
     if (!file) {
         return false;
@@ -185,18 +194,25 @@ bool cgresources_c::load_level_results() {
     if (file) {
         cgiff_file_c iff(file);
         cgiff_group_t list;
-        if (!iff.first(CGIFF_LIST, CGIFF_CGLR, list)) {
-            goto done;
-        } else {
+        if (iff.first(CGIFF_LIST, CGIFF_CGLR, list)) {
             cgiff_chunk_t level_chunk;
             while (iff.next(list, CGIFF_CGLR, level_chunk)) {
                 level_results.push_back();
                 auto &level_result = level_results.back();
-                level_result.load(iff, level_chunk);
+                if (!level_result.load(iff, level_chunk)) {
+                    goto done;
+                }
             }
         }
-    done:
         fclose(file);
+        success = true;
+    }
+done:
+    if (!success) {
+        level_results.clear();
+    }
+    while (level_results.size() < levels.size()) {
+        level_results.push_back();
     }
     return success;
 }
@@ -206,9 +222,8 @@ bool cgresources_c::save_level_results() const {
     cgiff_group_t list;
     if (iff.begin(list, CGIFF_LIST)) {
         iff.write(CGIFF_CGLR_ID);
-        for (int index = 0; level_results.size(); index++) {
-            auto &level_result = level_results[index];
-            level_result.save(iff);
+        for (auto result = level_results.begin(); result != level_results.end(); result++) {
+            result->save(iff);
         }
         return iff.end(list);
     }

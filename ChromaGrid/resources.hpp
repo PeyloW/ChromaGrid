@@ -43,9 +43,9 @@ public:
     
     static const cgresources_c& shared();
 private:
-    bool load_levels() const;
+    void load_levels();
     bool load_level_results();
-    bool load_user_levels() const;
+    bool load_user_levels();
     cgresources_c();
 };
 
