@@ -16,7 +16,8 @@ struct cgbutton_t : cgnocopy_c {
     typedef enum __packed {
         normal,
         pressed,
-        disabled
+        disabled,
+        hidden
     } state_t;
     inline cgbutton_t() : text("") {}
     inline cgbutton_t(const char *text, cgrect_t rect) : text(text), rect(rect), state(normal) {}
@@ -35,10 +36,10 @@ class cgbutton_group_base_c : public cgnocopy_c {
         _size(size),
         _spacing(spacing)
     {
-        _group_rect = (cgrect_t){ origin, { size.width, 0 }};
+        _group_rect = (cgrect_t){ origin, { 0, 0 }};
     }
 
-    cgrect_t next_button_rect(bool first);
+    cgrect_t next_button_rect(bool first, bool horizontal = false);
     void next_button_pair_rects(bool first, cgrect_t &left_rect, cgrect_t &right_rect, int16_t spacing);
     int update_button_range(cgbutton_t *begin, cgbutton_t *end, const cgpoint_t &pos, cgimage_c &screen, cgmouse_c::state_e state);
     
@@ -54,8 +55,8 @@ public:
     cgbutton_group_c(cgpoint_t origin, cgsize_t size, int16_t spacing) : 
         cgbutton_group_base_c(origin, size, spacing) {}
         
-    void add_button(const char *title) {
-        cgrect_t rect = next_button_rect(buttons.size() == 0);
+    void add_button(const char *title, bool horizontal = false) {
+        cgrect_t rect = next_button_rect(buttons.size() == 0, horizontal);
         buttons.emplace_back(title, rect);
     }
     

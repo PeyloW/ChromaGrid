@@ -79,9 +79,74 @@ void cgintro_scene_c::tick(cgimage_c &screen, int ticks) {
             manager.push(new cgscores_scene_c(manager));
             break;
         case 5:
-            manager.push(new cglevel_scene_c(manager, 0));
+            if (rsc.level_results.front().score == 0) {
+                manager.push(new cglevel_scene_c(manager, 0));
+            } else {
+                manager.push(new cglevel_select_scene_c(manager));
+            }
             break;
         default:
             break;
+    }
+}
+
+cglevel_select_scene_c::cglevel_select_scene_c(cgmanager_c &manager) :
+    cggame_scene_c(manager),
+    _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
+{
+    _menu_buttons.add_button("Back");
+    
+    static char title_buf[3 * 45];
+    int index = 0;
+    cgpoint_t origin = (cgpoint_t){16, 40};
+    const cgsize_t size = (cgsize_t){26, 14};
+    bool disable = false;
+    for (auto result = rsc.level_results.begin(); result != rsc.level_results.end(); result++) {
+        int col = index % 5;
+        if (col == 0) {
+            _select_button_groups.emplace_back(origin, size, 8);
+            origin.y += 14 + 2;
+        }
+        auto &button_group = _select_button_groups.back();
+        auto title = title_buf + index * 3;
+        sprintf(title, "%d", index + 1);
+        button_group.add_button(title, true);
+
+        button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
+        if (result->score == 0) {
+            disable = true;
+        }
+        
+        index++;
+    }
+}
+
+void cglevel_select_scene_c::will_appear(cgimage_c &screen, bool obsured) {
+    screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
+    _menu_buttons.draw_all(screen);
+
+    screen.draw(rsc.font, "Choose Level", (cgpoint_t){96, 16});
+
+    for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
+        group->draw_all(screen);
+    }
+}
+
+void cglevel_select_scene_c::tick(cgimage_c &screen, int ticks) {
+    int button = update_button_group(screen, _menu_buttons);
+    if (button == 0) {
+        manager.pop();
+        return;
+    }
+
+    int row = 0;
+    for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
+        button = update_button_group(screen, *group);
+        if (button >= 0) {
+            int level = row * 5 + button;
+            manager.replace(new cglevel_scene_c(manager, level));
+            return;
+        }
+        row++;
     }
 }

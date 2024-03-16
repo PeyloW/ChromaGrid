@@ -90,6 +90,16 @@ private:
     level_t _level;
 };
 
+class cglevel_select_scene_c : public cggame_scene_c {
+public:
+    cglevel_select_scene_c(cgmanager_c &manager);
+
+    virtual void will_appear(cgimage_c &screen, bool obsured);
+    virtual void tick(cgimage_c &screen, int ticks);
+private:
+    cgbutton_group_c<1> _menu_buttons;
+    cgvector_c<cgbutton_group_c<5>, 9> _select_button_groups;
+};
 
 class cglevel_edit_scene_c : public cggame_scene_c {
 public:
