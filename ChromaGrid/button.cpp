@@ -61,6 +61,7 @@ void cgbutton_group_base_c::next_button_pair_rects(bool first, cgrect_t &left_re
     } else {
         left_rect.origin.y = _group_rect.origin.y + _group_rect.size.height + extra;
     }
+    _group_rect.size.width = _size.width;
     _group_rect.size.height += _size.height + extra;
     left_rect.size.width = left_rect.size.width / 2 - (spacing / 2);
     
