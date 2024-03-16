@@ -55,6 +55,7 @@
 		A6E484D52BA3381D004CCA7D /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484D42BA3381D004CCA7D /* button.cpp */; };
 		A6E484D72BA33F68004CCA7D /* levels.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6E484D62BA33F68004CCA7D /* levels.dat */; };
 		A6E484D92BA3EDB6004CCA7D /* game_scores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */; };
+		A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
@@ -146,6 +147,7 @@
 		A6E484D42BA3381D004CCA7D /* button.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		A6E484D62BA33F68004CCA7D /* levels.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels.dat; sourceTree = "<group>"; };
 		A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_scores.cpp; sourceTree = "<group>"; };
+		A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = fusebrk.aif; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 				A6E484CD2BA1ED02004CCA7D /* drop.aif */,
 				A6E484D22BA293EE004CCA7D /* take.aif */,
 				A6E484CC2BA1ED02004CCA7D /* fuse.aif */,
+				A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */,
 				A6E484CB2BA1ED02004CCA7D /* tock.aif */,
 				A69AE5052B82B1E300EBA43D /* music.snd */,
 			);
@@ -440,6 +443,7 @@
 				A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A6E484D32BA293EE004CCA7D /* take.aif in Resources */,
+				A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */,
 				A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 				A6F766B12B98BC2600325754 /* select.iff in Resources */,

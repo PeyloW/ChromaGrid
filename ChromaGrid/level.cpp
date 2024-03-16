@@ -110,6 +110,10 @@ public:
             const auto c = state.orb;
             state.orb = none;
             cgp_tile_changes |= removed_orb;
+            if (state.type == glass) {
+                state.type = broken;
+                cgp_tile_changes |= broke_glass;
+            }
             _dirty = true;
             return c;
         } else {
@@ -504,7 +508,9 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
                 draw_move_count(screen);
             }
             auto &rsc = cgresources_c::shared();
-            if (cgp_tile_changes >= broke_glass) {
+            if (cgp_tile_changes >= (broke_glass + fused_orb)) {
+                rsc.fuse_break_tile.set_active();
+            } else if (cgp_tile_changes >= broke_glass) {
                 rsc.break_tile.set_active();
             } else if (cgp_tile_changes >= fused_orb) {
                 rsc.fuse_orb.set_active();

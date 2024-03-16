@@ -81,6 +81,7 @@ cgresources_c::cgresources_c() :
     fuse_orb(data_path("fuse.aif")),
     no_drop_orb(data_path("tock.aif")),
     break_tile(data_path("break.aif")),
+    fuse_break_tile(data_path("fusebrk.aif")),
     music(data_path("music.snd", "Load music"))
 {
     background.set_offset((cgpoint_t){0, 0});

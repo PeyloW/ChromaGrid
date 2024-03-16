@@ -33,6 +33,7 @@ public:
     cgsount_c fuse_orb;
     cgsount_c no_drop_orb;
     cgsount_c break_tile;
+    cgsount_c fuse_break_tile;
     cgmusic_c music;
     
     cgvector_c<level_recipe_t*, 45> levels;
