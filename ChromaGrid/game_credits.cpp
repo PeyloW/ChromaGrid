@@ -20,6 +20,8 @@ cgcredits_scene_c::cgcredits_scene_c(cgmanager_c &manager, page_e page) :
 }
 
 static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
+    screen.draw(rsc.font, "Credits", (cgpoint_t){96, 16});
+
     struct { const char *credit; const char *person; } credits[] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
         {"Graphics:", "Herve 'Exocet' Piton"},
@@ -29,8 +31,8 @@ static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
         {nullptr}
     };
     
-    cgpoint_t atc = (cgpoint_t){16, 32 +  0};
-    cgpoint_t atp = (cgpoint_t){40, 32 + 10};
+    cgpoint_t atc = (cgpoint_t){16, 40 +  0};
+    cgpoint_t atp = (cgpoint_t){40, 40 + 10};
     for (auto credit = &credits[0]; credit->credit; credit++) {
         screen.draw(rsc.font, credit->credit, atc, cgimage_c::align_left);
         atc.y += 26;

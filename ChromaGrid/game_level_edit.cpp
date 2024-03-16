@@ -175,7 +175,12 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse
             return selected.orb == none ? selected : current;
             break;
         case tiletype_e::blocked:
-            return button == cgmouse_c::right ? empty : current;
+            if (selected.orb != none) {
+                return current;
+            } else if (selected.type == current.type) {
+                return button == cgmouse_c::right ? empty : current;
+            }
+            // fall through
         default: {
             auto copy = current;
             if (selected.orb != none) {
