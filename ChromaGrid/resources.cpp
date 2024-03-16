@@ -141,7 +141,7 @@ void cgresources_c::load_levels() {
         iff.first(CGIFF_LIST, CGIFF_CGLV, list);
         uint8_t *data = (uint8_t *)calloc(1, list.size);
         cgiff_group_t level_group;
-        while (iff.next(list, CGIFF_FORM, level_group)) {
+        while (levels.size() < 45 && iff.next(list, CGIFF_FORM, level_group)) {
             level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
             recipe->load(iff, level_group);
             levels.emplace_back(recipe);

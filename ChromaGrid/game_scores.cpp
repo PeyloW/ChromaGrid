@@ -36,35 +36,33 @@ void cgscores_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     }
     
     int index = 0;
-    for (int j = 0; j < 9; j++) {
-        for (auto result = rsc.level_results.begin(); result != rsc.level_results.end(); result++) {
-            char buf[12];
-            int col = index % 3;
-            int row = index / 3;
-            if (result->score == 0) {
-                if (_scoring == time) {
-                    sprintf(buf, "%2d: -:--", index + 1);
-                } else {
-                    sprintf(buf, "%2d:    -", index + 1);
-                }
+    for (auto result = rsc.level_results.begin(); result != rsc.level_results.end(); result++) {
+        char buf[12];
+        int col = index % 3;
+        int row = index / 3;
+        if (result->score == 0) {
+            if (_scoring == time) {
+                sprintf(buf, "%2d: -:--", index + 1);
             } else {
-                switch (_scoring) {
-                    case score:
-                        sprintf(buf, "%2d:%5ld", index + 1, result->score);
-                        break;
-                    case time:
-                        sprintf(buf, "%2d: %d:%0d", index + 1, result->time / 60, result->time % 60);
-                        break;
-                    case moves:
-                        sprintf(buf, "%2d: %4d", index + 1, result->moves);
-                        break;
-                }
+                sprintf(buf, "%2d:    -", index + 1);
             }
-            cgpoint_t at = (cgpoint_t){(int16_t)(16 + col * 55), (int16_t)(16 + 20 + 10 * row)};
-            screen.draw(rsc.small_mono_font, buf, at, cgimage_c::align_left);
-            
-            index++;
+        } else {
+            switch (_scoring) {
+                case score:
+                    sprintf(buf, "%2d:%5ld", index + 1, result->score);
+                    break;
+                case time:
+                    sprintf(buf, "%2d: %d:%0d", index + 1, result->time / 60, result->time % 60);
+                    break;
+                case moves:
+                    sprintf(buf, "%2d: %4d", index + 1, result->moves);
+                    break;
+            }
         }
+        cgpoint_t at = (cgpoint_t){(int16_t)(16 + col * 55), (int16_t)(16 + 20 + 10 * row)};
+        screen.draw(rsc.small_mono_font, buf, at, cgimage_c::align_left);
+        
+        index++;
     }
 }
 

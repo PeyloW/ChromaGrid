@@ -413,7 +413,7 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
             validate_c4id(c4id, false);
             args.pop_front();
         }}},
-        {"-i in_file", {"Input file for data.", [&] (arguments_t &args) {
+        {"-d in_file", {"Input file for data.", [&] (arguments_t &args) {
             if (args.size() < 1) {
                 printf("No input file.\n");
                 exit(-1);
@@ -423,7 +423,9 @@ static void do_add_common_insert_options(std::string &c4id, std::vector<uint8_t>
                 printf("Could not open input file");
                 exit(-1);
             }
+            fseek(file, 0, SEEK_END);
             int size = ftell(file);
+            fseek(file, 0, SEEK_SET);
             auto old_size = data.size();
             data.resize(data.size() + size);
             if (fread(data.data() + old_size, 1, size, file) != size) {
@@ -619,7 +621,8 @@ static void handle_extract(arguments_t &args) {
         if (iff_in.first("*", top_chunk)) {
             do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
-                    if (time != visit_before_data) {
+                    if (time == visit_before_data) {
+                        const long pos = iff_in.get_pos();
                         cgiff_file_c iff_ext_out(output_file_path.c_str(), "w+");
                         cgiff_chunk_t chunk_out;
                         if (!data_only) {
@@ -632,6 +635,7 @@ static void handle_extract(arguments_t &args) {
                         if (!data_only) {
                             iff_ext_out.end(chunk_out);
                         }
+                        iff_in.set_pos(pos);
                         printf("Extracted matched chunk.\n");
                     }
                     return action_skip;
