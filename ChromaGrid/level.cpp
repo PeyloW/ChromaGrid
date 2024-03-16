@@ -536,6 +536,8 @@ static void cghton(level_recipe_t::header_t &header) {
 #ifndef __M68000__
 static void cghton(level_result_t &result) {
     cghton(result.score);
+    cghton(result.orbs_score);
+    cghton(result.time_score);
     cghton(result.time);
     cghton(result.moves);
 };

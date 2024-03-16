@@ -12,9 +12,9 @@ cgscores_scene_c::cgscores_scene_c(cgmanager_c &manager, scoring_e scoring) :
     _scoring(scoring),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
-    const char *button_titles[5] = { "Back", "Least Moves", "Best Times", "Hi-Scores" };
-    for (int i = 0; i < 5; i++) {
-        _menu_buttons.add_button(button_titles[i]);
+    const char *button_titles[5] = { "Back", "Least Moves", "Best Times", "Hi-Scores", nullptr };
+    for (auto title = &button_titles[0]; *title; title++) {
+        _menu_buttons.add_button(*title);
     }
     _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
 }
@@ -50,7 +50,7 @@ void cgscores_scene_c::will_appear(cgimage_c &screen, bool obsured) {
             } else {
                 switch (_scoring) {
                     case score:
-                        sprintf(buf, "%2d: %4d", index + 1, result->score);
+                        sprintf(buf, "%2d:%5ld", index + 1, result->score);
                         break;
                     case time:
                         sprintf(buf, "%2d: %d:%0d", index + 1, result->time / 60, result->time % 60);

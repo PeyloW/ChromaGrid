@@ -12,28 +12,29 @@ cgcredits_scene_c::cgcredits_scene_c(cgmanager_c &manager, page_e page) :
     _page(page),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
-    const char *button_titles[5] = { "Back", "Greetings", "Dedications", "Recognitions", "Credits" };
-    for (int i = 0; i < 5; i++) {
-        _menu_buttons.add_button(button_titles[i]);
+    const char *button_titles[] = { "Back", "Greetings", "Dedications", "Recognitions", "Credits", nullptr };
+    for (auto title = &button_titles[0]; *title; title++) {
+        _menu_buttons.add_button(*title);
     }
     _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
 }
 
 static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
-    struct { const char *credit; const char *person; } credits[5] = {
+    struct { const char *credit; const char *person; } credits[] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
         {"Graphics:", "Herve 'Exocet' Piton"},
         {"Music:", "Joakim 'AiO' Ekblad"},
         {"Fonts:", "Damien Guard"},
-        {"Concept:", "Peter 'Eagle' Nyman"}
+        {"Concept:", "Peter 'Eagle' Nyman"},
+        {nullptr}
     };
     
     cgpoint_t atc = (cgpoint_t){16, 32 +  0};
     cgpoint_t atp = (cgpoint_t){40, 32 + 10};
-    for (int i = 0; i < 5; i++) {
-        screen.draw(rsc.font, credits[i].credit, atc, cgimage_c::align_left);
+    for (auto credit = &credits[0]; credit->credit; credit++) {
+        screen.draw(rsc.font, credit->credit, atc, cgimage_c::align_left);
         atc.y += 26;
-        screen.draw(rsc.font, credits[i].person, atp, cgimage_c::align_left);
+        screen.draw(rsc.font, credit->person, atp, cgimage_c::align_left);
         atp.y += 26;
     }
 }
@@ -42,44 +43,47 @@ static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
 
 static void draw_recognitions(const cgresources_c &rsc, cgimage_c &screen) {
     screen.draw(rsc.font, "Recognitions", (cgpoint_t){96, 16});
-    const char *texts[4] = {
+    const char *texts[] = {
         "This game uses royalty free sound effects from ZapSplat.\n(https://www.zapsplat.com/)",
         "This game uses libcmini by Thorsten Otto, Oliver and Markus, for the superiour speed and size.\n(https://github.com/freemint/libcmini)",
         "Blitter and audio setup code inspired by GODLib by Leon 'Mr. Pink' O'Reilly.\n(https://github.com/ReservoirGods/GODLIB).",
-        "Original game idea conceived by Peter 'Eagle' Nyman of Friendchip, now realized 32 years later."
+        "Original game idea conceived by Peter 'Eagle' Nyman of Friendchip, now realized 32 years later.",
+        nullptr
     };
     cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
-    for (int i = 0; i < 4; i++) {
-        auto size = screen.draw(rsc.small_font, texts[i], rect, 2);
+    for (auto text = &texts[0]; *text; text++) {
+        auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
 static void draw_dedications(const cgresources_c &rsc, cgimage_c &screen) {
     screen.draw(rsc.font, "Dedications", (cgpoint_t){96, 16});
-    const char *texts[4] = {
+    const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
         "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe it all.",
         "Joakim would like to thank... people",
-        "Herve would also like to thank... people"
+        "Herve would also like to thank... people",
+        nullptr
     };
     cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
-    for (int i = 0; i < 4; i++) {
-        auto size = screen.draw(rsc.small_font, texts[i], rect, 2);
+    for (auto text = &texts[0]; *text; text++) {
+        auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
 static void draw_greetings(const cgresources_c &rsc, cgimage_c &screen) {
     screen.draw(rsc.font, "Greetings", (cgpoint_t){96, 16});
-    const char *texts[3] = {
+    const char *texts[] = {
         "List of specific people.",
         "List of active Atari groups.",
         "List of the great groups that inspired us.",
+        nullptr
     };
     cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
-    for (int i = 0; i < 3; i++) {
-        auto size = screen.draw(rsc.small_font, texts[i], rect, 2);
+    for (auto text = &texts[0]; *text; text++) {
+        auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }

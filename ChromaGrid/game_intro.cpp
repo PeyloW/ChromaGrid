@@ -11,14 +11,12 @@ cgintro_scene_c::cgintro_scene_c(cgmanager_c &manager) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
-    const char *button_titles[6] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY" };
-    bool enabled[6] = { false, true, false, true, true, true };
-    for (int i = 0; i < 6; i++) {
-        _menu_buttons.add_button(button_titles[i]);
-        if (!enabled[i]) {
-            _menu_buttons.buttons[i].state = cgbutton_t::disabled;
-        }
+    const char *button_titles[] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY", nullptr };
+    for (auto title = &button_titles[0]; *title; title++) {
+        _menu_buttons.add_button(*title);
     }
+    _menu_buttons.buttons[0].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[2].state = cgbutton_t::disabled;
 }
 
 void cgintro_scene_c::will_appear(cgimage_c &screen, bool obsured) {

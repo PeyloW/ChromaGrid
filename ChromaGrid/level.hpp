@@ -45,11 +45,12 @@ struct __attribute__((aligned (2))) tilestate_t  {
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
 
 struct level_recipe_t {
-    struct header_t {
+    struct __packed_struct header_t {
         uint8_t width, height;
         uint8_t orbs[2];
         uint16_t time;
     } header;
+    static_assert(sizeof(header) == 6, "level_result_t size mismatch");
     const char *text;
     tilestate_t tiles[];
     static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
@@ -59,7 +60,7 @@ struct level_recipe_t {
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
 
-struct level_result_t {
+struct __packed_struct level_result_t {
     static const uint32_t FAILED_SCORE = 0;
     static const uint32_t PER_ORB_SCORE = 100;
     static const uint32_t PER_SECOND_SCORE = 10;
@@ -74,6 +75,7 @@ struct level_result_t {
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
+static_assert(sizeof(level_result_t) == 18, "level_result_t size mismatch");
 
 void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
 void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);
