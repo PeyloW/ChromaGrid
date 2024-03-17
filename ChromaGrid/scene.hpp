@@ -56,13 +56,6 @@ public:
     cgimage_c &get_logical_screen() { return _screens.back().image; }
     
 private:
-#ifdef __M68000__
-    __forceinline void debug_cpu_color(uint16_t c) const {
-        cgcolor_c(c).set_at(0);
-    }
-#else
-    inline void debug_cpu_color(uint16_t) { }
-#endif
     cgscene_c *_overlay_scene;
     cgvector_c<cgscene_c *, 8> _scene_stack;
     cgvector_c<cgscene_c *, 8> _deletion_stack;

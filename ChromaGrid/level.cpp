@@ -65,34 +65,28 @@ class tile_c {
 public:
     static const uint8_t STEP_MAX = 16;
     
-    void tick() {
+    __forceinline void tick() {
         if (transition.step > 0) {
             transition.step--;
             _dirty = true;
         }
     }
-
-    uint8_t get_drawstate(tilestate_t *current, tilestate_t *from) const {
-        *current = state;
-        *from = transition.from_state;
-        return transition.step;
-    }
     
-    bool check_dirty() {
+    __forceinline bool check_dirty() {
         const bool d = _dirty;
         _dirty = false;
         return d;
     }
     
-    color_e orb_color() const {
+    __forceinline color_e orb_color() const {
         return state.orb;
     }
     
-    bool is_orb_color(color_e c) const {
+    __forceinline bool is_orb_color(color_e c) const {
         return (state.orb & c) == c;
     }
     
-    bool at_target() const {
+    __forceinline bool at_target() const {
         return transition.step == 0 && state.target == state.current;
     }
     
@@ -167,7 +161,7 @@ public:
     tile_c tiles[GRID_MAX][GRID_MAX];
 private:
 
-    bool is_orb_at(color_e c, int x, int y) {
+    inline bool is_orb_at(color_e c, int x, int y) const {
         if (x >= 0 && x < GRID_MAX && y >= 0 && y < GRID_MAX) {
             return tiles[x][y].is_orb_color(c);
         }
@@ -175,7 +169,15 @@ private:
     }
     
     template<class V>
-    void visit_adjecent_at(int x, int y, V visitor) {
+    inline void visit_adjecent_at(int x, int y, V visitor) const {
+        for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 2); ay++) {
+            for (int ax = MAX(0, x - 1); ax < MIN(GRID_MAX, x + 2); ax++) {
+                visitor(tiles[ax][ay], ax, ay);
+            }
+        }
+    }
+    template<class V>
+    inline void visit_adjecent_at(int x, int y, V visitor) {
         for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 2); ay++) {
             for (int ax = MAX(0, x - 1); ax < MIN(GRID_MAX, x + 2); ax++) {
                 visitor(tiles[ax][ay], ax, ay);
@@ -184,7 +186,7 @@ private:
     }
 
     template<class V>
-    void visit_across_at(int x, int y, V visitor) {
+    inline void visit_across_at(int x, int y, V visitor) {
         for (int ay = MAX(0, y - 1); ay < MIN(GRID_MAX, y + 2); ay++) {
             visitor(tiles[x][ay], x, ay);
         }
@@ -193,11 +195,11 @@ private:
         }
     }
     
-    bool is_orb_solved_at(int x, int y) {
+    inline bool is_orb_solved_at(int x, int y) const {
         const color_e c = tiles[x][y].orb_color();
         int cnt = 0;
         if (c != none) {
-            visit_adjecent_at(x, y, [&cnt, c] (tile_c &tile, int x, int y) {
+            visit_adjecent_at(x, y, [&cnt, c] (const tile_c &tile, int x, int y) {
                 if (tile.is_orb_color(c)) {
                     cnt++;
                 }
@@ -249,8 +251,8 @@ public:
     template<typename CB>
     bool tick(CB callback) {
         bool completed = true;
-        for (int y = 0; y < GRID_MAX; y++) {
-            for (int x = 0; x < GRID_MAX; x++) {
+        for (int y = GRID_MAX; --y != -1; ) {
+            for (int x = GRID_MAX; --x != -1; ) {
                 auto &tile = tiles[x][y];
                 tile.tick();
                 if (tile.check_dirty()) {
@@ -261,14 +263,6 @@ public:
         }
         return completed;
     }
-        
-    uint8_t get_drawstate_at(int x, int y, tilestate_t *current, tilestate_t *from) const {
-        assert(x >= 0 && x < GRID_MAX);
-        assert(y >= 0 && y < GRID_MAX);
-        auto &tile = tiles[x][y];
-        return tile.get_drawstate(current, from);
-    }
-    
 };
 
 
@@ -478,7 +472,9 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
     if (_time_count >= 50) {
         _results.time--;
         _time_count -= 50;
+        debug_cpu_color(0x007);
         draw_time(screen);
+        debug_cpu_color(0x001);
     }
     
     auto at = mouse.get_postion();
@@ -524,9 +520,13 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
                 rsc.no_drop_orb.set_active();
             }
         }
+        debug_cpu_color(0x200);
         auto completed = _grid->tick([this, &screen] (int x, int y) {
+            debug_cpu_color(0x400);
             draw_tile(screen, x, y);
+            debug_cpu_color(0x200);
         });
+        debug_cpu_color(0x100);
         if (completed) {
             return success;
         }

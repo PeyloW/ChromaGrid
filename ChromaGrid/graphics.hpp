@@ -41,6 +41,13 @@ private:
     }
 };
 
+#ifdef __M68000__
+    __forceinline static void debug_cpu_color(uint16_t c) {
+        cgcolor_c(c).set_at(0);
+    }
+#else
+    inline static void debug_cpu_color(uint16_t) { }
+#endif
 
 class cgpalette_c : private cgnocopy_c {
 public:

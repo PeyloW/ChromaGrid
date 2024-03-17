@@ -49,7 +49,7 @@ void cgscores_scene_c::will_appear(cgimage_c &screen, bool obsured) {
         } else {
             switch (_scoring) {
                 case score:
-                    sprintf(buf, "%2d:%5ld", index + 1, result->score);
+                    sprintf(buf, "%2d:%5d", index + 1, result->score);
                     break;
                 case time:
                     sprintf(buf, "%2d: %d:%0d", index + 1, result->time / 60, result->time % 60);
