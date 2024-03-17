@@ -23,16 +23,21 @@ __forceinline tile_changes_e &operator|=(tile_changes_e &a, const tile_changes_e
 
 static tile_changes_e cgp_tile_changes = no_changes;
 
-void level_result_t::calculate_scores(bool succes) {
+void level_result_t::calculate_score(bool succes) {
     if (succes) {
-        assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
-        assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
-        orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
-        time_score = time * PER_SECOND_SCORE;
+        uint16_t orbs_score, time_score;
+        get_subscores(orbs_score, time_score);
         score = orbs_score + time_score;
     } else {
-        score = orbs_score = time_score = 0;
+        score = 0;
     }
+}
+
+void level_result_t::get_subscores(uint16_t &orbs_score, uint16_t &time_score) const {
+    assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
+    assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
+    orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
+    time_score = time * PER_SECOND_SCORE;
 }
 
 bool level_result_t::merge_from(const level_result_t &new_result) {
@@ -44,8 +49,6 @@ bool level_result_t::merge_from(const level_result_t &new_result) {
         }
         if (new_result.score > score) {
             score = new_result.score;
-            orbs_score = new_result.orbs_score;
-            time_score = new_result.time_score;
             improved = true;
         }
         if (moves == 0 || new_result.moves < moves) {
@@ -544,8 +547,6 @@ static void cghton(level_recipe_t::header_t &header) {
 #ifndef __M68000__
 static void cghton(level_result_t &result) {
     cghton(result.score);
-    cghton(result.orbs_score);
-    cghton(result.time_score);
     cghton(result.time);
     cghton(result.moves);
 };

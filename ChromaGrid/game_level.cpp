@@ -52,9 +52,11 @@ public:
         
         if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];
-            sprintf(buf, "Time: %d x 10 = %d", _results.time, _results.time_score);
+            uint16_t time_score, orbs_score;
+            _results.get_subscores(orbs_score, time_score);
+            sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 64});
-            sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], _results.orbs_score);
+            sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 84});
             sprintf(buf, "Total: %d pts", _results.score);
             screen.draw(rsc.font, buf, (cgpoint_t){96, 114});
@@ -133,7 +135,7 @@ void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
     if (state != level_t::normal) {
         level_result_t results;
         _level.get_results(&results);
-        results.calculate_scores(state == level_t::success);
+        results.calculate_score(state == level_t::success);
         manager.replace(new cglevel_ended_scene_c(manager, _level_num, results));
     }
 }

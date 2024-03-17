@@ -65,17 +65,16 @@ struct __packed_struct level_result_t {
     static const uint16_t PER_ORB_SCORE = 100;
     static const uint16_t PER_SECOND_SCORE = 10;
     uint16_t score;
-    uint16_t orbs_score;
-    uint16_t time_score;
     uint8_t orbs[2];
     uint16_t time;
     uint16_t moves;
-    void calculate_scores(bool succes);
+    void calculate_score(bool succes);
+    void get_subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
-static_assert(sizeof(level_result_t) == 12, "level_result_t size mismatch");
+static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
 
 void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
 void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);

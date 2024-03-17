@@ -162,7 +162,7 @@ is an error :/.
 LIST # { CGLR       
     // Zero or more ChromaGrid Level Result chunks
     CGLR # {
-        ulong score
+        uword score
         ubyte[2] orbs
         uword time
         uword moves
