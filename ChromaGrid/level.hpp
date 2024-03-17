@@ -33,7 +33,7 @@ typedef enum __packed {
     magnetic
 } tiletype_e;
 
-struct __attribute__((aligned (2))) tilestate_t  {
+struct __packed_struct tilestate_t  {
     tiletype_e type;
     color_e target;
     color_e current;
@@ -50,7 +50,6 @@ struct level_recipe_t {
         uint8_t orbs[2];
         uint16_t time;
     } header;
-    static_assert(sizeof(header) == 6, "level_result_t size mismatch");
     const char *text;
     tilestate_t tiles[];
     static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
@@ -59,14 +58,15 @@ struct level_recipe_t {
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
+static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
 
 struct __packed_struct level_result_t {
-    static const uint32_t FAILED_SCORE = 0;
-    static const uint32_t PER_ORB_SCORE = 100;
-    static const uint32_t PER_SECOND_SCORE = 10;
-    uint32_t score;
-    uint32_t orbs_score;
-    uint32_t time_score;
+    static const uint16_t FAILED_SCORE = 0;
+    static const uint16_t PER_ORB_SCORE = 100;
+    static const uint16_t PER_SECOND_SCORE = 10;
+    uint16_t score;
+    uint16_t orbs_score;
+    uint16_t time_score;
     uint8_t orbs[2];
     uint16_t time;
     uint16_t moves;
@@ -75,7 +75,7 @@ struct __packed_struct level_result_t {
     bool save(cgiff_file_c &iff);
     bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
 };
-static_assert(sizeof(level_result_t) == 18, "level_result_t size mismatch");
+static_assert(sizeof(level_result_t) == 12, "level_result_t size mismatch");
 
 void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
 void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);

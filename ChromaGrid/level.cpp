@@ -25,6 +25,8 @@ static tile_changes_e cgp_tile_changes = no_changes;
 
 void level_result_t::calculate_scores(bool succes) {
     if (succes) {
+        assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
+        assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
         orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
         time_score = time * PER_SECOND_SCORE;
         score = orbs_score + time_score;
@@ -121,11 +123,11 @@ public:
         }
     }
     
-    void try_make_regular() {
+    void try_make_tile(tiletype_e type) {
         if (state.type == empty) {
             transition.from_state = state;
             transition.step = STEP_MAX;
-            state.type = regular;
+            state.type = type;
             cgp_tile_changes |= added_tile;
         }
     }
@@ -210,10 +212,10 @@ public:
         assert(c >= gold && c <= silver);
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        auto &tile = tiles[x][y];
-        if (tile.try_add_orb(c)) {
-            visit_across_at(x, y, [this] (tile_c &tile, int x, int y) {
-                tile.try_make_regular();
+        auto &src_tile = tiles[x][y];
+        if (src_tile.try_add_orb(c)) {
+            visit_across_at(x, y, [this, &src_tile] (tile_c &tile, int x, int y) {
+                tile.try_make_tile(src_tile.state.type);
             });
             return true;
         } else {
@@ -589,6 +591,7 @@ bool level_recipe_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
     if (iff.expand(start_chunk, group) && group.subtype == CGIFF_CGLV_ID) {
         cgiff_chunk_t chunk;
         iff.next(group, CGIFF_LVHD, chunk);
+        assert(chunk.size == sizeof(level_recipe_t::header));
         iff.read(header);
         
         if (iff.next(group, CGIFF_TEXT, chunk)) {
@@ -613,5 +616,8 @@ bool level_result_t::save(cgiff_file_c &iff) {
 
 bool level_result_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
     assert(start_chunk.id == CGIFF_CGLR_ID);
+    if (start_chunk.size != sizeof(level_result_t)) {
+        return false;
+    }
     return iff.read(*this);
 }

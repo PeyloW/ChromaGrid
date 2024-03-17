@@ -16,7 +16,7 @@ CGDEFINE_ID (AIFF);
 CGDEFINE_ID (COMM);
 CGDEFINE_ID (SSND);
 
-struct extended80_t {
+struct __packed_struct extended80_t {
     uint16_t exp;
     uint16_t fracs[4];
     uint16_t to_uint16() const {
@@ -40,7 +40,7 @@ struct __packed_struct aiff_common_t {
 };
 static_assert(sizeof(aiff_common_t) == 18, "aiff_common_t size mismatch");
 
-struct aiff_ssnd_data_t {
+struct __packed_struct aiff_ssnd_data_t {
     uint32_t offset;
     uint32_t block_size;
     uint8_t data[];

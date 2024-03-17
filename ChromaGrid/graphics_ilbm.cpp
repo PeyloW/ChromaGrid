@@ -27,7 +27,7 @@ typedef enum __packed {
     compression_type_vertical
 } compression_type_e;
 
-struct ilbm_header_t {
+struct __packed_struct ilbm_header_t {
     cgsize_t size;
     cgpoint_t offset;
     uint8_t plane_count;
