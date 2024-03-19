@@ -67,9 +67,9 @@ private:
     class screen_t {
     public:
         cgimage_c image;
-        bool *dirtymap;
+        cgdirtymap_c *dirtymap;
         screen_t() : image((cgsize_t){320, 208}, false, nullptr) {
-            dirtymap = (bool *)calloc(1, image.dirtymap_size());
+            dirtymap = cgdirtymap_c::create(image);
         }
     };
     cgvector_c<screen_t, 3> _screens;

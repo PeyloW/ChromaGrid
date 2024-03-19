@@ -72,15 +72,15 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
             });
             debug_cpu_color(0x202);
             // Merge dirty maps here!
-            logical_screen.image.merge_dirtymap(_screens[0].dirtymap, logical_screen.dirtymap);
-            logical_screen.image.merge_dirtymap(_screens[1].dirtymap, logical_screen.dirtymap);
-#if DEBUG_RESTORE_SCREEN
-            logical_screen.image.debug_dirtymap(logical_screen.dirtymap, "LOG");
-            logical_screen.image.debug_dirtymap(physical_screen.dirtymap, "AF");
+            _screens[0].dirtymap->merge(*logical_screen.dirtymap);
+            _screens[1].dirtymap->merge(*logical_screen.dirtymap);
+#if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
+            logical_screen.dirtymap->debug("log");
+            physical_screen.dirtymap->debug("phys");
 #endif
-            memset(logical_screen.dirtymap, 0, logical_screen.image.dirtymap_size());
+            logical_screen.dirtymap->clear();
             debug_cpu_color(0x004);
-            physical_screen.image.restore(logical_screen.image, physical_screen.dirtymap);
+            physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
 
             if (_overlay_scene) {
                 debug_cpu_color(0x010);
@@ -88,8 +88,8 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
                     _overlay_scene->tick(physical_screen.image, ticks);
                 });
             }
-#if DEBUG_RESTORE_SCREEN
-            logical_screen.image.debug_dirtymap(physical_screen.dirtymap, "AF next");
+#if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
+            physical_screen.dirtymap->debug("AF next");
 #endif
 
             for (auto scene = _deletion_stack.begin(); scene != _deletion_stack.end(); scene++) {

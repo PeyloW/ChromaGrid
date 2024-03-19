@@ -56,6 +56,7 @@
 		A6E484D72BA33F68004CCA7D /* levels.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6E484D62BA33F68004CCA7D /* levels.dat */; };
 		A6E484D92BA3EDB6004CCA7D /* game_scores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */; };
 		A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */; };
+		A6E484DD2BA92889004CCA7D /* graphics_dirtymap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484DC2BA92889004CCA7D /* graphics_dirtymap.cpp */; };
 		A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AA2B9509EB00325754 /* game_credits.cpp */; };
 		A6F766AD2B96A80000325754 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AC2B96A80000325754 /* level.cpp */; };
 		A6F766AF2B96AA9F00325754 /* game_level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F766AE2B96AA9F00325754 /* game_level.cpp */; };
@@ -148,6 +149,7 @@
 		A6E484D62BA33F68004CCA7D /* levels.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels.dat; sourceTree = "<group>"; };
 		A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_scores.cpp; sourceTree = "<group>"; };
 		A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = fusebrk.aif; sourceTree = "<group>"; };
+		A6E484DC2BA92889004CCA7D /* graphics_dirtymap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_dirtymap.cpp; sourceTree = "<group>"; };
 		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				A6A419432B9ABA610062339B /* graphics_ilbm.cpp */,
 				A682A3DF2B90CEE700FF2E57 /* graphics_stencil.cpp */,
 				A69AE5162B88F53500EBA43D /* graphics_draw.cpp */,
+				A6E484DC2BA92889004CCA7D /* graphics_dirtymap.cpp */,
 				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
 				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
 				A69AE51C2B8AC25300EBA43D /* graphics_draw_blitter.cpp */,
@@ -458,6 +461,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6E484DD2BA92889004CCA7D /* graphics_dirtymap.cpp in Sources */,
 				A69AE51D2B8AC25300EBA43D /* graphics_draw_blitter.cpp in Sources */,
 				A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */,
 				A6F766AD2B96A80000325754 /* level.cpp in Sources */,

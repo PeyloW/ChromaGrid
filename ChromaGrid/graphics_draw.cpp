@@ -7,69 +7,6 @@
 
 #include "graphics.hpp"
 
-void cgimage_c::restore(const cgimage_c &clean_image, bool *const dirtymap) const {
-    assert(_size == clean_image.get_size());
-    assert((_size.width & 0xf) == 0);
-    assert((_size.height & 0xf) == 0);
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, &clean_image, dirtymap] {
-        const int row_count = _size.height / 16;
-        int16_t y = _size.height - 16;
-        for (int row = row_count; --row != -1; y -= 16) {
-            const int row_offset = row * _line_words;
-            int16_t x = _size.width - 16;
-            for (int col = _line_words; --col != -1; x -= 16) {
-                if (dirtymap[col + row_offset]) {
-                    dirtymap[col + row_offset] = false;
-                    cgpoint_t at = (cgpoint_t){x, y};
-                    cgrect_t rect = (cgrect_t){at, {16, 16}};
-                    draw_aligned(clean_image, rect, at);
-                }
-            }
-        }
-    });
-}
-
-void cgimage_c::merge_dirtymap(bool *dest, const bool* source) const {
-    int count = (int)dirtymap_size();
-    int l_count = count / 4;
-    if (l_count * 4 == count) {
-        uint32_t *l_dest = (uint32_t*)dest;
-        const uint32_t *l_source = (uint32_t*)source;
-        while (--l_count != -1) {
-            uint32_t v = *l_source++;
-            if (v) {
-                *l_dest++ |= v;
-            } else {
-                l_dest++;
-            }
-        }
-    } else {
-        // slow path
-        while (--count != -1) {
-            *dest++ |= *source++;
-        }
-    }
-}
-
-#ifndef __M68000__
-#if DEBUG_DIRTYMAP
-void cgimage_c::debug_dirtymap(bool *const dirtymap, const char *name) const {
-    const int row_count = _size.height / 16;
-    int16_t y = _size.height - 16;
-    printf("Dirtymap %d cols [%s]\n", _line_words, name);
-    for (int row = 0; row < row_count; row++) {
-        char buf[_line_words + 1];
-        const int row_offset = row * _line_words;
-        for (int col = 0; col < _line_words; col++) {
-            buf[col] = dirtymap[col + row_offset] ? 'X' : '-';
-        }
-        buf[_line_words] = 0;
-        printf("  row %2d: %s\n", row, buf);
-    }
-}
-#endif
-#endif
-
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     if (_clipping) {
         if (!_size.contains(at)) return;
@@ -145,7 +82,7 @@ void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
         }
     }
     if (_dirtymap) {
-        imp_update_dirtymap(rect);
+        _dirtymap->mark(rect);
     }
     imp_fill(ci, rect);
 }
@@ -174,7 +111,7 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) 
     }
     if (_dirtymap) {
         const cgrect_t dirty_rect = (cgrect_t){ at, rect.size };
-        imp_update_dirtymap(dirty_rect);
+        _dirtymap->mark(dirty_rect);
     }
     imp_draw_aligned(src, rect, at);
 }
@@ -197,7 +134,7 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const ui
     }
     if (_dirtymap) {
         const cgrect_t dirty_rect = (cgrect_t){at, rect.size};
-        imp_update_dirtymap(dirty_rect);
+        _dirtymap->mark(dirty_rect);
     }
     if (src._maskmap) {
         if (color == MASKED_CIDX) {
@@ -221,7 +158,7 @@ void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, c
     assert(rect.size.width > cap * 2);
     assert(rect.size.height == in.size.height);
     if (_dirtymap) {
-        imp_update_dirtymap(in);
+        _dirtymap->mark(in);
     }
     const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
         const cgrect_t left_rect = (cgrect_t){ rect.origin, {cap, rect.size.height}};
@@ -260,8 +197,8 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, t
             break;
     }
     if (_dirtymap) {
-        cgrect_t rect = (cgrect_t){{(int16_t)(at.x - size.width), at.y}, size};
-        imp_update_dirtymap(rect);
+        cgrect_t dirty_rect = (cgrect_t){{(int16_t)(at.x - size.width), at.y}, size};
+        _dirtymap->mark(dirty_rect);
     }
     const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
         for (int i = len; --i != -1; ) {
@@ -328,22 +265,6 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, ui
         first = false;
     }
     return  max_size;
-}
-
-void cgimage_c::imp_update_dirtymap(cgrect_t rect) const {
-    assert(_dirtymap);
-    assert((_size.width & 0xf) == 0);
-    assert((_size.height & 0xf) == 0);
-    const int x1 = rect.origin.x / 16;
-    const int x2 = (rect.origin.x + rect.size.width - 1) / 16;
-    const int y1 = rect.origin.y / 16;
-    const int y2 = (rect.origin.y + rect.size.height - 1) / 16;
-    for (int y = y1; y <= y2; y++) {
-        const int line_offset = y * _line_words;
-        for (int x = x1; x <= x2; x++) {
-            _dirtymap[x + line_offset] = true;
-        }
-    }
 }
 
 #if 0

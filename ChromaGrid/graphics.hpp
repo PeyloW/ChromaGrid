@@ -65,6 +65,7 @@ public:
 
 
 class cgfont_c;
+class cgdirtymap_c;
 
 class cgimage_c : private cgnocopy_c {
 public:
@@ -123,8 +124,8 @@ public:
         return _line_words * _size.height / 16;
     };
     template<class Commands>
-    __forceinline void with_dirtymap(bool *const dirtymap, Commands commands) {
-        bool *const old_dirtymap = _dirtymap;
+    __forceinline void with_dirtymap(cgdirtymap_c *dirtymap, Commands commands) {
+        cgdirtymap_c *old_dirtymap = _dirtymap;
         _dirtymap = dirtymap;
         commands();
         _dirtymap = old_dirtymap;
@@ -168,15 +169,13 @@ private:
     cgpalette_c *_palette;
     uint16_t *_bitmap;
     uint16_t *_maskmap;
-    bool *_dirtymap;
+    cgdirtymap_c *_dirtymap;
     const stencil_t *_stencil;
     cgsize_t _size;
     cgpoint_t _offset;
     uint16_t _line_words;
     bool _owns_bitmap;
     bool _clipping;
-
-    inline void imp_update_dirtymap(cgrect_t rect) const;
         
     void imp_fill(uint8_t ci, cgrect_t rect) const;
     void imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
@@ -187,7 +186,7 @@ private:
     void imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
 };
 
-class cgfont_c {
+class cgfont_c : private cgnocopy_c {
 public:
     cgfont_c(const cgimage_c &image, cgsize_t character_size);
     cgfont_c(const cgimage_c &image, cgsize_t max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
@@ -210,6 +209,25 @@ private:
     
     const cgimage_c &_image;
     cgrect_t _rects[96];
+};
+
+class cgdirtymap_c : private cgnocopy_c {
+public:
+    static cgdirtymap_c *create(const cgimage_c &image);
+
+    void mark(const cgrect_t &rect);
+    void merge(const cgdirtymap_c &dirtymap);
+    void restore(cgimage_c &image, const cgimage_c &clean_image);
+    void clear();
+#ifndef __M68000__
+#if DEBUG_DIRTYMAP
+    void debug(const char *name) const;
+#endif
+#endif
+private:
+    cgdirtymap_c(const cgsize_t size) : _size(size) {}
+    const cgsize_t _size;
+    uint8_t _data[];
 };
 
 #endif /* graphics_hpp */
