@@ -211,6 +211,14 @@ private:
     cgrect_t _rects[96];
 };
 
+#ifndef CGDIRTYMAP_TILE_WIDTH
+#   define CGDIRTYMAP_TILE_WIDTH (16)
+#endif
+#ifndef CGDIRTYMAP_TILE_HEIGHT
+#   define CGDIRTYMAP_TILE_HEIGHT (16)
+#endif
+static_assert(CGDIRTYMAP_TILE_WIDTH % 16 == 0, "Tile width must be a multiple of 16");
+
 class cgdirtymap_c : private cgnocopy_c {
 public:
     static cgdirtymap_c *create(const cgimage_c &image);

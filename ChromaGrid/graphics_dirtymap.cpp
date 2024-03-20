@@ -10,17 +10,17 @@
 
 cgdirtymap_c *cgdirtymap_c::create(const cgimage_c &image) {
     auto size = image.get_size();
-    size.width /= 16;
-    size.height /= 16;
+    size.width /= CGDIRTYMAP_TILE_WIDTH;
+    size.height /= CGDIRTYMAP_TILE_HEIGHT;
     int bytes = sizeof(cgdirtymap_c) + size.width * size.height;
     return new (calloc(1, bytes)) cgdirtymap_c(size);
 }
 
 void cgdirtymap_c::mark(const cgrect_t &rect) {
-    const int x1 = rect.origin.x / 16;
-    const int x2 = (rect.origin.x + rect.size.width - 1) / 16;
-    const int y1 = rect.origin.y / 16;
-    const int y2 = (rect.origin.y + rect.size.height - 1) / 16;
+    const int x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
+    const int x2 = (rect.origin.x + rect.size.width - 1) / CGDIRTYMAP_TILE_WIDTH;
+    const int y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
+    const int y2 = (rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT;
     for (int y = y1; y <= y2; y++) {
         const int line_offset = y * _size.width;
         for (int x = x1; x <= x2; x++) {
@@ -56,21 +56,21 @@ void cgdirtymap_c::merge(const cgdirtymap_c &dirtymap) {
 
 void cgdirtymap_c::restore(cgimage_c &image, const cgimage_c &clean_image) {
     assert(image.get_size() == clean_image.get_size());
-    assert(_size.width == (clean_image.get_size().width + 15) / 16);
-    assert(_size.height == (clean_image.get_size().height + 15) / 16);
-    assert((image.get_size().width & 0xf) == 0);
-    assert((image.get_size().height & 0xf) == 0);
+    assert(_size.width * CGDIRTYMAP_TILE_WIDTH == clean_image.get_size().width);
+    assert(_size.height * CGDIRTYMAP_TILE_HEIGHT == clean_image.get_size().height);
+    assert((image.get_size().width % CGDIRTYMAP_TILE_WIDTH) == 0);
+    assert((image.get_size().height % CGDIRTYMAP_TILE_HEIGHT) == 0);
     const_cast<cgimage_c&>(image).with_clipping(false, [this, &image, &clean_image] {
         const auto image_size = image.get_size();
-        int16_t y = image_size.height - 16;
-        for (int row = _size.height; --row != -1; y -= 16) {
+        int16_t y = image_size.height - CGDIRTYMAP_TILE_HEIGHT;
+        for (int row = _size.height; --row != -1; y -= CGDIRTYMAP_TILE_HEIGHT) {
             const int row_offset = row * _size.width;
-            int16_t x = image_size.width - 16;
-            for (int col = _size.width; --col != -1; x -= 16) {
+            int16_t x = image_size.width - CGDIRTYMAP_TILE_WIDTH;
+            for (int col = _size.width; --col != -1; x -= CGDIRTYMAP_TILE_WIDTH) {
                 if (_data[col + row_offset]) {
                     _data[col + row_offset] = false;
                     cgpoint_t at = (cgpoint_t){x, y};
-                    cgrect_t rect = (cgrect_t){at, {16, 16}};
+                    cgrect_t rect = (cgrect_t){at, {CGDIRTYMAP_TILE_WIDTH, CGDIRTYMAP_TILE_HEIGHT}};
                     image.draw_aligned(clean_image, rect, at);
                 }
             }
