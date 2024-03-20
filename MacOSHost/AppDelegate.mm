@@ -19,6 +19,7 @@
 
 @implementation CGGameView {
     NSTimer *_vblTimer;
+    NSTimer *_timerCTimer;
     cgpoint_t _mouse;
     bool _left;
     bool _right;
@@ -41,6 +42,8 @@ static void _yieldFunction() {
     cgg_yield_function = &_yieldFunction;
     _vblTimer = [NSTimer timerWithTimeInterval:1.0 / 50 target:self selector:@selector(fireVBLTimer:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_vblTimer forMode:NSDefaultRunLoopMode];
+    _timerCTimer = [NSTimer timerWithTimeInterval:1.0 / 200 target:self selector:@selector(fireTimerCTimer:) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:_timerCTimer forMode:NSDefaultRunLoopMode];
     NSString *path = [[NSBundle mainBundle] resourcePath];
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
@@ -73,6 +76,10 @@ static void _yieldFunction() {
         [_sound play];
         cgg_active_sound = nullptr;
     }
+}
+
+- (void)fireTimerCTimer:(NSTimer *)timer {
+    cgg_timer_c_interupt();
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {

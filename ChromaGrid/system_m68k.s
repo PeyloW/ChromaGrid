@@ -3,9 +3,13 @@
 |
     .extern _cgg_vbl_functions
     .extern _cgg_vbl_tick
+    .extern _cgg_timer_c_functions
+    .extern _cgg_timer_c_tick
     .extern _cgg_active_image
     .global _cgg_vbl_interupt
     .global _cgg_system_vbl_interupt
+    .global _cgg_timer_c_interupt
+    .global _cgg_system_timer_c_interupt
 
     .extern _cgg_mouse_buttons
     .extern _cgg_mouse_position
@@ -14,6 +18,10 @@
 
     .global _cgg_microwire_write
 
+    .struct
+cgtimer_func_freq:      ds.b    1
+cgtimer_func_cnt:       ds.b    1
+cgtimer_func_func:      ds.l    4
 
     .struct
 cgimage_super_image:            ds.l    1
@@ -45,16 +53,43 @@ _cgg_vbl_interupt:
 .no_active_image:
     add.l   #1,_cgg_vbl_tick
     lea     _cgg_vbl_functions, a2
-.next_vbl_func:
-    move.l  (a2)+,d0
-    beq.s   .no_more_vbl_funcs
-    move.l  d0,a0
+.next_func_v:
+    move.b  (a2),d0
+    beq.s   .no_more_funcs_v
+    sub.b   d0,1(a2)
+    bcc.s   .no_call_v
+    add.b   #50,1(a2)
+    move.l  2(a2),a0
     jsr     (a0)
-    bra.s   .next_vbl_func
-.no_more_vbl_funcs:
+.no_call_v:
+    add.l   #6,a2
+    bra.s   .next_func_v
+.no_more_funcs_v:
     movem.l (sp)+,d0-d2/a0-a2
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _cgg_system_vbl_interupt:
+    .dc.l    0x0
+
+.even
+_cgg_timer_c_interupt:
+    movem.l d0-d2/a0-a2,-(sp)
+    add.l   #1,_cgg_timer_c_tick
+    lea     _cgg_timer_c_functions,a2
+.next_func_c:
+    move.b  (a2),d0
+    beq.s   .no_more_funcs_c
+    sub.b   d0,1(a2)
+    bcc.s   .no_call_c
+    add.b   #200,1(a2)
+    move.l  2(a2),a0
+    jsr     (a0)
+.no_call_c:
+    add.l   #6,a2
+    bra.s   .next_func_c
+.no_more_funcs_c:
+    movem.l (sp)+,d0-d2/a0-a2
+    .dc.w    0x4ef9         | jmp $xxxxxxxx.l
+_cgg_system_timer_c_interupt:
     .dc.l    0x0
 
     .even

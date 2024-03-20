@@ -51,6 +51,7 @@ public:
     void replace(cgscene_c *scene, cgimage_c::stencil_type_e transition = cgimage_c::noise);
 
     cgtimer_c vbl;
+    cgtimer_c timer_c;
     cgmouse_c mouse;
 
     cgimage_c &get_logical_screen() { return _screens.back().image; }

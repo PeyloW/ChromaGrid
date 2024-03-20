@@ -153,7 +153,7 @@ void cgsount_c::set_active() const {
 #ifdef __M68000__
 static uint16_t cgg_music_init_code[8];
 static uint16_t cgg_music_exit_code[8];
-static uint16_t cgg_music_vbl_function_code[8];
+static uint16_t cgg_music_play_code[8];
 #endif
 
 cgmusic_c::cgmusic_c(const char *path) : _track(0) {
@@ -170,7 +170,7 @@ cgmusic_c::cgmusic_c(const char *path) : _track(0) {
 #ifdef __M68000__
     cgcodegen_t::make_trampoline(cgg_music_init_code, _sndh, false);
     cgcodegen_t::make_trampoline(cgg_music_exit_code, _sndh + 4, false);
-    cgcodegen_t::make_trampoline(cgg_music_vbl_function_code, _sndh + 8, false);
+    cgcodegen_t::make_trampoline(cgg_music_play_code, _sndh + 8, false);
 #endif
 }
 
@@ -184,18 +184,18 @@ void cgmusic_c::set_active(int track) const {
     if (_track != track) {
         cgtimer_c::with_paused_timers([this, track] {
 #ifdef __M68000__
-            cgtimer_c vbl(cgtimer_c::vbl);
+            cgtimer_c timer_c(cgtimer_c::timer_c);
             if (_track > 0) {
                 // Exit driver
                 ((cgtimer_c::func_t)cgg_music_exit_code)();
                 // remove VBL
-                vbl.remove_func((cgtimer_c::func_t)cgg_music_vbl_function_code);
+                timer_c.remove_func((cgtimer_c::func_t)cgg_music_play_code);
             }
             if (track > 0) {
                 // init driver
                 ((cgtimer_c::func_i_t)cgg_music_init_code)(track);
                 // add VBL
-                vbl.add_func((cgtimer_c::func_t)cgg_music_vbl_function_code);
+                timer_c.add_func((cgtimer_c::func_t)cgg_music_play_code);
             }
 #endif
         });

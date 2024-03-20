@@ -10,6 +10,7 @@
 cgmanager_c::cgmanager_c() :
     _super_token(cgsuper(0)),
     vbl(cgtimer_c::vbl),
+    timer_c(cgtimer_c::timer_c),
     mouse((cgrect_t){{0,0}, {320, 192}})
 {
     _overlay_scene = nullptr;

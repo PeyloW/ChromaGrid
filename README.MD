@@ -25,6 +25,8 @@ Legend: __Required__, Expected , _Optional_
     * [x] __MacOS Host app harness__
     * [x] __Target machine bootstrap__
     * [x] __VBL timer support__
+    * [x] __Timer-C support__
+        * [ ] Other frequencies than 200hz
     * [x] __Mouse interups__
 * [x] __Basic file loading__
     * [x] __ILBM Image files, with masks__
@@ -56,6 +58,8 @@ Legend: __Required__, Expected , _Optional_
 * [ ] __Sound__
     * [x] __Play SNDH music__
         * [x] Change tracks
+        * [ ] Parse headers
+        * [ ] Support non-static replay frequencies
     * [x] __Play LCM samples__
         * [ ] _Mix several channels_
 * [ ] __Scene management__

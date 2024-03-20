@@ -19,6 +19,9 @@ extern "C" {
 // Host must call on a 50hz interval
 extern void cgg_vbl_interupt();
 
+// Host must call on a 200hz interval
+extern void cgg_timer_c_interupt();
+
 // Host must provide a yield function
 extern void (*cgg_yield_function)();
     

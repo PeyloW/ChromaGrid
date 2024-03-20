@@ -88,7 +88,7 @@ static int16_t cgset_screen(void *log, void *phys, int16_t mode) {
 class cgtimer_c : private cgnocopy_c {
 public:
     typedef enum __packed {
-        vbl
+        vbl, timer_c
     } timer_e;
     typedef void(*func_t)(void);
     typedef void(*func_a_t)(void *);
@@ -112,7 +112,9 @@ public:
 #endif
     }
     
-    void add_func(func_t func);
+    uint8_t base_freq() const;
+    
+    void add_func(func_t func, uint8_t freq = 0);
     void remove_func(func_t func);
     
     uint32_t tick();
