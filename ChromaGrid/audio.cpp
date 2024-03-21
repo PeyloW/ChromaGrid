@@ -156,9 +156,21 @@ static uint16_t cgg_music_exit_code[8];
 static uint16_t cgg_music_play_code[8];
 #endif
 
+// libcmini (version used) has a buggy strncmp :(
+static int _strncmp(const char *s1, const char *s2, size_t max)
+{
+    int cmp = 0;
+    while (cmp == 0 && max && *s1) {
+        cmp = *(unsigned char *)s1 - *(unsigned char *)s2;
+        s1++; s2++;
+        max--;
+    }
+    return cmp;
+}
+
 cgmusic_c::cgmusic_c(const char *path) : _track(0) {
     FILE *file = fopen(path, "r");
-    assert(file);
+    hard_assert(file);
     fseek(file, 0, SEEK_END);
     size_t size = ftell(file);
     fseek(file, 0L, SEEK_SET);
@@ -167,6 +179,35 @@ cgmusic_c::cgmusic_c(const char *path) : _track(0) {
     size_t read = fread(_sndh, size, 1, file);
     assert(read == 1);
     assert(memcmp((char *)_sndh + 12, "SNDH", 4) == 0);
+    _title = nullptr;
+    _composer = nullptr;
+    _track_count = 1;
+    _freq = 50;
+    char *header_str = (char *)_sndh + 16;
+    while (_strncmp(header_str, "HDNS", 4) != 0 && (header_str < (char *)_sndh + 200)) {
+        int len = (int)strlen(header_str);
+        if (len > 0) {
+            if (len > 100) {
+                break;
+            }
+            if (_strncmp(header_str, "TITL", 4) == 0) {
+                _title = header_str + 4;
+            } else if (_strncmp(header_str, "COMM", 4) == 0) {
+                _composer = header_str + 4;
+            } else if (strncmp(header_str, "##", 2) == 0) {
+                _track_count = atoi(header_str + 2);
+            } else if (_strncmp(header_str, "TA", 2) == 0 ||
+                       _strncmp(header_str, "TB", 2) == 0 ||
+                       _strncmp(header_str, "TC", 2) == 0 ||
+                       _strncmp(header_str, "TD", 2) == 0 ||
+                       _strncmp(header_str, "!V", 2) == 0) {
+                _freq = atoi(header_str + 2);
+                assert(_freq != 0);
+            }
+        }
+        header_str += len;
+        while (*++header_str == 0);
+    }
 #ifdef __M68000__
     cgcodegen_t::make_trampoline(cgg_music_init_code, _sndh, false);
     cgcodegen_t::make_trampoline(cgg_music_exit_code, _sndh + 4, false);
@@ -195,7 +236,7 @@ void cgmusic_c::set_active(int track) const {
                 // init driver
                 ((cgtimer_c::func_i_t)cgg_music_init_code)(track);
                 // add VBL
-                timer_c.add_func((cgtimer_c::func_t)cgg_music_play_code);
+                timer_c.add_func((cgtimer_c::func_t)cgg_music_play_code, _freq);
             }
 #endif
         });

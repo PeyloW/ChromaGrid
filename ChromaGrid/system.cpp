@@ -132,7 +132,6 @@ uint8_t cgtimer_c::base_freq() const {
     switch (_timer) {
         case vbl:
             return 50;
-            break;
         case timer_c:
             return 200;
         default:
