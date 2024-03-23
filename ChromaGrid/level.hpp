@@ -21,6 +21,12 @@ DEFINE_IFF_ID (LVHD); // LeVel HeaDer
 DEFINE_IFF_ID (TSTS); // Tile STateS
 DEFINE_IFF_ID (CGLR); // ChromaGrid Level Results
 
+#define DEBUG_CPU_LEVEL_DRAW_TIME 0x007
+#define DBEUG_CPU_LEVEL_TICK 0x030
+#define DBEUG_CPU_LEVEL_RESOLVE 0x700
+#define DEBUG_CPU_LEVEL_GRID_TICK 0x200
+#define DEBUG_CPU_LEVEL_GRID_DRAW 0x400
+
 typedef enum __packed {
     none, gold, silver, both
 } color_e;

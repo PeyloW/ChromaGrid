@@ -73,6 +73,10 @@ _g_system_vbl_interupt:
 .even
 _g_clock_interupt:
     movem.l d0-d2/a0-a2,-(sp)
+#ifdef DEBUG_CPU
+    move.w  0xffff8240.w,-(sp)
+    move.w  #0x011,0xffff8240.w
+#endif
     add.l   #1,_g_clock_tick
     lea     _g_clock_functions,a2
 .next_func_c:
@@ -87,6 +91,9 @@ _g_clock_interupt:
     add.l   #6,a2
     bra.s   .next_func_c
 .no_more_funcs_c:
+#ifdef DEBUG_CPU
+    move.w  (sp)+,0xffff8240.w
+#endif
     movem.l (sp)+,d0-d2/a0-a2
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _g_system_clock_interupt:
@@ -95,6 +102,10 @@ _g_system_clock_interupt:
     .even
 _g_mouse_interupt:
     move.w  d0, -(sp)
+#ifdef DEBUG_CPU
+    move.w  0xffff8240.w,-(sp)
+    move.w  #0x101,0xffff8240.w
+#endif
     move.b  (a0),d0
     and.b   #0x3,d0
     move.b  d0,_g_mouse_buttons
@@ -104,6 +115,9 @@ _g_mouse_interupt:
     move.b  2(a0),d0
     ext.w   d0
     add.w   d0,_g_mouse_position+2
+#ifdef DEBUG_CPU
+    move.w  (sp)+,0xffff8240.w
+#endif
     move.w  (sp)+,d0
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _g_system_mouse_interupt:

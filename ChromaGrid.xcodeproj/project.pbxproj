@@ -114,7 +114,7 @@
 		A69AE4E82B77FED300EBA43D /* cursor.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = cursor.iff; sourceTree = "<group>"; };
 		A69AE4EB2B791FF100EBA43D /* system.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
 		A69AE4EC2B791FF100EBA43D /* system.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system.hpp; sourceTree = "<group>"; };
-		A69AE4EF2B79202A00EBA43D /* system_m68k.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = system_m68k.s; sourceTree = "<group>"; };
+		A69AE4EF2B79202A00EBA43D /* system_m68k.sx */ = {isa = PBXFileReference; lastKnownFileType = text; path = system_m68k.sx; sourceTree = "<group>"; };
 		A69AE4F42B79253A00EBA43D /* types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
 		A69AE4FA2B793CEF00EBA43D /* system_host.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_host.hpp; sourceTree = "<group>"; };
 		A69AE5002B82983A00EBA43D /* audio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio.cpp; sourceTree = "<group>"; };
@@ -313,7 +313,7 @@
 				A69AE4EC2B791FF100EBA43D /* system.hpp */,
 				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,
 				A69AE4EB2B791FF100EBA43D /* system.cpp */,
-				A69AE4EF2B79202A00EBA43D /* system_m68k.s */,
+				A69AE4EF2B79202A00EBA43D /* system_m68k.sx */,
 				A69AE4D42B701EF600EBA43D /* iff_file.hpp */,
 				A69AE4D32B701EF600EBA43D /* iff_file.cpp */,
 				A69AE4CA2B6FEFE500EBA43D /* graphics.hpp */,

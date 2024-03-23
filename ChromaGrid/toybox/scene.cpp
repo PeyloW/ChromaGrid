@@ -30,7 +30,7 @@ scene_manager_c::~scene_manager_c() {
 #define DEBUG_NO_SET_SCREEN 0
 
 void scene_manager_c::run_transition(screen_c &physical_screen, int ticks) {
-    debug_cpu_color(0x100);
+    debug_cpu_color(DEBUG_CPU_RUN_TRANSITION);
     if (_transition_state.type == image_c::none) {
         physical_screen.image.draw_aligned(get_logical_screen(), (point_s){0,0});
         _transition_state.full_restores_left--;
@@ -69,11 +69,10 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::st
         if (_transition_state.full_restores_left > 0) {
             run_transition(physical_screen, ticks);
         } else {
-            debug_cpu_color(0x030);
+            debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
             logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, ticks, &logical_screen] {
                 top_scene().tick(logical_screen.image, ticks);
             });
-            debug_cpu_color(0x202);
             // Merge dirty maps here!
             _screens[0].dirtymap->merge(*logical_screen.dirtymap);
             _screens[1].dirtymap->merge(*logical_screen.dirtymap);
@@ -82,11 +81,11 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::st
             physical_screen.dirtymap->debug("phys");
 #endif
             logical_screen.dirtymap->clear();
-            debug_cpu_color(0x004);
+            debug_cpu_color(DEBUG_CPU_PHYS_RESTORE);
             physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
 
             if (_overlay_scene) {
-                debug_cpu_color(0x010);
+                debug_cpu_color(DEBUG_CPU_OVERLAY_SCENE_TICK);
                 physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, ticks, &physical_screen] {
                     _overlay_scene->tick(physical_screen.image, ticks);
                 });
@@ -100,7 +99,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::st
             }
             _deletion_stack.clear();
         }
-        debug_cpu_color(0x000);
+        debug_cpu_color(DEBUG_CPU_DONE);
         timer_c::with_paused_timers([this, &physical_screen] {
             physical_screen.image.set_active();
             _active_physical_screen = (_active_physical_screen + 1) & 0x1;

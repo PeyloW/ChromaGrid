@@ -16,6 +16,16 @@ namespace toybox {
    
     using namespace toystd;
     
+#define DEBUG_CPU_CLOCK_INTERUPT 0x011
+#define DEBUG_CPU_MOUSE_INTERUPT 0x101
+#ifdef DEBUG_CPU
+    __forceinline static void debug_cpu_color(uint16_t c) {
+        __asm__ volatile ("move.w %[d],0xffff8240.w" :  : [d] "g" (c) : );
+    }
+#else
+    inline static void debug_cpu_color(uint16_t) { }
+#endif
+
 #ifdef __M68000__
 #define __append_int16(p,n) __asm__ volatile ("move.w %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
 #define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );

@@ -44,15 +44,7 @@ namespace toybox {
             return STE_FROM_SEQ[(c >> shift) & 0x0f];
         }
     };
-    
-#ifdef __M68000__
-    __forceinline static void debug_cpu_color(uint16_t c) {
-        color_c(c).set_at(0);
-    }
-#else
-    inline static void debug_cpu_color(uint16_t) { }
-#endif
-    
+        
     class palette_c : private nocopy_c {
     public:
         color_c colors[16];

@@ -1,4 +1,6 @@
 xcshareddata
 xcuserdata
+.DS_Store
 *.o
+*.a
 *.tos

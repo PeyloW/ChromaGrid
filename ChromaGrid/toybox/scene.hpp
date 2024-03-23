@@ -20,6 +20,12 @@
 
 namespace toybox {
     
+#define DEBUG_CPU_RUN_TRANSITION 0x100
+#define DEBUG_CPU_TOP_SCENE_TICK 0x030
+#define DEBUG_CPU_PHYS_RESTORE 0x004
+#define DEBUG_CPU_OVERLAY_SCENE_TICK 0x010
+#define DEBUG_CPU_DONE 0x000
+    
     using namespace toystd;
     
     class scene_manager_c;

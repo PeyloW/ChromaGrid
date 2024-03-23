@@ -10,6 +10,7 @@ AR=/opt/cross-mint-OLD/bin/m68k-atari-mint-ar
 FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
 FLAGS+=-g0 -DNDEBUG
+FLAGS+=-DDEBUG_CPU
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti -fpermissive
@@ -36,7 +37,7 @@ libtoybox.a: $(TOYBOX_OBJECTS)
 
 %.o: $(TOYBOX)/%.cpp
 	$(CC) $(CFLAGS) $<
-%.o: $(TOYBOX)/%.s
+%.o: $(TOYBOX)/%.sx
 	$(CC) $(CFLAGS) $<
 
 cgrid: toybox $(CG_OBJECTS)

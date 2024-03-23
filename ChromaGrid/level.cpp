@@ -475,15 +475,16 @@ level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int ticks
     if (_time_count >= 50) {
         _results.time--;
         _time_count -= 50;
-        debug_cpu_color(0x007);
+        debug_cpu_color(DEBUG_CPU_LEVEL_DRAW_TIME);
         draw_time(screen);
-        debug_cpu_color(0x001);
     }
-    
+    debug_cpu_color(DBEUG_CPU_LEVEL_TICK);
+
     auto at = mouse.get_postion();
     at.x /= 16; at.y /= 16;
 
     if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
+        debug_cpu_color(DBEUG_CPU_LEVEL_RESOLVE);
         bool lb = mouse.get_state(mouse_c::left) == mouse_c::clicked;
         bool rb = mouse.get_state(mouse_c::right) == mouse_c::clicked;
         if (lb || rb) {
@@ -523,13 +524,12 @@ level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int ticks
                 rsc.no_drop_orb.set_active();
             }
         }
-        debug_cpu_color(0x200);
+        debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);
         auto completed = _grid->tick([this, &screen] (int x, int y) {
-            debug_cpu_color(0x400);
+            debug_cpu_color(DEBUG_CPU_LEVEL_GRID_DRAW);
             draw_tile(screen, x, y);
-            debug_cpu_color(0x200);
+            debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);
         });
-        debug_cpu_color(0x100);
         if (completed) {
             return success;
         }
