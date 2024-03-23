@@ -9,9 +9,7 @@
 #define types_h
 
 #include "cincludes.hpp"
-#ifndef __NO_GCSTDLIB__
-#include "stdlib.hpp"
-#endif
+#include "utility.hpp"
 
 namespace toybox {
     

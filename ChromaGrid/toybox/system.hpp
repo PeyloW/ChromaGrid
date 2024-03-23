@@ -89,7 +89,7 @@ namespace toybox {
         return rez;
     }
     
-    class cgtimer_c : private toystd::cgnocopy_c {
+    class cgtimer_c : private toystd::nocopy_c {
     public:
         typedef enum __packed {
             vbl, timer_c
@@ -129,7 +129,7 @@ namespace toybox {
         timer_e _timer;
     };
     
-    class cgmouse_c : private cgnocopy_c {
+    class cgmouse_c : private nocopy_c {
     public:
         typedef enum __packed {
             right, left

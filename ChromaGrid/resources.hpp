@@ -13,7 +13,7 @@
 #include "level.hpp"
 #include "vector.hpp"
 
-class cgresources_c : private cgnocopy_c {
+class cgresources_c : private nocopy_c {
 public:
     cgimage_c background;
     cgimage_c tiles;
@@ -37,9 +37,9 @@ public:
     cgsount_c fuse_break_tile;
     cgmusic_c music;
     
-    cgvector_c<level_recipe_t*, 45> levels;
-    cgvector_c<level_result_t, 45> level_results;
-    cgvector_c<level_recipe_t*, 10> user_levels;
+    vector_c<level_recipe_t*, 45> levels;
+    vector_c<level_result_t, 45> level_results;
+    vector_c<level_recipe_t*, 10> user_levels;
 
     bool save_user_levels() const;
     bool save_level_results() const;

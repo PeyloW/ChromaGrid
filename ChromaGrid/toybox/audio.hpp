@@ -15,7 +15,7 @@ namespace toybox {
     
     using namespace toystd;
     
-    class cgsount_c : private cgnocopy_c {
+    class cgsount_c : private nocopy_c {
     public:
         cgsount_c(const char *path);
         ~cgsount_c();
@@ -32,7 +32,7 @@ namespace toybox {
         uint16_t _rate;
     };
     
-    class cgmusic_c : private cgnocopy_c {
+    class cgmusic_c : private nocopy_c {
     public:
         cgmusic_c(const char *path);
         ~cgmusic_c();

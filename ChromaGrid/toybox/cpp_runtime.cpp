@@ -29,7 +29,7 @@ extern "C" void __cxa_pure_virtual() {
 
 #endif
 
-void* operator new (size_t count, void *p) {
+void* operator new (size_t count, void *p) noexcept {
     return p;
 }
 void* operator new[] (size_t count, void *p) {

@@ -9,7 +9,7 @@
 
 using namespace toybox;
 
-#define CGDIRTYMAP_BITSET (1)
+#define CGDIRTYMAP_BITSET (0)
 
 #if CGDIRTYMAP_BITSET
     static const int LOOKUP_SIZE = 256;

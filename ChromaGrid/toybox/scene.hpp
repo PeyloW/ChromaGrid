@@ -24,7 +24,7 @@ namespace toybox {
     
     class cgmanager_c;
     
-    class cgscene_c : private cgnocopy_c {
+    class cgscene_c : private nocopy_c {
     public:
         cgscene_c(cgmanager_c &manager) : manager(manager) {};
         virtual ~cgscene_c() {};
@@ -36,7 +36,7 @@ namespace toybox {
         cgmanager_c &manager;
     };
     
-    class cgmanager_c : private cgnocopy_c {
+    class cgmanager_c : private nocopy_c {
     private:
         int32_t _super_token;
     public:
@@ -63,8 +63,8 @@ namespace toybox {
         
     private:
         cgscene_c *_overlay_scene;
-        cgvector_c<cgscene_c *, 8> _scene_stack;
-        cgvector_c<cgscene_c *, 8> _deletion_stack;
+        vector_c<cgscene_c *, 8> _scene_stack;
+        vector_c<cgscene_c *, 8> _deletion_stack;
         
         inline void enqueue_delete(cgscene_c *scene) {
             _deletion_stack.push_back(scene);
@@ -78,7 +78,7 @@ namespace toybox {
                 dirtymap = cgdirtymap_c::create(image);
             }
         };
-        cgvector_c<screen_t, 3> _screens;
+        vector_c<screen_t, 3> _screens;
         int _active_physical_screen;
         
         void run_transition(screen_t &physical_screen, int ticks);

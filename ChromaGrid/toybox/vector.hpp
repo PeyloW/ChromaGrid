@@ -8,15 +8,16 @@
 #ifndef vector_h
 #define vector_h
 
-#include "stdlib.hpp"
+#include "utility.hpp"
+#include "utility.hpp"
 
 namespace toystd {
     
     // Minimal std::vector replacement with static size
     template<class TYPE, int COUNT>
-    class cgvector_c : cgnocopy_c {
+    class vector_c : nocopy_c {
     public:
-        inline cgvector_c() : _size(0) {}
+        inline vector_c() : _size(0) {}
         
         __forceinline TYPE *begin() const { return (TYPE *)&_buffer[0]; }
         __forceinline TYPE *end() const { return begin() + _size; }
@@ -47,7 +48,7 @@ namespace toystd {
         template<class... Args>
         inline void emplace_back(Args&&... args) {
             assert(_size < COUNT);
-            new (begin() + _size++) TYPE(cgforward<Args>(args)...);
+            new (begin() + _size++) TYPE(forward<Args>(args)...);
         }
         
         inline void clear() {

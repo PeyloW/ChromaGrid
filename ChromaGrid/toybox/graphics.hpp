@@ -53,7 +53,7 @@ namespace toybox {
     inline static void debug_cpu_color(uint16_t) { }
 #endif
     
-    class cgpalette_c : private cgnocopy_c {
+    class cgpalette_c : private nocopy_c {
     public:
         cgcolor_c colors[16];
         cgpalette_c(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
@@ -71,7 +71,7 @@ namespace toybox {
     class cgfont_c;
     class cgdirtymap_c;
     
-    class cgimage_c : private cgnocopy_c {
+    class cgimage_c : private nocopy_c {
     public:
         static const uint8_t MASKED_CIDX = 0x10;
         typedef uint8_t remap_table_t[17];
@@ -190,7 +190,7 @@ namespace toybox {
         void imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const;
     };
     
-    class cgfont_c : private cgnocopy_c {
+    class cgfont_c : private nocopy_c {
     public:
         cgfont_c(const cgimage_c &image, cgsize_t character_size);
         cgfont_c(const cgimage_c &image, cgsize_t max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
@@ -223,7 +223,7 @@ namespace toybox {
 #endif
     static_assert(CGDIRTYMAP_TILE_WIDTH % 16 == 0, "Tile width must be a multiple of 16");
     
-    class cgdirtymap_c : private cgnocopy_c {
+    class cgdirtymap_c : private nocopy_c {
     public:
         static cgdirtymap_c *create(const cgimage_c &image);
         

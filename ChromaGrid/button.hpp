@@ -12,7 +12,7 @@
 #include "resources.hpp"
 #include "system.hpp"
 
-struct cgbutton_t : cgnocopy_c {
+struct cgbutton_t : nocopy_c {
     typedef enum __packed {
         normal,
         pressed,
@@ -29,7 +29,7 @@ struct cgbutton_t : cgnocopy_c {
     state_t state;
 };
 
-class cgbutton_group_base_c : public cgnocopy_c {
+class cgbutton_group_base_c : public nocopy_c {
     protected:
     cgbutton_group_base_c(cgpoint_t origin, cgsize_t size, int16_t spacing) :
         _tracked_button(-1),
@@ -77,7 +77,7 @@ public:
         return update_button_range(buttons.begin(), buttons.end(), pos, screen, state);
     }
 
-    cgvector_c<cgbutton_t, BUTTON_COUNT> buttons;
+    vector_c<cgbutton_t, BUTTON_COUNT> buttons;
 };
 
 

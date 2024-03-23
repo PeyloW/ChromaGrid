@@ -108,7 +108,7 @@ static const cgiff_id_t CGIFF_ ## ID ## _ID = cgiff_id_make(CGIFF_ ## ID)
     };
     
     
-    class cgiff_file_c : private cgnocopy_c {
+    class cgiff_file_c : private nocopy_c {
     public:
         cgiff_file_c(FILE *file);
         cgiff_file_c(const char *path, const char *mode = "r");

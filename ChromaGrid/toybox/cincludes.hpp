@@ -44,4 +44,10 @@ extern "C" {
         
 }
 
+// Required for inplace new
+extern void* operator new (size_t count, void *p) noexcept;
+namespace toystd {
+    typedef decltype(nullptr) nullptr_t;
+}
+
 #endif /* cincludes_h */

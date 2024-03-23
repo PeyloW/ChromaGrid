@@ -218,7 +218,7 @@ static char draw_text_buffer[80 * MAX_LINES];
 
 cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
     strcpy(draw_text_buffer, text);
-    cgvector_c<const char *, 12> lines;
+    vector_c<const char *, 12> lines;
 
     uint16_t line_width = 0;
     int start = 0;

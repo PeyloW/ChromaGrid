@@ -98,7 +98,7 @@ public:
     virtual void tick(cgimage_c &screen, int ticks);
 private:
     cgbutton_group_c<1> _menu_buttons;
-    cgvector_c<cgbutton_group_c<5>, 9> _select_button_groups;
+    vector_c<cgbutton_group_c<5>, 9> _select_button_groups;
 };
 
 class cglevel_edit_scene_c : public cggame_scene_c {
@@ -118,7 +118,7 @@ private:
     
     cgbutton_group_c<4> _menu_buttons;
     cgbutton_group_c<6> _count_buttons;
-    cgvector_c<tilestate_t, 6> _tile_templates;
+    vector_c<tilestate_t, 6> _tile_templates;
     int _selected_template;
     level_recipe_t::header_t _header;
     tilestate_t _level_grid[12][12];

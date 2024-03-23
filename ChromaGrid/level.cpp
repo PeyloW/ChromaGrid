@@ -238,7 +238,7 @@ public:
     void resolve_at(int x, int y) {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        cgvector_c<cgpoint_t, 9> updates;
+        vector_c<cgpoint_t, 9> updates;
         visit_adjecent_at(x, y, [this, &updates] (tile_c &tile, int x, int y) {
             if (is_orb_solved_at(x, y)) {
                 tile.state.current = tile.state.orb;

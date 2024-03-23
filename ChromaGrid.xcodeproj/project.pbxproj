@@ -153,7 +153,6 @@
 		A6E484E02BAE6D49004CCA7D /* utility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utility.hpp; sourceTree = "<group>"; };
 		A6E484E12BAE6DB3004CCA7D /* vector.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vector.hpp; sourceTree = "<group>"; };
 		A6E484E22BAE709B004CCA7D /* type_traits.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = type_traits.hpp; sourceTree = "<group>"; };
-		A6F766A62B94F66700325754 /* stdlib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stdlib.hpp; sourceTree = "<group>"; };
 		A6F766A82B94FC8600325754 /* button.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		A6F766AA2B9509EB00325754 /* game_credits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_credits.cpp; sourceTree = "<group>"; };
 		A6F766AC2B96A80000325754 /* level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = "<group>"; };
@@ -338,10 +337,9 @@
 			isa = PBXGroup;
 			children = (
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
-				A6F766A62B94F66700325754 /* stdlib.hpp */,
 				A6E484E22BAE709B004CCA7D /* type_traits.hpp */,
-				A6E484E12BAE6DB3004CCA7D /* vector.hpp */,
 				A6E484E02BAE6D49004CCA7D /* utility.hpp */,
+				A6E484E12BAE6DB3004CCA7D /* vector.hpp */,
 				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
 			);
 			name = toystd;
