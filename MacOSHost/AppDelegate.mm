@@ -20,7 +20,7 @@
 @implementation CGGameView {
     NSTimer *_vblTimer;
     NSTimer *_timerCTimer;
-    cgpoint_t _mouse;
+    point_s _mouse;
     bool _left;
     bool _right;
     NSTrackingRectTag _trackingRect;
@@ -39,7 +39,7 @@ static void _yieldFunction() {
 
 - (void)_cg_commonInit {
     _gameLock = [[NSConditionLock alloc] initWithCondition:0];
-    cgg_yield_function = &_yieldFunction;
+    g_yield_function = &_yieldFunction;
     _vblTimer = [NSTimer timerWithTimeInterval:1.0 / 50 target:self selector:@selector(fireVBLTimer:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_vblTimer forMode:NSDefaultRunLoopMode];
     _timerCTimer = [NSTimer timerWithTimeInterval:1.0 / 200 target:self selector:@selector(fireTimerCTimer:) userInfo:nil repeats:YES];
@@ -48,7 +48,7 @@ static void _yieldFunction() {
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
         {
-            cgmanager_c manager;
+            scene_manager_c manager;
             auto intro_scene = new cgintro_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
             manager.run(intro_scene, overlay_scene);
@@ -68,18 +68,18 @@ static void _yieldFunction() {
 }
 
 - (void)fireVBLTimer:(NSTimer *)timer {
-    cgg_vbl_interupt();
+    g_vbl_interupt();
     [self setNeedsDisplay:YES];
-    if (cgg_active_sound) {
-        NSData *data = [NSData dataWithBytesNoCopy:(void *)cgg_active_sound->get_sample() length:cgg_active_sound->get_length() freeWhenDone:NO];
+    if (g_active_sound) {
+        NSData *data = [NSData dataWithBytesNoCopy:(void *)g_active_sound->get_sample() length:g_active_sound->get_length() freeWhenDone:NO];
         _sound = [[NSSound alloc] initWithData:data];
         [_sound play];
-        cgg_active_sound = nullptr;
+        g_active_sound = nullptr;
     }
 }
 
 - (void)fireTimerCTimer:(NSTimer *)timer {
-    cgg_timer_c_interupt();
+    g_clock_interupt();
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
@@ -99,7 +99,7 @@ static void _yieldFunction() {
 }
 
 - (void)_updateMouse {
-    cgg_update_mouse(_mouse, _left, _right);
+    g_update_mouse(_mouse, _left, _right);
 }
 
 - (void)mouseMoved:(NSEvent *)event {
@@ -130,33 +130,33 @@ static void _yieldFunction() {
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
-    if (cgg_active_image == NULL) {
+    if (g_active_image == NULL) {
         NSRect bounds = [self bounds];
         [[NSColor blackColor] set];
         [NSBezierPath fillRect:bounds];
         return;
     }
     [_gameLock lockWhenCondition:1];
-    const auto size = cgg_active_image->get_size();
-    const auto offset = cgg_active_image->get_offset();
-    typedef struct { uint8_t rgb[3]; uint8_t _; } color_t;
-    color_t palette[16] = { 0 };
-    color_t buffer[320 * 200];
-    memset(buffer, 0, sizeof(color_t) * 320 * 200);
+    const auto size = g_active_image->get_size();
+    const auto offset = g_active_image->get_offset();
+    typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
+    color_s palette[16] = { 0 };
+    color_s buffer[320 * 200];
+    memset(buffer, 0, sizeof(color_s) * 320 * 200);
 
-    if (cgg_active_palette) {
+    if (g_active_palette) {
         for (int i = 0; i < 16; i++) {
-            cgg_active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
+            g_active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
             buffer[i]._ = 0;
         }
     }
-    const_cast<cgimage_c*>(cgg_active_image)->with_clipping(false, [self, size, offset, &palette, &buffer] () {
-        cgpoint_t at;
+    const_cast<image_c*>(g_active_image)->with_clipping(false, [self, size, offset, &palette, &buffer] () {
+        point_s at;
         for (at.y = 0; at.y < 200; at.y++) {
             for (at.x = 0; at.x < 320; at.x++) {
-                const auto real_at = (cgpoint_t){ static_cast<int16_t>(at.x + offset.x), static_cast<int16_t>(at.y + offset.y) };
-                const auto c = cgg_active_image->get_pixel(real_at);
-                if (c != cgimage_c::MASKED_CIDX) {
+                const auto real_at = (point_s){ static_cast<int16_t>(at.x + offset.x), static_cast<int16_t>(at.y + offset.y) };
+                const auto c = g_active_image->get_pixel(real_at);
+                if (c != image_c::MASKED_CIDX) {
                     auto offset = (at.y * size.width + at.x);
                     buffer[offset] = palette[c];
                 }

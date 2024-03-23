@@ -7,7 +7,7 @@
 
 #include "game.hpp"
 
-cgcredits_scene_c::cgcredits_scene_c(cgmanager_c &manager, page_e page) :
+cgcredits_scene_c::cgcredits_scene_c(scene_manager_c &manager, page_e page) :
     cggame_scene_c(manager),
     _page(page),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
@@ -19,8 +19,8 @@ cgcredits_scene_c::cgcredits_scene_c(cgmanager_c &manager, page_e page) :
     _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
 }
 
-static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
-    screen.draw(rsc.font, "Credits", (cgpoint_t){96, 16});
+static void draw_credits(const cgresources_c &rsc, image_c &screen) {
+    screen.draw(rsc.font, "Credits", (point_s){96, 16});
 
     struct { const char *credit; const char *person; } credits[] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
@@ -31,20 +31,20 @@ static void draw_credits(const cgresources_c &rsc, cgimage_c &screen) {
         {nullptr}
     };
     
-    cgpoint_t atc = (cgpoint_t){16, 40 +  0};
-    cgpoint_t atp = (cgpoint_t){40, 40 + 10};
+    point_s atc = (point_s){16, 40 +  0};
+    point_s atp = (point_s){40, 40 + 10};
     for (auto credit = &credits[0]; credit->credit; credit++) {
-        screen.draw(rsc.font, credit->credit, atc, cgimage_c::align_left);
+        screen.draw(rsc.font, credit->credit, atc, image_c::align_left);
         atc.y += 26;
-        screen.draw(rsc.font, credit->person, atp, cgimage_c::align_left);
+        screen.draw(rsc.font, credit->person, atp, image_c::align_left);
         atp.y += 26;
     }
 }
 
 // , ,
 
-static void draw_recognitions(const cgresources_c &rsc, cgimage_c &screen) {
-    screen.draw(rsc.font, "Recognitions", (cgpoint_t){96, 16});
+static void draw_recognitions(const cgresources_c &rsc, image_c &screen) {
+    screen.draw(rsc.font, "Recognitions", (point_s){96, 16});
     const char *texts[] = {
         "This game uses royalty free sound effects from ZapSplat.\n(https://www.zapsplat.com/)",
         "This game uses libcmini by Thorsten Otto, Oliver and Markus, for the superiour speed and size.\n(https://github.com/freemint/libcmini)",
@@ -52,15 +52,15 @@ static void draw_recognitions(const cgresources_c &rsc, cgimage_c &screen) {
         "Original game idea conceived by Peter 'Eagle' Nyman of Friendchip, now realized 32 years later.",
         nullptr
     };
-    cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
+    rect_s rect = (rect_s){{16, 40}, {160, 48}};
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
-static void draw_dedications(const cgresources_c &rsc, cgimage_c &screen) {
-    screen.draw(rsc.font, "Dedications", (cgpoint_t){96, 16});
+static void draw_dedications(const cgresources_c &rsc, image_c &screen) {
+    screen.draw(rsc.font, "Dedications", (point_s){96, 16});
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
         "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe it all.",
@@ -68,30 +68,30 @@ static void draw_dedications(const cgresources_c &rsc, cgimage_c &screen) {
         "Herve would also like to thank... people",
         nullptr
     };
-    cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
+    rect_s rect = (rect_s){{16, 40}, {160, 48}};
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
-static void draw_greetings(const cgresources_c &rsc, cgimage_c &screen) {
-    screen.draw(rsc.font, "Greetings", (cgpoint_t){96, 16});
+static void draw_greetings(const cgresources_c &rsc, image_c &screen) {
+    screen.draw(rsc.font, "Greetings", (point_s){96, 16});
     const char *texts[] = {
         "List of specific people.",
         "List of active Atari groups.",
         "List of the great groups that inspired us.",
         nullptr
     };
-    cgrect_t rect = (cgrect_t){{16, 40}, {160, 48}};
+    rect_s rect = (rect_s){{16, 40}, {160, 48}};
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
-void cgcredits_scene_c::will_appear(cgimage_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
+void cgcredits_scene_c::will_appear(image_c &screen, bool obsured) {
+    screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     const auto &rsc = this->rsc;
     
@@ -112,7 +112,7 @@ void cgcredits_scene_c::will_appear(cgimage_c &screen, bool obsured) {
 }
 
 
-void cgcredits_scene_c::tick(cgimage_c &screen, int ticks) {
+void cgcredits_scene_c::tick(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case -1:

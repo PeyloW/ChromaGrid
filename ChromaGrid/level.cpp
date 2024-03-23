@@ -238,11 +238,11 @@ public:
     void resolve_at(int x, int y) {
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
-        vector_c<cgpoint_t, 9> updates;
+        vector_c<point_s, 9> updates;
         visit_adjecent_at(x, y, [this, &updates] (tile_c &tile, int x, int y) {
             if (is_orb_solved_at(x, y)) {
                 tile.state.current = tile.state.orb;
-                updates.push_back((cgpoint_t){(int16_t)x, (int16_t)y});
+                updates.push_back((point_s){(int16_t)x, (int16_t)y});
             }
         });
         for (auto update = updates.begin(); update != updates.end(); update++) {
@@ -309,55 +309,55 @@ level_t::~level_t() {
 #define ORB_Y_INSET 90
 #define MOVES_Y_INSET 110
 
-void level_t::draw_all(cgimage_c &screen) const {
+void level_t::draw_all(image_c &screen) const {
     auto &rsc = cgresources_c::shared();
     for (int y = 0; y < grid_c::GRID_MAX; y++) {
         for (int x = 0; x < grid_c::GRID_MAX; x++) {
             draw_tile(screen, x, y);
         }
     }
-    screen.draw(rsc.font, "TIME:", (cgpoint_t){LABEL_X_INSET, TIME_Y_INSET}, cgimage_c::align_left);
+    screen.draw(rsc.font, "TIME:", (point_s){LABEL_X_INSET, TIME_Y_INSET}, image_c::align_left);
     draw_time(screen);
     
-    screen.draw(rsc.font, "ORBS:", (cgpoint_t){LABEL_X_INSET, ORB_Y_INSET}, cgimage_c::align_left);
-    cgrect_t rect = (cgrect_t){{0, 0}, {16, 10}};
+    screen.draw(rsc.font, "ORBS:", (point_s){LABEL_X_INSET, ORB_Y_INSET}, image_c::align_left);
+    rect_s rect = (rect_s){{0, 0}, {16, 10}};
     for (int i = 0; i < 2; i++) {
-        cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + i * ORB_X_SPACING), ORB_Y_INSET - 1};
+        point_s at = (point_s){(int16_t)(ORB_X_INSET + i * ORB_X_SPACING), ORB_Y_INSET - 1};
         draw_orb(screen, (color_e)(i + 1), at);
         rect.origin.x += 16;
     }
     draw_orb_counts(screen);
     
-    screen.draw(rsc.font, "MOVES:", (cgpoint_t){LABEL_X_INSET, MOVES_Y_INSET}, cgimage_c::align_left);
+    screen.draw(rsc.font, "MOVES:", (point_s){LABEL_X_INSET, MOVES_Y_INSET}, image_c::align_left);
     draw_move_count(screen);
 }
 
-inline static const cgrect_t tilestate_src_rect(const tilestate_t &state) {
+inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
     int16_t tx = state.target * 16;
     tx += state.current * 48;
     int16_t ty = (state.type - 1) * 16;
-    return (cgrect_t){{tx, ty}, {16, 16}};
+    return (rect_s){{tx, ty}, {16, 16}};
 }
 
-inline static void draw_tilestate(cgimage_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
+inline static void draw_tilestate(image_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
     if (state.type == empty) {
         return;
     }
-    const cgrect_t rect = tilestate_src_rect(state);
-    const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16)};
+    const rect_s rect = tilestate_src_rect(state);
+    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
     screen.draw_aligned(rsc.tiles, rect, at);
 }
 
-void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected) {
+void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool selected) {
     auto &rsc = cgresources_c::shared();
     if (state.type == empty) {
-        cgrect_t rect = (cgrect_t){at, {16, 16}};
+        rect_s rect = (rect_s){at, {16, 16}};
         screen.draw(rsc.background, rect, at);
     } else {
-        const cgrect_t rect = tilestate_src_rect(state);
+        const rect_s rect = tilestate_src_rect(state);
         screen.draw(rsc.tiles, rect, at);
     }
-    cgpoint_t o_at = at;
+    point_s o_at = at;
     switch (state.orb) {
         case none:
             break;
@@ -380,29 +380,29 @@ void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, b
     }
 }
 
-inline static void draw_orb(cgimage_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
+inline static void draw_orb(image_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
     int16_t tx = (color - 1) * 16;
     int16_t ty = 10 * shade;
-    const cgrect_t rect = (cgrect_t){{tx, ty}, {16, 10}};
-    const cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
+    const rect_s rect = (rect_s){{tx, ty}, {16, 10}};
+    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
     screen.draw(rsc.orbs, rect, at);
 }
 
-void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at) {
+void draw_orb(image_c &screen, color_e color, point_s at) {
     auto &rsc = cgresources_c::shared();
     int16_t tx = (color - 1) * 16;
-    const cgrect_t rect = (cgrect_t){{tx, 0}, {16, 10}};
+    const rect_s rect = (rect_s){{tx, 0}, {16, 10}};
     screen.draw(rsc.orbs, rect, at);
 }
 
-void level_t::draw_tile(cgimage_c &screen, int x, int y) const {
+void level_t::draw_tile(image_c &screen, int x, int y) const {
     auto &rsc = cgresources_c::shared();
     auto &tile = _grid->tiles[x][y];
     if (tile.state.type != tiletype_e::empty) {
         if (tile.transition.step > 0) {
             draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
-            const int shade = cgimage_c::STENCIL_FULLY_OPAQUE - tile.transition.step * cgimage_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
-            auto stencil = cgimage_c::get_stencil(cgimage_c::orderred, shade);
+            const int shade = image_c::STENCIL_FULLY_OPAQUE - tile.transition.step * image_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
+            auto stencil = image_c::get_stencil(image_c::orderred, shade);
             screen.with_stencil(stencil, [&, this] {
                 draw_tilestate(screen, rsc, tile.state, x, y);
             });
@@ -419,7 +419,7 @@ void level_t::draw_tile(cgimage_c &screen, int x, int y) const {
     }
 }
 
-void level_t::draw_time(cgimage_c &screen) const {
+void level_t::draw_time(image_c &screen) const {
     auto &rsc = cgresources_c::shared();
     int min = _results.time / 60;
     int sec = _results.time % 60;
@@ -430,14 +430,14 @@ void level_t::draw_time(cgimage_c &screen) const {
     buf[3] = '0' + (sec % 10);
     buf[4] = 0;
     
-    const cgpoint_t at = (cgpoint_t){ TIME_X_TRAIL - 32, TIME_Y_INSET };
-    const cgrect_t rect = (cgrect_t){at, (cgsize_t){32, 8}};
+    const point_s at = (point_s){ TIME_X_TRAIL - 32, TIME_Y_INSET };
+    const rect_s rect = (rect_s){at, (size_s){32, 8}};
 
     screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+    screen.draw(rsc.mono_font, buf, at, image_c::align_left);
 }
 
-void level_t::draw_orb_counts(cgimage_c &screen) const {
+void level_t::draw_orb_counts(image_c &screen) const {
     auto &rsc = cgresources_c::shared();
 
     for (int i = 0; i < 2; i++) {
@@ -446,14 +446,14 @@ void level_t::draw_orb_counts(cgimage_c &screen) const {
         buf[0] = d1 ? '0' + d1 :  ' ';
         buf[1] = '0' + _results.orbs[i] % 10;
         buf[2] = 0;
-        cgpoint_t at = (cgpoint_t){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
-        cgrect_t rect = (cgrect_t){ at, {16, 8}};
+        point_s at = (point_s){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
+        rect_s rect = (rect_s){ at, {16, 8}};
         screen.draw(rsc.background, rect, at);
-        screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+        screen.draw(rsc.mono_font, buf, at, image_c::align_left);
     }
 }
 
-void level_t::draw_move_count(cgimage_c &screen) const {
+void level_t::draw_move_count(image_c &screen) const {
     auto &rsc = cgresources_c::shared();
     int moves = _results.moves;
     char buf[4];
@@ -463,14 +463,14 @@ void level_t::draw_move_count(cgimage_c &screen) const {
         moves /= 10;
         buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
     }
-    const cgpoint_t at = (cgpoint_t){ TIME_X_TRAIL - 24, MOVES_Y_INSET };
-    const cgrect_t rect = (cgrect_t){at, (cgsize_t){24, 8}};
+    const point_s at = (point_s){ TIME_X_TRAIL - 24, MOVES_Y_INSET };
+    const rect_s rect = (rect_s){at, (size_s){24, 8}};
 
     screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+    screen.draw(rsc.mono_font, buf, at, image_c::align_left);
 }
 
-level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int ticks) {
+level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int ticks) {
     _time_count += ticks;
     if (_time_count >= 50) {
         _results.time--;
@@ -484,8 +484,8 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
     at.x /= 16; at.y /= 16;
 
     if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
-        bool lb = mouse.get_state(cgmouse_c::left) == cgmouse_c::clicked;
-        bool rb = mouse.get_state(cgmouse_c::right) == cgmouse_c::clicked;
+        bool lb = mouse.get_state(mouse_c::left) == mouse_c::clicked;
+        bool rb = mouse.get_state(mouse_c::right) == mouse_c::clicked;
         if (lb || rb) {
             cgp_tile_changes = no_changes;
             // Try remove an orb
@@ -539,16 +539,16 @@ level_t::state_e level_t::update_tick(cgimage_c &screen, cgmouse_c &mouse, int t
 }
 
 #ifndef __M68000__
-static void cghton(level_recipe_t::header_t &header) {
-    cghton(header.time);
+static void hton(level_recipe_t::header_t &header) {
+    hton(header.time);
 };
 #endif
 
 #ifndef __M68000__
-static void cghton(level_result_t &result) {
-    cghton(result.score);
-    cghton(result.time);
-    cghton(result.moves);
+static void hton(level_result_t &result) {
+    hton(result.score);
+    hton(result.time);
+    hton(result.moves);
 };
 #endif
 
@@ -561,23 +561,23 @@ int level_recipe_t::get_size() const {
     return sizeof(level_recipe_t) + sizeof(tilestate_t) * header.width * header.height;
 }
 
-bool level_recipe_t::save(cgiff_file_c &iff) {
-    cgiff_group_t group;
-    cgiff_chunk_t chunk;
-    if (iff.begin(group, CGIFF_FORM)) {
-        iff.write(CGIFF_CGLV_ID);
+bool level_recipe_t::save(iff_file_c &iff) {
+    iff_group_s group;
+    iff_chunk_s chunk;
+    if (iff.begin(group, IFF_FORM)) {
+        iff.write(IFF_CGLV_ID);
         
-        iff.begin(chunk, CGIFF_LVHD);
+        iff.begin(chunk, IFF_LVHD);
         iff.write(header);
         iff.end(chunk);
         
         if (text) {
-            iff.begin(chunk, CGIFF_TEXT);
+            iff.begin(chunk, IFF_TEXT);
             iff.write((void *)text, 1, strlen(text) + 1);
             iff.end(chunk);
         }
         
-        iff.begin(chunk, CGIFF_TSTS);
+        iff.begin(chunk, IFF_TSTS);
         iff.write((void *)tiles, sizeof(tilestate_t), header.width * header.height);
         iff.end(chunk);
         
@@ -586,37 +586,37 @@ bool level_recipe_t::save(cgiff_file_c &iff) {
     return false;
 }
 
-bool level_recipe_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
-    assert(start_chunk.id == CGIFF_FORM_ID);
-    cgiff_group_t group;
-    if (iff.expand(start_chunk, group) && group.subtype == CGIFF_CGLV_ID) {
-        cgiff_chunk_t chunk;
-        iff.next(group, CGIFF_LVHD, chunk);
+bool level_recipe_t::load(iff_file_c &iff, iff_chunk_s &start_chunk) {
+    assert(start_chunk.id == IFF_FORM_ID);
+    iff_group_s group;
+    if (iff.expand(start_chunk, group) && group.subtype == IFF_CGLV_ID) {
+        iff_chunk_s chunk;
+        iff.next(group, IFF_LVHD, chunk);
         assert(chunk.size == sizeof(level_recipe_t::header));
         iff.read(header);
         
-        if (iff.next(group, CGIFF_TEXT, chunk)) {
+        if (iff.next(group, IFF_TEXT, chunk)) {
             text = (const char *)calloc(1, chunk.size);
             iff.read((void *)text, 1, chunk.size);
         }
 
-        iff.next(group, CGIFF_TSTS, chunk);
+        iff.next(group, IFF_TSTS, chunk);
         return iff.read(tiles, sizeof(tilestate_t), header.width * header.height);
     }
     return false;
 }
 
-bool level_result_t::save(cgiff_file_c &iff) {
-    cgiff_chunk_t chunk;
-    if (iff.begin(chunk, CGIFF_CGLR)) {
+bool level_result_t::save(iff_file_c &iff) {
+    iff_chunk_s chunk;
+    if (iff.begin(chunk, IFF_CGLR)) {
         iff.write(*this);
         return iff.end(chunk);
     }
     return false;
 }
 
-bool level_result_t::load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk) {
-    assert(start_chunk.id == CGIFF_CGLR_ID);
+bool level_result_t::load(iff_file_c &iff, iff_chunk_s &start_chunk) {
+    assert(start_chunk.id == IFF_CGLR_ID);
     if (start_chunk.size != sizeof(level_result_t)) {
         return false;
     }

@@ -9,27 +9,27 @@
 
 using namespace toybox;
 
-cgiff_file_c::cgiff_file_c(FILE *file) :
+iff_file_c::iff_file_c(FILE *file) :
     _file(file), _hard_assert(false), _owns_file(false)
 {
-    hard_assert(CGIFF_FORM_ID != 0);
+    hard_assert(IFF_FORM_ID != 0);
     hard_assert(file);
     _for_writing = true;
 };
-cgiff_file_c::cgiff_file_c(const char *path, const char *mode) : 
+iff_file_c::iff_file_c(const char *path, const char *mode) : 
     _file(fopen(path, mode)), _hard_assert(false), _owns_file(true)
 {
-    hard_assert(CGIFF_FORM_ID != 0);
+    hard_assert(IFF_FORM_ID != 0);
     hard_assert(_file);
     _for_writing = strstr(mode, "w") != nullptr;
 }
-cgiff_file_c::~cgiff_file_c() {
+iff_file_c::~iff_file_c() {
     if (_owns_file) {
         fclose(_file);
     }
 }
 
-long cgiff_file_c::get_pos() const {
+long iff_file_c::get_pos() const {
     long result = -1;
     if (_file) {
         result = ftell(_file);
@@ -41,7 +41,7 @@ long cgiff_file_c::get_pos() const {
 }
 
 #ifndef __M68000__
-bool cgiff_file_c::set_pos(long pos) const {
+bool iff_file_c::set_pos(long pos) const {
     bool result = fseek(_file, pos, SEEK_SET) >= 0;
     if (_hard_assert) {
         hard_assert(result >= 0);
@@ -51,11 +51,11 @@ bool cgiff_file_c::set_pos(long pos) const {
 #endif
 
 
-bool cgiff_file_c::first(const char *const id, cgiff_chunk_t &chunk) {
+bool iff_file_c::first(const char *const id, iff_chunk_s &chunk) {
     bool result = false;
     if (_file && fseek(_file, 0, SEEK_SET) == 0) {
         if (read(chunk)) {
-            result = cgiff_id_match(chunk.id, id);
+            result = iff_id_match(chunk.id, id);
         }
     }
     if (_hard_assert) {
@@ -64,11 +64,11 @@ bool cgiff_file_c::first(const char *const id, cgiff_chunk_t &chunk) {
     return result;
 }
 
-bool cgiff_file_c::first(const char *const id, const char *const subtype, cgiff_group_t &group) {
+bool iff_file_c::first(const char *const id, const char *const subtype, iff_group_s &group) {
     bool result = false;
     if (_file && fseek(_file, 0, SEEK_SET) == 0) {
         if (read(group)) {
-            result = cgiff_id_match(group.id, id) && cgiff_id_match(group.subtype, subtype);
+            result = iff_id_match(group.id, id) && iff_id_match(group.subtype, subtype);
         }
     }
     if (_hard_assert) {
@@ -77,12 +77,12 @@ bool cgiff_file_c::first(const char *const id, const char *const subtype, cgiff_
     return result;
 }
 
-bool cgiff_file_c::next(const cgiff_group_t &in_group, const char *const id, cgiff_chunk_t &chunk) {
+bool iff_file_c::next(const iff_group_s &in_group, const char *const id, iff_chunk_s &chunk) {
     // Hard assert handled by called functions.
     const long end = in_group.offset + sizeof(uint32_t) * 2 + in_group.size;
     long pos = get_pos();
     while (get_pos() < end && read(chunk)) {
-        if (cgiff_id_match(chunk.id, id)) {
+        if (iff_id_match(chunk.id, id)) {
             return true;
         }
         if (!skip(chunk)) {
@@ -96,7 +96,7 @@ bool cgiff_file_c::next(const cgiff_group_t &in_group, const char *const id, cgi
     return false;
 }
 
-bool cgiff_file_c::expand(const cgiff_chunk_t &chunk, cgiff_group_t &group) {
+bool iff_file_c::expand(const iff_chunk_s &chunk, iff_group_s &group) {
     // Hard assert handled by called functions.
     group.offset = chunk.offset;
     group.id = chunk.id;
@@ -107,7 +107,7 @@ bool cgiff_file_c::expand(const cgiff_chunk_t &chunk, cgiff_group_t &group) {
     return false;
 }
 
-bool cgiff_file_c::reset(const cgiff_chunk_t &chunk) {
+bool iff_file_c::reset(const iff_chunk_s &chunk) {
     bool result = fseek(_file, chunk.offset + sizeof(uint32_t) * 2, SEEK_SET) >= 0;
     if (_hard_assert) {
         hard_assert(result);
@@ -115,7 +115,7 @@ bool cgiff_file_c::reset(const cgiff_chunk_t &chunk) {
     return result;
 }
 
-bool cgiff_file_c::skip(const cgiff_chunk_t &chunk) {
+bool iff_file_c::skip(const iff_chunk_s &chunk) {
     bool result = false;
     long end = chunk.offset + sizeof(uint32_t) * 2 + chunk.size;
     if ((result = fseek(_file, end, SEEK_SET) >= 0)) {
@@ -127,7 +127,7 @@ bool cgiff_file_c::skip(const cgiff_chunk_t &chunk) {
     return result;
 }
 
-bool cgiff_file_c::align() {
+bool iff_file_c::align() {
     bool result = false;
     long pos = get_pos();
     if (pos >= 0) {
@@ -149,7 +149,7 @@ done:
     return result;
 }
 
-bool cgiff_file_c::read(void *data, size_t s, size_t n) {
+bool iff_file_c::read(void *data, size_t s, size_t n) {
     size_t read = fread(data, s, n, _file);
 #ifndef __M68000__
     bool result = read == n;
@@ -162,12 +162,12 @@ bool cgiff_file_c::read(void *data, size_t s, size_t n) {
     return result;
 }
 
-bool cgiff_file_c::begin(cgiff_chunk_t &chunk, const char *const id) {
+bool iff_file_c::begin(iff_chunk_s &chunk, const char *const id) {
     bool result = false;
     if (align()) {
         chunk.offset = get_pos();
         if (chunk.offset >= 0) {
-            chunk.id = cgiff_id_make(id);
+            chunk.id = iff_id_make(id);
             chunk.size = -1;
             result = write(chunk.id) && write(chunk.size);
         }
@@ -178,7 +178,7 @@ bool cgiff_file_c::begin(cgiff_chunk_t &chunk, const char *const id) {
     return result;
 }
 
-bool cgiff_file_c::end(cgiff_chunk_t &chunk) {
+bool iff_file_c::end(iff_chunk_s &chunk) {
     bool result = false;
     long pos = get_pos();
     if (pos >= 0) {
@@ -195,7 +195,7 @@ bool cgiff_file_c::end(cgiff_chunk_t &chunk) {
     return result;
 }
 
-bool cgiff_file_c::write(void *data, size_t s, size_t n) {
+bool iff_file_c::write(void *data, size_t s, size_t n) {
     size_t read = fwrite(data, s, n, _file);
 #ifndef __M68000__
     bool result = read == n;
@@ -208,9 +208,9 @@ bool cgiff_file_c::write(void *data, size_t s, size_t n) {
     return result;
 }
 
-bool cgiff_file_c::read(cgiff_group_t &group) {
+bool iff_file_c::read(iff_group_s &group) {
     bool result = false;
-    if (read(static_cast<cgiff_chunk_t&>(group))) {
+    if (read(static_cast<iff_chunk_s&>(group))) {
         result = read(group.subtype);
     }
     if (_hard_assert) {
@@ -219,7 +219,7 @@ bool cgiff_file_c::read(cgiff_group_t &group) {
     return result;
 }
 
-bool cgiff_file_c::read(cgiff_chunk_t &chunk) {
+bool iff_file_c::read(iff_chunk_s &chunk) {
     bool result = align();
     if (result) {
         chunk.offset = get_pos();

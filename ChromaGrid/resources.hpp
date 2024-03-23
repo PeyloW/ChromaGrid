@@ -15,27 +15,27 @@
 
 class cgresources_c : private nocopy_c {
 public:
-    cgimage_c background;
-    cgimage_c tiles;
-    cgimage_c orbs;
-    cgimage_c cursor;
-    cgimage_c button;
-    cgimage_c selection;
+    image_c background;
+    image_c tiles;
+    image_c orbs;
+    image_c cursor;
+    image_c button;
+    image_c selection;
 private:
-    cgimage_c _font_image;
-    cgimage_c _small_font_image;
+    image_c _font_image;
+    image_c _small_font_image;
 public:
-    cgfont_c font;
-    cgfont_c mono_font;
-    cgfont_c small_font;
-    cgfont_c small_mono_font;
-    cgsount_c drop_orb;
-    cgsount_c take_orb;
-    cgsount_c fuse_orb;
-    cgsount_c no_drop_orb;
-    cgsount_c break_tile;
-    cgsount_c fuse_break_tile;
-    cgmusic_c music;
+    font_c font;
+    font_c mono_font;
+    font_c small_font;
+    font_c small_mono_font;
+    sount_c drop_orb;
+    sount_c take_orb;
+    sount_c fuse_orb;
+    sount_c no_drop_orb;
+    sount_c break_tile;
+    sount_c fuse_break_tile;
+    music_c music;
     
     vector_c<level_recipe_t*, 45> levels;
     vector_c<level_result_t, 45> level_results;

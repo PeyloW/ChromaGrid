@@ -15,19 +15,19 @@ namespace toybox {
     
     using namespace toystd;
     
-    struct cgpoint_t {
+    struct point_s {
         int16_t x, y;
-        bool operator==(const cgpoint_t &p) const {
+        bool operator==(const point_s &p) const {
             return x == p.x && y == p.y;
         }
     };
     
-    struct cgsize_t {
+    struct size_s {
         int16_t width, height;
-        bool operator==(const cgsize_t s) const {
+        bool operator==(const size_s s) const {
             return width == s.width && height == s.height;
         }
-        bool contains(const cgpoint_t point) const {
+        bool contains(const point_s point) const {
             return point.x >= 0 && point.y >= 0 && point.x < width && point.y < height;
         }
         bool is_empty() const {
@@ -35,23 +35,23 @@ namespace toybox {
         }
     };
     
-    struct cgrect_t {
-        cgpoint_t origin;
-        cgsize_t size;
-        bool operator==(const cgrect_t &r) const {
+    struct rect_s {
+        point_s origin;
+        size_s size;
+        bool operator==(const rect_s &r) const {
             return origin == r.origin && size == r.size;
         }
-        bool contains(const cgpoint_t &point) const {
-            const cgpoint_t at = (cgpoint_t){static_cast<int16_t>(point.x - origin.x), static_cast<int16_t>(point.y - origin.y)};
+        bool contains(const point_s &point) const {
+            const point_s at = (point_s){static_cast<int16_t>(point.x - origin.x), static_cast<int16_t>(point.y - origin.y)};
             return size.contains(at);
         }
-        bool contained_by(const cgsize_t &size) const {
+        bool contained_by(const size_s &size) const {
             if (origin.x < 0 || origin.y < 0) return false;
             if (origin.x + this->size.width > size.width) return false;
             if (origin.y + this->size.height > size.height) return false;
             return true;
         }
-        bool clip_to(const cgsize_t size, cgpoint_t &at) {
+        bool clip_to(const size_s size, point_s &at) {
             if (at.x < 0) {
                 this->size.width += at.x;
                 if (this->size.width <= 0) return false;

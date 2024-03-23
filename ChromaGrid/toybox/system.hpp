@@ -20,11 +20,11 @@ namespace toybox {
 #define __append_int16(p,n) __asm__ volatile ("move.w %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
 #define __append_int32(p,n) __asm__ volatile ("move.l %[d],(%[a])+" : [a] "+a" (p) : [d] "g" (n) : );
     
-    struct cgcodegen_t {
+    struct codegen_s {
         // Buffer must be 16 bytes
         static void make_trampoline(void *buffer, void *func, bool all_regs) {
             //movem.l d3-d7/a2-a6,-(sp)
-            //jsr     _cgg_system_vbl_interupt.l
+            //jsr     _g_system_vbl_interupt.l
             //movem.l (sp)+,d3-d7/a2-a6
             //rts
             if (all_regs) {
@@ -43,11 +43,11 @@ namespace toybox {
         }
     };
     
-    extern "C" void cgg_microwire_write(uint16_t value);
+    extern "C" void g_microwire_write(uint16_t value);
     
 #endif
     
-    static int32_t cgsuper(int32_t v) {
+    static int32_t super(int32_t v) {
 #ifdef __M68000__
         return Super((void *)v);
 #else
@@ -55,7 +55,7 @@ namespace toybox {
 #endif
     }
     
-    static int16_t cgget_screen_mode() {
+    static int16_t get_screen_mode() {
 #ifdef __M68000__
         return Getrez();
 #else
@@ -63,20 +63,20 @@ namespace toybox {
 #endif
     }
     
-    static int32_t cgrand() {
+    static int32_t rand() {
 #ifdef __M68000__
         return Random();
 #else
-        return rand();
+        return random();
 #endif
     }
     
     extern "C" {
-        class cgimage_c;
-        extern const cgimage_c *cgg_active_image;
+        class image_c;
+        extern const image_c *g_active_image;
     }
     
-    static int16_t cgset_screen(void *log, void *phys, int16_t mode) {
+    static int16_t set_screen(void *log, void *phys, int16_t mode) {
         int16_t rez = 0;
 #ifdef __M68000__
         log = log ?: (void *)-1;
@@ -89,17 +89,17 @@ namespace toybox {
         return rez;
     }
     
-    class cgtimer_c : private toystd::nocopy_c {
+    class timer_c : private nocopy_c {
     public:
         typedef enum __packed {
-            vbl, timer_c
+            vbl, clock
         } timer_e;
         typedef void(*func_t)(void);
         typedef void(*func_a_t)(void *);
         typedef void(*func_i_t)(int);
         
-        cgtimer_c(timer_e timer);
-        ~cgtimer_c();
+        timer_c(timer_e timer);
+        ~timer_c();
         
         template<class Commands>
         __forceinline static void with_paused_timers(Commands commands) {
@@ -129,7 +129,7 @@ namespace toybox {
         timer_e _timer;
     };
     
-    class cgmouse_c : private nocopy_c {
+    class mouse_c : private nocopy_c {
     public:
         typedef enum __packed {
             right, left
@@ -140,15 +140,15 @@ namespace toybox {
             clicked
         } state_e;
         
-        cgmouse_c(cgrect_t limit);
-        ~cgmouse_c();
+        mouse_c(rect_s limit);
+        ~mouse_c();
         
         void update_state();  // Call once per vbl
         
         bool is_pressed(button_e button) const;
         state_e get_state(button_e button) const;
         
-        cgpoint_t get_postion();
+        point_s get_postion();
         
     };
     

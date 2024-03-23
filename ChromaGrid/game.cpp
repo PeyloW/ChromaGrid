@@ -16,7 +16,7 @@ extern "C" {
 }
 #endif
 
-void cgoverlay_scene_c::will_appear(cgimage_c &screen, bool obsured) {
+void cgoverlay_scene_c::will_appear(image_c &screen, bool obsured) {
     rsc.music.set_active(1);
     rsc.background.get_palette()->set_active();
 }
@@ -27,7 +27,7 @@ void cgoverlay_scene_c::will_disappear(bool obscured) {
     }
 }
 
-void cgoverlay_scene_c::tick(cgimage_c &screen, int ticks) {
+void cgoverlay_scene_c::tick(image_c &screen, int ticks) {
     screen.with_clipping(true, [this, &screen] {
         /*
         if (manager.mouse.is_pressed(cgmouse_c::left)) {

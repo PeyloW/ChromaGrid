@@ -25,16 +25,16 @@ static const uint16_t pBlitter_mask[17] = {
     0x0000
 };
 
-static const cgimage_c::stencil_t *pActiveStencil = nullptr;
+static const image_c::stencil_t *pActiveStencil = nullptr;
 
-__forceinline static void set_active_stencil(struct cgblitter_t *blitter, const cgimage_c::stencil_t *const stencil) {
+__forceinline static void set_active_stencil(struct blitter_s *blitter, const image_c::stencil_t *const stencil) {
     if (pActiveStencil != stencil) {
         memcpy(blitter->halftoneRAM, stencil, 32);
         pActiveStencil = stencil;
     }
 }
 
-void cgimage_c::imp_fill(uint8_t color, cgrect_t rect) const {
+void image_c::imp_fill(uint8_t color, rect_s rect) const {
     uint16_t dummy_src = 0;
     auto blitter = pBlitter;
 
@@ -94,7 +94,7 @@ void cgimage_c::imp_fill(uint8_t color, cgrect_t rect) const {
 
 }
 
-void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
+void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(get_size().contains(at));
     assert((rect.origin.x & 0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
@@ -149,7 +149,7 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, const cgrect_t &rect
     blitter->start();
 }
 
-void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
+void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(get_size().contains(at));
     assert(srcImage.get_size().contains(rect.origin));
     auto blitter = pBlitter;
@@ -219,7 +219,7 @@ void cgimage_c::imp_draw(const cgimage_c &srcImage, const cgrect_t &rect, cgpoin
     }
 }
 
-void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at) const {
+void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(get_size().contains(at));
     assert(srcImage.get_size().contains(rect.origin));
     auto blitter = pBlitter;
@@ -311,7 +311,7 @@ void cgimage_c::imp_draw_masked(const cgimage_c &srcImage, const cgrect_t &rect,
     }
 }
 
-void cgimage_c::imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t at, uint16_t color) const {
+void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
     assert(get_size().contains(at));
     assert(srcImage.get_size().contains(rect.origin));
     auto blitter = pBlitter;
@@ -385,13 +385,13 @@ void cgimage_c::imp_draw_color(const cgimage_c &srcImage, const cgrect_t &rect, 
     }
 }
 
-void cgimage_c::imp_draw_rect_SLOW(const cgimage_c &srcImage, const cgrect_t &rect, cgpoint_t point) const {
+void image_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s point) const {
     assert(get_size().contains(point));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {
-            uint8_t color = srcImage.get_pixel(cgpoint_t{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
+            uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
             if (color != MASKED_CIDX) {
-                put_pixel(color, cgpoint_t{(int16_t)(point.x + x), (int16_t)(point.y + y)});
+                put_pixel(color, point_s{(int16_t)(point.x + x), (int16_t)(point.y + y)});
             }
         }
     }

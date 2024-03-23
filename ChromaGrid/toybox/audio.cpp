@@ -14,11 +14,11 @@
 
 using namespace toybox;
 
-CGDEFINE_ID (AIFF);
-CGDEFINE_ID (COMM);
-CGDEFINE_ID (SSND);
+DEFINE_IFF_ID (AIFF);
+DEFINE_IFF_ID (COMM);
+DEFINE_IFF_ID (SSND);
 
-struct __packed_struct extended80_t {
+struct __packed_struct extended80_s {
     uint16_t exp;
     uint16_t fracs[4];
     uint16_t to_uint16() const {
@@ -32,56 +32,56 @@ struct __packed_struct extended80_t {
         }
     }
 };
-static_assert(sizeof(extended80_t) == 10, "extended80_t size mismatch");
+static_assert(sizeof(extended80_s) == 10, "extended80_t size mismatch");
 
-struct __packed_struct aiff_common_t {
+struct __packed_struct aiff_common_s {
     int16_t num_channels;
     uint32_t num_sample_frames;
     int16_t sample_size;
-    extended80_t sample_rate;
+    extended80_s sample_rate;
 };
-static_assert(sizeof(aiff_common_t) == 18, "aiff_common_t size mismatch");
+static_assert(sizeof(aiff_common_s) == 18, "aiff_common_t size mismatch");
 
-struct __packed_struct aiff_ssnd_data_t {
+struct __packed_struct aiff_ssnd_data_s {
     uint32_t offset;
     uint32_t block_size;
     uint8_t data[];
 };
-static_assert(sizeof(aiff_ssnd_data_t) == 8, "ssnd_data_t size mismatch");
+static_assert(sizeof(aiff_ssnd_data_s) == 8, "ssnd_data_t size mismatch");
 
 #ifndef __M68000__
-static void cghton(extended80_t &ext80) {
-    cghton(ext80.exp);
-    cghton(ext80.fracs[0]);
+static void hton(extended80_s &ext80) {
+    hton(ext80.exp);
+    hton(ext80.fracs[0]);
 }
-static void cghton(aiff_common_t &common) {
-    cghton(common.num_channels);
-    cghton(common.num_sample_frames);
-    cghton(common.sample_size);
-    cghton(common.sample_rate);
+static void hton(aiff_common_s &common) {
+    hton(common.num_channels);
+    hton(common.num_sample_frames);
+    hton(common.sample_size);
+    hton(common.sample_rate);
 }
-static void cghton(aiff_ssnd_data_t &ssnd) {
-    cghton(ssnd.offset);
-    cghton(ssnd.block_size);
+static void hton(aiff_ssnd_data_s &ssnd) {
+    hton(ssnd.offset);
+    hton(ssnd.block_size);
 }
 #endif
 
 
-cgsount_c::cgsount_c(const char *path) :
+sount_c::sount_c(const char *path) :
     _sample(nullptr),
     _length(0),
     _rate(0)
 {
-    cgiff_file_c file(path);
-    cgiff_group_t form;
-    if (!file.first(CGIFF_FORM, CGIFF_AIFF, form)) {
+    iff_file_c file(path);
+    iff_group_s form;
+    if (!file.first(IFF_FORM, IFF_AIFF, form)) {
         hard_assert(0);
         return; // Not a AIFF
     }
-    cgiff_chunk_t chunk;
-    aiff_common_t common;
+    iff_chunk_s chunk;
+    aiff_common_s common;
     while (file.next(form, "*", chunk)) {
-        if (cgiff_id_match(chunk.id, CGIFF_COMM)) {
+        if (iff_id_match(chunk.id, IFF_COMM)) {
             if (!file.read(common)) {
                 return;
             }
@@ -90,8 +90,8 @@ cgsount_c::cgsount_c(const char *path) :
             _length = common.num_sample_frames;
             _rate = common.sample_rate.to_uint16();
             assert(_rate >= 11000 && _rate <= 14000); // Ball park ;)
-        } else if (cgiff_id_match(chunk.id, CGIFF_SSND)) {
-            aiff_ssnd_data_t data;
+        } else if (iff_id_match(chunk.id, IFF_SSND)) {
+            aiff_ssnd_data_s data;
             if (!file.read(data)) {
                 return;
             }
@@ -117,16 +117,16 @@ cgsount_c::cgsount_c(const char *path) :
     }
 }
 
-cgsount_c::~cgsount_c() {
+sount_c::~sount_c() {
     free(_sample);
     _sample = nullptr;
 }
 
-void cgsount_c::set_active() const {
+void sount_c::set_active() const {
 #ifdef __M68000__
-    cgg_microwire_write(0x4c | 40); // Max master volume (0 to 40)
-    cgg_microwire_write(0x50 | 20); // Right volume (0 to 20)
-    cgg_microwire_write(0x54 | 20); // Left volume (0 to 20)
+    g_microwire_write(0x4c | 40); // Max master volume (0 to 40)
+    g_microwire_write(0x50 | 20); // Right volume (0 to 20)
+    g_microwire_write(0x54 | 20); // Left volume (0 to 20)
 
     uint8_t * ste_dma_control  = (uint8_t*)0xffff8901;
     uint8_t * ste_dmo_mode  = (uint8_t*)0xffff8921;
@@ -148,14 +148,14 @@ void cgsount_c::set_active() const {
     *ste_dmo_mode = 0x81; // 8 bit mono @ 12.5kHz
     *ste_dma_control = 1; // Play once
 #else
-    cgg_active_sound = (cgsount_c *)this;
+    g_active_sound = (sount_c *)this;
 #endif
 }
 
 #ifdef __M68000__
-static uint16_t cgg_music_init_code[8];
-static uint16_t cgg_music_exit_code[8];
-static uint16_t cgg_music_play_code[8];
+static uint16_t g_music_init_code[8];
+static uint16_t g_music_exit_code[8];
+static uint16_t g_music_play_code[8];
 #endif
 
 // libcmini (version used) has a buggy strncmp :(
@@ -170,7 +170,7 @@ static int _strncmp(const char *s1, const char *s2, size_t max)
     return cmp;
 }
 
-cgmusic_c::cgmusic_c(const char *path) : _track(0) {
+music_c::music_c(const char *path) : _track(0) {
     FILE *file = fopen(path, "r");
     hard_assert(file);
     fseek(file, 0, SEEK_END);
@@ -211,34 +211,34 @@ cgmusic_c::cgmusic_c(const char *path) : _track(0) {
         while (*++header_str == 0);
     }
 #ifdef __M68000__
-    cgcodegen_t::make_trampoline(cgg_music_init_code, _sndh, false);
-    cgcodegen_t::make_trampoline(cgg_music_exit_code, _sndh + 4, false);
-    cgcodegen_t::make_trampoline(cgg_music_play_code, _sndh + 8, false);
+    codegen_s::make_trampoline(g_music_init_code, _sndh, false);
+    codegen_s::make_trampoline(g_music_exit_code, _sndh + 4, false);
+    codegen_s::make_trampoline(g_music_play_code, _sndh + 8, false);
 #endif
 }
 
-cgmusic_c::~cgmusic_c() {
+music_c::~music_c() {
     if (_track > 0) {
         set_active(0);
     }
 }
 
-void cgmusic_c::set_active(int track) const {
+void music_c::set_active(int track) const {
     if (_track != track) {
-        cgtimer_c::with_paused_timers([this, track] {
+        timer_c::with_paused_timers([this, track] {
 #ifdef __M68000__
-            cgtimer_c timer_c(cgtimer_c::timer_c);
+            timer_c clock(timer_c::clock);
             if (_track > 0) {
                 // Exit driver
-                ((cgtimer_c::func_t)cgg_music_exit_code)();
+                ((timer_c::func_t)g_music_exit_code)();
                 // remove VBL
-                timer_c.remove_func((cgtimer_c::func_t)cgg_music_play_code);
+                clock.remove_func((timer_c::func_t)g_music_play_code);
             }
             if (track > 0) {
                 // init driver
-                ((cgtimer_c::func_i_t)cgg_music_init_code)(track);
+                ((timer_c::func_i_t)g_music_init_code)(track);
                 // add VBL
-                timer_c.add_func((cgtimer_c::func_t)cgg_music_play_code, _freq);
+                clock.add_func((timer_c::func_t)g_music_play_code, _freq);
             }
 #endif
         });

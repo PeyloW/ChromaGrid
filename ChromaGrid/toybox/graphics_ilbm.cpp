@@ -10,11 +10,11 @@
 
 using namespace toybox;
 
-CGDEFINE_ID(ILBM);
-CGDEFINE_ID(BMHD);
-CGDEFINE_ID(CMAP);
-CGDEFINE_ID(GRAB);
-CGDEFINE_ID(BODY);
+DEFINE_IFF_ID(ILBM);
+DEFINE_IFF_ID(BMHD);
+DEFINE_IFF_ID(CMAP);
+DEFINE_IFF_ID(GRAB);
+DEFINE_IFF_ID(BODY);
 
 typedef enum __packed {
     mask_type_none,
@@ -29,30 +29,30 @@ typedef enum __packed {
     compression_type_vertical
 } compression_type_e;
 
-struct __packed_struct ilbm_header_t {
-    cgsize_t size;
-    cgpoint_t offset;
+struct __packed_struct ilbm_header_s {
+    size_s size;
+    point_s offset;
     uint8_t plane_count;
     mask_type_e mask_type;
     compression_type_e compression_type;
     uint8_t _pad;
     uint16_t mask_color;
     uint8_t aspect[2];
-    cgsize_t page_size;
+    size_s page_size;
 };
-static_assert(sizeof(ilbm_header_t) == 20, "Heade size mismatch");
+static_assert(sizeof(ilbm_header_s) == 20, "Heade size mismatch");
 
 
 #ifndef __M68000__
-static void cghton(ilbm_header_t &bmhd) {
-    cghton(bmhd.size);
-    cghton(bmhd.offset);
-    cghton(bmhd.mask_color);
-    cghton(bmhd.page_size);
+static void hton(ilbm_header_s &bmhd) {
+    hton(bmhd.size);
+    hton(bmhd.offset);
+    hton(bmhd.mask_color);
+    hton(bmhd.page_size);
 };
 #endif
 
-static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_read(iff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     uint16_t word_buffer[line_words];
     const int bp_count = (maskmap ? 5 : 4);
     while (--height != -1) {
@@ -79,7 +79,7 @@ static void cgimage_read(cgiff_file_c &file, uint16_t line_words, int height, ui
     }
 }
 
-static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_read_packbits(iff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
@@ -110,12 +110,12 @@ static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int h
             if (bp < 4) {
                 for (int i = 0; i < line_words; i++) {
                     bitmap[bp + i * 4] = word_buffer[bp * line_words + i];
-                    cghton(bitmap[bp + i * 4]);
+                    hton(bitmap[bp + i * 4]);
                 }
             } else {
                 for (int i = 0; i < line_words; i++) {
                     maskmap[i] = word_buffer[bp * line_words + i];
-                    cghton(bitmap[i]);
+                    hton(bitmap[i]);
                 }
             }
         }
@@ -126,19 +126,19 @@ static void cgimage_read_packbits(cgiff_file_c &file, uint16_t line_words, int h
     }
 }
 
-cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
-    memset(this, 0, sizeof(cgimage_c));
+image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
+    memset(this, 0, sizeof(image_c));
 
-    cgiff_file_c file(path);
-    cgiff_group_t form;
-    if (!file.first(CGIFF_FORM, CGIFF_ILBM, form)) {
+    iff_file_c file(path);
+    iff_group_s form;
+    if (!file.first(IFF_FORM, IFF_ILBM, form)) {
         hard_assert(0);
         return; // Not a ILBM
     }
-    cgiff_chunk_t chunk;
-    ilbm_header_t bmhd;
+    iff_chunk_s chunk;
+    ilbm_header_s bmhd;
     while (file.next(form, "*", chunk)) {
-        if (cgiff_id_match(chunk.id, CGIFF_BMHD)) {
+        if (iff_id_match(chunk.id, IFF_BMHD)) {
             if (!file.read(bmhd)) {
                 return;
             }
@@ -150,13 +150,13 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
             if (masked_cidx != MASKED_CIDX && masked) {
                 bmhd.mask_color = masked_cidx;
             }
-        } else if (cgiff_id_match(chunk.id, CGIFF_CMAP)) {
+        } else if (iff_id_match(chunk.id, IFF_CMAP)) {
             uint8_t cmpa[48];
             if (!file.read(cmpa, 48)) {
                 return; // Could not read palette
             }
-            _palette = new cgpalette_c(&cmpa[0]);
-        } else if (cgiff_id_match(chunk.id, CGIFF_BODY)) {
+            _palette = new palette_c(&cmpa[0]);
+        } else if (iff_id_match(chunk.id, IFF_BODY)) {
             _line_words = ((_size.width + 15) / 16);
             const uint16_t bitmap_words = (_line_words * _size.height) << 2;
             const bool needs_mask_words = masked || (bmhd.mask_type == mask_type_plane);
@@ -171,10 +171,10 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
             _owns_bitmap = true;
             switch (bmhd.compression_type) {
                 case compression_type_none:
-                    cgimage_read(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_read(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
                     break;
                 case compression_type_packbits:
-                    cgimage_read_packbits(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_read_packbits(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
                     break;
                 default:
                     break;
@@ -187,7 +187,7 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
                     remap_table_t table;
                     make_noremap_table(table);
                     table[masked_cidx] = MASKED_CIDX;
-                    remap_colors(table, (cgrect_t){ {0, 0}, _size});
+                    remap_colors(table, (rect_s){ {0, 0}, _size});
                 }
             }
         } else {
@@ -203,7 +203,7 @@ cgimage_c::cgimage_c(const char *path, bool masked, uint8_t masked_cidx) {
 #ifdef CGIMAGE_SUPPORT_SAVE
 
 
-static int cgimage_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, int row_byte_count) {
+static int image_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, int row_byte_count) {
     assert(row_byte_count >= 2);
 #define PACKBITS_MIN_RUN 3
 #define PACKBITS_MAX_BYTES 128
@@ -282,7 +282,7 @@ static int cgimage_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, 
     return (int)(body - body_begin);
 }
 
-static void cgimage_write_packbits(cgiff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_write_packbits(iff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
@@ -290,17 +290,17 @@ static void cgimage_write_packbits(cgiff_file_c &file, uint16_t line_words, uint
             if (bp < 4) {
                 for (int i = 0; i < line_words; i++) {
                     word_buffer[bp * line_words + i] = bitmap[bp + i * 4];
-                    cghton(word_buffer[bp * line_words + i]);
+                    hton(word_buffer[bp * line_words + i]);
                 }
             } else {
                 for (int i = 0; i < line_words; i++) {
                     word_buffer[bp * line_words + i] = maskmap[i];
-                    cghton(word_buffer[bp * line_words + i]);
+                    hton(word_buffer[bp * line_words + i]);
                 }
             }
         }
         uint8_t body[line_words * bp_count * 2 + 32];
-        int bytes = cgimage_packbits_into_body(body, (const uint8_t *)word_buffer, line_words * bp_count * 2);
+        int bytes = image_packbits_into_body(body, (const uint8_t *)word_buffer, line_words * bp_count * 2);
         file.write(body, 1, bytes);
         
         bitmap += next_line_words * 4;
@@ -310,7 +310,7 @@ static void cgimage_write_packbits(cgiff_file_c &file, uint16_t line_words, uint
     }
 }
 
-static void cgimage_write(cgiff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_write(iff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
@@ -335,17 +335,17 @@ static void cgimage_write(cgiff_file_c &file, uint16_t line_words, uint16_t next
 }
 
 
-bool cgimage_c::save(const char *path, bool compressed, bool masked, uint8_t masked_cidx) {
-    cgiff_file_c ilbm(path, "w+");
+bool image_c::save(const char *path, bool compressed, bool masked, uint8_t masked_cidx) {
+    iff_file_c ilbm(path, "w+");
     if (ilbm.get_pos() >= 0) {
         ilbm.with_hard_asserts(true, [&] {
-            cgiff_group_t form;
-            cgiff_chunk_t chunk;
-            ilbm_header_t header;
-            ilbm.begin(form, CGIFF_FORM);
-            ilbm.write(CGIFF_ILBM_ID);
+            iff_group_s form;
+            iff_chunk_s chunk;
+            ilbm_header_s header;
+            ilbm.begin(form, IFF_FORM);
+            ilbm.write(IFF_ILBM_ID);
             {
-                memset(&header, 0, sizeof(ilbm_header_t));
+                memset(&header, 0, sizeof(ilbm_header_s));
                 header.size = _size;
                 header.plane_count = 4;
                 header.mask_type = masked_cidx != MASKED_CIDX ? mask_type_color : (masked && _maskmap) ? mask_type_plane : mask_type_none;
@@ -356,12 +356,12 @@ bool cgimage_c::save(const char *path, bool compressed, bool masked, uint8_t mas
                 header.aspect[0] = 10;
                 header.aspect[0] = 11;
                 header.page_size = {320, 200};
-                ilbm.begin(chunk, CGIFF_BMHD);
+                ilbm.begin(chunk, IFF_BMHD);
                 ilbm.write(header);
                 ilbm.end(chunk);
             }
             if (_offset.x != 0 || _offset.y != 0) {
-                ilbm.begin(chunk, CGIFF_GRAB);
+                ilbm.begin(chunk, IFF_GRAB);
                 ilbm.write(_offset);
                 ilbm.end(chunk);
             }
@@ -370,16 +370,16 @@ bool cgimage_c::save(const char *path, bool compressed, bool masked, uint8_t mas
                 for (int i = 0; i < 16; i++) {
                     _palette->colors[i].get(&cmap[i * 3 + 0], &cmap[i * 3 + 1], &cmap[i * 3 + 2]);
                 }
-                ilbm.begin(chunk, CGIFF_CMAP);
+                ilbm.begin(chunk, IFF_CMAP);
                 ilbm.write(cmap, 1, 48);
                 ilbm.end(chunk);
             }
             {
-                ilbm.begin(chunk, CGIFF_BODY);
+                ilbm.begin(chunk, IFF_BODY);
                 if (compressed) {
-                    cgimage_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
                 } else {
-                    cgimage_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
                 }
                 ilbm.end(chunk);
             }

@@ -9,11 +9,11 @@
 
 using namespace toybox;
 
-cgmanager_c::cgmanager_c() :
-    _super_token(cgsuper(0)),
-    vbl(cgtimer_c::vbl),
-    timer_c(cgtimer_c::timer_c),
-    mouse((cgrect_t){{0,0}, {320, 192}})
+scene_manager_c::scene_manager_c() :
+    _super_token(super(0)),
+    vbl(timer_c::vbl),
+    clock(timer_c::clock),
+    mouse((rect_s){{0,0}, {320, 192}})
 {
     _overlay_scene = nullptr;
     _active_physical_screen = 0;
@@ -23,32 +23,32 @@ cgmanager_c::cgmanager_c() :
     _screens.emplace_back();
 }
 
-cgmanager_c::~cgmanager_c() {
-    cgsuper(_super_token);
+scene_manager_c::~scene_manager_c() {
+    super(_super_token);
 }
 
 #define DEBUG_NO_SET_SCREEN 0
 
-void cgmanager_c::run_transition(screen_t &physical_screen, int ticks) {
+void scene_manager_c::run_transition(screen_c &physical_screen, int ticks) {
     debug_cpu_color(0x100);
-    if (_transition_state.type == cgimage_c::none) {
-        physical_screen.image.draw_aligned(get_logical_screen(), (cgpoint_t){0,0});
+    if (_transition_state.type == image_c::none) {
+        physical_screen.image.draw_aligned(get_logical_screen(), (point_s){0,0});
         _transition_state.full_restores_left--;
     } else {
-        auto shade = MIN(cgimage_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
-        physical_screen.image.with_stencil(cgimage_c::get_stencil(_transition_state.type, shade), [this, &physical_screen] {
-            physical_screen.image.draw_aligned(get_logical_screen(), (cgpoint_t){0, 0});
+        auto shade = MIN(image_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
+        physical_screen.image.with_stencil(image_c::get_stencil(_transition_state.type, shade), [this, &physical_screen] {
+            physical_screen.image.draw_aligned(get_logical_screen(), (point_s){0, 0});
         });
-        if (shade == cgimage_c::STENCIL_FULLY_OPAQUE) {
+        if (shade == image_c::STENCIL_FULLY_OPAQUE) {
             _transition_state.full_restores_left--;
         }
         _transition_state.shade += 1 + MAX(1, ticks);
     }
 }
 
-void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::stencil_type_e transition) {
+void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::stencil_type_e transition) {
 #if !DEBUG_NO_SET_SCREEN
-    int16_t old_mode = cgset_screen(nullptr, nullptr, 0);
+    int16_t old_mode = set_screen(nullptr, nullptr, 0);
 #endif
 
     set_overlay_scene(overlayscene);
@@ -63,8 +63,8 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
         previous_tick = tick;
         
         mouse.update_state();
-        screen_t &physical_screen = _screens[_active_physical_screen];
-        screen_t &logical_screen = _screens.back();
+        screen_c &physical_screen = _screens[_active_physical_screen];
+        screen_c &logical_screen = _screens.back();
         
         if (_transition_state.full_restores_left > 0) {
             run_transition(physical_screen, ticks);
@@ -101,17 +101,17 @@ void cgmanager_c::run(cgscene_c *rootscene, cgscene_c *overlayscene, cgimage_c::
             _deletion_stack.clear();
         }
         debug_cpu_color(0x000);
-        cgtimer_c::with_paused_timers([this, &physical_screen] {
+        timer_c::with_paused_timers([this, &physical_screen] {
             physical_screen.image.set_active();
             _active_physical_screen = (_active_physical_screen + 1) & 0x1;
         });
     }
 #if !DEBUG_NO_SET_SCREEN
-    (void)cgset_screen(nullptr, nullptr, old_mode);
+    (void)set_screen(nullptr, nullptr, old_mode);
 #endif
 }
 
-void cgmanager_c::set_overlay_scene(cgscene_c *overlay_scene) {
+void scene_manager_c::set_overlay_scene(scene_c *overlay_scene) {
     if (_overlay_scene != overlay_scene) {
         if (_overlay_scene) {
             _overlay_scene->will_disappear(false);
@@ -121,7 +121,7 @@ void cgmanager_c::set_overlay_scene(cgscene_c *overlay_scene) {
     }
 }
 
-void cgmanager_c::push(cgscene_c *scene, cgimage_c::stencil_type_e transition) {
+void scene_manager_c::push(scene_c *scene, image_c::stencil_type_e transition) {
     if (_scene_stack.size() > 0) {
         top_scene().will_disappear(true);
     }
@@ -132,7 +132,7 @@ void cgmanager_c::push(cgscene_c *scene, cgimage_c::stencil_type_e transition) {
     enqueue_transition(transition);
 }
 
-void cgmanager_c::pop(cgimage_c::stencil_type_e transition, int count) {
+void scene_manager_c::pop(image_c::stencil_type_e transition, int count) {
     while (count-- > 0) {
         auto &top = top_scene();
         top.will_disappear(false);
@@ -147,7 +147,7 @@ void cgmanager_c::pop(cgimage_c::stencil_type_e transition, int count) {
     enqueue_transition(transition);
 }
 
-void cgmanager_c::replace(cgscene_c *scene, cgimage_c::stencil_type_e transition) {
+void scene_manager_c::replace(scene_c *scene, image_c::stencil_type_e transition) {
     top_scene().will_disappear(false);
     enqueue_delete(&top_scene());
     _scene_stack.back() = scene;

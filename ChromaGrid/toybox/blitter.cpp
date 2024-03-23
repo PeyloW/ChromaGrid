@@ -13,14 +13,14 @@ using namespace toybox;
 
 #define DEBUG_BLITTER 0
 
-static struct cgblitter_t _Blitter;
-struct cgblitter_t *toybox::pBlitter = &_Blitter;
+static struct blitter_s _Blitter;
+struct blitter_s *toybox::pBlitter = &_Blitter;
 
 //
 // Emulate blitter on host machine.
 // Details borrowed from Hatari 1.0 sources (https://github.com/hatari/hatari)
 //
-void cgblitter_t::start() {
+void blitter_s::start() {
 #if DEBUG_BLITTER
     printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
 #endif

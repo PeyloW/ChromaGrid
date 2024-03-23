@@ -37,7 +37,7 @@ namespace toybox {
     static const uint8_t cgblitter_hog_bit = (1<<6);
     static const uint8_t cgblitter_busy_bit = (1<<7);
     
-    struct cgblitter_t {
+    struct blitter_s {
         uint16_t halftoneRAM[16];
         int16_t srcIncX;
         int16_t srcIncY;
@@ -85,9 +85,9 @@ namespace toybox {
     };
     
 #ifdef __M68000__
-    static struct cgblitter_t *pBlitter = (struct cgblitter_t *)0xffff8a00;
+    static struct blitter_s *pBlitter = (struct blitter_s *)0xffff8a00;
 #else
-    extern struct cgblitter_t *pBlitter;
+    extern struct blitter_s *pBlitter;
 #endif
     
 }

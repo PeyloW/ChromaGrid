@@ -15,10 +15,10 @@ namespace toybox {
     
     using namespace toystd;
     
-    class cgsount_c : private nocopy_c {
+    class sount_c : private nocopy_c {
     public:
-        cgsount_c(const char *path);
-        ~cgsount_c();
+        sount_c(const char *path);
+        ~sount_c();
         
         void set_active() const;
         
@@ -32,10 +32,10 @@ namespace toybox {
         uint16_t _rate;
     };
     
-    class cgmusic_c : private nocopy_c {
+    class music_c : private nocopy_c {
     public:
-        cgmusic_c(const char *path);
-        ~cgmusic_c();
+        music_c(const char *path);
+        ~music_c();
         
         void set_active(int track) const; // Track starts at 1, not 0
         

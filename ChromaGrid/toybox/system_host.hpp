@@ -22,23 +22,23 @@ namespace toybox {
     extern "C" {
         
         // Host must call on a 50hz interval
-        extern void cgg_vbl_interupt();
+        extern void g_vbl_interupt();
         
         // Host must call on a 200hz interval
-        extern void cgg_timer_c_interupt();
+        extern void g_clock_interupt();
         
         // Host must provide a yield function
-        extern void (*cgg_yield_function)();
+        extern void (*g_yield_function)();
         
         // Host must call when mouse state changes
-        extern void cgg_update_mouse(cgpoint_t position, bool left, bool right);
+        extern void g_update_mouse(point_s position, bool left, bool right);
         
-        class cgpalette_c;
-        class cgimage_c;
-        class cgsount_c;
+        class palette_c;
+        class image_c;
+        class sount_c;
         
-        extern cgpalette_c *cgg_active_palette;
-        extern cgsount_c *cgg_active_sound;
+        extern palette_c *g_active_palette;
+        extern sount_c *g_active_sound;
         
     }
     

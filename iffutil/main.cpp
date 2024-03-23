@@ -28,7 +28,7 @@ typedef enum {
 } visitor_action_e;
 // iff_in, iff_out, read chunk/group, visit_time, is_matched
 // Return true if chunk or group should be copied
-typedef std::function<visitor_action_e(cgiff_file_c&, cgiff_file_c&, cgiff_chunk_t &chunk, visit_time_e, bool)> chunk_visitor_t;
+typedef std::function<visitor_action_e(iff_file_c&, iff_file_c&, iff_chunk_t &chunk, visit_time_e, bool)> chunk_visitor_t;
 
 static void handle_verbose(arguments_t &args);
 static void handle_help(arguments_t &args);
@@ -89,12 +89,12 @@ static bool move_file(const char *dest, const char *src) {
     return false;
 }
 
-static cgiff_file_c *iff_in = nullptr;
-static cgiff_file_c *iff_out = nullptr;
+static iff_file_c *iff_in = nullptr;
+static iff_file_c *iff_out = nullptr;
 
-static std::set<cgiff_id_t> known_groups = {
-    CGIFF_FORM_ID,
-    CGIFF_LIST_ID,
+static std::set<iff_id_t> known_groups = {
+    IFF_FORM_ID,
+    IFF_LIST_ID,
 };
 
 static void validate_c4id(std::string &c4id, bool allow_index = true) {
@@ -159,7 +159,7 @@ static void do_text_input_data(const char *text, std::vector<uint8_t> &data) {
             printf("Losing precission.\n");
             exit(-1);
         }
-        cghton(v);
+        hton(v);
         for (int i = 0; i < sizeof(T); i++) {
             data.push_back(bytes[i]);
         }
@@ -195,13 +195,13 @@ static void handle_group(arguments_t &args) {
         printf("No group given.\n");
         exit(-1);
     }
-    known_groups.emplace(cgiff_id_make(args.front()));
+    known_groups.emplace(iff_id_make(args.front()));
     args.pop_front();
 }
 
 #pragma mark - Common helpers
 
-static void do_copy_chunk_content(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk_in, bool is_group) {
+static void do_copy_chunk_content(iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk_in, bool is_group) {
     uint32_t size = chunk_in.size - (is_group ? 4 : 0);
     if (is_verbose) {
         printf("Copied %d bytes\n", size);
@@ -213,14 +213,14 @@ static void do_copy_chunk_content(cgiff_file_c &iff_in, cgiff_file_c &iff_out, c
     }
 }
 
-static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk_in, chunk_path_t &path, int index, chunk_visitor_t visitor) {
+static void do_visit_chunks(iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk_in, chunk_path_t &path, int index, chunk_visitor_t visitor) {
     const bool is_group = known_groups.contains(chunk_in.id);
-    cgiff_group_t group_in;
+    iff_group_t group_in;
     if (is_group) {
         iff_in.expand(chunk_in, group_in);
     }
-    cgiff_chunk_t chunk_out;
-    cgiff_group_t group_out;
+    iff_chunk_t chunk_out;
+    iff_group_t group_out;
     bool matched_first = false;
     std::string matched_path_id;
     if (path.size() > 0 && path.front().starts_with('@')) {
@@ -231,11 +231,11 @@ static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_c
     if (!matched_first && is_group && path.size() > 0) {
         chunk_path_t group_id = split_string(path.front(), '.');
         if (group_id.size() == 2) {
-            matched_first = matched_first =  cgiff_id_match(group_in.id, group_id[0].c_str()) && cgiff_id_match(group_in.subtype, group_id[1].c_str());
+            matched_first = matched_first =  iff_id_match(group_in.id, group_id[0].c_str()) && iff_id_match(group_in.subtype, group_id[1].c_str());
         }
     } else if (!matched_first && path.size() > 0) {
         if (path.front().length() == 4) {
-            matched_first = cgiff_id_match(chunk_in.id, path.front().c_str());
+            matched_first = iff_id_match(chunk_in.id, path.front().c_str());
         }
     }
     if (matched_first) {
@@ -243,9 +243,9 @@ static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_c
         path.pop_front();
     }
     if (is_verbose) {
-        char id[5]; cgiff_id_str(chunk_in.id, id);
+        char id[5]; iff_id_str(chunk_in.id, id);
         if (is_group) {
-            char subtype[5]; cgiff_id_str(group_in.subtype, subtype);
+            char subtype[5]; iff_id_str(group_in.subtype, subtype);
             printf("Started reading %s:%s for %d bytes\n", id, subtype, chunk_in.size);
         } else {
             printf("Started reading %s for %d bytes\n", id, chunk_in.size);
@@ -264,7 +264,7 @@ static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_c
         }
         iff_in.skip(chunk_in);
     } else {
-        char buf[5]; cgiff_id_str(chunk_in.id, buf);
+        char buf[5]; iff_id_str(chunk_in.id, buf);
         if (action == action_traverse_copy) {
             if (is_verbose) {
                 printf("Started writing %s.\n", buf);
@@ -281,7 +281,7 @@ static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_c
                     exit(-1);
                 }
             }
-            cgiff_chunk_t next_chunk;
+            iff_chunk_t next_chunk;
             int idx = 0;
             while (iff_in.next(group_in, "*", next_chunk)) {
                 do_visit_chunks(iff_in, iff_out, next_chunk, path, idx, visitor);
@@ -299,13 +299,13 @@ static void do_visit_chunks(cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_c
             iff_out.end(group_out);
             if (is_verbose) {
                 char id[5], subtype[5];
-                cgiff_id_str(group_in.id, id); cgiff_id_str(group_in.subtype, subtype);
+                iff_id_str(group_in.id, id); iff_id_str(group_in.subtype, subtype);
                 printf("Finished writing %s:%s with %d bytes.\n", id, subtype, group_out.size);
             }
         } else {
             if (is_verbose) {
                 char id[5];
-                cgiff_id_str(chunk_in.id, id);
+                iff_id_str(chunk_in.id, id);
                 printf("Finished writing %s with %d bytes.\n", id, chunk_in.size);
             }
             iff_out.end(chunk_out);
@@ -326,27 +326,27 @@ static void handle_list(arguments_t &args) {
     do_require_iff_in_path();
 
     {
-        cgiff_file_c iff_in(iff_in_path.c_str());
-        cgiff_file_c iff_out(stdout);
+        iff_file_c iff_in(iff_in_path.c_str());
+        iff_file_c iff_out(stdout);
         int level = 0;
         const auto do_list_indentation = [&] {
             for (int l = 0; l < level; l++) {
                 printf("    ");
             }
         };
-        cgiff_chunk_t top_chunk;
+        iff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
             chunk_path_t path = {};
-            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 bool is_group = known_groups.contains(chunk.id);
                 if (time == visit_before_data) {
                     do_list_indentation();
-                    char id[5]; cgiff_id_str(chunk.id, id);
+                    char id[5]; iff_id_str(chunk.id, id);
                     printf("%s %d bytes", id, chunk.size);
                     if (is_group) {
-                        cgiff_group_t group;
+                        iff_group_t group;
                         iff_in.expand(chunk, group);
-                        char subtype[5]; cgiff_id_str(group.subtype, subtype);
+                        char subtype[5]; iff_id_str(group.subtype, subtype);
                         printf(" { %s", subtype);
                         level++;
                     }
@@ -379,12 +379,12 @@ static void handle_remove(arguments_t &args) {
     do_require_iff_in_path();
     
     {
-        cgiff_file_c iff_in(iff_in_path.c_str(), "r");
-        cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
+        iff_file_c iff_in(iff_in_path.c_str(), "r");
+        iff_file_c iff_out(get_iff_out_path().c_str(), "w+");
 
-        cgiff_chunk_t top_chunk;
+        iff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
-            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
                     if (time != visit_before_data) {
                         printf("Removed matched chunk.\n");
@@ -496,19 +496,19 @@ static void handle_append(arguments_t &args) {
     do_require_iff_in_path();
 
     {
-        cgiff_file_c iff_in(iff_in_path.c_str());
-        cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
-        cgiff_chunk_t top_chunk;
+        iff_file_c iff_in(iff_in_path.c_str());
+        iff_file_c iff_out(get_iff_out_path().c_str(), "w+");
+        iff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
-            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
                     if (time == visit_after_last_group_data) {
-                        cgiff_chunk_t chunk_out;
+                        iff_chunk_t chunk_out;
                         if (!c4id.empty()) {
                             auto split = split_string(c4id, '.');
                             iff_out.begin(chunk_out, split[0].c_str());
                             if (split.size() > 1) {
-                                cgiff_id_t subtype = cgiff_id_make(split[1].c_str());
+                                iff_id_t subtype = iff_id_make(split[1].c_str());
                                 iff_out.write(subtype);
                             }
                         }
@@ -549,19 +549,19 @@ static void handle_insert(arguments_t &args) {
     do_require_iff_in_path();
 
     {
-        cgiff_file_c iff_in(iff_in_path.c_str());
-        cgiff_file_c iff_out(get_iff_out_path().c_str(), "w+");
-        cgiff_chunk_t top_chunk;
+        iff_file_c iff_in(iff_in_path.c_str());
+        iff_file_c iff_out(get_iff_out_path().c_str(), "w+");
+        iff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
-            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
                     if (time == visit_before_data) {
-                        cgiff_chunk_t chunk_out;
+                        iff_chunk_t chunk_out;
                         if (!c4id.empty()) {
                             auto split = split_string(c4id, '.');
                             iff_out.begin(chunk_out, split[0].c_str());
                             if (split.size() > 1) {
-                                cgiff_id_t subtype = cgiff_id_make(split[1].c_str());
+                                iff_id_t subtype = iff_id_make(split[1].c_str());
                                 iff_out.write(subtype);
                             }
                         }
@@ -615,18 +615,18 @@ static void handle_extract(arguments_t &args) {
     do_require_iff_in_path();
 
     {
-        cgiff_file_c iff_in(iff_in_path.c_str());
-        cgiff_file_c iff_out(stdout);
-        cgiff_chunk_t top_chunk;
+        iff_file_c iff_in(iff_in_path.c_str());
+        iff_file_c iff_out(stdout);
+        iff_chunk_t top_chunk;
         if (iff_in.first("*", top_chunk)) {
-            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (cgiff_file_c &iff_in, cgiff_file_c &iff_out, cgiff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
+            do_visit_chunks(iff_in, iff_out, top_chunk, path, 0, [&] (iff_file_c &iff_in, iff_file_c &iff_out, iff_chunk_t &chunk, visit_time_e time, bool matched) -> visitor_action_e {
                 if (matched) {
                     if (time == visit_before_data) {
                         const long pos = iff_in.get_pos();
-                        cgiff_file_c iff_ext_out(output_file_path.c_str(), "w+");
-                        cgiff_chunk_t chunk_out;
+                        iff_file_c iff_ext_out(output_file_path.c_str(), "w+");
+                        iff_chunk_t chunk_out;
                         if (!data_only) {
-                            char buf[5]; cgiff_id_str(chunk.id, buf);
+                            char buf[5]; iff_id_str(chunk.id, buf);
                             iff_ext_out.begin(chunk_out, buf);
                         }
                         uint8_t data[chunk.size];

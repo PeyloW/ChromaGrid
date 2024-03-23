@@ -15,9 +15,9 @@
 
 #define LEVEL_EDIT_BUTTON_ORIGIN_X (MAIN_MENU_ORIGIN_X + MAIN_MENU_MARGINS * 2)
 #define LEVEL_EDIT_BUTTON_ORIGIN_Y (56)
-#define LEVEL_EDIT_BUTTON_ORIGIN (cgpoint_t){LEVEL_EDIT_BUTTON_ORIGIN_X, LEVEL_EDIT_BUTTON_ORIGIN_Y}
+#define LEVEL_EDIT_BUTTON_ORIGIN (point_s){LEVEL_EDIT_BUTTON_ORIGIN_X, LEVEL_EDIT_BUTTON_ORIGIN_Y}
 #define LEVEL_EDIT_BUTTON_SIZE_WIDTH    (48)
-#define LEVEL_EDIT_BUTTON_SIZE (cgsize_t){LEVEL_EDIT_BUTTON_SIZE_WIDTH, 14}
+#define LEVEL_EDIT_BUTTON_SIZE (size_s){LEVEL_EDIT_BUTTON_SIZE_WIDTH, 14}
 #define LEVEL_EDIT_BUTTON_SPACING (2)
 
 static int button_to_level_idx(int button_idx) {
@@ -27,7 +27,7 @@ static int button_to_level_idx(int button_idx) {
 
 class cglevel_edit_persistence_scene_c : public cggame_scene_c {
 public:
-    cglevel_edit_persistence_scene_c(cgmanager_c &manager) :
+    cglevel_edit_persistence_scene_c(scene_manager_c &manager) :
         cggame_scene_c(manager),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _recipe(nullptr)
@@ -35,7 +35,7 @@ public:
         add_buttons();
     }
 
-    cglevel_edit_persistence_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
+    cglevel_edit_persistence_scene_c(scene_manager_c &manager, level_recipe_t *recipe) :
         cggame_scene_c(manager),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _recipe(recipe)
@@ -43,23 +43,23 @@ public:
         add_buttons();
     }
 
-    virtual void will_appear(cgimage_c &screen, bool obsured) {
-        cgrect_t rect = (cgrect_t) {
+    virtual void will_appear(image_c &screen, bool obsured) {
+        rect_s rect = (rect_s) {
             {0,0},
             {MAIN_MENU_ORIGIN_X, 200}
         };
-        screen.with_stencil(cgimage_c::get_stencil(cgimage_c::orderred, 32), [this, &screen, &rect] {
+        screen.with_stencil(image_c::get_stencil(image_c::orderred, 32), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
-        rect = (cgrect_t){
-            (cgpoint_t){MAIN_MENU_ORIGIN_X, 0},
-            (cgsize_t){MAIN_MENU_SIZE_WIDTH, 200}
+        rect = (rect_s){
+            (point_s){MAIN_MENU_ORIGIN_X, 0},
+            (size_s){MAIN_MENU_SIZE_WIDTH, 200}
         };
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
     }
     
-    virtual void tick(cgimage_c &screen, int ticks) {
+    virtual void tick(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
         if (button == 0) {
             manager.pop();
@@ -111,7 +111,7 @@ private:
     level_recipe_t *_recipe;
 };
 
-cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
+cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recipe_t *recipe) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _count_buttons(LEVEL_EDIT_BUTTON_ORIGIN, LEVEL_EDIT_BUTTON_SIZE, LEVEL_EDIT_BUTTON_SPACING),
@@ -154,8 +154,8 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(cgmanager_c &manager, level_recipe_t 
     _tile_templates.push_back((tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::both});
 }
 
-void cglevel_edit_scene_c::will_appear(cgimage_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
+void cglevel_edit_scene_c::will_appear(image_c &screen, bool obsured) {
+    screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     _count_buttons.draw_all(screen);
     draw_counts(screen);
@@ -167,7 +167,7 @@ void cglevel_edit_scene_c::will_appear(cgimage_c &screen, bool obsured) {
     }
 }
 
-tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse_c::button_e button) const {
+tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c::button_e button) const {
     static const tilestate_t empty = (tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::none };
     auto &selected = _tile_templates[_selected_template];
     switch (current.type) {
@@ -178,7 +178,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse
             if (selected.orb != none) {
                 return current;
             } else if (selected.type == current.type) {
-                return button == cgmouse_c::right ? empty : current;
+                return button == mouse_c::right ? empty : current;
             }
             // fall through
         default: {
@@ -190,14 +190,14 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse
                     copy.orb = (color_e)(2 - button);
                 }
             } else if (selected.type == current.type) {
-                if (button == cgmouse_c::left) {
+                if (button == mouse_c::left) {
                     copy.target = (color_e)(current.target + 1);
                     if (copy.target >= color_e::both) {
                         copy = empty;
                     } else if (copy.target != copy.current && copy.current != color_e::none) {
                         copy.current = color_e::none;
                     }
-                } else if (button == cgmouse_c::right) {
+                } else if (button == mouse_c::right) {
                     if (current.current == color_e::none) {
                         copy.current = current.target;
                     } else {
@@ -213,7 +213,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, cgmouse
     return current;
 }
 
-void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
+void cglevel_edit_scene_c::tick(image_c &screen, int ticks) {
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
@@ -256,16 +256,16 @@ void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
     }
     
     auto &mouse = manager.mouse;
-    bool lb = mouse.get_state(cgmouse_c::left) == cgmouse_c::clicked;
-    bool rb = mouse.get_state(cgmouse_c::right) == cgmouse_c::clicked;
+    bool lb = mouse.get_state(mouse_c::left) == mouse_c::clicked;
+    bool rb = mouse.get_state(mouse_c::right) == mouse_c::clicked;
     const auto pos = mouse.get_postion();
     
     if (pos.x < MAIN_MENU_ORIGIN_X && pos.y < MAIN_MENU_SIZE_HEIGHT) {
         int tx = pos.x / 16;
         int ty = pos.y / 16;
         auto &current = _level_grid[tx][ty];
-        auto l_next = next_state(current, cgmouse_c::left);
-        auto r_next = next_state(current, cgmouse_c::right);
+        auto l_next = next_state(current, mouse_c::left);
+        auto r_next = next_state(current, mouse_c::right);
         if (lb || rb) {
             _level_grid[tx][ty] = lb ? l_next : r_next;
             draw_level_grid(screen, tx, ty);
@@ -277,7 +277,7 @@ void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
     }
     
     if (lb || rb) {
-        cgrect_t rect = (cgrect_t){
+        rect_s rect = (rect_s){
             {LEVEL_EDIT_TEMPLATE_ORIGIN_X, LEVEL_EDIT_TEMPLATE_ORIGIN_Y},
             {LEVEL_EDIT_TEMPLATE_SIZE_WIDTH, LEVEL_EDIT_TEMPLATE_SIZE_HEIGHT}
         };
@@ -293,7 +293,7 @@ void cglevel_edit_scene_c::tick(cgimage_c &screen, int ticks) {
     }
 }
 
-void cglevel_edit_scene_c::draw_counts(cgimage_c &screen) const {
+void cglevel_edit_scene_c::draw_counts(image_c &screen) const {
     int min = _header.time / 60;
     int sec = _header.time % 60;
     char buf[5];
@@ -302,12 +302,12 @@ void cglevel_edit_scene_c::draw_counts(cgimage_c &screen) const {
     buf[2] = '0' + (sec / 10);
     buf[3] = '0' + (sec % 10);
     buf[4] = 0;
-    const cgpoint_t at = (cgpoint_t){ 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3};
-    const cgrect_t rect = (cgrect_t){at, (cgsize_t){32, 8}};
+    const point_s at = (point_s){ 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3};
+    const rect_s rect = (rect_s){at, (size_s){32, 8}};
     screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+    screen.draw(rsc.mono_font, buf, at, image_c::align_left);
     for (int i = 1; i < 3; i++) {
-        cgpoint_t at = (cgpoint_t){ 320 - 32 - 8 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
+        point_s at = (point_s){ 320 - 32 - 8 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
         draw_orb(screen, (color_e)i, at);
         
         char buf[3];
@@ -315,28 +315,28 @@ void cglevel_edit_scene_c::draw_counts(cgimage_c &screen) const {
         buf[0] = d1 ? '0' + d1 :  ' ';
         buf[1] = '0' + _header.orbs[i - 1] % 10;
         buf[2] = 0;
-        at = (cgpoint_t){ 320 - 16 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
-        cgrect_t rect = (cgrect_t){ at, {16, 8}};
+        at = (point_s){ 320 - 16 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
+        rect_s rect = (rect_s){ at, {16, 8}};
         screen.draw(rsc.background, rect, at);
-        screen.draw(rsc.mono_font, buf, at, cgimage_c::align_left);
+        screen.draw(rsc.mono_font, buf, at, image_c::align_left);
     }
 }
 
 
-void cglevel_edit_scene_c::draw_tile_template_at(cgimage_c &screen, tilestate_t &state, int index) const {
+void cglevel_edit_scene_c::draw_tile_template_at(image_c &screen, tilestate_t &state, int index) const {
     int16_t x = LEVEL_EDIT_TEMPLATE_ORIGIN_X + index * 16;
-    cgpoint_t at = (cgpoint_t){x, LEVEL_EDIT_TEMPLATE_ORIGIN_Y};
+    point_s at = (point_s){x, LEVEL_EDIT_TEMPLATE_ORIGIN_Y};
     draw_tilestate(screen, state, at, _selected_template == index);
 }
 
-void cglevel_edit_scene_c::draw_tile_templates(cgimage_c &screen) const {
+void cglevel_edit_scene_c::draw_tile_templates(image_c &screen) const {
     for (int i = 0; i < _tile_templates.size(); i++) {
         draw_tile_template_at(screen, _tile_templates[i], i);
     }
 }
 
-void cglevel_edit_scene_c::draw_level_grid(cgimage_c &screen, int x, int y) const {
-    cgpoint_t at = (cgpoint_t){(int16_t)(x * 16), (int16_t)(y * 16)};
+void cglevel_edit_scene_c::draw_level_grid(image_c &screen, int x, int y) const {
+    point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
     draw_tilestate(screen, _level_grid[x][y], at);
 }
 

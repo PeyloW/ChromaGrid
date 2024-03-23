@@ -9,7 +9,7 @@
 #include "game.hpp"
 #include "iff_file.hpp"
 
-static void remap_to(color_e col, cgimage_c::remap_table_t table, uint8_t masked_idx = cgimage_c::MASKED_CIDX) {
+static void remap_to(color_e col, image_c::remap_table_t table, uint8_t masked_idx = image_c::MASKED_CIDX) {
     switch (col) {
         case color_e::gold:
             table[0] = 1;
@@ -26,7 +26,7 @@ static void remap_to(color_e col, cgimage_c::remap_table_t table, uint8_t masked
         default:
             break;
     }
-    table[masked_idx] = cgimage_c::MASKED_CIDX;
+    table[masked_idx] = image_c::MASKED_CIDX;
 }
 
 const cgresources_c& cgresources_c::shared() {
@@ -72,10 +72,10 @@ cgresources_c::cgresources_c() :
     selection(data_path("SELECT.IFF"), true, 6),
     _font_image(data_path("FONT.IFF", "Load fonts"), true, 0),
     _small_font_image(data_path("FONT6.IFF"), true, 0),
-    font(_font_image, (cgsize_t){8, 8}, 4, 2, 4),
-    mono_font(_font_image, (cgsize_t){8, 8}),
-    small_font(_small_font_image, (cgsize_t){6, 6}, 3, 0, 6),
-    small_mono_font(_small_font_image, (cgsize_t){6, 6}),
+    font(_font_image, (size_s){8, 8}, 4, 2, 4),
+    mono_font(_font_image, (size_s){8, 8}),
+    small_font(_small_font_image, (size_s){6, 6}, 3, 0, 6),
+    small_mono_font(_small_font_image, (size_s){6, 6}),
     drop_orb(data_path("drop.aif", "Load audio")),
     take_orb(data_path("take.aif")),
     fuse_orb(data_path("fuse.aif")),
@@ -84,15 +84,15 @@ cgresources_c::cgresources_c() :
     fuse_break_tile(data_path("fusebrk.aif")),
     music(data_path("music.snd", "Load music"))
 {
-    background.set_offset((cgpoint_t){0, 0});
-    tiles.set_offset((cgpoint_t){0, 0});
-    selection.set_offset((cgpoint_t){0, 0});
+    background.set_offset((point_s){0, 0});
+    tiles.set_offset((point_s){0, 0});
+    selection.set_offset((point_s){0, 0});
     for (int x = 1; x < 3; x++) {
         printf("Initialize tiles %d.\n\r", x);
-        cgrect_t rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
-        tiles.draw(tiles, (cgrect_t){{0, 0}, {48, 80}}, rect.origin);
-        cgimage_c::remap_table_t table;
-        cgimage_c::make_noremap_table(table);
+        rect_s rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
+        tiles.draw(tiles, (rect_s){{0, 0}, {48, 80}}, rect.origin);
+        image_c::remap_table_t table;
+        image_c::make_noremap_table(table);
         if (x == 1) {
             remap_to(color_e::gold, table);
         } else {
@@ -100,11 +100,11 @@ cgresources_c::cgresources_c() :
         }
         tiles.remap_colors(table, rect);
     }
-    orbs.set_offset((cgpoint_t){0, 0});
-    cursor.set_offset((cgpoint_t){1, 2});
+    orbs.set_offset((point_s){0, 0});
+    cursor.set_offset((point_s){1, 2});
 
     printf("Pre-warm stencils.\n\r");
-    cgimage_c::get_stencil(cgimage_c::orderred, 0);
+    image_c::get_stencil(image_c::orderred, 0);
     
     printf("Loading user levels.\n\r");
     int max_recipe_size = sizeof(level_recipe_t) + sizeof(tilestate_t) * (12 * 12);
@@ -135,14 +135,14 @@ cgresources_c::cgresources_c() :
 }
 
 void cgresources_c::load_levels() {
-    cgiff_file_c  iff(data_path("levels.dat"));
+    iff_file_c  iff(data_path("levels.dat"));
     assert(iff.get_pos() == 0);
     iff.with_hard_asserts(true, [&] {
-        cgiff_group_t list;
-        iff.first(CGIFF_LIST, CGIFF_CGLV, list);
+        iff_group_s list;
+        iff.first(IFF_LIST, IFF_CGLV, list);
         uint8_t *data = (uint8_t *)calloc(1, list.size);
-        cgiff_group_t level_group;
-        while (levels.size() < 45 && iff.next(list, CGIFF_FORM, level_group)) {
+        iff_group_s level_group;
+        while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
             level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
             recipe->load(iff, level_group);
             levels.emplace_back(recipe);
@@ -155,13 +155,13 @@ bool cgresources_c::load_user_levels() {
     if (!file) {
         return false;
     }
-    cgiff_file_c iff(file);
+    iff_file_c iff(file);
     iff.with_hard_asserts(true, [&] {
-        cgiff_group_t list;
-        iff.first(CGIFF_LIST, CGIFF_CGLV, list);
+        iff_group_s list;
+        iff.first(IFF_LIST, IFF_CGLV, list);
         int index = 0;
-        cgiff_group_t level_group;
-        while (iff.next(list, CGIFF_FORM, level_group)) {
+        iff_group_s level_group;
+        while (iff.next(list, IFF_FORM, level_group)) {
             auto recipe = user_levels[index++];
             recipe->load(iff, level_group);
         }
@@ -171,14 +171,14 @@ bool cgresources_c::load_user_levels() {
 }
 
 bool cgresources_c::save_user_levels() const {
-    cgiff_file_c iff(user_path("levels.dat"), "w+");
+    iff_file_c iff(user_path("levels.dat"), "w+");
     if (iff.get_pos() < 0) {
         return false;
     }
     iff.with_hard_asserts(true, [&] {
-        cgiff_group_t list;
-        iff.begin(list, CGIFF_LIST);
-        iff.write(CGIFF_CGLV_ID);
+        iff_group_s list;
+        iff.begin(list, IFF_LIST);
+        iff.write(IFF_CGLV_ID);
         for (int index = 0; index < user_levels.size(); index++) {
             auto &recipe = user_levels[index];
             if (!recipe->empty()) {
@@ -194,11 +194,11 @@ bool cgresources_c::load_level_results() {
     bool success = false;
     FILE *file =  fopen(user_path("scores.dat"), "r");
     if (file) {
-        cgiff_file_c iff(file);
-        cgiff_group_t list;
-        if (iff.first(CGIFF_LIST, CGIFF_CGLR, list)) {
-            cgiff_chunk_t level_chunk;
-            while (iff.next(list, CGIFF_CGLR, level_chunk)) {
+        iff_file_c iff(file);
+        iff_group_s list;
+        if (iff.first(IFF_LIST, IFF_CGLR, list)) {
+            iff_chunk_s level_chunk;
+            while (iff.next(list, IFF_CGLR, level_chunk)) {
                 level_results.push_back();
                 auto &level_result = level_results.back();
                 if (!level_result.load(iff, level_chunk)) {
@@ -220,10 +220,10 @@ done:
 }
 
 bool cgresources_c::save_level_results() const {
-    cgiff_file_c iff(user_path("scores.dat"), "w+");
-    cgiff_group_t list;
-    if (iff.begin(list, CGIFF_LIST)) {
-        iff.write(CGIFF_CGLR_ID);
+    iff_file_c iff(user_path("scores.dat"), "w+");
+    iff_group_s list;
+    if (iff.begin(list, IFF_LIST)) {
+        iff.write(IFF_CGLR_ID);
         for (auto result = level_results.begin(); result != level_results.end(); result++) {
             result->save(iff);
         }

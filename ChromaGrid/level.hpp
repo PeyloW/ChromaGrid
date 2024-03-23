@@ -16,10 +16,10 @@
 
 using namespace toybox;
 
-CGDEFINE_ID (CGLV); // ChromaGrid LeVel
-CGDEFINE_ID (LVHD); // LeVel HeaDer
-CGDEFINE_ID (TSTS); // Tile STateS
-CGDEFINE_ID (CGLR); // ChromaGrid Level Results
+DEFINE_IFF_ID (CGLV); // ChromaGrid LeVel
+DEFINE_IFF_ID (LVHD); // LeVel HeaDer
+DEFINE_IFF_ID (TSTS); // Tile STateS
+DEFINE_IFF_ID (CGLR); // ChromaGrid Level Results
 
 typedef enum __packed {
     none, gold, silver, both
@@ -56,8 +56,8 @@ struct level_recipe_t {
     static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
     bool empty() const;
     int get_size() const;
-    bool save(cgiff_file_c &iff);
-    bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
+    bool save(iff_file_c &iff);
+    bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
 
@@ -72,13 +72,13 @@ struct __packed_struct level_result_t {
     void calculate_score(bool succes);
     void get_subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
-    bool save(cgiff_file_c &iff);
-    bool load(cgiff_file_c &iff, cgiff_chunk_t &start_chunk);
+    bool save(iff_file_c &iff);
+    bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
 
-void draw_tilestate(cgimage_c &screen, const tilestate_t &state, cgpoint_t at, bool selected = false);
-void draw_orb(cgimage_c &screen, color_e color, cgpoint_t at);
+void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool selected = false);
+void draw_orb(image_c &screen, color_e color, point_s at);
 
 class grid_c;
 
@@ -93,18 +93,18 @@ public:
     level_t(level_recipe_t *recipe);
     ~level_t();
 
-    state_e update_tick(cgimage_c &screen, cgmouse_c &mouse, int delta_ticks);
+    state_e update_tick(image_c &screen, mouse_c &mouse, int delta_ticks);
 
-    void draw_all(cgimage_c &screen) const;
+    void draw_all(image_c &screen) const;
     
     void get_results(level_result_t *results) const {
         *results = _results;
     }
 private:
-    void draw_tile(cgimage_c &screen, int x, int y) const;
-    void draw_time(cgimage_c &screen) const;
-    void draw_orb_counts(cgimage_c &screen) const;
-    void draw_move_count(cgimage_c &screen) const;
+    void draw_tile(image_c &screen, int x, int y) const;
+    void draw_time(image_c &screen) const;
+    void draw_orb_counts(image_c &screen) const;
+    void draw_move_count(image_c &screen) const;
 
     level_result_t _results;
     int _time_count;

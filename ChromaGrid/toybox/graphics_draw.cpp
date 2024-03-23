@@ -10,7 +10,7 @@
 
 using namespace toybox;
 
-void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
+void image_c::put_pixel(uint8_t ci, point_s at) const {
     if (_clipping) {
         if (!_size.contains(at)) return;
     }
@@ -39,7 +39,7 @@ void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     }
 }
 
-uint8_t cgimage_c::get_pixel(cgpoint_t at) const {
+uint8_t image_c::get_pixel(point_s at) const {
     if (!_clipping || _size.contains(at)) {
         int word_offset = (at.x / 16) + at.y * _line_words;
         const uint16_t bit = 1 << (15 - at.x & 15);
@@ -62,21 +62,21 @@ uint8_t cgimage_c::get_pixel(cgpoint_t at) const {
     return _maskmap != nullptr ? MASKED_CIDX : 0;
 }
 
-void cgimage_c::remap_colors(remap_table_t table, cgrect_t rect) const {
-    const_cast<cgimage_c*>(this)->with_clipping(false, [this, table, &rect] {
+void image_c::remap_colors(remap_table_t table, rect_s rect) const {
+    const_cast<image_c*>(this)->with_clipping(false, [this, table, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                const uint8_t c = get_pixel((cgpoint_t){ x, y});
+                const uint8_t c = get_pixel((point_s){ x, y});
                 const uint8_t rc = table[c];
                 if (c != rc) {
-                    put_pixel(rc, (cgpoint_t){ x, y});
+                    put_pixel(rc, (point_s){ x, y});
                 }
             }
         }
     });
 }
 
-void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
+void image_c::fill(uint8_t ci, rect_s rect) const {
     assert(_maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
@@ -90,18 +90,18 @@ void cgimage_c::fill(uint8_t ci, cgrect_t rect) const {
     imp_fill(ci, rect);
 }
 
-void cgimage_c::draw_aligned(const cgimage_c &src, cgpoint_t at) const {
+void image_c::draw_aligned(const image_c &src, point_s at) const {
     assert((at.x & 0xf) == 0);
     assert(src._offset.x == 0);
     assert(src._offset.y == 0);
     assert((src._size.width & 0xf) == 0);
     assert(_maskmap == nullptr);
     assert(src._maskmap == nullptr);
-    cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
+    rect_s rect = (rect_s){ {0, 0}, src.get_size()};
     draw_aligned(src, rect, at);
 }
 
-void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) const {
+void image_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
     assert((at.x & 0xf) == 0);
     assert((rect.origin.x &0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
@@ -113,21 +113,21 @@ void cgimage_c::draw_aligned(const cgimage_c &src, cgrect_t rect, cgpoint_t at) 
         }
     }
     if (_dirtymap) {
-        const cgrect_t dirty_rect = (cgrect_t){ at, rect.size };
+        const rect_s dirty_rect = (rect_s){ at, rect.size };
         _dirtymap->mark(dirty_rect);
     }
     imp_draw_aligned(src, rect, at);
 }
 
-void cgimage_c::draw(const cgimage_c &src, cgpoint_t at, const uint8_t color) const {
+void image_c::draw(const image_c &src, point_s at, const uint8_t color) const {
     assert(_maskmap == nullptr);
     const auto offset = src.get_offset();
-    const cgpoint_t real_at = (cgpoint_t){ (int16_t)(at.x - offset.x), (int16_t)(at.y - offset.y)};
-    cgrect_t rect = (cgrect_t){ {0, 0}, src.get_size()};
+    const point_s real_at = (point_s){ (int16_t)(at.x - offset.x), (int16_t)(at.y - offset.y)};
+    rect_s rect = (rect_s){ {0, 0}, src.get_size()};
     draw(src, rect, real_at, color);
 }
 
-void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const uint8_t color) const {
+void image_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t color) const {
     assert(_maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
@@ -136,7 +136,7 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const ui
         }
     }
     if (_dirtymap) {
-        const cgrect_t dirty_rect = (cgrect_t){at, rect.size};
+        const rect_s dirty_rect = (rect_s){at, rect.size};
         _dirtymap->mark(dirty_rect);
     }
     if (src._maskmap) {
@@ -151,26 +151,26 @@ void cgimage_c::draw(const cgimage_c &src, cgrect_t rect, cgpoint_t at, const ui
     }
 }
 
-void cgimage_c::draw_3_patch(const cgimage_c &src, int16_t cap, cgrect_t in) const {
-    cgrect_t rect = (cgrect_t){{0, 0}, src.get_size()};
+void image_c::draw_3_patch(const image_c &src, int16_t cap, rect_s in) const {
+    rect_s rect = (rect_s){{0, 0}, src.get_size()};
     draw_3_patch(src, rect, cap, in);
 }
 
-void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, cgrect_t in) const {
+void image_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s in) const {
     assert(in.size.width >= cap * 2);
     assert(rect.size.width > cap * 2);
     assert(rect.size.height == in.size.height);
     if (_dirtymap) {
         _dirtymap->mark(in);
     }
-    const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
-        const cgrect_t left_rect = (cgrect_t){ rect.origin, {cap, rect.size.height}};
+    const_cast<image_c*>(this)->with_dirtymap(nullptr, [&] {
+        const rect_s left_rect = (rect_s){ rect.origin, {cap, rect.size.height}};
         draw(src, left_rect, in.origin);
-        const cgrect_t right_rect = (cgrect_t){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
-        const cgpoint_t right_at = (cgpoint_t){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
+        const rect_s right_rect = (rect_s){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
+        const point_s right_at = (point_s){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
         draw(src, right_rect, right_at);
-        cgrect_t middle_rect = (cgrect_t){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
-        cgpoint_t at = (cgpoint_t){(int16_t)(in.origin.x + cap), in.origin.y };
+        rect_s middle_rect = (rect_s){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
+        point_s at = (point_s){(int16_t)(in.origin.x + cap), in.origin.y };
         int16_t to_draw = in.size.width - cap * 2;
         while (to_draw > 0) {
             const int16_t width = MIN(to_draw, middle_rect.size.width);
@@ -182,9 +182,9 @@ void cgimage_c::draw_3_patch(const cgimage_c &src, cgrect_t rect, int16_t cap, c
     });
 }
 
-cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, text_alignment_e alignment, const uint8_t color) const {
+size_s image_c::draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment, const uint8_t color) const {
     int len = (int)strlen(text);
-    cgsize_t size = font.get_rect(' ').size;
+    size_s size = font.get_rect(' ').size;
     size.width = 0;
     for (int i = len; --i != -1; ) {
         size.width += font.get_rect(text[i]).size.width;
@@ -200,12 +200,12 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, t
             break;
     }
     if (_dirtymap) {
-        cgrect_t dirty_rect = (cgrect_t){{(int16_t)(at.x - size.width), at.y}, size};
+        rect_s dirty_rect = (rect_s){{(int16_t)(at.x - size.width), at.y}, size};
         _dirtymap->mark(dirty_rect);
     }
-    const_cast<cgimage_c*>(this)->with_dirtymap(nullptr, [&] {
+    const_cast<image_c*>(this)->with_dirtymap(nullptr, [&] {
         for (int i = len; --i != -1; ) {
-            const cgrect_t &rect = font.get_rect(text[i]);
+            const rect_s &rect = font.get_rect(text[i]);
             at.x -= rect.size.width;
             draw(font.get_image(), rect, at, color);
         }
@@ -216,7 +216,7 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgpoint_t at, t
 #define MAX_LINES 8
 static char draw_text_buffer[80 * MAX_LINES];
 
-cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
+size_s image_c::draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
     strcpy(draw_text_buffer, text);
     vector_c<const char *, 12> lines;
 
@@ -252,13 +252,13 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, ui
             i = start;
         }
     }
-    cgpoint_t at;
+    point_s at;
     switch (alignment) {
         case align_left: at = in.origin; break;
-        case align_center: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
-        case align_right: at = (cgpoint_t){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
+        case align_center: at = (point_s){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
+        case align_right: at = (point_s){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
     }
-    cgsize_t max_size = {0,0};
+    size_s max_size = {0,0};
     bool first = true;
     for (auto line = lines.begin(); line != lines.end(); line++) {
         const auto size = draw(font, *line, at, alignment, color);
@@ -273,7 +273,7 @@ cgsize_t cgimage_c::draw(const cgfont_c &font, const char *text, cgrect_t in, ui
 #if 0
 #ifndef __M68000__
 
-void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) const {
+void image_c::imp_draw_aligned(const image_c &srcImage, point_s point) const {
     assert(get_size().contains(point));
     assert((point.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
@@ -286,13 +286,13 @@ void cgimage_c::imp_draw_aligned(const cgimage_c &srcImage, cgpoint_t point) con
     }
 }
 
-void cgimage_c::imp_draw_rect(const cgimage_c &srcImage, cgrect_t *const rect, cgpoint_t point) const {
+void image_c::imp_draw_rect(const image_c &srcImage, cgrect_t *const rect, point_s point) const {
     assert(get_size().contains(point));
     for (int y = 0; y < rect->size.height; y++) {
         for (int x = 0; x < rect->size.width; x++) {
-            uint8_t color = srcImage.get_pixel(cgpoint_t{(int16_t)(rect->origin.x + x), (int16_t)(rect->origin.y + y)});
+            uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect->origin.x + x), (int16_t)(rect->origin.y + y)});
             if (color != MASKED_CIDX) {
-                put_pixel(color, cgpoint_t{(int16_t)(point.x + x), (int16_t)(point.y + y)});
+                put_pixel(color, point_s{(int16_t)(point.x + x), (int16_t)(point.y + y)});
             }
         }
     }

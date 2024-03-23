@@ -9,7 +9,7 @@
 
 using namespace toybox;
 
-static void make_dither_mask_orderred(cgimage_c::stencil_t stencil, int shade) {
+static void make_dither_mask_orderred(image_c::stencil_t stencil, int shade) {
     const static uint8_t bayer_8x8[8][8] = {
         { 0, 32,  8, 40,  2, 34, 10, 42},
         {48, 16, 56, 24, 50, 18, 58, 26},
@@ -33,7 +33,7 @@ static void make_dither_mask_orderred(cgimage_c::stencil_t stencil, int shade) {
     }
 }
 
-void make_dither_mask_blue_noise(cgimage_c::stencil_t stencil, int shade) {
+void make_dither_mask_blue_noise(image_c::stencil_t stencil, int shade) {
     const static uint8_t blue_16x16[16][16] = {
         { 10,  2, 17, 23, 10, 34,  4, 28, 37,  2, 19,  7,  3,  1,  5, 62 },
         {  0,  8, 55, 46,  1, 61, 19,  0,  1,  9, 45, 25, 34, 16,  0, 24 },
@@ -62,7 +62,7 @@ void make_dither_mask_blue_noise(cgimage_c::stencil_t stencil, int shade) {
     }
 }
 
-void cgimage_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
+void image_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
     assert(shade >= STENCIL_FULLY_TRANSPARENT);
     assert(shade <= STENCIL_FULLY_OPAQUE);
     switch (type) {
@@ -78,16 +78,16 @@ void cgimage_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) 
     }
 }
 
-const cgimage_c::stencil_t *const cgimage_c::get_stencil(stencil_type_e type, int shade) {
-    assert(shade >= cgimage_c::STENCIL_FULLY_TRANSPARENT);
-    assert(shade <= cgimage_c::STENCIL_FULLY_OPAQUE);
-    static cgimage_c::stencil_t _none_stencil = { 0 };
+const image_c::stencil_t *const image_c::get_stencil(stencil_type_e type, int shade) {
+    assert(shade >= image_c::STENCIL_FULLY_TRANSPARENT);
+    assert(shade <= image_c::STENCIL_FULLY_OPAQUE);
+    static image_c::stencil_t _none_stencil = { 0 };
     static bool _initialized = false;
-    static stencil_t _stencils[2][cgimage_c::STENCIL_FULLY_OPAQUE + 1];
+    static stencil_t _stencils[2][image_c::STENCIL_FULLY_OPAQUE + 1];
     if (!_initialized) {
         for (int i = 2; --i != -1; ) {
-            for (int j = cgimage_c::STENCIL_FULLY_OPAQUE + 1; --j != -1; ) {
-                cgimage_c::make_stencil(_stencils[i][j], (cgimage_c::stencil_type_e)(i + 1), j);
+            for (int j = image_c::STENCIL_FULLY_OPAQUE + 1; --j != -1; ) {
+                image_c::make_stencil(_stencils[i][j], (image_c::stencil_type_e)(i + 1), j);
             }
         }
         _initialized = true;

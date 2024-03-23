@@ -20,9 +20,9 @@ static void handle_compressed(arguments_t &args);
 
 static bool save_palette = true;
 static bool save_masked = false;
-static uint8_t masked_idx = cgimage_c::MASKED_CIDX;
+static uint8_t masked_idx = image_c::MASKED_CIDX;
 static bool save_compressed = false;
-static cgpoint_t grab_point = {0,0};
+static point_s grab_point = {0,0};
 
 const arg_handlers_t arg_handlers {
     {"-h",          {"Show this help and exit.", &handle_help}},
@@ -84,22 +84,22 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
         exit(-1);
     }
     
-    cgpalette_c *cgpalette = nullptr;
+    palette_c *cgpalette = nullptr;
     if (num_palette > 0 && save_palette) {
-        cgpalette = new cgpalette_c((uint8_t *)palette);
+        cgpalette = new palette_c((uint8_t *)palette);
     }
 
-    cgimage_c cgimage((cgsize_t){width, height}, save_masked, cgpalette);
+    image_c cgimage((size_s){width, height}, save_masked, cgpalette);
     
     png_bytep row = (png_byte*)malloc(png_get_rowbytes(png,info));
-    cgpoint_t at;
+    point_s at;
     bool has_warned = false;
     for(at.y = 0; at.y < height; at.y++) {
         png_read_row(png, row, nullptr);
         for (at.x = 0; at.x < width; at.x++) {
             uint8_t c = row[at.x];
             if (c == masked_idx) {
-                cgimage.put_pixel(cgimage_c::MASKED_CIDX, at);
+                cgimage.put_pixel(image_c::MASKED_CIDX, at);
             } else if (c > 15) {
                 if (!has_warned) {
                     printf("WARNING: Color index > 15 found and ignored.\n");

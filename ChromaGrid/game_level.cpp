@@ -11,7 +11,7 @@
 class cglevel_ended_scene_c : public cggame_scene_c {
 public:
     
-    cglevel_ended_scene_c(cgmanager_c &manager, int level_num, level_result_t &results) :
+    cglevel_ended_scene_c(scene_manager_c &manager, int level_num, level_result_t &results) :
         cggame_scene_c(manager),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _level_num(level_num),
@@ -32,40 +32,40 @@ public:
         }
     };
 
-    virtual void will_appear(cgimage_c &screen, bool obsured) {
-        cgrect_t rect = (cgrect_t) {
+    virtual void will_appear(image_c &screen, bool obsured) {
+        rect_s rect = (rect_s) {
             {0,0},
             {MAIN_MENU_ORIGIN_X, 200}
         };
-        screen.with_stencil(cgimage_c::get_stencil(cgimage_c::orderred, 32), [this, &screen, &rect] {
+        screen.with_stencil(image_c::get_stencil(image_c::orderred, 32), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
-        rect = (cgrect_t){
-            (cgpoint_t){MAIN_MENU_ORIGIN_X, 0},
-            (cgsize_t){MAIN_MENU_SIZE_WIDTH, 200}
+        rect = (rect_s){
+            (point_s){MAIN_MENU_ORIGIN_X, 0},
+            (size_s){MAIN_MENU_SIZE_WIDTH, 200}
         };
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
 
         const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
-        screen.draw(rsc.font, title, (cgpoint_t){96, 32});
+        screen.draw(rsc.font, title, (point_s){96, 32});
         
         if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];
             uint16_t time_score, orbs_score;
             _results.get_subscores(orbs_score, time_score);
             sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
-            screen.draw(rsc.font, buf, (cgpoint_t){96, 64});
+            screen.draw(rsc.font, buf, (point_s){96, 64});
             sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
-            screen.draw(rsc.font, buf, (cgpoint_t){96, 84});
+            screen.draw(rsc.font, buf, (point_s){96, 84});
             sprintf(buf, "Total: %d pts", _results.score);
-            screen.draw(rsc.font, buf, (cgpoint_t){96, 114});
+            screen.draw(rsc.font, buf, (point_s){96, 114});
             sprintf(buf, "Moves: %d", _results.moves);
-            screen.draw(rsc.font, buf, (cgpoint_t){96, 144});
+            screen.draw(rsc.font, buf, (point_s){96, 144});
         }
     }
 
-    virtual void tick(cgimage_c &screen, int ticks) {
+    virtual void tick(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
         switch (button) {
             case 0:
@@ -87,7 +87,7 @@ private:
 };
 
 
-cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, int level) :
+cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, int level) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(level),
@@ -98,7 +98,7 @@ cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, int level) :
     _menu_buttons.add_button("Restart");
 }
 
-cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
+cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe) :
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(TEST_LEVEL),
@@ -109,13 +109,13 @@ cglevel_scene_c::cglevel_scene_c(cgmanager_c &manager, level_recipe_t *recipe) :
     _menu_buttons.add_button("Restart");
 }
 
-void cglevel_scene_c::will_appear(cgimage_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (cgpoint_t){0, 0});
+void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
+    screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
 }
 
-void cglevel_scene_c::tick(cgimage_c &screen, int ticks) {
+void cglevel_scene_c::tick(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
