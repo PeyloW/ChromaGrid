@@ -26,7 +26,7 @@ Legend: __Required__, Expected , _Optional_
     * [x] __Target machine bootstrap__
     * [x] __VBL timer support__
     * [x] __Timer-C support__
-        * [ ] Other frequencies than 200hz
+        * [x] Other frequencies than 200hz
     * [x] __Mouse interups__
 * [x] __Basic file loading__
     * [x] __ILBM Image files, with masks__
@@ -54,12 +54,12 @@ Legend: __Required__, Expected , _Optional_
     * [x] Draw 3 patches
     * [x] Add optional dirty mask to all draw operations
         * [x] Restore from dirty mask
-        * [ ] _Asm and HW optimized_
+        * [x] _Asm and HW optimized_
 * [ ] __Sound__
     * [x] __Play SNDH music__
         * [x] Change tracks
-        * [ ] Parse headers
-        * [ ] Support non-static replay frequencies
+        * [x] Parse headers
+        * [x] Support non-static replay frequencies
     * [x] __Play LCM samples__
         * [ ] _Mix several channels_
 * [ ] __Scene management__
@@ -81,7 +81,7 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Level selection grid, center
 * [x] __Credits scene__
     * [x] Credits
-    * [ ] Acknowledgements
+    * [x] Acknowledgements
     * [ ] Dedications
     * [ ] Greetings
 * [ ] __Help scene__
@@ -98,7 +98,7 @@ Legend: __Required__, Expected , _Optional_
         * [x] Animations between states
     * [x] __Game logic ;)__
         * [x] __Count down timer__
-        * [ ] Count moves
+        * [x] Count moves
     * [ ] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
 * [ ] Game over scene
@@ -106,11 +106,11 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Large success logo
     * [ ] Large failure logo
     * [ ] Game over game music 
-* [ ] _Highscore screne_
-    * [ ] Per level scores
-        * [ ] Load/Save scores
-    * [ ] _Name entry_
-    * [ ] _High score per level_
+* [x] _Highscore screne_
+    * [x] Per level scores
+        * [x] Load/Save scores
+    * [ ] ~~_Name entry_~~
+    * [x] _High score per level_
 * [x] Level editor screne
     * [x] _Editor logic ;)_
     * [x] Edit times
