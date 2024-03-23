@@ -95,11 +95,13 @@ void image_c::imp_fill(uint8_t color, rect_s rect) const {
 }
 
 void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, point_s at) const {
-    assert(get_size().contains(at));
     assert((rect.origin.x & 0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
     assert((at.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
+    assert(!rect.size.is_empty());
+    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect.contained_by(srcImage.get_size()));
         
     auto blitter = pBlitter;
     const uint16_t copy_words = (rect.size.width / 16);
@@ -150,8 +152,9 @@ void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poin
 }
 
 void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
-    assert(get_size().contains(at));
-    assert(srcImage.get_size().contains(rect.origin));
+    assert(!rect.size.is_empty());
+    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
@@ -220,8 +223,9 @@ void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) 
 }
 
 void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
-    assert(get_size().contains(at));
-    assert(srcImage.get_size().contains(rect.origin));
+    assert(!rect.size.is_empty());
+    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
@@ -312,8 +316,9 @@ void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point
 }
 
 void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
-    assert(get_size().contains(at));
-    assert(srcImage.get_size().contains(rect.origin));
+    assert(!rect.size.is_empty());
+    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
@@ -385,13 +390,15 @@ void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_
     }
 }
 
-void image_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s point) const {
-    assert(get_size().contains(point));
+void image_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s at) const {
+    assert(!rect.size.is_empty());
+    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect.contained_by(srcImage.get_size()));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {
             uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
             if (color != MASKED_CIDX) {
-                put_pixel(color, point_s{(int16_t)(point.x + x), (int16_t)(point.y + y)});
+                put_pixel(color, point_s{(int16_t)(at.x + x), (int16_t)(at.y + y)});
             }
         }
     }

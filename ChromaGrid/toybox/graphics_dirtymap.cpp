@@ -12,14 +12,15 @@ using namespace toybox;
 #define CGDIRTYMAP_BITSET (1)
 
 #if CGDIRTYMAP_BITSET
-    static const int LOOKUP_SIZE = 256;
-    typedef struct bitrun_list_s {
-        int16_t num_runs;
-        struct bitrun_s {
-            int16_t start;
-            int16_t length;
-        } bit_runs[4];
-    } bitrun_list_s;
+static const int16_t LOOKUP_SIZE = 256;
+struct __packed_struct bitrun_list_s {
+    int16_t num_runs;
+    struct bitrun_s {
+        int16_t start;
+        int16_t length;
+    } bit_runs[4];
+};
+static_assert(sizeof(bitrun_list_s) == 18, "bitrun_list_s size mismatch");
 static bitrun_list_s* lookup_table[LOOKUP_SIZE];
 static void init_lookup_table_if_needed() {
     static bitrun_list_s _lookup_buffer[LOOKUP_SIZE];
@@ -28,12 +29,12 @@ static void init_lookup_table_if_needed() {
         return;
     }
     is_initialized = true;
-    for (int input = 0; input < LOOKUP_SIZE; input++) {
+    for (int16_t input = 0; input < LOOKUP_SIZE; input++) {
         bitrun_list_s* result = &_lookup_buffer[input];
         lookup_table[input] = result;
         result->num_runs = 0;
         // Iterate through each bit in the input
-        for (int i = 0; i < 8; ) {
+        for (int16_t i = 0; i < 8; ) {
             // If the current bit is 1, start a new run
             if ((input >> i) & 1) {
                 int16_t start = i * CGDIRTYMAP_TILE_WIDTH;
@@ -58,19 +59,19 @@ dirtymap_c *dirtymap_c::create(const image_c &image) {
     init_lookup_table_if_needed();
     size.width = (size.width + (8 * CGDIRTYMAP_TILE_WIDTH - 1)) / (8 * CGDIRTYMAP_TILE_WIDTH);
     size.height /= CGDIRTYMAP_TILE_HEIGHT;
-    const int data_size = size.width * (size.height + 1) + 3;
+    const int16_t data_size = size.width * (size.height + 1) + 3;
 #else
     size.width /= CGDIRTYMAP_TILE_WIDTH;
     size.height /= CGDIRTYMAP_TILE_HEIGHT;
-    const int data_size = size.width * size.height;
+    const int16_t data_size = size.width * size.height;
 #endif
     return new (calloc(1, sizeof(dirtymap_c) + data_size)) dirtymap_c(size);
 }
 
 void dirtymap_c::mark(const rect_s &rect) {
-    const int x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
-    const int x2 = (rect.origin.x + rect.size.width - 1) / CGDIRTYMAP_TILE_WIDTH;
-    const int y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
+    const int16_t x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
+    const int16_t x2 = (rect.origin.x + rect.size.width - 1) / CGDIRTYMAP_TILE_WIDTH;
+    const int16_t y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
     assert(y1 < _size.height);
 #if CGDIRTYMAP_BITSET
 #define BITS_PER_BYTE 8
@@ -81,15 +82,15 @@ void dirtymap_c::mark(const rect_s &rect) {
         0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF
     };
 
-    const int extra_rows = ((rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT - y1);
+    const int16_t extra_rows = ((rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT - y1);
     assert(y1 + extra_rows < _size.height);
-    const int start_byte = x1 / BITS_PER_BYTE;
+    const int16_t start_byte = x1 / BITS_PER_BYTE;
     assert(start_byte < _size.width);
-    const int end_byte = x2 / BITS_PER_BYTE;
+    const int16_t end_byte = x2 / BITS_PER_BYTE;
     assert(end_byte < _size.width);
-    const int start_bit = x1 % BITS_PER_BYTE;
+    const int16_t start_bit = x1 % BITS_PER_BYTE;
     assert(start_bit < 8);
-    const int end_bit = x2 % BITS_PER_BYTE;
+    const int16_t end_bit = x2 % BITS_PER_BYTE;
     assert(end_bit < 8);
     
     uint8_t *data = _data + (start_byte + _size.width * y1);
@@ -99,7 +100,7 @@ void dirtymap_c::mark(const rect_s &rect) {
             *data |= (first_byte_masks[start_bit] & last_byte_masks[end_bit]);
         } else {
             *data++ |= (first_byte_masks[start_bit]);
-            for (int j = end_byte - start_byte - 1; --j != -1; ) {
+            for (int16_t j = end_byte - start_byte - 1; --j != -1; ) {
                 *data++ = 0xFF;
             }
             *data |= (last_byte_masks[end_bit]);
@@ -107,17 +108,17 @@ void dirtymap_c::mark(const rect_s &rect) {
     } else {
         if (start_byte == end_byte) {
             auto mask = (first_byte_masks[start_bit] & last_byte_masks[end_bit]);
-            for (int y = 0; y <= extra_rows; y++) {
+            for (int16_t y = 0; y <= extra_rows; y++) {
                 *data |= mask;
                 data += _size.width;
             }
         } else {
             auto mask_first = (first_byte_masks[start_bit]);
             auto mask_last = (last_byte_masks[end_bit]);
-            for (int y = 0; y <= extra_rows; y++) {
+            for (int16_t y = 0; y <= extra_rows; y++) {
                 auto line_data = data;
                 *line_data++ |= mask_first;
-                for (int j = end_byte - start_byte - 1; --j != -1; ) {
+                for (int16_t j = end_byte - start_byte - 1; --j != -1; ) {
                     *line_data++ = 0xFF;
                 }
                 *line_data |= mask_last;
@@ -126,10 +127,10 @@ void dirtymap_c::mark(const rect_s &rect) {
         }
     }
 #else
-    const int y2 = (rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT;
-    for (int y = y1; y <= y2; y++) {
-        const int line_offset = y * _size.width;
-        for (int x = x1; x <= x2; x++) {
+    const int16_t y2 = (rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT;
+    for (int16_t y = y1; y <= y2; y++) {
+        const int16_t line_offset = y * _size.width;
+        for (int16_t x = x1; x <= x2; x++) {
             _data[x + line_offset] = true;
         }
     }
@@ -140,7 +141,7 @@ void dirtymap_c::merge(const dirtymap_c &dirtymap) {
 #if CGDIRTYMAP_BITSET
     uint32_t *l_dest = (uint32_t*)_data;
     const uint32_t *l_source = (uint32_t*)dirtymap._data;
-    int long_count = (_size.width * _size.height + 3) / 4;
+    int16_t long_count = (_size.width * _size.height + 3) / 4;
     do {
         const uint32_t v = *l_source++;
         if (v) {
@@ -151,8 +152,8 @@ void dirtymap_c::merge(const dirtymap_c &dirtymap) {
     } while (--long_count != -1);
 #else
     assert(_size == dirtymap._size);
-    int count = _size.width * _size.height;
-    int l_count = count / 4;
+    int16_t count = _size.width * _size.height;
+    int16_t l_count = count / 4;
     if (l_count * 4 == count) {
         uint32_t *l_dest = (uint32_t*)_data;
         const uint32_t *l_source = (uint32_t*)dirtymap._data;
@@ -189,28 +190,26 @@ void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
 #if CGDIRTYMAP_BITSET
         auto data = _data;
         point_s at = {0, 0};
-        for (int row = _size.height; --row != -1; ) {
-            for (int col = _size.width; --col != -1; ) {
-                const auto byte = *data;
+        for (int16_t row = _size.height; --row != -1; ) {
+            for (int16_t col = _size.width; --col != -1; ) {
+                const uint8_t byte = *data;
                 if (byte) {
                     const int16_t height = [&] {
-                        int height = 0;
+                        int16_t height = 0;
                         while (data[height * _size.width] == byte) {
                             data[height * _size.width] = 0;
                             height++;
                         }
                         return height * CGDIRTYMAP_TILE_HEIGHT;
                     }();
-                    auto bitrunlist = lookup_table[byte];
+                    auto bitrunlist = lookup_table[(int16_t)byte];
                     int16_t *bitrun = (int16_t*)bitrunlist->bit_runs;
-                    for (int r = bitrunlist->num_runs; --r != -1; ) {
-                        rect_s rect = (rect_s){
-                            (point_s){ (int16_t)(at.x + *bitrun++), at.y},
-                            (size_s){ *bitrun++, height}
-                        };
-                        bitrun++;
+                    for (int16_t r = bitrunlist->num_runs; --r != -1; ) {
+                        rect_s rect;
+                        rect.origin = (point_s){ (int16_t)(at.x + *bitrun++), at.y};
+                        rect.size = (size_s){ *bitrun++, height};
                         #if DEBUG_DIRTYMAP
-                        printf("Restore {{%d, %d}, {%d, %d}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+                        printf("Restore {{%d, %d}, {%d, %d}}\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
                         #endif
                         image.draw_aligned(clean_image, rect, rect.origin);
                     }
@@ -224,10 +223,10 @@ void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
 #else
         const auto image_size = image.get_size();
         int16_t y = image_size.height - CGDIRTYMAP_TILE_HEIGHT;
-        for (int row = _size.height; --row != -1; y -= CGDIRTYMAP_TILE_HEIGHT) {
-            const int row_offset = row * _size.width;
+        for (int16_t row = _size.height; --row != -1; y -= CGDIRTYMAP_TILE_HEIGHT) {
+            const int16_t row_offset = row * _size.width;
             int16_t x = image_size.width - CGDIRTYMAP_TILE_WIDTH;
-            for (int col = _size.width; --col != -1; x -= CGDIRTYMAP_TILE_WIDTH) {
+            for (int16_t col = _size.width; --col != -1; x -= CGDIRTYMAP_TILE_WIDTH) {
                 if (_data[col + row_offset]) {
                     _data[col + row_offset] = false;
                     point_s at = (point_s){x, y};
@@ -260,18 +259,18 @@ void cgdirtymap_c::debug(const char *name) const {
     ((byte) & 0x40 ? '1' : '0'), \
     ((byte) & 0x80 ? '1' : '0')
     auto data = _data;
-    for (int row = _size.height; --row != -1; ) {
-        for (int col = _size.width; --col != -1; ) {
+    for (int16_t row = _size.height; --row != -1; ) {
+        for (int16_t col = _size.width; --col != -1; ) {
             const auto byte = *data++;
             printf(BYTE_TO_BINARY_PATTERN,  BYTE_TO_BINARY(byte));
         }
         printf("\n");
     }
 #else
-    for (int row = 0; row < _size.height; row++) {
+    for (int16_t row = 0; row < _size.height; row++) {
         char buf[_size.width + 1];
-        const int row_offset = row * _size.width;
-        for (int col = 0; col < _size.width; col++) {
+        const int16_t row_offset = row * _size.width;
+        for (int16_t col = 0; col < _size.width; col++) {
             buf[col] = _data[col + row_offset] ? 'X' : '-';
         }
         buf[_size.width] = 0;
