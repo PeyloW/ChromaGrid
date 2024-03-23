@@ -7,8 +7,9 @@
 
 #include "iff_file.hpp"
 
+using namespace toybox;
 
-cgiff_file_c::cgiff_file_c(FILE *file) : 
+cgiff_file_c::cgiff_file_c(FILE *file) :
     _file(file), _hard_assert(false), _owns_file(false)
 {
     hard_assert(CGIFF_FORM_ID != 0);

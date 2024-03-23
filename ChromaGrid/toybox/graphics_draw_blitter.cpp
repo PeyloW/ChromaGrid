@@ -8,6 +8,8 @@
 #include "graphics.hpp"
 #include "blitter.hpp"
 
+using namespace toybox;
+
 static const uint8_t pBlitter_skewflags[4] = {
     cgblitter_nfsr_bit,
     cgblitter_fxsr_bit,

@@ -11,6 +11,7 @@
 #include "graphics.hpp"
 #include "audio.hpp"
 #include "level.hpp"
+#include "vector.hpp"
 
 class cgresources_c : private cgnocopy_c {
 public:

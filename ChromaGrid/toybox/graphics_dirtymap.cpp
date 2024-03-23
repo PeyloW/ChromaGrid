@@ -7,6 +7,8 @@
 
 #include "graphics.hpp"
 
+using namespace toybox;
+
 #define CGDIRTYMAP_BITSET (1)
 
 #if CGDIRTYMAP_BITSET

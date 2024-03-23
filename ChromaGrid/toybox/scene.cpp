@@ -7,6 +7,8 @@
 
 #include "scene.hpp"
 
+using namespace toybox;
+
 cgmanager_c::cgmanager_c() :
     _super_token(cgsuper(0)),
     vbl(cgtimer_c::vbl),

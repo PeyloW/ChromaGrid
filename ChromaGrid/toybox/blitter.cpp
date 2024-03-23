@@ -7,12 +7,14 @@
 
 #include "blitter.hpp"
 
+using namespace toybox;
+
 #ifndef __M68000__
 
 #define DEBUG_BLITTER 0
 
 static struct cgblitter_t _Blitter;
-struct cgblitter_t *pBlitter = &_Blitter;
+struct cgblitter_t *toybox::pBlitter = &_Blitter;
 
 //
 // Emulate blitter on host machine.

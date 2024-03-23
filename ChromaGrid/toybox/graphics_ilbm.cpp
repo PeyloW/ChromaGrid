@@ -8,6 +8,8 @@
 #include "graphics.hpp"
 #include "iff_file.hpp"
 
+using namespace toybox;
+
 CGDEFINE_ID(ILBM);
 CGDEFINE_ID(BMHD);
 CGDEFINE_ID(CMAP);

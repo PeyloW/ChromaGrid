@@ -9,6 +9,8 @@
 
 extern "C" {
 
+    using namespace toybox;
+    
 #ifndef __M68000__
 #include <unistd.h>
 #include "system_host.hpp"

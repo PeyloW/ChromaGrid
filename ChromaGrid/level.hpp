@@ -14,6 +14,7 @@
 #include "system.hpp"
 #include "iff_file.hpp"
 
+using namespace toybox;
 
 CGDEFINE_ID (CGLV); // ChromaGrid LeVel
 CGDEFINE_ID (LVHD); // LeVel HeaDer

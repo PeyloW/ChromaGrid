@@ -7,6 +7,8 @@
 
 #include "graphics.hpp"
 
+using namespace toybox;
+
 static void make_dither_mask_orderred(cgimage_c::stencil_t stencil, int shade) {
     const static uint8_t bayer_8x8[8][8] = {
         { 0, 32,  8, 40,  2, 34, 10, 42},

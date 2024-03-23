@@ -12,6 +12,8 @@
 #include "system_host.hpp"
 #endif
 
+using namespace toybox;
+
 CGDEFINE_ID (AIFF);
 CGDEFINE_ID (COMM);
 CGDEFINE_ID (SSND);

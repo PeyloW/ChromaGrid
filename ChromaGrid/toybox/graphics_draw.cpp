@@ -6,6 +6,9 @@
 //
 
 #include "graphics.hpp"
+#include "vector.hpp"
+
+using namespace toybox;
 
 void cgimage_c::put_pixel(uint8_t ci, cgpoint_t at) const {
     if (_clipping) {

@@ -44,12 +44,4 @@ extern "C" {
         
 }
 
-// Base class enforcing no copy constructor or assignment.
-class cgnocopy_c {
-protected:
-    __forceinline cgnocopy_c() {}
-    cgnocopy_c(const cgnocopy_c&) = delete;
-    cgnocopy_c& operator=(const cgnocopy_c&) = delete;
-};
-
 #endif /* cincludes_h */

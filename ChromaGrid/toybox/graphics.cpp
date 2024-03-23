@@ -9,6 +9,8 @@
 #include "audio.hpp"
 #include "system.hpp"
 
+using namespace toybox;
+
 extern "C" {
 #ifndef __M68000__
     const cgpalette_c *cgg_active_palette = nullptr;
