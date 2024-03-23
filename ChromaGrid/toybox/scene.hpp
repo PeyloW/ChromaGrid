@@ -29,7 +29,7 @@ namespace toybox {
     using namespace toystd;
     
     class scene_manager_c;
-    
+        
     class scene_c : private nocopy_c {
     public:
         scene_c(scene_manager_c &manager) : manager(manager) {};
@@ -42,6 +42,17 @@ namespace toybox {
         scene_manager_c &manager;
     };
     
+    class transition_c : private nocopy_c {
+    public:
+        transition_c() {};
+        virtual ~transition_c() {}
+        
+        virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) = 0;
+        
+        static transition_c *create(image_c::stencil_type_e dither, uint8_t through);
+        static transition_c *create(color_c through);
+    };
+        
     class scene_manager_c : private nocopy_c {
     private:
         int32_t _super_token;
@@ -49,7 +60,7 @@ namespace toybox {
         scene_manager_c();
         ~scene_manager_c();
         
-        void run(scene_c *rootscene, scene_c *overlay_scene = nullptr, image_c::stencil_type_e transition = image_c::noise);
+        void run(scene_c *rootscene, scene_c *overlay_scene = nullptr, transition_c *transition = nullptr);
         
         void set_overlay_scene(scene_c *overlay_cene);
         scene_c *overlay_scene() const { return _overlay_scene; };
@@ -57,9 +68,9 @@ namespace toybox {
         scene_c &top_scene() const {
             return *_scene_stack.back();
         };
-        void push(scene_c *scene, image_c::stencil_type_e transition = image_c::noise);
-        void pop(image_c::stencil_type_e transition = image_c::noise, int count = 1);
-        void replace(scene_c *scene, image_c::stencil_type_e transition = image_c::noise);
+        void push(scene_c *scene, transition_c *transition = transition_c::create(image_c::noise, 0));
+        void pop(transition_c *transition  = transition_c::create(image_c::noise, 0), int count = 1);
+        void replace(scene_c *scene, transition_c *transition  = transition_c::create(image_c::noise, 0));
         
         timer_c vbl;
         timer_c clock;
@@ -68,6 +79,7 @@ namespace toybox {
         image_c &get_logical_screen() { return _screens.back().image; }
         
     private:
+        transition_c *_transition;
         scene_c *_overlay_scene;
         vector_c<scene_c *, 8> _scene_stack;
         vector_c<scene_c *, 8> _deletion_stack;
@@ -75,6 +87,7 @@ namespace toybox {
         inline void enqueue_delete(scene_c *scene) {
             _deletion_stack.push_back(scene);
         }
+        inline void set_transition(transition_c *transition, bool done = false);
         
         class screen_c {
         public:
@@ -86,19 +99,6 @@ namespace toybox {
         };
         vector_c<screen_c, 3> _screens;
         int _active_physical_screen;
-        
-        void run_transition(screen_c &physical_screen, int ticks);
-        
-        struct {
-            int full_restores_left;
-            image_c::stencil_type_e type;
-            int shade;
-        } _transition_state;
-        inline void enqueue_transition(image_c::stencil_type_e type) {
-            _transition_state.full_restores_left = 2;
-            _transition_state.type = type;
-            _transition_state.shade = 0;
-        }
     };
     
 }

@@ -22,7 +22,7 @@ TOYBOX_OBJECTS=system.o system_m68k.o cpp_runtime.o
 TOYBOX_OBJECTS+=iff_file.o
 TOYBOX_OBJECTS+=graphics.o graphics_ilbm.o graphics_stencil.o graphics_draw.o graphics_dirtymap.o graphics_draw_blitter.o
 TOYBOX_OBJECTS+=audio.o
-TOYBOX_OBJECTS+=scene.o
+TOYBOX_OBJECTS+=scene.o scene_transition.o
 
 CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o

@@ -9,6 +9,19 @@
 
 using namespace toybox;
 
+class no_transition_c : public transition_c {
+public:
+    no_transition_c() : transition_c() {
+        _full_restores_left = 2;
+    }
+    bool tick(image_c &phys_screen, image_c &log_screen, int ticks) override {
+        phys_screen.draw_aligned(log_screen, (point_s){0,0});
+        return --_full_restores_left <= 0;
+    }
+private:
+    int _full_restores_left;
+};
+
 scene_manager_c::scene_manager_c() :
     _super_token(super(0)),
     vbl(timer_c::vbl),
@@ -17,7 +30,7 @@ scene_manager_c::scene_manager_c() :
 {
     _overlay_scene = nullptr;
     _active_physical_screen = 0;
-    _transition_state.full_restores_left = 0;
+    _transition = nullptr;
     _screens.emplace_back();
     _screens.emplace_back();
     _screens.emplace_back();
@@ -29,24 +42,7 @@ scene_manager_c::~scene_manager_c() {
 
 #define DEBUG_NO_SET_SCREEN 0
 
-void scene_manager_c::run_transition(screen_c &physical_screen, int ticks) {
-    debug_cpu_color(DEBUG_CPU_RUN_TRANSITION);
-    if (_transition_state.type == image_c::none) {
-        physical_screen.image.draw_aligned(get_logical_screen(), (point_s){0,0});
-        _transition_state.full_restores_left--;
-    } else {
-        auto shade = MIN(image_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
-        physical_screen.image.with_stencil(image_c::get_stencil(_transition_state.type, shade), [this, &physical_screen] {
-            physical_screen.image.draw_aligned(get_logical_screen(), (point_s){0, 0});
-        });
-        if (shade == image_c::STENCIL_FULLY_OPAQUE) {
-            _transition_state.full_restores_left--;
-        }
-        _transition_state.shade += 1 + MAX(1, ticks);
-    }
-}
-
-void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::stencil_type_e transition) {
+void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_c *transition) {
 #if !DEBUG_NO_SET_SCREEN
     int16_t old_mode = set_screen(nullptr, nullptr, 0);
 #endif
@@ -66,8 +62,12 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, image_c::st
         screen_c &physical_screen = _screens[_active_physical_screen];
         screen_c &logical_screen = _screens.back();
         
-        if (_transition_state.full_restores_left > 0) {
-            run_transition(physical_screen, ticks);
+        if (_transition) {
+            debug_cpu_color(DEBUG_CPU_RUN_TRANSITION);
+            bool done = _transition->tick(physical_screen.image, get_logical_screen(), ticks);
+            if (done) {
+                set_transition(nullptr, true);
+            }
         } else {
             debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
             logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, ticks, &logical_screen] {
@@ -120,7 +120,7 @@ void scene_manager_c::set_overlay_scene(scene_c *overlay_scene) {
     }
 }
 
-void scene_manager_c::push(scene_c *scene, image_c::stencil_type_e transition) {
+void scene_manager_c::push(scene_c *scene, transition_c *transition) {
     if (_scene_stack.size() > 0) {
         top_scene().will_disappear(true);
     }
@@ -128,10 +128,10 @@ void scene_manager_c::push(scene_c *scene, image_c::stencil_type_e transition) {
     get_logical_screen().with_dirtymap(nullptr, [this] {
         top_scene().will_appear(get_logical_screen(), false);
     });
-    enqueue_transition(transition);
+    set_transition(transition);
 }
 
-void scene_manager_c::pop(image_c::stencil_type_e transition, int count) {
+void scene_manager_c::pop(transition_c *transition, int count) {
     while (count-- > 0) {
         auto &top = top_scene();
         top.will_disappear(false);
@@ -143,16 +143,26 @@ void scene_manager_c::pop(image_c::stencil_type_e transition, int count) {
             top_scene().will_appear(get_logical_screen(), true);
         });
     }
-    enqueue_transition(transition);
+    set_transition(transition);
 }
 
-void scene_manager_c::replace(scene_c *scene, image_c::stencil_type_e transition) {
+void scene_manager_c::replace(scene_c *scene, transition_c *transition) {
     top_scene().will_disappear(false);
     enqueue_delete(&top_scene());
     _scene_stack.back() = scene;
     get_logical_screen().with_dirtymap(nullptr, [this] {
         top_scene().will_appear(get_logical_screen(), false);
     });
-    enqueue_transition(transition);
+    set_transition(transition);
 }
 
+void scene_manager_c::set_transition(transition_c *transition, bool done) {
+    if (_transition) delete _transition;
+    if (transition) {
+        _transition = transition;
+    } else if (done) {
+        _transition = nullptr;
+    } else {
+        _transition = new no_transition_c();
+    }
+}
