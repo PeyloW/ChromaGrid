@@ -286,7 +286,7 @@ void image_c::imp_draw_aligned(const image_c &srcImage, point_s point) const {
     }
 }
 
-void image_c::imp_draw_rect(const image_c &srcImage, cgrect_t *const rect, point_s point) const {
+void image_c::imp_draw_rect(const image_c &srcImage, rect_s *const rect, point_s point) const {
     assert(get_size().contains(point));
     for (int y = 0; y < rect->size.height; y++) {
         for (int x = 0; x < rect->size.width; x++) {

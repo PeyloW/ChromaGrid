@@ -9,7 +9,7 @@
 
 using namespace toybox;
 
-#define CGDIRTYMAP_BITSET (0)
+#define CGDIRTYMAP_BITSET (1)
 
 #if CGDIRTYMAP_BITSET
     static const int LOOKUP_SIZE = 256;
@@ -71,6 +71,7 @@ void dirtymap_c::mark(const rect_s &rect) {
     const int x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
     const int x2 = (rect.origin.x + rect.size.width - 1) / CGDIRTYMAP_TILE_WIDTH;
     const int y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
+    assert(y1 < _size.height);
 #if CGDIRTYMAP_BITSET
 #define BITS_PER_BYTE 8
     static const uint8_t first_byte_masks[BITS_PER_BYTE] = {
@@ -81,11 +82,16 @@ void dirtymap_c::mark(const rect_s &rect) {
     };
 
     const int extra_rows = ((rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT - y1);
+    assert(y1 + extra_rows < _size.height);
     const int start_byte = x1 / BITS_PER_BYTE;
+    assert(start_byte < _size.width);
     const int end_byte = x2 / BITS_PER_BYTE;
+    assert(end_byte < _size.width);
     const int start_bit = x1 % BITS_PER_BYTE;
+    assert(start_bit < 8);
     const int end_bit = x2 % BITS_PER_BYTE;
-
+    assert(end_bit < 8);
+    
     uint8_t *data = _data + (start_byte + _size.width * y1);
 
     if (extra_rows == 0) {
@@ -198,7 +204,7 @@ void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
                     auto bitrunlist = lookup_table[byte];
                     int16_t *bitrun = (int16_t*)bitrunlist->bit_runs;
                     for (int r = bitrunlist->num_runs; --r != -1; ) {
-                        cgrect_t rect = (cgrect_t){
+                        rect_s rect = (rect_s){
                             (point_s){ (int16_t)(at.x + *bitrun++), at.y},
                             (size_s){ *bitrun++, height}
                         };

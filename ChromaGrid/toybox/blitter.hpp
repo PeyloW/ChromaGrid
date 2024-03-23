@@ -66,21 +66,21 @@ namespace toybox {
             return halftoneRAM[mode & 0xf];
         }
 #ifdef __M68000__
-        inline void start() {
-#if 1
-            __asm__ volatile (
-                              "bset.b #7,0xffff8A3C.w \n\t"
-                              "nop \n"
-                              ".Lwait: bset.b #7,0xffff8A3C.w \n\t"
-                              "nop \n\t"
-                              "bne.s .Lwait \n\t" : : : );
-#else
-            __asm__ volatile ("move.b #0xc0,0xffff8A3C.w \n\t"  : : : );
-#endif
+        inline void start(bool hog = false) {
+            if (hog) {
+                __asm__ volatile ("move.b #0xc0,0xffff8A3C.w \n\t"  : : : );
+            } else {
+                __asm__ volatile (
+                                  "bset.b #7,0xffff8A3C.w \n\t"
+                                  "nop \n"
+                                  ".Lrestart: bset.b #7,0xffff8A3C.w \n\t"
+                                  "nop \n\t"
+                                  "bne.s .Lrestart \n\t" : : : );
+            }
         }
 #else
         bool debug;
-        void start();
+        void start(bool hog = false);
 #endif
     };
     

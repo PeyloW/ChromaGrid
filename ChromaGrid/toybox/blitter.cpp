@@ -20,7 +20,7 @@ struct blitter_s *toybox::pBlitter = &_Blitter;
 // Emulate blitter on host machine.
 // Details borrowed from Hatari 1.0 sources (https://github.com/hatari/hatari)
 //
-void blitter_s::start() {
+void blitter_s::start(bool hog) {
 #if DEBUG_BLITTER
     printf("BLIT: %d x %d words.\n\r", this->countX, this->countY);
 #endif
