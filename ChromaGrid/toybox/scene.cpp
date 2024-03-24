@@ -38,6 +38,7 @@ scene_manager_c::scene_manager_c() :
     _screens.emplace_back();
     _screens.emplace_back();
     _screens.emplace_back();
+    srand48(time(nullptr));
 }
 
 scene_manager_c::~scene_manager_c() {

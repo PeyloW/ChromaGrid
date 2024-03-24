@@ -72,15 +72,7 @@ namespace toybox {
         return 0;
 #endif
     }
-    
-    static int32_t rand() {
-#ifdef __M68000__
-        return Random();
-#else
-        return random();
-#endif
-    }
-    
+        
     extern "C" {
         class palette_c;
         class image_c;

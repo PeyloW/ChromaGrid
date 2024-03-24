@@ -78,8 +78,12 @@ namespace toybox {
         typedef enum __packed {
             none,
             orderred,
-            noise
+            noise,
+            diagonal,
+            circle,
+            random
         } stencil_type_e;
+        static stencil_type_e effective_type(stencil_type_e type);
         
         typedef enum __packed {
             align_left,

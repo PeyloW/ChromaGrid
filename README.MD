@@ -146,6 +146,13 @@ Types uses suffix, variables does not:
     * Classes __must__ support move semantics.
     * Never assume copy semantics are available.
 
+#### Known libcmini limitations
+
+libcmini-0.47 used is an older version form 2017, and has a few known issues. It is not being updated as to avoid disruptions before Sommarhack 2024.
+
+* `fread` and `fwrite` does not return number of items, but total bytes on success.
+* `rand()` does not respect `RAND_MAX` with -mshort, and can return negative values.
+* `strncmp()` is just very buggy.
 
 ### File Format
 

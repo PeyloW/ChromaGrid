@@ -133,7 +133,16 @@ timer_c::~timer_c() {
 uint8_t timer_c::base_freq() const {
     switch (_timer) {
         case vbl:
+#ifdef __M68000__
+            if (*(uint8_t*)0xffff820a == 0) {
+                return 60;
+            } else {
+                return 50;
+            }
+#else
             return 50;
+#endif
+            //
         case clock:
             return 200;
         default:

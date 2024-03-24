@@ -22,13 +22,13 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
 
 void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
-    
+        
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
             int dx = ABS(x * 2 - 11);
             int dy = ABS(y * 2 - 11);
             int dist = sqrt((dx * dx + dy * dy) * 8);
-            int32_t r = toybox::rand();
+            auto r = (uint16_t)rand();
             if ((r % 32) > dist) {
                 int shade = 44 - dist;
                 int row;

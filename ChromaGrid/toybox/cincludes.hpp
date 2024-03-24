@@ -42,7 +42,7 @@ extern "C" {
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
-        
+#include <time.h>
 }
 
 // Required for inplace new

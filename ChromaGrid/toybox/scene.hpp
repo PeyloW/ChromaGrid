@@ -70,9 +70,9 @@ namespace toybox {
         scene_c &top_scene() const {
             return *_scene_stack.back();
         };
-        void push(scene_c *scene, transition_c *transition = transition_c::create(image_c::noise, 0));
-        void pop(transition_c *transition  = transition_c::create(image_c::noise, 0), int count = 1);
-        void replace(scene_c *scene, transition_c *transition  = transition_c::create(image_c::noise));
+        void push(scene_c *scene, transition_c *transition = transition_c::create(image_c::random, 0));
+        void pop(transition_c *transition  = transition_c::create(image_c::random, 0), int count = 1);
+        void replace(scene_c *scene, transition_c *transition = transition_c::create(image_c::random));
         
         timer_c vbl;
         timer_c clock;

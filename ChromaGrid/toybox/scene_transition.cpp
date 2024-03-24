@@ -5,8 +5,6 @@
 //  Created by Fredrik on 2024-03-23.
 //
 
-#include <stdio.h>
-
 #include "scene.hpp"
 
 using namespace toybox;
@@ -17,7 +15,7 @@ namespace toybox {
     public:
         dither_transition_c(image_c::stencil_type_e dither) : transition_c() {
             _transition_state.full_restores_left = 2;
-            _transition_state.type = dither;
+            _transition_state.type = image_c::effective_type(dither);
             _transition_state.shade = 0;
         }
         

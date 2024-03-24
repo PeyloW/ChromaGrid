@@ -61,7 +61,7 @@ public:
     
     virtual void tick(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
-        auto transition = transition_c::create(image_c::noise);
+        auto transition = transition_c::create(image_c::random);
         if (button == 0) {
             manager.pop(transition);
         } else if (button > 0) {
@@ -226,7 +226,7 @@ void cglevel_edit_scene_c::tick(image_c &screen, int ticks) {
             break;
         case 1: // Load level
         case 2: {// Save level
-            auto transition = transition_c::create(image_c::noise);
+            auto transition = transition_c::create(image_c::random);
             if (button == 1) {
                 manager.push(new cglevel_edit_persistence_scene_c(manager), transition);
             } else {
