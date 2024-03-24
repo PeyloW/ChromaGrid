@@ -73,7 +73,8 @@ public:
                 return;
             case 1: {
                 auto next_level = (_results.score == level_result_t::FAILED_SCORE) ? _level_num: (_level_num + 1) % rsc.levels.size();
-                manager.replace(new cglevel_scene_c(manager, next_level));
+                auto transition = transition_c::create(g_active_palette->colors[0]);
+                manager.replace(new cglevel_scene_c(manager, next_level), transition);
                 return;
             }
             default:

@@ -37,7 +37,7 @@ namespace toybox {
         class image_c;
         class sount_c;
         
-        extern palette_c *g_active_palette;
+        extern const palette_c *g_active_palette;
         extern sount_c *g_active_sound;
         
     }

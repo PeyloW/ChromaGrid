@@ -49,6 +49,7 @@ namespace toybox {
         
         virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) = 0;
         
+        static transition_c *create(image_c::stencil_type_e dither);
         static transition_c *create(image_c::stencil_type_e dither, uint8_t through);
         static transition_c *create(color_c through);
     };
@@ -56,6 +57,7 @@ namespace toybox {
     class scene_manager_c : private nocopy_c {
     private:
         int32_t _super_token;
+        uint8_t _old_conterm;
     public:
         scene_manager_c();
         ~scene_manager_c();
@@ -70,7 +72,7 @@ namespace toybox {
         };
         void push(scene_c *scene, transition_c *transition = transition_c::create(image_c::noise, 0));
         void pop(transition_c *transition  = transition_c::create(image_c::noise, 0), int count = 1);
-        void replace(scene_c *scene, transition_c *transition  = transition_c::create(image_c::noise, 0));
+        void replace(scene_c *scene, transition_c *transition  = transition_c::create(image_c::noise));
         
         timer_c vbl;
         timer_c clock;

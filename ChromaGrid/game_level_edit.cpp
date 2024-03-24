@@ -61,16 +61,17 @@ public:
     
     virtual void tick(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
+        auto transition = transition_c::create(image_c::noise);
         if (button == 0) {
-            manager.pop();
+            manager.pop(transition);
         } else if (button > 0) {
             if (_recipe) {
                 memcpy(rsc.user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
                 rsc.save_user_levels();
-                manager.pop();
+                manager.pop(transition);
             } else {
-                manager.pop();
-                manager.replace(new cglevel_edit_scene_c(manager, rsc.user_levels[button_to_level_idx(button)]));
+                manager.pop(nullptr);
+                manager.replace(new cglevel_edit_scene_c(manager, rsc.user_levels[button_to_level_idx(button)]), transition);
             }
         }
     }
@@ -224,16 +225,22 @@ void cglevel_edit_scene_c::tick(image_c &screen, int ticks) {
             manager.pop();
             break;
         case 1: // Load level
-            manager.push(new cglevel_edit_persistence_scene_c(manager));
+        case 2: {// Save level
+            auto transition = transition_c::create(image_c::noise);
+            if (button == 1) {
+                manager.push(new cglevel_edit_persistence_scene_c(manager), transition);
+            } else {
+                make_recipe(temp.recipe);
+                manager.push(new cglevel_edit_persistence_scene_c(manager, &temp.recipe), transition);
+            }
             break;
-        case 2: // Save level
+        }
+        case 3: { // Try level
             make_recipe(temp.recipe);
-            manager.push(new cglevel_edit_persistence_scene_c(manager, &temp.recipe));
+            auto transition = transition_c::create(g_active_palette->colors[0]);
+            manager.push(new cglevel_scene_c(manager, &temp.recipe), transition);
             break;
-        case 3: // Try level
-            make_recipe(temp.recipe);
-            manager.push(new cglevel_scene_c(manager, &temp.recipe));
-            break;
+        }
         default:
             break;
     }

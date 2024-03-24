@@ -79,13 +79,15 @@ void cgintro_scene_c::tick(image_c &screen, int ticks) {
         case 4:
             manager.push(new cgscores_scene_c(manager));
             break;
-        case 5:
+        case 5: {
+            auto transition = transition_c::create(g_active_palette->colors[0]);
             if (rsc.level_results.front().score == 0) {
-                manager.push(new cglevel_scene_c(manager, 0));
+                manager.push(new cglevel_scene_c(manager, 0), transition);
             } else {
-                manager.push(new cglevel_select_scene_c(manager));
+                manager.push(new cglevel_select_scene_c(manager), transition);
             }
             break;
+        }
         default:
             break;
     }
@@ -145,7 +147,8 @@ void cglevel_select_scene_c::tick(image_c &screen, int ticks) {
         button = update_button_group(screen, *group);
         if (button >= 0) {
             int level = row * 5 + button;
-            manager.replace(new cglevel_scene_c(manager, level));
+            auto transition = transition_c::create(g_active_palette->colors[0]);
+            manager.replace(new cglevel_scene_c(manager, level), transition);
             return;
         }
         row++;

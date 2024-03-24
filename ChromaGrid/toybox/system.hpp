@@ -82,7 +82,9 @@ namespace toybox {
     }
     
     extern "C" {
+        class palette_c;
         class image_c;
+        extern const palette_c *g_active_palette;
         extern const image_c *g_active_image;
     }
     

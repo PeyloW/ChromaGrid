@@ -51,7 +51,7 @@ static void _yieldFunction() {
             scene_manager_c manager;
             auto intro_scene = new cgintro_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
-            manager.run(intro_scene, overlay_scene);
+            manager.run(intro_scene, overlay_scene, transition_c::create(image_c::noise));
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSApp terminate:nil];

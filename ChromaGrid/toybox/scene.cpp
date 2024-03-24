@@ -14,7 +14,7 @@ public:
     no_transition_c() : transition_c() {
         _full_restores_left = 2;
     }
-    bool tick(image_c &phys_screen, image_c &log_screen, int ticks) override {
+    bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
         phys_screen.draw_aligned(log_screen, (point_s){0,0});
         return --_full_restores_left <= 0;
     }
@@ -28,6 +28,10 @@ scene_manager_c::scene_manager_c() :
     clock(timer_c::clock),
     mouse((rect_s){{0,0}, {320, 192}})
 {
+#ifdef __M68000__
+    _old_conterm = *(uint8_t*)0x484;
+    *(uint8_t*)0x484 = 0;
+#endif
     _overlay_scene = nullptr;
     _active_physical_screen = 0;
     _transition = nullptr;
@@ -37,6 +41,9 @@ scene_manager_c::scene_manager_c() :
 }
 
 scene_manager_c::~scene_manager_c() {
+#ifdef __M68000__
+    *(uint8_t*)0x484 = _old_conterm;
+#endif
     super(_super_token);
 }
 

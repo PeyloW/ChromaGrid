@@ -15,7 +15,7 @@ namespace toybox {
     
     class dither_transition_c : public transition_c {
     public:
-        dither_transition_c(image_c::stencil_type_e dither, uint8_t through) : transition_c() {
+        dither_transition_c(image_c::stencil_type_e dither) : transition_c() {
             _transition_state.full_restores_left = 2;
             _transition_state.type = dither;
             _transition_state.shade = 0;
@@ -32,7 +32,7 @@ namespace toybox {
             _transition_state.shade += 1 + MAX(1, ticks);
             return _transition_state.full_restores_left <= 0;
         }
-    private:
+    protected:
         struct {
             int full_restores_left;
             image_c::stencil_type_e type;
@@ -41,10 +41,84 @@ namespace toybox {
     };
 }
 
-transition_c *transition_c::create(image_c::stencil_type_e dither, uint8_t through) {
-    return new dither_transition_c(dither, through);
+class dither_through_transition_c : public dither_transition_c {
+public:
+    dither_through_transition_c(image_c::stencil_type_e dither, uint8_t through) :
+        dither_transition_c(dither), _through(through) {
+            _transition_state.full_restores_left = 4;
+        }
+    
+    virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
+        if (_transition_state.full_restores_left > 2) {
+            auto shade = MIN(image_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
+            phys_screen.with_stencil(image_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
+                phys_screen.fill(_through, (rect_s){{0,0}, phys_screen.get_size()});
+            });
+            if (shade == image_c::STENCIL_FULLY_OPAQUE) {
+                _transition_state.full_restores_left--;
+            }
+            if (_transition_state.full_restores_left > 2) {
+                _transition_state.shade += 1 + MAX(1, ticks);
+            } else {
+                _transition_state.shade = 0;
+            }
+            return false;
+        } else {
+            return dither_transition_c::tick(phys_screen, log_screen, ticks);
+        }
+    }
+protected:
+    const uint8_t _through;
+};
+
+class fade_through_transition_c : public transition_c {
+public:
+    fade_through_transition_c(color_c through) : transition_c() {
+        _count = 0;
+        uint8_t r, g, b;
+        through.get(&r, &g, &b);
+        _old_active = g_active_palette;
+        assert(_old_active);
+        for (int i = 0; i <= 16; i++) {
+            _palettes.push_back();
+            auto &palette = _palettes.back();
+            int shade = i * color_c::MIX_FULLY_OTHER / 16;
+            for (int j = 0; j < 16; j++) {
+                palette.colors[j] = _old_active->colors[j].mix(through, shade);
+            }
+        }
+    }
+    virtual ~fade_through_transition_c() {
+        _old_active->set_active();
+    }
+    virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
+        const int count = _count / 2;
+        if (count < 17) {
+            _palettes[count].set_active();
+        } else if (count < 18) {
+            phys_screen.draw_aligned(log_screen, (point_s){0, 0});
+        } else if (count < 35) {
+            _palettes[34 - count].set_active();
+        } else {
+            return true;
+        }
+        _count++;
+        return false;
+    }
+private:
+    const palette_c *_old_active;
+    int _count;
+    vector_c<palette_c, 17> _palettes;
+};
+
+transition_c *transition_c::create(image_c::stencil_type_e dither) {
+    return new dither_transition_c(dither);
 }
 
-transition_c *create(color_c through) {
-    return nullptr;;
+transition_c *transition_c::create(image_c::stencil_type_e dither, uint8_t through) {
+    return new dither_through_transition_c(dither, through);
+}
+
+transition_c *transition_c::create(color_c through) {
+    return new fade_through_transition_c(through);
 }

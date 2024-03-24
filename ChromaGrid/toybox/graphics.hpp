@@ -33,6 +33,9 @@ namespace toybox {
             *g = from_ste(color, 4);
             *b = from_ste(color, 0);
         }
+        color_c mix(color_c other, int shade) const;
+        static const int MIX_FULLY_THIS = 0;
+        static const int MIX_FULLY_OTHER = 64;
     private:
         __forceinline static uint16_t to_ste(const uint8_t c, const uint8_t shift) {
             static const uint8_t STE_TO_SEQ[16] = { 0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
@@ -48,7 +51,8 @@ namespace toybox {
     class palette_c : private nocopy_c {
     public:
         color_c colors[16];
-        palette_c(uint16_t *cs) {memcpy(colors, cs, sizeof(colors)); }
+        palette_c() { memset(colors, 0, sizeof(colors)); }
+        palette_c(uint16_t *cs) { memcpy(colors, cs, sizeof(colors)); }
         palette_c(uint8_t *c) {
             c += 3 * 16;
             for (int i = 16; --i != -1; ) {
@@ -116,9 +120,6 @@ namespace toybox {
         }
         static const image_c::stencil_t *const get_stencil(stencil_type_e type, int shade);
         
-        size_t dirtymap_size() const {
-            return _line_words * _size.height / 16;
-        };
         template<class Commands>
         __forceinline void with_dirtymap(dirtymap_c *dirtymap, Commands commands) {
             dirtymap_c *old_dirtymap = _dirtymap;
@@ -199,10 +200,6 @@ namespace toybox {
         }
         
     private:
-        font_c() = delete;
-        font_c(const font_c &) = delete;
-        font_c(font_c &&) = delete;
-        
         const image_c &_image;
         rect_s _rects[96];
     };
