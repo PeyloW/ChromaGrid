@@ -6,6 +6,7 @@
 //
 
 #include "system.hpp"
+#include "forward_list.hpp"
 
 extern "C" {
 
@@ -21,14 +22,21 @@ static int g_timer_ref_counts[2] = { 0 };
 typedef struct __packed_struct {
     uint8_t freq;
     uint8_t cnt;
-    timer_c::func_t func;
+    timer_c::func_a_t func;
+    void *context;
 } cgtimer_func_s;
     
-#define TIMER_FUNC_MAX_CNT 4
-cgtimer_func_s g_vbl_functions[TIMER_FUNC_MAX_CNT+1] = { {0,0, nullptr} };
+#define TIMER_FUNC_MAX_CNT 16
+typedef forward_list_c<cgtimer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
+#ifdef __M68000__
+static_assert(sizeof(timer_func_list_c::node_t) == 14, "timer_func_list_c::node_t) size mismatch");
+#endif
+    
+timer_func_list_c g_vbl_functions;
 volatile uint32_t g_vbl_tick = 0;
-cgtimer_func_s g_clock_functions[TIMER_FUNC_MAX_CNT+1] = { {0,0, nullptr} };
+timer_func_list_c g_clock_functions;
 volatile uint32_t g_clock_tick = 0;
+    
 static rect_s g_mouse_limit;
 static uint8_t g_prev_mouse_butons;
 uint8_t g_mouse_buttons;
@@ -46,19 +54,17 @@ point_s g_mouse_position;
 #else
     void (*g_yield_function)() = nullptr;
 
-    static void g_do_timer(cgtimer_func_s timer_funcs[], int freq) {
-        for (int i = 0; i < TIMER_FUNC_MAX_CNT; i++) {
-            if (timer_funcs[i].freq) {
-                bool trigger = false;
-                int cnt = (int)timer_funcs[i].cnt - timer_funcs[i].freq;
-                if (cnt <= 0) {
-                    trigger = true;
-                    cnt += freq;
-                }
-                timer_funcs[i].cnt = (uint8_t)cnt;
-                if (trigger) {
-                    timer_funcs[i].func();
-                }
+    static void g_do_timer(timer_func_list_c &timer_funcs, int freq) {
+        for (auto &timer_func : timer_funcs) {
+            bool trigger = false;
+            int cnt = (int)timer_func.cnt - timer_func.freq;
+            if (cnt <= 0) {
+                trigger = true;
+                cnt += freq;
+            }
+            timer_func.cnt = (uint8_t)cnt;
+            if (trigger) {
+                timer_func.func(timer_func.context);
             }
         }
     }
@@ -85,6 +91,8 @@ point_s g_mouse_position;
 #endif
 }
 
+template<>
+timer_func_list_c::allocator::type timer_func_list_c::allocator::first_block = nullptr;
 
 timer_c::timer_c(timer_e timer) : _timer(timer) {
     assert(timer == vbl || timer == clock);
@@ -151,33 +159,26 @@ uint8_t timer_c::base_freq() const {
     }
 }
 
-void timer_c::add_func(func_t func, uint8_t freq) {
+void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
     if (freq == 0) {
         freq = base_freq();
     }
-    with_paused_timers([this, func, freq] {
-        auto functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
-        for (int i = 0; i < TIMER_FUNC_MAX_CNT; i++) {
-            if (functions[i].freq == 0) {
-                functions[i] = { freq, base_freq(), func };
-                return;
-            }
-        }
-        assert(0);
+    with_paused_timers([this, func, context, freq] {
+        auto &functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
+        functions.push_front((cgtimer_func_s){freq, base_freq(), func, context});
     });
 }
 
-void timer_c::remove_func(func_t func) {
+void timer_c::remove_func(func_a_t func) {
     with_paused_timers([this, func] {
-        auto functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
-        int i;
-        for (i = 0; i < TIMER_FUNC_MAX_CNT; i++) {
-            if (functions[i].func == func) {
-                break;
+        auto &functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
+        auto it = functions.before_begin();
+        while (it._node->next) {
+            if (it._node->next->value.func == func) {
+                functions.erase_after(it);
+                return;
             }
-        }
-        for ( ; i < TIMER_FUNC_MAX_CNT; i++) {
-            functions[i] = g_vbl_functions[i+1];
+            it++;
         }
     });
 }

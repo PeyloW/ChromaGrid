@@ -19,22 +19,24 @@
     .global _g_microwire_write
 
     .struct
-cgtimer_func_freq:      ds.b    1
-cgtimer_func_cnt:       ds.b    1
-cgtimer_func_func:      ds.l    4
+timer_func_next:        ds.l    1
+timer_func_freq:        ds.b    1
+timer_func_cnt:         ds.b    1
+timer_func_func:        ds.l    1
+timer_func_context:     ds.l    1
 
     .struct
-image_super_image:            ds.l    1
-image_palette:                ds.l    1
-image_bitmap:                  ds.l    1
-image_maskmap:                 ds.l    1
-image_dirtymap:                ds.l    1
-image_stencil:                 ds.l    1
-image_size:                    ds.w    2
-image_offset:                  ds.w    2
-image_line_words:              ds.w    1
-image_owns_bitmap:             ds.b    1
-image_clipping:                ds.b    1
+image_super_image:      ds.l    1
+image_palette:          ds.l    1
+image_bitmap:           ds.l    1
+image_maskmap:          ds.l    1
+image_dirtymap:         ds.l    1
+image_stencil:          ds.l    1
+image_size:             ds.w    2
+image_offset:           ds.w    2
+image_line_words:       ds.w    1
+image_owns_bitmap:      ds.b    1
+image_clipping:         ds.b    1
 
 
     .text
@@ -54,15 +56,18 @@ _g_vbl_interupt:
     add.l   #1,_g_vbl_tick
     lea     _g_vbl_functions, a2
 .next_func_v:
-    move.b  (a2),d0
+    move.l  timer_func_next(a2),d0
     beq.s   .no_more_funcs_v
-    sub.b   d0,1(a2)
+    move.l  d0,a2
+    move.b  timer_func_freq(a2),d0
+    sub.b   d0,timer_func_cnt(a2)
     bcc.s   .no_call_v
-    add.b   #50,1(a2)
-    move.l  2(a2),a0
-    jsr     (a0)
+    add.b   #50,timer_func_cnt(a2)
+    move.l  timer_func_func(a2),a1
+    move.l  timer_func_context(a2),a0
+    jsr     (a1)
 .no_call_v:
-    add.l   #6,a2
+    add.l   #14,a2
     bra.s   .next_func_v
 .no_more_funcs_v:
     movem.l (sp)+,d0-d2/a0-a2
@@ -80,15 +85,18 @@ _g_clock_interupt:
     add.l   #1,_g_clock_tick
     lea     _g_clock_functions,a2
 .next_func_c:
-    move.b  (a2),d0
+    move.l  timer_func_next(a2),d0
     beq.s   .no_more_funcs_c
-    sub.b   d0,1(a2)
+    move.l  d0,a2
+    move.b  timer_func_freq(a2),d0
+    sub.b   d0,timer_func_cnt(a2)
     bcc.s   .no_call_c
-    add.b   #200,1(a2)
-    move.l  2(a2),a0
-    jsr     (a0)
+    add.b   #200,timer_func_cnt(a2)
+    move.l  timer_func_func(a2),a1
+    move.l  timer_func_context(a2),a0
+    jsr     (a1)
 .no_call_c:
-    add.l   #6,a2
+    add.l   #14,a2
     bra.s   .next_func_c
 .no_more_funcs_c:
 #ifdef DEBUG_CPU

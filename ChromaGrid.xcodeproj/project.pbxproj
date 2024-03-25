@@ -93,6 +93,8 @@
 		A682A3E62B92459500FF2E57 /* scene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = scene.hpp; sourceTree = "<group>"; };
 		A682A3E82B92613F00FF2E57 /* game_intro.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_intro.cpp; sourceTree = "<group>"; };
 		A69612C12BAF9C06008ACD05 /* scene_transition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene_transition.cpp; sourceTree = "<group>"; };
+		A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = static_allocator.hpp; sourceTree = "<group>"; };
+		A69612D72BB1BE9F008ACD05 /* forward_list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = forward_list.hpp; sourceTree = "<group>"; };
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -341,8 +343,10 @@
 			children = (
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
 				A6E484E22BAE709B004CCA7D /* type_traits.hpp */,
+				A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */,
 				A6E484E02BAE6D49004CCA7D /* utility.hpp */,
 				A6E484E12BAE6DB3004CCA7D /* vector.hpp */,
+				A69612D72BB1BE9F008ACD05 /* forward_list.hpp */,
 				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
 			);
 			name = toystd;

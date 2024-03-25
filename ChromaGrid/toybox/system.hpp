@@ -122,8 +122,8 @@ namespace toybox {
         
         uint8_t base_freq() const;
         
-        void add_func(func_t func, uint8_t freq = 0);
-        void remove_func(func_t func);
+        void add_func(func_a_t func, void *context = nullptr, uint8_t freq = 0);
+        void remove_func(func_a_t func);
         
         uint32_t tick();
         void reset_tick();

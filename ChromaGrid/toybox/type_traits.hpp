@@ -1,8 +1,8 @@
 //
 //  type_traits.hpp
-//  CodingCpp
+//  ChromaGrid
 //
-//  Created by Fredrik Olsson on 3/22/24.
+//  Created by Fredrik Olsson on 2024-03-22.
 //
 
 #ifndef type_traits_h
