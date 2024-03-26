@@ -270,7 +270,6 @@ public:
 
 
 level_t::level_t(level_recipe_t *recipe) :
-    _time_count(0),
     _grid((grid_c*)calloc(1, sizeof(grid_c)))
 {
     assert(recipe->header.width <= grid_c::GRID_MAX);
@@ -470,11 +469,9 @@ void level_t::draw_move_count(image_c &screen) const {
     screen.draw(rsc.mono_font, buf, at, image_c::align_left);
 }
 
-level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int ticks) {
-    _time_count += ticks;
-    if (_time_count >= 50) {
-        _results.time--;
-        _time_count -= 50;
+level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int passed_seconds) {
+    if (passed_seconds) {
+        _results.time -= passed_seconds;
         debug_cpu_color(DEBUG_CPU_LEVEL_DRAW_TIME);
         draw_time(screen);
     }
@@ -535,7 +532,7 @@ level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int ticks
         }
     }
     
-    return _results.time > 0 ? normal : failed;
+    return (int16_t)_results.time > 0 ? normal : failed;
 }
 
 #ifndef __M68000__

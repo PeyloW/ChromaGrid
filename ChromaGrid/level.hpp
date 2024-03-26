@@ -99,7 +99,7 @@ public:
     level_t(level_recipe_t *recipe);
     ~level_t();
 
-    state_e update_tick(image_c &screen, mouse_c &mouse, int delta_ticks);
+    state_e update_tick(image_c &screen, mouse_c &mouse, int passed_seconds);
 
     void draw_all(image_c &screen) const;
     
@@ -113,7 +113,6 @@ private:
     void draw_move_count(image_c &screen) const;
 
     level_result_t _results;
-    int _time_count;
     grid_c *_grid;
 };
 

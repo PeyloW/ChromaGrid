@@ -80,11 +80,11 @@ void cgintro_scene_c::tick(image_c &screen, int ticks) {
             manager.push(new cgscores_scene_c(manager));
             break;
         case 5: {
-            auto transition = transition_c::create(g_active_palette->colors[0]);
             if (rsc.level_results.front().score == 0) {
+                auto transition = transition_c::create(g_active_palette->colors[0]);
                 manager.push(new cglevel_scene_c(manager, 0), transition);
             } else {
-                manager.push(new cglevel_select_scene_c(manager), transition);
+                manager.push(new cglevel_select_scene_c(manager));
             }
             break;
         }

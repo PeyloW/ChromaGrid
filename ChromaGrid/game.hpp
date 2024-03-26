@@ -76,14 +76,17 @@ private:
 };
 
 class cglevel_scene_c : public cggame_scene_c {
+    friend void tick_second(cglevel_scene_c *that);
 public:
     static const int TEST_LEVEL = -1;
     cglevel_scene_c(scene_manager_c &manager, int level);
     cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe);
 
     virtual void will_appear(image_c &screen, bool obsured);
+    virtual void will_disappear(bool obscured);
     virtual void tick(image_c &screen, int ticks);
 private:
+    int _passed_seconds;
     cgbutton_group_c<2> _menu_buttons;
     int _level_num;
     level_recipe_t *_recipe;

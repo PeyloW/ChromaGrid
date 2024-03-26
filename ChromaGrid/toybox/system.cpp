@@ -46,6 +46,7 @@ point_s g_mouse_position;
 #ifdef __M68000__
     extern timer_c::func_t g_system_vbl_interupt;
     extern void g_vbl_interupt();
+    extern int16_t g_system_vbl_freq;
     extern timer_c::func_t g_system_clock_interupt;
     extern void g_clock_interupt();
     extern timer_c::func_a_t g_system_mouse_interupt;
@@ -104,6 +105,7 @@ timer_c::timer_c(timer_e timer) : _timer(timer) {
                 #ifdef __M68000__
                     g_system_vbl_interupt = *((func_t *)0x0070);
                     *((func_t *)0x0070) = &g_vbl_interupt;
+                    g_system_vbl_freq = *(uint8_t*)0xffff820a == 0 ? 60 : 50;
                 #endif
                     break;
                 case clock:
@@ -142,11 +144,7 @@ uint8_t timer_c::base_freq() const {
     switch (_timer) {
         case vbl:
 #ifdef __M68000__
-            if (*(uint8_t*)0xffff820a == 0) {
-                return 60;
-            } else {
-                return 50;
-            }
+            return g_system_vbl_freq;
 #else
             return 50;
 #endif
@@ -169,17 +167,18 @@ void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
     });
 }
 
-void timer_c::remove_func(func_a_t func) {
-    with_paused_timers([this, func] {
+void timer_c::remove_func(func_a_t func, void *context) {
+    with_paused_timers([this, func, context] {
         auto &functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
         auto it = functions.before_begin();
         while (it._node->next) {
-            if (it._node->next->value.func == func) {
+            if (it._node->next->value.func == func && it._node->next->value.context == context) {
                 functions.erase_after(it);
                 return;
             }
             it++;
         }
+        assert(0);
     });
 }
 

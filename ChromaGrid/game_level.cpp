@@ -110,11 +110,21 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recip
     _menu_buttons.add_button("Restart");
 }
 
+void tick_second(cglevel_scene_c *that) {
+    that->_passed_seconds++;
+}
+
 void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
+    _passed_seconds = 0;
+    manager.vbl.add_func((timer_c::func_a_t)&tick_second, this, 1);
 }
+
+void cglevel_scene_c::will_disappear(bool obscured) {
+    manager.vbl.remove_func((timer_c::func_a_t)&tick_second, this);
+};
 
 void cglevel_scene_c::tick(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
@@ -122,17 +132,21 @@ void cglevel_scene_c::tick(image_c &screen, int ticks) {
         case 0:
             manager.pop();
             return;
-        case 1:
+        case 1: {
+            auto transition = transition_c::create(g_active_palette->colors[0]);
             if (_level_num == -1) {
-                manager.replace(new cglevel_scene_c(manager, _recipe));
+                manager.replace(new cglevel_scene_c(manager, _recipe), transition);
             } else {
-                manager.replace(new cglevel_scene_c(manager, _level_num));
+                manager.replace(new cglevel_scene_c(manager, _level_num), transition);
             }
             return;
+        }
         default:
             break;
     }
-    auto state = _level.update_tick(screen, manager.mouse, ticks);
+    auto passed = _passed_seconds;
+    _passed_seconds = 0;
+    auto state = _level.update_tick(screen, manager.mouse, passed);
     if (state != level_t::normal) {
         level_result_t results;
         _level.get_results(&results);

@@ -7,6 +7,7 @@
     .extern _g_clock_tick
     .extern _g_active_image
     .global _g_vbl_interupt
+    .global _g_system_vbl_freq
     .global _g_system_vbl_interupt
     .global _g_clock_interupt
     .global _g_system_clock_interupt
@@ -62,7 +63,10 @@ _g_vbl_interupt:
     move.b  timer_func_freq(a2),d0
     sub.b   d0,timer_func_cnt(a2)
     bcc.s   .no_call_v
-    add.b   #50,timer_func_cnt(a2)
+    .dc.w    0x062a                       | add.b   #50,timer_func_cnt(a2)
+_g_system_vbl_freq:
+    .dc.w   0x32
+    .dc.w   0x05
     move.l  timer_func_func(a2),a1
     move.l  timer_func_context(a2),a0
     jsr     (a1)
