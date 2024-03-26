@@ -157,6 +157,14 @@ uint8_t timer_c::base_freq() const {
     }
 }
 
+void timer_c::add_func(func_t func, uint8_t freq) {
+    add_func((func_a_t)func, nullptr, freq);
+}
+
+void timer_c::remove_func(func_t func) {
+    remove_func((func_a_t)func, nullptr);
+}
+
 void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
     if (freq == 0) {
         freq = base_freq();

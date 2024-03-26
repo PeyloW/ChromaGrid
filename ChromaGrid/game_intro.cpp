@@ -17,7 +17,6 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
         _menu_buttons.add_button(*title);
     }
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
-    _menu_buttons.buttons[2].state = cgbutton_t::disabled;
 }
 
 void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
@@ -71,7 +70,7 @@ void cgintro_scene_c::tick(image_c &screen, int ticks) {
             manager.push(new cgcredits_scene_c(manager));
             break;
         case 2:
-            // Show help
+            manager.push(new cghelp_scene_c(manager));
             break;
         case 3:
             manager.push(new cglevel_edit_scene_c(manager, nullptr));

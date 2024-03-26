@@ -9,8 +9,8 @@ AR=/opt/cross-mint-OLD/bin/m68k-atari-mint-ar
 
 FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
-FLAGS+=-g0 -DNDEBUG
-FLAGS+=-DDEBUG_CPU
+FLAGS+=-g0 -DNDEBUG -s
+#FLAGS+=-DDEBUG_CPU
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti -fpermissive
@@ -26,7 +26,7 @@ TOYBOX_OBJECTS+=scene.o scene_transition.o
 
 CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o
-CG_OBJECTS+=game.o game_intro.o game_scores.o game_credits.o game_level.o game_level_edit.o
+CG_OBJECTS+=game.o game_intro.o game_scores.o game_credits.o game_help.o game_level.o game_level_edit.o
 
 all: toybox cgrid
 

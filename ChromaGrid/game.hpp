@@ -62,6 +62,19 @@ private:
     cgbutton_group_c<5> _menu_buttons;
 };
 
+class cghelp_scene_c : public cggame_scene_c {
+public:
+    typedef enum __packed {
+        basics, special_tiles, scoring, level_editor
+    } page_e;
+    cghelp_scene_c(scene_manager_c &manager, page_e page = basics);
+    virtual void will_appear(image_c &screen, bool obsured);
+    virtual void tick(image_c &screen, int ticks);
+private:
+    page_e _page;
+    cgbutton_group_c<5> _menu_buttons;
+};
+
 class cgscores_scene_c : public cggame_scene_c {
 public:
     typedef enum __packed {

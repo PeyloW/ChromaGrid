@@ -12,6 +12,7 @@
 		A682A3E72B92459500FF2E57 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E52B92459500FF2E57 /* scene.cpp */; };
 		A682A3EA2B92613F00FF2E57 /* game_intro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_intro.cpp */; };
 		A69612C22BAF9C06008ACD05 /* scene_transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612C12BAF9C06008ACD05 /* scene_transition.cpp */; };
+		A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612D82BB26B86008ACD05 /* game_help.cpp */; };
 		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
 		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
 		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
@@ -95,6 +96,7 @@
 		A69612C12BAF9C06008ACD05 /* scene_transition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene_transition.cpp; sourceTree = "<group>"; };
 		A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = static_allocator.hpp; sourceTree = "<group>"; };
 		A69612D72BB1BE9F008ACD05 /* forward_list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = forward_list.hpp; sourceTree = "<group>"; };
+		A69612D82BB26B86008ACD05 /* game_help.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_help.cpp; sourceTree = "<group>"; };
 		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				A69AE4C02B6EBFCA00EBA43D /* game.cpp */,
 				A682A3E82B92613F00FF2E57 /* game_intro.cpp */,
 				A6F766AA2B9509EB00325754 /* game_credits.cpp */,
+				A69612D82BB26B86008ACD05 /* game_help.cpp */,
 				A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */,
 				A6F766AE2B96AA9F00325754 /* game_level.cpp */,
 				A6A4192D2B9954DD0062339B /* game_level_edit.cpp */,
@@ -484,6 +487,7 @@
 				A69AE51D2B8AC25300EBA43D /* graphics_draw_blitter.cpp in Sources */,
 				A69AE4ED2B791FF100EBA43D /* system.cpp in Sources */,
 				A6F766AD2B96A80000325754 /* level.cpp in Sources */,
+				A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */,
 				A6E484D92BA3EDB6004CCA7D /* game_scores.cpp in Sources */,
 				A6E484D52BA3381D004CCA7D /* button.cpp in Sources */,
 				A69AE5212B8BB71E00EBA43D /* blitter.cpp in Sources */,

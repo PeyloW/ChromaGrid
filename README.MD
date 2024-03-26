@@ -66,7 +66,7 @@ Legend: __Required__, Expected , _Optional_
     * [x] __Shared resources manager__
     * [x] __A stage manager - push-pop scenes__
         * [x] **Scene transitions**
-        * [ ] Transition through black
+        * [x] Transition through black
     * [x] Generic scene
 * [ ] Introduction scene
     * [ ] T.O.Y.S. logo
@@ -85,11 +85,12 @@ Legend: __Required__, Expected , _Optional_
     * [ ] Dedications
     * [ ] Greetings
 * [ ] __Help scene__
-    * [ ] Goal of the game
-        * [ ] Tile types
-        * [ ] Orb fusing    
-    * [ ] _Editing levels_
-    * [ ] _Scoring_
+    * [x] Goal of the game
+        * [x] Tile types
+        * [x] Orb fusing    
+    * [x] _Editing levels_
+    * [x] _Scoring_
+    * [ ] Help scene with graphics.
 * [ ] __Gameplay scene__
     * Re-use right side background
     * [x] __16x16 tiles, 5x types__
