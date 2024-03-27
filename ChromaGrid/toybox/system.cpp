@@ -7,6 +7,7 @@
 
 #include "system.hpp"
 #include "forward_list.hpp"
+#include "algorithm.hpp"
 
 extern "C" {
 
@@ -254,8 +255,8 @@ mouse_c::state_e mouse_c::get_state(button_e button) const {
 
 point_s mouse_c::get_postion() {
     point_s clamped_point = (point_s){
-        (int16_t)(MIN(g_mouse_limit.origin.x + g_mouse_limit.size.width - 1, MAX(g_mouse_position.x, g_mouse_limit.origin.x))),
-        (int16_t)(MIN(g_mouse_limit.origin.y + g_mouse_limit.size.height - 1, MAX(g_mouse_position.y, g_mouse_limit.origin.y)))
+        (int16_t)(MIN(g_mouse_limit.max_x(), MAX(g_mouse_position.x, g_mouse_limit.origin.x))),
+        (int16_t)(MIN(g_mouse_limit.max_y(), MAX(g_mouse_position.y, g_mouse_limit.origin.y)))
     };
     g_mouse_position = clamped_point;
     return clamped_point;

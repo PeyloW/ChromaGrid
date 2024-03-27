@@ -38,6 +38,8 @@ namespace toybox {
     struct rect_s {
         point_s origin;
         size_s size;
+        __forceinline int16_t max_x() const { return origin.x + size.width - 1; }
+        __forceinline int16_t max_y() const { return origin.y + size.height - 1; }
         bool operator==(const rect_s &r) const {
             return origin == r.origin && size == r.size;
         }

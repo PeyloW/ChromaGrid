@@ -78,7 +78,7 @@ public:
         _old_active = g_active_palette;
         assert(_old_active);
         for (int i = 0; i <= 16; i++) {
-            _palettes.push_back();
+            _palettes.emplace_back();
             auto &palette = _palettes.back();
             int shade = i * color_c::MIX_FULLY_OTHER / 16;
             for (int j = 0; j < 16; j++) {

@@ -83,6 +83,13 @@ namespace toystd {
     template<typename T> struct is_destructible : public bool_constant<sizeof(detail::is_destructible_imp::test<T>(0)) == sizeof(true_type)> {};
     template<typename T> struct is_trivially_destructible : bool_constant<is_destructible<T>::value && __has_trivial_destructor(T)> {};
     
+    template<typename T>
+    struct __attribute__((aligned(alignof(T)))) aligned_membuf {
+        uint8_t data[sizeof(T)];
+        void *addr() const { return (void *)&data; }
+        T *ptr() const { return (T *)&data; }
+    };
+    
 }
 
 #endif /* type_traits_h */

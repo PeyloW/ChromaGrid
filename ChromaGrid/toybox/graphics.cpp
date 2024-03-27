@@ -117,7 +117,7 @@ font_c::font_c(const image_c &image, size_s max_size, uint8_t space_width, uint8
         leading_done:
             // Find last non-empty column, count spaces from bottom
             {
-                const point_s max_at = (point_s){ (int16_t)(rect.origin.x + rect.size.width - 1), (int16_t)(rect.origin.y + rect.size.height - 1)};
+                const point_s max_at = (point_s){ (int16_t)(rect.max_x()), (int16_t)(rect.max_y())};
                 for (int fc = 0; fc < rect.size.width; fc++) {
                     for (int fcc = 0; fcc < rect.size.height; fcc++) {
                         const point_s at = (point_s){ (int16_t)(max_at.x - fc), (int16_t)(max_at.y - fcc)};

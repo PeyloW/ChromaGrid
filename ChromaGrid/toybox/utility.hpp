@@ -39,6 +39,13 @@ namespace toystd {
     template<typename T> constexpr typename remove_reference<T>::type&& move(T&& t) noexcept {
         return static_cast<typename remove_reference<T>::type&&>(t);
     }
+    
+    template<typename T>
+    __forceinline void swap(T& a, T& b) {
+        T t = move(a);
+        a = move(b);
+        b = move(t);
+    }
 
     template< class T, class... Args >
     constexpr T* construct_at(T* p, Args&&... args) {

@@ -8,8 +8,7 @@
 #ifndef static_allocator_h
 #define static_allocator_h
 
-#include "cincludes.hpp"
-
+#include "algorithm.hpp"
 
 namespace toystd {
 

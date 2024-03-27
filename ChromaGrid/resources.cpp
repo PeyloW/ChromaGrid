@@ -199,7 +199,7 @@ bool cgresources_c::load_level_results() {
         if (iff.first(IFF_LIST, IFF_CGLR, list)) {
             iff_chunk_s level_chunk;
             while (iff.next(list, IFF_CGLR, level_chunk)) {
-                level_results.push_back();
+                level_results.emplace_back();
                 auto &level_result = level_results.back();
                 if (!level_result.load(iff, level_chunk)) {
                     goto done;
@@ -214,7 +214,7 @@ done:
         level_results.clear();
     }
     while (level_results.size() < levels.size()) {
-        level_results.push_back();
+        level_results.emplace_back();
     }
     return success;
 }

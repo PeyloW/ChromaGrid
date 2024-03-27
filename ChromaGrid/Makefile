@@ -13,7 +13,7 @@ FLAGS+=-g0 -DNDEBUG -s
 #FLAGS+=-DDEBUG_CPU
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
-CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti -fpermissive
+CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
 LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format

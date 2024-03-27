@@ -38,7 +38,7 @@ void image_c::imp_fill(uint8_t color, rect_s rect) const {
     uint16_t dummy_src = 0;
     auto blitter = pBlitter;
 
-    const uint16_t dst_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t dst_max_x    = (uint16_t)rect.max_x();
     const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (rect.origin.x / 16));
     
     // Source
@@ -157,7 +157,7 @@ void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) 
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t src_max_x    = (uint16_t)rect.max_x();
     const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
     const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
     const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
@@ -228,7 +228,7 @@ void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t src_max_x    = (uint16_t)rect.max_x();
     const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
     const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
     const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
@@ -321,7 +321,7 @@ void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)(rect.origin.x + rect.size.width - 1);
+    const uint16_t src_max_x    = (uint16_t)rect.max_x();
     const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
     const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
     const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));

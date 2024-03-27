@@ -8,8 +8,7 @@
 #ifndef vector_h
 #define vector_h
 
-#include "utility.hpp"
-#include "utility.hpp"
+#include "algorithm.hpp"
 
 namespace toystd {
     
@@ -19,48 +18,65 @@ namespace toystd {
     public:
         inline vector_c() : _size(0) {}
         
-        __forceinline TYPE *begin() const { return (TYPE *)&_buffer[0]; }
-        __forceinline TYPE *end() const { return begin() + _size; }
+        __forceinline TYPE *begin() const { return _data[0].ptr(); }
+        __forceinline TYPE *end() const { return _data[_size].ptr(); }
         __forceinline int size() const { return _size; }
         
         inline TYPE& operator[](const int i) const {
             assert(i < _size);
             assert(i >= 0);
-            return begin()[i];
+            return *_data[i].ptr();
         }
         inline TYPE& front() const {
             assert(_size > 0);
-            return *begin();
+            return *_data[0].ptr();
         }
         inline TYPE& back() const {
             assert(_size > 0);
-            return *(end() - 1);
+            return *_data[_size - 1].ptr();
         }
         
-        inline void push_back() {
-            assert(_size < COUNT);
-            memset(begin() + _size++, 0, sizeof(TYPE));
-        }
         inline void push_back(const TYPE& value) {
             assert(_size < COUNT);
-            begin()[_size++] = value;
+            *_data[_size++].ptr() = value;
+        }
+        inline void insert(TYPE *pos, const TYPE &value) {
+            assert(_size < COUNT && pos >= begin() && pos <= end());
+            move_backward(pos, end(), end() + 1);
+            *pos = value;
+            _size++;
         }
         template<class... Args>
         inline void emplace_back(Args&&... args) {
             assert(_size < COUNT);
-            new (begin() + _size++) TYPE(forward<Args>(args)...);
+            new (_data[_size++].addr()) TYPE(forward<Args>(args)...);
+        }
+        template<class... Args>
+        inline void emplace(TYPE *pos, Args&&... args) {
+            assert(_size < COUNT && pos >= begin() && pos <= end());
+            move_backward(pos, end(), end() + 1);
+            new ((void *)pos) TYPE(forward<Args>(args)...);
+            _size++;
         }
         
+        inline void erase(TYPE *pos) {
+            assert(_size > 0 && pos >= begin() && pos < end());
+            destroy_at(pos);
+            move(pos + 1, this->end(), pos);
+            _size--;
+        }
         inline void clear() {
-            _size = 0;
+            while (_size) {
+                destroy_at(_data[--_size].ptr());
+            }
         }
         inline void pop_back() {
             assert(_size > 0);
-            _size--;
+            destroy_at(_data[--_size].ptr());
         }
         
     private:
-        uint8_t _buffer[sizeof(TYPE) * COUNT];
+        aligned_membuf<TYPE> _data[COUNT];
         int _size;
     };
     

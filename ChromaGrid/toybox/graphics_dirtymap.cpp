@@ -70,7 +70,7 @@ dirtymap_c *dirtymap_c::create(const image_c &image) {
 
 void dirtymap_c::mark(const rect_s &rect) {
     const int16_t x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
-    const int16_t x2 = (rect.origin.x + rect.size.width - 1) / CGDIRTYMAP_TILE_WIDTH;
+    const int16_t x2 = (rect.max_x()) / CGDIRTYMAP_TILE_WIDTH;
     const int16_t y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
     assert(y1 < _size.height);
 #if CGDIRTYMAP_BITSET
