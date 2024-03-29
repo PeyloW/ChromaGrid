@@ -25,7 +25,7 @@ public:
     cggame_scene_c(scene_manager_c &manager) :
         scene_c(manager),
         rsc(cgresources_c::shared()) {};
-    const cgresources_c &rsc;
+    cgresources_c &rsc;
     template<class BG>
     int update_button_group(image_c &screen, BG &buttons) const {
         return buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(mouse_c::left));
@@ -126,7 +126,7 @@ public:
 private:
     tilestate_t next_state(const tilestate_t &current, mouse_c::button_e button) const;
     void draw_counts(image_c &screen) const;
-    void draw_tile_template_at(image_c &screen, tilestate_t &state, int index) const;
+    void draw_tile_template_at(image_c &screen, const tilestate_t &state, int index) const;
     void draw_tile_templates(image_c &screen) const;
     void draw_level_grid(image_c &screen, int x, int y) const;
     

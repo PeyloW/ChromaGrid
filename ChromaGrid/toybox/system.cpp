@@ -30,7 +30,7 @@ typedef struct __packed_struct {
 #define TIMER_FUNC_MAX_CNT 16
 typedef forward_list_c<cgtimer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
 #ifdef __M68000__
-static_assert(sizeof(timer_func_list_c::node_t) == 14, "timer_func_list_c::node_t) size mismatch");
+static_assert(sizeof(timer_func_list_c::_node_s) == 14, "timer_func_list_c::_node_s) size mismatch");
 #endif
     
 timer_func_list_c g_vbl_functions;

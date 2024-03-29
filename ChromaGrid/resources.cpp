@@ -29,7 +29,7 @@ static void remap_to(color_e col, image_c::remap_table_t table, uint8_t masked_i
     table[masked_idx] = image_c::MASKED_CIDX;
 }
 
-const cgresources_c& cgresources_c::shared() {
+cgresources_c& cgresources_c::shared() {
     static cgresources_c *rsc = nullptr;
     if (rsc == nullptr) {
         rsc = new cgresources_c();
@@ -170,7 +170,7 @@ bool cgresources_c::load_user_levels() {
     return true;
 }
 
-bool cgresources_c::save_user_levels() const {
+bool cgresources_c::save_user_levels() {
     iff_file_c iff(user_path("levels.dat"), "w+");
     if (iff.get_pos() < 0) {
         return false;
@@ -219,7 +219,7 @@ done:
     return success;
 }
 
-bool cgresources_c::save_level_results() const {
+bool cgresources_c::save_level_results() {
     iff_file_c iff(user_path("scores.dat"), "w+");
     iff_group_s list;
     if (iff.begin(list, IFF_LIST)) {

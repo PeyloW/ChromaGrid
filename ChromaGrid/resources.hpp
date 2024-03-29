@@ -41,10 +41,10 @@ public:
     vector_c<level_result_t, 45> level_results;
     vector_c<level_recipe_t*, 10> user_levels;
 
-    bool save_user_levels() const;
-    bool save_level_results() const;
+    bool save_user_levels();
+    bool save_level_results();
     
-    static const cgresources_c& shared();
+    static cgresources_c& shared();
 private:
     void load_levels();
     bool load_level_results();

@@ -330,7 +330,7 @@ void cglevel_edit_scene_c::draw_counts(image_c &screen) const {
 }
 
 
-void cglevel_edit_scene_c::draw_tile_template_at(image_c &screen, tilestate_t &state, int index) const {
+void cglevel_edit_scene_c::draw_tile_template_at(image_c &screen, const tilestate_t &state, int index) const {
     int16_t x = LEVEL_EDIT_TEMPLATE_ORIGIN_X + index * 16;
     point_s at = (point_s){x, LEVEL_EDIT_TEMPLATE_ORIGIN_Y};
     draw_tilestate(screen, state, at, _selected_template == index);

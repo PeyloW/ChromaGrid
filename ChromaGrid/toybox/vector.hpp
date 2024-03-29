@@ -13,53 +13,76 @@
 namespace toystd {
     
     // Minimal std::vector replacement with static size
-    template<class TYPE, int COUNT>
+    template<class Type, int Count>
     class vector_c : nocopy_c {
     public:
+        typedef Type value_type;
+        typedef value_type* pointer;
+        typedef const value_type* const_pointer;
+        typedef value_type& reference;
+        typedef const value_type& const_reference;
+        typedef value_type* iterator;
+        typedef const value_type* const_iterator;
+        
         inline vector_c() : _size(0) {}
         
-        __forceinline TYPE *begin() const { return _data[0].ptr(); }
-        __forceinline TYPE *end() const { return _data[_size].ptr(); }
-        __forceinline int size() const { return _size; }
+        __forceinline iterator begin() __pure { return _data[0].ptr(); }
+        __forceinline const_iterator begin() const __pure { return _data[0].ptr(); }
+        __forceinline iterator end() __pure { return _data[_size].ptr(); }
+        __forceinline const_iterator end() const __pure { return _data[_size].ptr(); }
+        __forceinline int size() const __pure { return _size; }
         
-        inline TYPE& operator[](const int i) const {
+        inline reference operator[](const int i) __pure {
             assert(i < _size);
             assert(i >= 0);
             return *_data[i].ptr();
         }
-        inline TYPE& front() const {
+        inline const_reference operator[](const int i) const __pure {
+            assert(i < _size);
+            assert(i >= 0);
+            return *_data[i].ptr();
+        }
+        inline reference front() __pure {
             assert(_size > 0);
             return *_data[0].ptr();
         }
-        inline TYPE& back() const {
+        inline const_reference front() const __pure {
+            assert(_size > 0);
+            return *_data[0].ptr();
+        }
+        inline reference back() __pure {
             assert(_size > 0);
             return *_data[_size - 1].ptr();
         }
-        
-        inline void push_back(const TYPE& value) {
-            assert(_size < COUNT);
+        inline const_reference back() const __pure {
+            assert(_size > 0);
+            return *_data[_size - 1].ptr();
+        }
+
+        inline void push_back(const_reference value) {
+            assert(_size < Count);
             *_data[_size++].ptr() = value;
         }
-        inline void insert(TYPE *pos, const TYPE &value) {
-            assert(_size < COUNT && pos >= begin() && pos <= end());
+        inline void insert(const_iterator pos, const_reference value) {
+            assert(_size < Count && pos >= begin() && pos <= end());
             move_backward(pos, end(), end() + 1);
             *pos = value;
             _size++;
         }
         template<class... Args>
         inline void emplace_back(Args&&... args) {
-            assert(_size < COUNT);
-            new (_data[_size++].addr()) TYPE(forward<Args>(args)...);
+            assert(_size < Count);
+            new (_data[_size++].addr()) Type(forward<Args>(args)...);
         }
         template<class... Args>
-        inline void emplace(TYPE *pos, Args&&... args) {
-            assert(_size < COUNT && pos >= begin() && pos <= end());
+        inline void emplace(Type *pos, Args&&... args) {
+            assert(_size < Count && pos >= begin() && pos <= end());
             move_backward(pos, end(), end() + 1);
-            new ((void *)pos) TYPE(forward<Args>(args)...);
+            new ((void *)pos) Type(forward<Args>(args)...);
             _size++;
         }
         
-        inline void erase(TYPE *pos) {
+        inline void erase(const_iterator pos) {
             assert(_size > 0 && pos >= begin() && pos < end());
             destroy_at(pos);
             move(pos + 1, this->end(), pos);
@@ -76,7 +99,7 @@ namespace toystd {
         }
         
     private:
-        aligned_membuf<TYPE> _data[COUNT];
+        aligned_membuf<Type> _data[Count];
         int _size;
     };
     

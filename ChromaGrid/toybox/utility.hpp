@@ -26,8 +26,10 @@ namespace toystd {
     }
         
     template<class C> inline auto begin(C& c) -> decltype(c.begin()) { return c.begin(); };
+    template<class C> inline auto begin(const C& c) -> decltype(c.begin()) { return c.begin(); };
     template<class T, size_t N> inline T* begin(T (&array)[N]) { return &array[0]; };
     template<class C> inline auto end(C& c) -> decltype(c.end()) { return c.end(); };
+    template<class C> inline auto end(const C& c) -> decltype(c.end()) { return c.end(); };
     template<class T, size_t N> inline T* end(T (&array)[N]) { return &array[N]; };
 
     template<typename T> constexpr T&& forward(typename remove_reference<T>::type& t) noexcept {
