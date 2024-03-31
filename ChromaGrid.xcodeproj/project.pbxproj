@@ -40,6 +40,7 @@
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6A419442B9ABA610062339B /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
 		A6A4194C2B9B6D530062339B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4194B2B9B6D530062339B /* main.cpp */; };
+		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6E484B22B9FE5D7004CCA7D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484B12B9FE5D7004CCA7D /* main.cpp */; };
 		A6E484BE2B9FEE81004CCA7D /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
 		A6E484BF2B9FEEA5004CCA7D /* graphics_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5162B88F53500EBA43D /* graphics_draw.cpp */; };
@@ -55,7 +56,6 @@
 		A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484CD2BA1ED02004CCA7D /* drop.aif */; };
 		A6E484D32BA293EE004CCA7D /* take.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484D22BA293EE004CCA7D /* take.aif */; };
 		A6E484D52BA3381D004CCA7D /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484D42BA3381D004CCA7D /* button.cpp */; };
-		A6E484D72BA33F68004CCA7D /* levels.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6E484D62BA33F68004CCA7D /* levels.dat */; };
 		A6E484D92BA3EDB6004CCA7D /* game_scores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */; };
 		A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */ = {isa = PBXBuildFile; fileRef = A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */; };
 		A6E484DD2BA92889004CCA7D /* graphics_dirtymap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484DC2BA92889004CCA7D /* graphics_dirtymap.cpp */; };
@@ -141,6 +141,7 @@
 		A6A419432B9ABA610062339B /* graphics_ilbm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_ilbm.cpp; sourceTree = "<group>"; };
 		A6A419492B9B6D530062339B /* iffutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iffutil; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6A4194B2B9B6D530062339B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6E484AA2B9D0172004CCA7D /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 		A6E484AF2B9FE5D7004CCA7D /* png2ilbm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = png2ilbm; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6E484B12B9FE5D7004CCA7D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -153,7 +154,6 @@
 		A6E484CD2BA1ED02004CCA7D /* drop.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = drop.aif; sourceTree = "<group>"; };
 		A6E484D22BA293EE004CCA7D /* take.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = take.aif; sourceTree = "<group>"; };
 		A6E484D42BA3381D004CCA7D /* button.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
-		A6E484D62BA33F68004CCA7D /* levels.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels.dat; sourceTree = "<group>"; };
 		A6E484D82BA3EDB6004CCA7D /* game_scores.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_scores.cpp; sourceTree = "<group>"; };
 		A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = fusebrk.aif; sourceTree = "<group>"; };
 		A6E484DC2BA92889004CCA7D /* graphics_dirtymap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_dirtymap.cpp; sourceTree = "<group>"; };
@@ -259,7 +259,7 @@
 		A69AE5092B82CD6100EBA43D /* data */ = {
 			isa = PBXGroup;
 			children = (
-				A6E484D62BA33F68004CCA7D /* levels.dat */,
+				A6D012CD2BB9D02800D260C2 /* levels1.dat */,
 				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
 				A69AE4E42B72851700EBA43D /* test.iff */,
 				A69AE52D2B8D76FA00EBA43D /* button.iff */,
@@ -462,9 +462,9 @@
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */,
 				A6E484CE2BA1ED02004CCA7D /* break.aif in Resources */,
-				A6E484D72BA33F68004CCA7D /* levels.dat in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
 				A69AE50C2B82CDB500EBA43D /* README.MD in Resources */,
+				A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */,
 				A69AE51A2B8AA0EE00EBA43D /* font.iff in Resources */,
 				A6E484D02BA1ED02004CCA7D /* fuse.aif in Resources */,
 				A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */,

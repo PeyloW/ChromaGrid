@@ -107,10 +107,9 @@ cgresources_c::cgresources_c() :
     image_c::get_stencil(image_c::orderred, 0);
     
     printf("Loading user levels.\n\r");
-    int max_recipe_size = sizeof(level_recipe_t) + sizeof(tilestate_t) * (12 * 12);
     uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
-        user_levels.push_back((level_recipe_t *)(recipes + i * max_recipe_size));
+        user_levels.push_back((level_recipe_t *)(recipes + i * level_recipe_t::MAX_SIZE));
     }
     load_user_levels();
     
@@ -135,19 +134,29 @@ cgresources_c::cgresources_c() :
 }
 
 void cgresources_c::load_levels() {
-    iff_file_c  iff(data_path("levels.dat"));
-    assert(iff.get_pos() == 0);
-    iff.with_hard_asserts(true, [&] {
-        iff_group_s list;
-        iff.first(IFF_LIST, IFF_CGLV, list);
-        uint8_t *data = (uint8_t *)calloc(1, list.size);
-        iff_group_s level_group;
-        while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
-            level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
-            recipe->load(iff, level_group);
-            levels.emplace_back(recipe);
+    int i = 1;
+    while (levels.size() < 45) {
+        char buf[14];
+        sprintf(buf, "levels%d.dat", i++);
+        FILE *file = fopen(data_path(buf), "r");
+        if (file == nullptr) {
+            break;
         }
-    });
+        iff_file_c iff(file);
+        iff.with_hard_asserts(true, [&] {
+            iff_group_s list;
+            iff.first(IFF_LIST, IFF_CGLV, list);
+            uint8_t *data = (uint8_t *)calloc(1, list.size);
+            iff_group_s level_group;
+            while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
+                level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
+                recipe->load(iff, level_group);
+                levels.emplace_back(recipe);
+            }
+        });
+        fclose(file);
+    }
+    assert(levels.size() > 0);
 }
 
 bool cgresources_c::load_user_levels() {
@@ -207,7 +216,7 @@ bool cgresources_c::load_level_results() {
             }
         }
         fclose(file);
-        success = true;
+        success = level_results.size() <= levels.size();
     }
 done:
     if (!success) {

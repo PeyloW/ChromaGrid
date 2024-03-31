@@ -256,7 +256,7 @@ void cglevel_edit_scene_c::tick(image_c &screen, int ticks) {
                 break;
             default:
                 _header.orbs[group - 1] += step;
-                _header.orbs[group - 1] = MAX(0, (int8_t)MIN((int8_t)_header.orbs[group - 1], 20));
+                _header.orbs[group - 1] = MAX(0, (int8_t)MIN((int8_t)_header.orbs[group - 1], 30));
                 break;
         }
         draw_counts(screen);
