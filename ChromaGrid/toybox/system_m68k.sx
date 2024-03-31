@@ -49,6 +49,7 @@ _g_vbl_interupt:
     beq.s   .no_active_image
     move.l  d0,a0
     move.l  image_bitmap(a0),d0   ||| MUST MATCH image_c::_bitmap offset!!!
+    move.l  d0,0x044e.w           ||| Do not let TOS overrwite.
     move.b  d0,d1
     lsr.w #8,d0
     move.l  d0,0xffff8204.w
@@ -75,7 +76,11 @@ _g_system_vbl_freq:
     bra.s   .next_func_v
 .no_more_funcs_v:
     movem.l (sp)+,d0-d2/a0-a2
+#ifdef DISABLE_SYSTEM_VBL
+    rte
+#else
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
+#endif
 _g_system_vbl_interupt:
     .dc.l    0x0
 
