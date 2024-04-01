@@ -11,7 +11,7 @@ FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
 FLAGS+=-g0 -DNDEBUG -s
 #FLAGS+=-DDEBUG_CPU
-#FLAGS+=-DDISABLE_SYSTEM_VBL
+FLAGS+=-DALLOW_FULL_LEVEL_SELECT
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti

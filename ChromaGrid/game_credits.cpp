@@ -112,7 +112,7 @@ void cgcredits_scene_c::will_appear(image_c &screen, bool obsured) {
 }
 
 
-void cgcredits_scene_c::tick(image_c &screen, int ticks) {
+void cgcredits_scene_c::update_background(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case -1:

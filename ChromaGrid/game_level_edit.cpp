@@ -59,7 +59,7 @@ public:
         _menu_buttons.draw_all(screen);
     }
     
-    virtual void tick(image_c &screen, int ticks) {
+    virtual void update_background(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
         auto transition = transition_c::create(image_c::random);
         if (button == 0) {
@@ -214,7 +214,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
     return current;
 }
 
-void cglevel_edit_scene_c::tick(image_c &screen, int ticks) {
+void cglevel_edit_scene_c::update_background(image_c &screen, int ticks) {
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];

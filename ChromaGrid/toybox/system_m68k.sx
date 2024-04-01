@@ -76,11 +76,7 @@ _g_system_vbl_freq:
     bra.s   .next_func_v
 .no_more_funcs_v:
     movem.l (sp)+,d0-d2/a0-a2
-#ifdef DISABLE_SYSTEM_VBL
-    rte
-#else
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
-#endif
 _g_system_vbl_interupt:
     .dc.l    0x0
 

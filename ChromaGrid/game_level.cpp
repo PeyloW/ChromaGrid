@@ -37,7 +37,7 @@ public:
             {0,0},
             {MAIN_MENU_ORIGIN_X, 200}
         };
-        screen.with_stencil(image_c::get_stencil(image_c::orderred, 32), [this, &screen, &rect] {
+        screen.with_stencil(image_c::get_stencil(image_c::orderred, 48), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = (rect_s){
@@ -65,7 +65,7 @@ public:
         }
     }
 
-    virtual void tick(image_c &screen, int ticks) {
+    virtual void update_background(image_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
         switch (button) {
             case 0:
@@ -114,10 +114,16 @@ void tick_second(cglevel_scene_c *that) {
     that->_passed_seconds++;
 }
 
+static int next_shimmer_ticks() {
+    return 100 + (uint16_t)rand() % 200;
+}
+
 void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
+    _shimmer_ticks = next_shimmer_ticks();
+    _shimmer_tile = -1;
     _passed_seconds = 0;
     manager.vbl.add_func((timer_c::func_a_t)&tick_second, this, 1);
 }
@@ -126,7 +132,7 @@ void cglevel_scene_c::will_disappear(bool obscured) {
     manager.vbl.remove_func((timer_c::func_a_t)&tick_second, this);
 };
 
-void cglevel_scene_c::tick(image_c &screen, int ticks) {
+void cglevel_scene_c::update_background(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
@@ -152,5 +158,25 @@ void cglevel_scene_c::tick(image_c &screen, int ticks) {
         _level.get_results(&results);
         results.calculate_score(state == level_t::success);
         manager.replace(new cglevel_ended_scene_c(manager, _level_num, results));
+    }
+}
+
+void cglevel_scene_c::update_foreground(image_c &screen, int ticks) {
+    _shimmer_ticks -= ticks;
+    if (_shimmer_tile != -1) {
+        if (_shimmer_ticks < -7) {
+            _shimmer_ticks = next_shimmer_ticks();
+            _shimmer_tile = -1;
+        } else {
+            rect_s rect = (rect_s){{0, (int16_t)(ABS(_shimmer_ticks) * 16)}, {16, 16}};
+            point_s at = (point_s){(int16_t)(_shimmer_tile % 12 * 16), (int16_t)(_shimmer_tile / 12 * 16)};
+            screen.draw(rsc.shimmer, rect, at);
+        }
+    } else if (_shimmer_ticks <= 0) {
+        _shimmer_ticks = 0;
+        int tile = rand() % (12 * 12);
+        if (_level.tilestate_at(tile % 12, tile / 12).type != empty) {
+            _shimmer_tile = tile;
+        }
     }
 }

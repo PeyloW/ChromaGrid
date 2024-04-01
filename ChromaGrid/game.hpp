@@ -37,14 +37,14 @@ public:
     cgoverlay_scene_c(scene_manager_c &manager) : cggame_scene_c(manager) {}
     virtual void will_appear(image_c &screen, bool obsured);
     virtual void will_disappear(bool obscured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_foreground(image_c &screen, int ticks);
 };
 
 class cgintro_scene_c : public cggame_scene_c {
 public:
     cgintro_scene_c(scene_manager_c &manager);
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     cgbutton_group_c<6> _menu_buttons;
 };
@@ -56,7 +56,7 @@ public:
     } page_e;
     cgcredits_scene_c(scene_manager_c &manager, page_e page = credits);
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     page_e _page;
     cgbutton_group_c<5> _menu_buttons;
@@ -69,7 +69,7 @@ public:
     } page_e;
     cghelp_scene_c(scene_manager_c &manager, page_e page = basics);
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     page_e _page;
     cgbutton_group_c<5> _menu_buttons;
@@ -82,7 +82,7 @@ public:
     } scoring_e;
     cgscores_scene_c(scene_manager_c &manager, scoring_e scoring = score);
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     scoring_e _scoring;
     cgbutton_group_c<4> _menu_buttons;
@@ -97,8 +97,11 @@ public:
 
     virtual void will_appear(image_c &screen, bool obsured);
     virtual void will_disappear(bool obscured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
+    virtual void update_foreground(image_c &screen, int ticks);
 private:
+    int _shimmer_ticks;
+    int _shimmer_tile;
     int _passed_seconds;
     cgbutton_group_c<2> _menu_buttons;
     int _level_num;
@@ -111,7 +114,7 @@ public:
     cglevel_select_scene_c(scene_manager_c &manager);
 
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     cgbutton_group_c<1> _menu_buttons;
     vector_c<cgbutton_group_c<5>, 9> _select_button_groups;
@@ -122,7 +125,7 @@ public:
     cglevel_edit_scene_c(scene_manager_c &manager, level_recipe_t *recipe);
     
     virtual void will_appear(image_c &screen, bool obsured);
-    virtual void tick(image_c &screen, int ticks);
+    virtual void update_background(image_c &screen, int ticks);
 private:
     tilestate_t next_state(const tilestate_t &current, mouse_c::button_e button) const;
     void draw_counts(image_c &screen) const;

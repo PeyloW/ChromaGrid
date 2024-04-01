@@ -21,6 +21,7 @@ public:
     image_c cursor;
     image_c button;
     image_c selection;
+    image_c shimmer;
 private:
     image_c _font_image;
     image_c _small_font_image;

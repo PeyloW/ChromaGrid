@@ -103,6 +103,8 @@ public:
 
     void draw_all(image_c &screen) const;
     
+    const tilestate_t &tilestate_at(int x, int y) const;
+    
     void get_results(level_result_t *results) const {
         *results = _results;
     }

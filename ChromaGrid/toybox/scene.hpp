@@ -37,7 +37,8 @@ namespace toybox {
         
         virtual void will_appear(image_c &screen, bool obsured) = 0;
         virtual void will_disappear(bool obscured) {};
-        virtual void tick(image_c &screen, int ticks) = 0;
+        virtual void update_background(image_c &screen, int ticks) {};
+        virtual void update_foreground(image_c &screen, int ticks) {};
     protected:
         scene_manager_c &manager;
     };
@@ -78,7 +79,7 @@ namespace toybox {
         timer_c clock;
         mouse_c mouse;
         
-        image_c &get_logical_screen() { return _screens.back().image; }
+        image_c &get_background_screen() { return _screens.back().image; }
         
     private:
         transition_c *_transition;

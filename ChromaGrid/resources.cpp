@@ -70,6 +70,7 @@ cgresources_c::cgresources_c() :
     cursor(data_path("CURSOR.IFF"), true, 0),
     button(data_path("BUTTON.IFF"), true, 6),
     selection(data_path("SELECT.IFF"), true, 6),
+    shimmer(data_path("shimmer.iff"), true, 6),
     _font_image(data_path("FONT.IFF", "Load fonts"), true, 0),
     _small_font_image(data_path("FONT6.IFF"), true, 0),
     font(_font_image, (size_s){8, 8}, 4, 2, 4),

@@ -60,7 +60,7 @@ void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (point_s){96, 170});
 }
 
-void cgintro_scene_c::tick(image_c &screen, int ticks) {
+void cgintro_scene_c::update_background(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
@@ -79,10 +79,13 @@ void cgintro_scene_c::tick(image_c &screen, int ticks) {
             manager.push(new cgscores_scene_c(manager));
             break;
         case 5: {
+#ifndef ALLOW_FULL_LEVEL_SELECT
             if (rsc.level_results.front().score == 0) {
                 auto transition = transition_c::create(g_active_palette->colors[0]);
                 manager.push(new cglevel_scene_c(manager, 0), transition);
-            } else {
+            } else 
+#endif
+            {
                 manager.push(new cglevel_select_scene_c(manager));
             }
             break;
@@ -115,9 +118,11 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
         button_group.add_button(title, true);
 
         button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
+#ifndef ALLOW_FULL_LEVEL_SELECT
         if (result->score == 0) {
             disable = true;
         }
+#endif
         
         index++;
     }
@@ -134,7 +139,7 @@ void cglevel_select_scene_c::will_appear(image_c &screen, bool obsured) {
     }
 }
 
-void cglevel_select_scene_c::tick(image_c &screen, int ticks) {
+void cglevel_select_scene_c::update_background(image_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     if (button == 0) {
         manager.pop();

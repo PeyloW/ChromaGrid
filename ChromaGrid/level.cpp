@@ -331,6 +331,10 @@ void level_t::draw_all(image_c &screen) const {
     draw_move_count(screen);
 }
 
+const tilestate_t &level_t::tilestate_at(int x, int y) const {
+    return _grid->tiles[x][y].state;
+}
+
 inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
     int16_t tx = state.target * 16;
     tx += state.current * 48;
