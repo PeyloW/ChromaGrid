@@ -78,8 +78,9 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
             }
         } else {
             debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
-            logical_screen.image.with_dirtymap(logical_screen.dirtymap, [this, ticks, &logical_screen] {
-                top_scene().update_background(logical_screen.image, ticks);
+            auto &scene = top_scene();
+            logical_screen.image.with_dirtymap(logical_screen.dirtymap, [&scene, ticks, &logical_screen] {
+                scene.update_background(logical_screen.image, ticks);
             });
             // Merge dirty maps here!
             _screens[0].dirtymap->merge(*logical_screen.dirtymap);
@@ -92,9 +93,11 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
             debug_cpu_color(DEBUG_CPU_PHYS_RESTORE);
             physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
 
-            physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, ticks, &physical_screen] {
+            physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &scene, ticks, &physical_screen] {
                 debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
-                top_scene().update_foreground(physical_screen.image, ticks);
+                if (&scene == &top_scene()) {
+                    scene.update_foreground(physical_screen.image, ticks);
+                }
                 if (_overlay_scene) {
                     debug_cpu_color(DEBUG_CPU_OVERLAY_SCENE_TICK);
                     _overlay_scene->update_foreground(physical_screen.image, ticks);
