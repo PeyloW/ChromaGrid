@@ -66,6 +66,7 @@ static const char *user_path(const char *file, const char *m = nullptr) {
 cgresources_c::cgresources_c() :
     background(data_path("BACKGRND.IFF", "Load images"), false),
     tiles(data_path("TILES.IFF"), false),
+    empty_tile(data_path("emptyt.iff"), true, 6),
     orbs(data_path("ORBS.IFF"), true, 6),
     cursor(data_path("CURSOR.IFF"), true, 0),
     button(data_path("BUTTON.IFF"), true, 6),

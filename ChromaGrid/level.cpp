@@ -343,19 +343,44 @@ inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
 }
 
 inline static void draw_tilestate(image_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
+    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
     if (state.type == empty) {
+        if (state.target != none) {
+            const rect_s rect = (rect_s){ {(int16_t)((state.target - 1) * 16), 0}, { 16, 16 } };
+            screen.draw(rsc.empty_tile, rect, at);
+        }
         return;
     }
     const rect_s rect = tilestate_src_rect(state);
-    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
     screen.draw_aligned(rsc.tiles, rect, at);
 }
 
 void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool selected) {
     auto &rsc = cgresources_c::shared();
     if (state.type == empty) {
-        rect_s rect = (rect_s){at, {16, 16}};
+        const rect_s rect = (rect_s){at, {16, 16}};
         screen.draw(rsc.background, rect, at);
+        switch (state.target) {
+            case none:
+                break;
+            case both: {
+                point_s o_at = at;
+                o_at.x += 2;
+                o_at.y += 2;
+                rect_s rect = (rect_s){ {16, 0}, { 16, 16 } };
+                screen.draw(rsc.empty_tile, rect, o_at);
+                o_at.x -= 4;
+                o_at.y -= 4;
+                rect = (rect_s){ {0, 0}, { 16, 16 } };
+                screen.draw(rsc.empty_tile, rect, o_at);
+                break;
+            }
+            default: {
+                const rect_s rect = (rect_s){ {(int16_t)((state.target - 1) * 16), 0}, { 16, 16 } };
+                screen.draw(rsc.empty_tile, rect, at);
+                break;
+            }
+        }
     } else {
         const rect_s rect = tilestate_src_rect(state);
         screen.draw(rsc.tiles, rect, at);
@@ -384,24 +409,27 @@ void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool 
 }
 
 inline static void draw_orb(image_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
-    int16_t tx = (color - 1) * 16;
+    int16_t tx = (color - 1) * 16 + 3;
     int16_t ty = 10 * shade;
-    const rect_s rect = (rect_s){{tx, ty}, {16, 10}};
-    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16 + 3)};
+    const rect_s rect = (rect_s){{tx, ty}, {10, 10}};
+    const point_s at = (point_s){(int16_t)(x * 16 + 3), (int16_t)(y * 16 + 3)};
     screen.draw(rsc.orbs, rect, at);
 }
 
 void draw_orb(image_c &screen, color_e color, point_s at) {
     auto &rsc = cgresources_c::shared();
-    int16_t tx = (color - 1) * 16;
-    const rect_s rect = (rect_s){{tx, 0}, {16, 10}};
+    int16_t tx = (color - 1) * 16 + 3;
+    const rect_s rect = (rect_s){{tx, 0}, {10, 10}};
+    at.x += 3;
     screen.draw(rsc.orbs, rect, at);
 }
 
 void level_t::draw_tile(image_c &screen, int x, int y) const {
     auto &rsc = cgresources_c::shared();
     auto &tile = _grid->tiles[x][y];
-    if (tile.state.type != tiletype_e::empty) {
+    if (tile.state.type == empty && tile.state.target == none) {
+        return;
+    } else {
         if (tile.transition.step > 0) {
             draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
             const int shade = image_c::STENCIL_FULLY_OPAQUE - tile.transition.step * image_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;

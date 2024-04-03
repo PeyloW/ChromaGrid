@@ -137,7 +137,7 @@ private:
     
     cgbutton_group_c<4> _menu_buttons;
     cgbutton_group_c<6> _count_buttons;
-    vector_c<tilestate_t, 6> _tile_templates;
+    vector_c<tilestate_t, 7> _tile_templates;
     int _selected_template;
     level_recipe_t::header_t _header;
     tilestate_t _level_grid[12][12];

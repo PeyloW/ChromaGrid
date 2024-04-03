@@ -7,8 +7,10 @@
 
 #include "game.hpp"
 
+#define MAX_ORBS 50
+#define MAX_TIME (5*60)
 
-#define LEVEL_EDIT_TEMPLATE_SIZE_WIDTH (16 * 6)
+#define LEVEL_EDIT_TEMPLATE_SIZE_WIDTH (16 * 7)
 #define LEVEL_EDIT_TEMPLATE_SIZE_HEIGHT (16)
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_X (MAIN_MENU_ORIGIN_X + (MAIN_MENU_SIZE_WIDTH - LEVEL_EDIT_TEMPLATE_SIZE_WIDTH) / 2)
 #define LEVEL_EDIT_TEMPLATE_ORIGIN_Y (108)
@@ -147,6 +149,7 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
         _count_buttons.add_button_pair("+", "-", 2);
     }
     
+    _tile_templates.push_back((tilestate_t){ tiletype_e::empty, color_e::both, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::regular, color_e::none, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::magnetic, color_e::none, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::glass, color_e::none, color_e::none, color_e::none});
@@ -160,6 +163,7 @@ void cglevel_edit_scene_c::will_appear(image_c &screen, bool obsured) {
     _menu_buttons.draw_all(screen);
     _count_buttons.draw_all(screen);
     draw_counts(screen);
+    _selected_template = 1;
     draw_tile_templates(screen);
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
@@ -170,48 +174,33 @@ void cglevel_edit_scene_c::will_appear(image_c &screen, bool obsured) {
 
 tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c::button_e button) const {
     static const tilestate_t empty = (tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::none };
+    auto copy = current;
     auto &selected = _tile_templates[_selected_template];
-    switch (current.type) {
-        case tiletype_e::empty:
-            return selected.orb == none ? selected : current;
-            break;
-        case tiletype_e::blocked:
-            if (selected.orb != none) {
-                return current;
-            } else if (selected.type == current.type) {
-                return button == mouse_c::right ? empty : current;
-            }
-            // fall through
-        default: {
-            auto copy = current;
-            if (selected.orb != none) {
-                if (current.orb != none) {
-                    copy.orb = none;
-                } else {
-                    copy.orb = (color_e)(2 - button);
-                }
-            } else if (selected.type == current.type) {
-                if (button == mouse_c::left) {
-                    copy.target = (color_e)(current.target + 1);
-                    if (copy.target >= color_e::both) {
-                        copy = empty;
-                    } else if (copy.target != copy.current && copy.current != color_e::none) {
-                        copy.current = color_e::none;
-                    }
-                } else if (button == mouse_c::right) {
-                    if (current.current == color_e::none) {
-                        copy.current = current.target;
-                    } else {
-                        copy = empty;
-                    }
-                }
-            } else {
-                copy = selected;
-            }
-            return copy;
+    if (selected.orb != none) {
+        if (current.orb != none) {
+            copy.orb = none;
+        } else {
+            copy.orb = (color_e)(2 - button);
         }
+    } else if (selected.target != none) {
+        if (current.target != none) {
+            copy.target = none;
+        } else {
+            copy.target = (color_e)(2 - button);
+        }
+    } else if (button == mouse_c::right) {
+        copy = empty;
+        copy.target = current.target;
+    } else if (selected.type == blocked) {
+        copy = selected;
+    } else if (selected.type == current.type && current.target != none) {
+        copy.current = current.current == none ? current.target : none;
+    } else {
+        copy.type = selected.type;
+        copy.current = none;
+        copy.orb = none;
     }
-    return current;
+    return copy;
 }
 
 void cglevel_edit_scene_c::update_background(image_c &screen, int ticks) {
@@ -252,11 +241,11 @@ void cglevel_edit_scene_c::update_background(image_c &screen, int ticks) {
         switch (group) {
             case 0:
                 _header.time += (step * 5);
-                _header.time = MAX(10, MIN(_header.time, 300));
+                _header.time = MAX(10, MIN(_header.time, MAX_TIME));
                 break;
             default:
                 _header.orbs[group - 1] += step;
-                _header.orbs[group - 1] = MAX(0, (int8_t)MIN((int8_t)_header.orbs[group - 1], 30));
+                _header.orbs[group - 1] = MAX(0, (int8_t)MIN((int8_t)_header.orbs[group - 1], MAX_ORBS));
                 break;
         }
         draw_counts(screen);
@@ -276,7 +265,7 @@ void cglevel_edit_scene_c::update_background(image_c &screen, int ticks) {
         if (lb || rb) {
             _level_grid[tx][ty] = lb ? l_next : r_next;
             draw_level_grid(screen, tx, ty);
-        } else if (current.type == _tile_templates[_selected_template].type && _tile_templates[_selected_template].orb != color_e::both) {
+        } else if (current.type == _tile_templates[_selected_template].type && _tile_templates[_selected_template].orb != color_e::both && _tile_templates[_selected_template].target != color_e::both) {
             draw_tile_template_at(screen, l_next, _selected_template);
         } else {
             draw_tile_template_at(screen, _tile_templates[_selected_template], _selected_template);
@@ -314,7 +303,7 @@ void cglevel_edit_scene_c::draw_counts(image_c &screen) const {
     screen.draw(rsc.background, rect, at);
     screen.draw(rsc.mono_font, buf, at, image_c::align_left);
     for (int i = 1; i < 3; i++) {
-        point_s at = (point_s){ 320 - 32 - 8 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
+        point_s at = (point_s){ 320 - 32 - 8 - MAIN_MENU_MARGINS * 2 + 3, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
         draw_orb(screen, (color_e)i, at);
         
         char buf[3];
@@ -352,7 +341,7 @@ void cglevel_edit_scene_c::make_recipe(level_recipe_t &recipe) const {
     int y1 = 12, y2 = -1;
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
-            if (_level_grid[x][y].type != empty) {
+            if (_level_grid[x][y].type != empty || _level_grid[x][y].target != none) {
                 x1 = MIN(x1, x);
                 x2 = MAX(x2, x);
                 y1 = MIN(y1, y);

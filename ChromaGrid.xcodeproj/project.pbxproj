@@ -42,6 +42,7 @@
 		A6A4194C2B9B6D530062339B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4194B2B9B6D530062339B /* main.cpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
+		A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012F02BBCE71800D260C2 /* emptyt.iff */; };
 		A6E484B22B9FE5D7004CCA7D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484B12B9FE5D7004CCA7D /* main.cpp */; };
 		A6E484BE2B9FEE81004CCA7D /* graphics_ilbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A419432B9ABA610062339B /* graphics_ilbm.cpp */; };
 		A6E484BF2B9FEEA5004CCA7D /* graphics_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5162B88F53500EBA43D /* graphics_draw.cpp */; };
@@ -144,6 +145,7 @@
 		A6A4194B2B9B6D530062339B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
+		A6D012F02BBCE71800D260C2 /* emptyt.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = emptyt.iff; sourceTree = "<group>"; };
 		A6E484AA2B9D0172004CCA7D /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 		A6E484AF2B9FE5D7004CCA7D /* png2ilbm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = png2ilbm; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6E484B12B9FE5D7004CCA7D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				A69AE50F2B85031400EBA43D /* orbs.iff */,
 				A6F766B02B98BC2600325754 /* select.iff */,
 				A69AE5102B85031400EBA43D /* tiles.iff */,
+				A6D012F02BBCE71800D260C2 /* emptyt.iff */,
 				A6D012CF2BBA317D00D260C2 /* shimmer.iff */,
 				A6E484CA2BA1ED02004CCA7D /* break.aif */,
 				A6E484CD2BA1ED02004CCA7D /* drop.aif */,
@@ -461,6 +464,7 @@
 				A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */,
 				A69AE5112B85031400EBA43D /* orbs.iff in Resources */,
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
+				A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */,
 				A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */,

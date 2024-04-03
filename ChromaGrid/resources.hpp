@@ -17,6 +17,7 @@ class cgresources_c : private nocopy_c {
 public:
     image_c background;
     image_c tiles;
+    image_c empty_tile;
     image_c orbs;
     image_c cursor;
     image_c button;
