@@ -174,7 +174,7 @@ void cglevel_scene_c::update_foreground(image_c &screen, int ticks) {
         }
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;
-        int tile = rand() % (12 * 12);
+        int tile = ((uint16_t)rand()) % (12 * 12);
         if (_level.tilestate_at(tile % 12, tile / 12).type != empty) {
             _shimmer_tile = tile;
         }
