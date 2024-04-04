@@ -66,7 +66,9 @@ struct level_recipe_t {
     bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
+#ifndef __M68000__
 static_assert(__offsetof(level_recipe_t, tiles) == 16, "offset of level_recipe_t::tiles mismatch");
+#endif
 
 struct __packed_struct level_result_t {
     static const uint16_t FAILED_SCORE = 0;
