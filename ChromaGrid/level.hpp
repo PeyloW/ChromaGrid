@@ -59,13 +59,14 @@ struct level_recipe_t {
     } header;
     const char *text;
     tilestate_t tiles[];
-    static const int MAX_SIZE = sizeof(struct header_t) + sizeof(char *) + sizeof(tilestate_t) * 12 * 12;
+    static const int MAX_SIZE = 16 + sizeof(tilestate_t) * 12 * 12;
     bool empty() const;
     int get_size() const;
     bool save(iff_file_c &iff);
     bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
+static_assert(__offsetof(level_recipe_t, tiles) == 16, "offset of level_recipe_t::tiles mismatch");
 
 struct __packed_struct level_result_t {
     static const uint16_t FAILED_SCORE = 0;
