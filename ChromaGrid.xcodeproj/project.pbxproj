@@ -251,11 +251,9 @@
 		A69AE4912B6EB9A900EBA43D = {
 			isa = PBXGroup;
 			children = (
+				A6A0EE622BC05AB5005B6ED3 /* tools */,
 				A69AE50B2B82CDB500EBA43D /* README.MD */,
 				A6E484AA2B9D0172004CCA7D /* Assets */,
-				A6E484B62B9FE5F1004CCA7D /* shared */,
-				A6A4194A2B9B6D530062339B /* iffutil */,
-				A6E484B02B9FE5D7004CCA7D /* png2ilbm */,
 				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
 				A69AE49C2B6EB9A900EBA43D /* ChromaGrid */,
 				A69AE49B2B6EB9A900EBA43D /* Products */,
@@ -338,6 +336,16 @@
 				A69AE5052B82B1E300EBA43D /* music.snd */,
 			);
 			path = data;
+			sourceTree = "<group>";
+		};
+		A6A0EE622BC05AB5005B6ED3 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				A6E484B62B9FE5F1004CCA7D /* shared */,
+				A6A4194A2B9B6D530062339B /* iffutil */,
+				A6E484B02B9FE5D7004CCA7D /* png2ilbm */,
+			);
+			path = tools;
 			sourceTree = "<group>";
 		};
 		A6A4194A2B9B6D530062339B /* iffutil */ = {
