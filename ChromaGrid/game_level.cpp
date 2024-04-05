@@ -120,6 +120,14 @@ static int next_shimmer_ticks() {
 
 void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
+    char buffer[256] = {0};
+    if (_level_num != TEST_LEVEL && rsc.levels[_level_num]->text) {
+        sprintf(buffer, "Level %d: %s", _level_num + 1, rsc.levels[_level_num]->text);
+    } else {
+        sprintf(buffer, "Level %d", _level_num + 1, rsc.levels[_level_num]->text);
+    }
+    screen.draw(rsc.small_font, buffer, (rect_s){ {8, 193}, {304, 6} }, 0, image_c::align_left);
+
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
     _shimmer_ticks = next_shimmer_ticks();

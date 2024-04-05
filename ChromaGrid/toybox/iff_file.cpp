@@ -9,12 +9,12 @@
 
 using namespace toybox;
 
-iff_file_c::iff_file_c(FILE *file) :
+iff_file_c::iff_file_c(FILE *file, bool write) :
     _file(file), _hard_assert(false), _owns_file(false)
 {
     hard_assert(IFF_FORM_ID != 0);
     hard_assert(file);
-    _for_writing = true;
+    _for_writing = write;
 };
 iff_file_c::iff_file_c(const char *path, const char *mode) : 
     _file(fopen(path, mode)), _hard_assert(false), _owns_file(true)

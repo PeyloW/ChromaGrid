@@ -60,6 +60,13 @@
 		A6A0EE5B2BC05A69005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
 		A6A0EE5E2BC05A76005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
 		A6A0EE612BC05A82005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
+		A6A0EE6B2BC05B0D005B6ED3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE6A2BC05B0D005B6ED3 /* AppDelegate.m */; };
+		A6A0EE6E2BC05B0D005B6ED3 /* Document.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE6D2BC05B0D005B6ED3 /* Document.mm */; };
+		A6A0EE712BC05B0D005B6ED3 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A6A0EE702BC05B0D005B6ED3 /* Base */; };
+		A6A0EE732BC05B0D005B6ED3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6A0EE722BC05B0D005B6ED3 /* Assets.xcassets */; };
+		A6A0EE762BC05B0D005B6ED3 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A6A0EE752BC05B0D005B6ED3 /* Base */; };
+		A6A0EE792BC05B0D005B6ED3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE782BC05B0D005B6ED3 /* main.m */; };
+		A6A0EE802BC06030005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6A4194C2B9B6D530062339B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4194B2B9B6D530062339B /* main.cpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
@@ -97,6 +104,13 @@
 			remoteInfo = toybox;
 		};
 		A6A0EE5F2BC05A7C005B6ED3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A69AE4922B6EB9A900EBA43D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A6A0EE362BC05959005B6ED3;
+			remoteInfo = toybox;
+		};
+		A6A0EE7E2BC0602B005B6ED3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A69AE4922B6EB9A900EBA43D /* Project object */;
 			proxyType = 1;
@@ -180,6 +194,17 @@
 		A6A0EE2F2BBE3AEC005B6ED3 /* levels2.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels2.dat; sourceTree = "<group>"; };
 		A6A0EE312BBE5981005B6ED3 /* levels3.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels3.dat; sourceTree = "<group>"; };
 		A6A0EE372BC05959005B6ED3 /* libtoybox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtoybox.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IFFEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6A0EE692BC05B0D005B6ED3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A6A0EE6A2BC05B0D005B6ED3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A6A0EE6C2BC05B0D005B6ED3 /* Document.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
+		A6A0EE6D2BC05B0D005B6ED3 /* Document.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Document.mm; sourceTree = "<group>"; };
+		A6A0EE702BC05B0D005B6ED3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Document.xib; sourceTree = "<group>"; };
+		A6A0EE722BC05B0D005B6ED3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A6A0EE752BC05B0D005B6ED3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A6A0EE772BC05B0D005B6ED3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A6A0EE782BC05B0D005B6ED3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A6A0EE7A2BC05B0D005B6ED3 /* IFFEdit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IFFEdit.entitlements; sourceTree = "<group>"; };
 		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6A419432B9ABA610062339B /* graphics_ilbm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graphics_ilbm.cpp; sourceTree = "<group>"; };
 		A6A419492B9B6D530062339B /* iffutil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iffutil; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -228,6 +253,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A6A0EE642BC05B0D005B6ED3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6A0EE802BC06030005B6ED3 /* libtoybox.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6A419462B9B6D530062339B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -268,6 +301,7 @@
 				A6A419492B9B6D530062339B /* iffutil */,
 				A6E484AF2B9FE5D7004CCA7D /* png2ilbm */,
 				A6A0EE372BC05959005B6ED3 /* libtoybox.a */,
+				A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -341,11 +375,29 @@
 		A6A0EE622BC05AB5005B6ED3 /* tools */ = {
 			isa = PBXGroup;
 			children = (
+				A6A0EE682BC05B0D005B6ED3 /* IFFEdit */,
 				A6E484B62B9FE5F1004CCA7D /* shared */,
 				A6A4194A2B9B6D530062339B /* iffutil */,
 				A6E484B02B9FE5D7004CCA7D /* png2ilbm */,
 			);
 			path = tools;
+			sourceTree = "<group>";
+		};
+		A6A0EE682BC05B0D005B6ED3 /* IFFEdit */ = {
+			isa = PBXGroup;
+			children = (
+				A6A0EE692BC05B0D005B6ED3 /* AppDelegate.h */,
+				A6A0EE6A2BC05B0D005B6ED3 /* AppDelegate.m */,
+				A6A0EE6C2BC05B0D005B6ED3 /* Document.h */,
+				A6A0EE6D2BC05B0D005B6ED3 /* Document.mm */,
+				A6A0EE6F2BC05B0D005B6ED3 /* Document.xib */,
+				A6A0EE722BC05B0D005B6ED3 /* Assets.xcassets */,
+				A6A0EE742BC05B0D005B6ED3 /* MainMenu.xib */,
+				A6A0EE772BC05B0D005B6ED3 /* Info.plist */,
+				A6A0EE782BC05B0D005B6ED3 /* main.m */,
+				A6A0EE7A2BC05B0D005B6ED3 /* IFFEdit.entitlements */,
+			);
+			path = IFFEdit;
 			sourceTree = "<group>";
 		};
 		A6A4194A2B9B6D530062339B /* iffutil */ = {
@@ -488,6 +540,24 @@
 			productReference = A6A0EE372BC05959005B6ED3 /* libtoybox.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		A6A0EE662BC05B0D005B6ED3 /* IFFEdit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6A0EE7B2BC05B0D005B6ED3 /* Build configuration list for PBXNativeTarget "IFFEdit" */;
+			buildPhases = (
+				A6A0EE632BC05B0D005B6ED3 /* Sources */,
+				A6A0EE642BC05B0D005B6ED3 /* Frameworks */,
+				A6A0EE652BC05B0D005B6ED3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A6A0EE7F2BC0602B005B6ED3 /* PBXTargetDependency */,
+			);
+			name = IFFEdit;
+			productName = IFFEdit;
+			productReference = A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A6A419482B9B6D530062339B /* iffutil */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A6A4194D2B9B6D530062339B /* Build configuration list for PBXNativeTarget "iffutil" */;
@@ -538,6 +608,9 @@
 					A6A0EE362BC05959005B6ED3 = {
 						CreatedOnToolsVersion = 15.3;
 					};
+					A6A0EE662BC05B0D005B6ED3 = {
+						CreatedOnToolsVersion = 15.3;
+					};
 					A6A419482B9B6D530062339B = {
 						CreatedOnToolsVersion = 15.3;
 					};
@@ -563,6 +636,7 @@
 				A6A419482B9B6D530062339B /* iffutil */,
 				A6E484AE2B9FE5D7004CCA7D /* png2ilbm */,
 				A6A0EE362BC05959005B6ED3 /* toybox */,
+				A6A0EE662BC05B0D005B6ED3 /* IFFEdit */,
 			);
 		};
 /* End PBXProject section */
@@ -596,6 +670,16 @@
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 				A6F766B12B98BC2600325754 /* select.iff in Resources */,
 				A69AE5122B85031400EBA43D /* tiles.iff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6A0EE652BC05B0D005B6ED3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6A0EE732BC05B0D005B6ED3 /* Assets.xcassets in Resources */,
+				A6A0EE762BC05B0D005B6ED3 /* Base in Resources */,
+				A6A0EE712BC05B0D005B6ED3 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -643,6 +727,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A6A0EE632BC05B0D005B6ED3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6A0EE6E2BC05B0D005B6ED3 /* Document.mm in Sources */,
+				A6A0EE792BC05B0D005B6ED3 /* main.m in Sources */,
+				A6A0EE6B2BC05B0D005B6ED3 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6A419452B9B6D530062339B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -677,6 +771,11 @@
 			target = A6A0EE362BC05959005B6ED3 /* toybox */;
 			targetProxy = A6A0EE5F2BC05A7C005B6ED3 /* PBXContainerItemProxy */;
 		};
+		A6A0EE7F2BC0602B005B6ED3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A6A0EE362BC05959005B6ED3 /* toybox */;
+			targetProxy = A6A0EE7E2BC0602B005B6ED3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -684,6 +783,22 @@
 			isa = PBXVariantGroup;
 			children = (
 				A69AE4A32B6EB9B000EBA43D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		A6A0EE6F2BC05B0D005B6ED3 /* Document.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6A0EE702BC05B0D005B6ED3 /* Base */,
+			);
+			name = Document.xib;
+			sourceTree = "<group>";
+		};
+		A6A0EE742BC05B0D005B6ED3 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6A0EE752BC05B0D005B6ED3 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -866,6 +981,68 @@
 			};
 			name = Release;
 		};
+		A6A0EE7C2BC05B0D005B6ED3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = tools/IFFEdit/IFFEdit.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tools/IFFEdit/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.toys.IFFEdit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		A6A0EE7D2BC05B0D005B6ED3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = tools/IFFEdit/IFFEdit.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tools/IFFEdit/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.toys.IFFEdit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
 		A6A4194E2B9B6D530062339B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -963,6 +1140,15 @@
 			buildConfigurations = (
 				A6A0EE392BC05959005B6ED3 /* Debug */,
 				A6A0EE3A2BC05959005B6ED3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A6A0EE7B2BC05B0D005B6ED3 /* Build configuration list for PBXNativeTarget "IFFEdit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6A0EE7C2BC05B0D005B6ED3 /* Debug */,
+				A6A0EE7D2BC05B0D005B6ED3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
