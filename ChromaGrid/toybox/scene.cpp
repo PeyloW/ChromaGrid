@@ -24,11 +24,13 @@ private:
 
 scene_manager_c::scene_manager_c() :
     _super_token(super(0)),
+    _old_blitter_mode(blitter_mode(-1)),
     vbl(timer_c::vbl),
     clock(timer_c::clock),
     mouse((rect_s){{0,0}, {320, 192}})
 {
 #ifdef __M68000__
+    blitter_mode(0);
     _old_conterm = *(uint8_t*)0x484;
     *(uint8_t*)0x484 = 0;
 #endif
@@ -45,6 +47,7 @@ scene_manager_c::~scene_manager_c() {
 #ifdef __M68000__
     *(uint8_t*)0x484 = _old_conterm;
 #endif
+    blitter_mode(_old_blitter_mode);
     super(_super_token);
 }
 
@@ -82,30 +85,32 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
             logical_screen.image.with_dirtymap(logical_screen.dirtymap, [&scene, ticks, &logical_screen] {
                 scene.update_background(logical_screen.image, ticks);
             });
-            // Merge dirty maps here!
-            _screens[0].dirtymap->merge(*logical_screen.dirtymap);
-            _screens[1].dirtymap->merge(*logical_screen.dirtymap);
+            if (scene == top_scene()) {
+                // Merge dirty maps here!
+                _screens[0].dirtymap->merge(*logical_screen.dirtymap);
+                _screens[1].dirtymap->merge(*logical_screen.dirtymap);
 #if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
-            logical_screen.dirtymap->debug("log");
-            physical_screen.dirtymap->debug("phys");
+                logical_screen.dirtymap->debug("log");
+                physical_screen.dirtymap->debug("phys");
 #endif
-            logical_screen.dirtymap->clear();
-            debug_cpu_color(DEBUG_CPU_PHYS_RESTORE);
-            physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
-
-            physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &scene, ticks, &physical_screen] {
-                debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
-                if (&scene == &top_scene()) {
-                    scene.update_foreground(physical_screen.image, ticks);
-                }
-                if (_overlay_scene) {
-                    debug_cpu_color(DEBUG_CPU_OVERLAY_SCENE_TICK);
-                    _overlay_scene->update_foreground(physical_screen.image, ticks);
-                }
-            });
+                logical_screen.dirtymap->clear();
+                debug_cpu_color(DEBUG_CPU_PHYS_RESTORE);
+                physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
+                
+                physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &scene, ticks, &physical_screen] {
+                    debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
+                    if (&scene == &top_scene()) {
+                        scene.update_foreground(physical_screen.image, ticks);
+                    }
+                    if (_overlay_scene) {
+                        debug_cpu_color(DEBUG_CPU_OVERLAY_SCENE_TICK);
+                        _overlay_scene->update_foreground(physical_screen.image, ticks);
+                    }
+                });
 #if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
-            physical_screen.dirtymap->debug("AF next");
+                physical_screen.dirtymap->debug("AF next");
 #endif
+            }
 
             for (auto scene = _deletion_stack.begin(); scene != _deletion_stack.end(); scene++) {
                 delete *scene;

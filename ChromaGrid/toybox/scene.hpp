@@ -39,6 +39,10 @@ namespace toybox {
         virtual void will_disappear(bool obscured) {};
         virtual void update_background(image_c &screen, int ticks) {};
         virtual void update_foreground(image_c &screen, int ticks) {};
+        
+        bool operator==(const scene_c &other) const {
+            return this == &other;
+        }
     protected:
         scene_manager_c &manager;
     };
@@ -58,6 +62,7 @@ namespace toybox {
     class scene_manager_c : private nocopy_c {
     private:
         int32_t _super_token;
+        int16_t _old_blitter_mode;
         uint8_t _old_conterm;
     public:
         scene_manager_c();

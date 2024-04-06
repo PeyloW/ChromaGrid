@@ -47,8 +47,15 @@ public:
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
 
-        const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
-        screen.draw(rsc.font, title, (point_s){96, 32});
+        if (_level_num != cglevel_scene_c::TEST_LEVEL) {
+            char buf[20];
+            const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level %d Failed" : "Level %d Completed";
+            sprintf(buf, title, _level_num + 1);
+            screen.draw(rsc.font, buf, (point_s){96, 32});
+        } else {
+            const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
+            screen.draw(rsc.font, title, (point_s){96, 32});
+        }
         
         if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];

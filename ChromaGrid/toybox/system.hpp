@@ -65,6 +65,14 @@ namespace toybox {
 #endif
     }
     
+    static int16_t blitter_mode(int16_t m) {
+#ifdef __M68000__
+        return Blitmode(m);
+#else
+        return 0;
+#endif
+    }
+    
     static int16_t get_screen_mode() {
 #ifdef __M68000__
         return Getrez();
