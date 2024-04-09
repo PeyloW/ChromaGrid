@@ -67,7 +67,7 @@ static void hton(aiff_ssnd_data_s &ssnd) {
 #endif
 
 
-sount_c::sount_c(const char *path) :
+sound_c::sound_c(const char *path) :
     _sample(nullptr),
     _length(0),
     _rate(0)
@@ -117,12 +117,12 @@ sount_c::sount_c(const char *path) :
     }
 }
 
-sount_c::~sount_c() {
+sound_c::~sound_c() {
     free(_sample);
     _sample = nullptr;
 }
 
-void sount_c::set_active() const {
+void sound_c::set_active() const {
 #ifdef __M68000__
     g_microwire_write(0x4c | 40); // Max master volume (0 to 40)
     g_microwire_write(0x50 | 20); // Right volume (0 to 20)
@@ -148,7 +148,7 @@ void sount_c::set_active() const {
     *ste_dmo_mode = 0x81; // 8 bit mono @ 12.5kHz
     *ste_dma_control = 1; // Play once
 #else
-    g_active_sound = (sount_c *)this;
+    g_active_sound = (sound_c *)this;
 #endif
 }
 

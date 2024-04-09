@@ -30,7 +30,7 @@ namespace toybox {
     
     class scene_manager_c;
         
-    class scene_c : private nocopy_c {
+    class scene_c : public nocopy_c {
     public:
         scene_c(scene_manager_c &manager) : manager(manager) {};
         virtual ~scene_c() {};
@@ -40,14 +40,11 @@ namespace toybox {
         virtual void update_background(image_c &screen, int ticks) {};
         virtual void update_foreground(image_c &screen, int ticks) {};
         
-        bool operator==(const scene_c &other) const {
-            return this == &other;
-        }
     protected:
         scene_manager_c &manager;
     };
     
-    class transition_c : private nocopy_c {
+    class transition_c : public nocopy_c {
     public:
         transition_c() {};
         virtual ~transition_c() {}
@@ -59,7 +56,7 @@ namespace toybox {
         static transition_c *create(color_c through);
     };
         
-    class scene_manager_c : private nocopy_c {
+    class scene_manager_c : public nocopy_c {
     private:
         int32_t _super_token;
         int16_t _old_blitter_mode;

@@ -12,7 +12,7 @@
 #include "resources.hpp"
 #include "system.hpp"
 
-struct cgbutton_t : nocopy_c {
+struct cgbutton_t : public nocopy_c {
     typedef enum __packed {
         normal,
         pressed,

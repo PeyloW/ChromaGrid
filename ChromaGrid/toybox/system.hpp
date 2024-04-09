@@ -101,7 +101,7 @@ namespace toybox {
         return rez;
     }
     
-    class timer_c : private nocopy_c {
+    class timer_c : public nocopy_c {
     public:
         typedef enum __packed {
             vbl, clock
@@ -143,7 +143,7 @@ namespace toybox {
         timer_e _timer;
     };
     
-    class mouse_c : private nocopy_c {
+    class mouse_c : public nocopy_c {
     public:
         typedef enum __packed {
             right, left

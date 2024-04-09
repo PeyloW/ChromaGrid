@@ -15,10 +15,10 @@ namespace toybox {
     
     using namespace toystd;
     
-    class sount_c : private nocopy_c {
+    class sound_c : public nocopy_c {
     public:
-        sount_c(const char *path);
-        ~sount_c();
+        sound_c(const char *path);
+        ~sound_c();
         
         void set_active() const;
         
@@ -32,7 +32,7 @@ namespace toybox {
         uint16_t _rate;
     };
     
-    class music_c : private nocopy_c {
+    class music_c : public nocopy_c {
     public:
         music_c(const char *path);
         ~music_c();

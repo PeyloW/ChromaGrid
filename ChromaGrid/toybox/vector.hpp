@@ -14,7 +14,7 @@ namespace toystd {
     
     // Minimal std::vector replacement with static size
     template<class Type, int Count>
-    class vector_c : nocopy_c {
+    class vector_c : public nocopy_c {
     public:
         typedef Type value_type;
         typedef value_type* pointer;

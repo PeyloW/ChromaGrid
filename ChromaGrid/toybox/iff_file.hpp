@@ -108,7 +108,7 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
     };
     
     
-    class iff_file_c : private nocopy_c {
+    class iff_file_c : public nocopy_c {
     public:
         iff_file_c(FILE *file, bool write = false);
         iff_file_c(const char *path, const char *mode = "r");

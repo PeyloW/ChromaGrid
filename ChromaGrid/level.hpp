@@ -91,7 +91,7 @@ void draw_orb(image_c &screen, color_e color, point_s at);
 
 class grid_c;
 
-class level_t : nocopy_c {
+class level_t : public nocopy_c {
 public:
     typedef enum __packed {
         normal,

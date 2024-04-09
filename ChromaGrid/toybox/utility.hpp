@@ -58,6 +58,10 @@ namespace toystd {
     
     // Base class enforcing no copy constructor or assignment.
     class nocopy_c {
+    public:
+        bool operator==(const nocopy_c &other) const {
+            return this == &other;
+        }
     protected:
         __forceinline nocopy_c() {}
         nocopy_c(const nocopy_c&) = delete;

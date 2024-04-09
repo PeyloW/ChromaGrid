@@ -25,10 +25,10 @@ typedef struct __packed_struct {
     uint8_t cnt;
     timer_c::func_a_t func;
     void *context;
-} cgtimer_func_s;
+} timer_func_s;
     
 #define TIMER_FUNC_MAX_CNT 16
-typedef forward_list_c<cgtimer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
+typedef forward_list_c<timer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
 #ifdef __M68000__
 static_assert(sizeof(timer_func_list_c::_node_s) == 14, "timer_func_list_c::_node_s) size mismatch");
 #endif
@@ -172,7 +172,7 @@ void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
     }
     with_paused_timers([this, func, context, freq] {
         auto &functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
-        functions.push_front((cgtimer_func_s){freq, base_freq(), func, context});
+        functions.push_front((timer_func_s){freq, base_freq(), func, context});
     });
 }
 

@@ -13,7 +13,7 @@
 #include "level.hpp"
 #include "vector.hpp"
 
-class cgresources_c : private nocopy_c {
+class cgresources_c : public nocopy_c {
 public:
     image_c background;
     image_c tiles;
@@ -31,12 +31,12 @@ public:
     font_c mono_font;
     font_c small_font;
     font_c small_mono_font;
-    sount_c drop_orb;
-    sount_c take_orb;
-    sount_c fuse_orb;
-    sount_c no_drop_orb;
-    sount_c break_tile;
-    sount_c fuse_break_tile;
+    sound_c drop_orb;
+    sound_c take_orb;
+    sound_c fuse_orb;
+    sound_c no_drop_orb;
+    sound_c break_tile;
+    sound_c fuse_break_tile;
     music_c music;
     
     vector_c<level_recipe_t*, 45> levels;
