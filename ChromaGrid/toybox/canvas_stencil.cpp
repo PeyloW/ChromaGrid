@@ -5,11 +5,11 @@
 //  Created by Fredrik on 2024-02-29.
 //
 
-#include "graphics.hpp"
+#include "canvas.hpp"
 
 using namespace toybox;
 
-image_c::stencil_type_e  image_c::effective_type(stencil_type_e type) {
+canvas_c::stencil_type_e  canvas_c::effective_type(stencil_type_e type) {
     if (type == random) {
         type = (stencil_type_e)(((uint16_t)rand() % 4) + 1);
     }
@@ -84,7 +84,7 @@ static uint8_t circle_16x16[16][16] = {
     { 61, 57, 54, 51, 48, 46, 45, 44, 45, 46, 47, 49, 52, 55, 59, 63 },
  };
 
-static void make_dither_mask(image_c::stencil_t stencil, const uint8_t mask_8x8[8][8], int shade) {
+static void make_dither_mask(canvas_c::stencil_t stencil, const uint8_t mask_8x8[8][8], int shade) {
     for (int y = 8; --y != -1; ) {
         stencil[y] = 0;
         for (int x = 8; --x != -1; ) {
@@ -98,7 +98,7 @@ static void make_dither_mask(image_c::stencil_t stencil, const uint8_t mask_8x8[
     }
 }
 
-void make_dither_mask(image_c::stencil_t stencil, const uint8_t mask_16x16[16][16], int shade) {
+void make_dither_mask(canvas_c::stencil_t stencil, const uint8_t mask_16x16[16][16], int shade) {
     for (int y = 16; --y != -1; ) {
         stencil[y] = 0;
         for (int x = 16; --x != -1; ) {
@@ -109,7 +109,7 @@ void make_dither_mask(image_c::stencil_t stencil, const uint8_t mask_16x16[16][1
     }
 }
 
-void image_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
+void canvas_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
     assert(shade >= STENCIL_FULLY_TRANSPARENT);
     assert(shade <= STENCIL_FULLY_OPAQUE);
     switch (type) {
@@ -131,17 +131,17 @@ void image_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
     }
 }
 
-const image_c::stencil_t *const image_c::get_stencil(stencil_type_e type, int shade) {
-    assert(shade >= image_c::STENCIL_FULLY_TRANSPARENT);
-    assert(shade <= image_c::STENCIL_FULLY_OPAQUE);
+const canvas_c::stencil_t *const canvas_c::get_stencil(stencil_type_e type, int shade) {
+    assert(shade >= canvas_c::STENCIL_FULLY_TRANSPARENT);
+    assert(shade <= canvas_c::STENCIL_FULLY_OPAQUE);
     assert(type < random);
-    static image_c::stencil_t _none_stencil = { 0 };
+    static canvas_c::stencil_t _none_stencil = { 0 };
     static bool _initialized = false;
-    static stencil_t _stencils[4][image_c::STENCIL_FULLY_OPAQUE + 1];
+    static stencil_t _stencils[4][canvas_c::STENCIL_FULLY_OPAQUE + 1];
     if (!_initialized) {
         for (int i = 4; --i != -1; ) {
-            for (int j = image_c::STENCIL_FULLY_OPAQUE + 1; --j != -1; ) {
-                image_c::make_stencil(_stencils[i][j], (image_c::stencil_type_e)(i + 1), j);
+            for (int j = canvas_c::STENCIL_FULLY_OPAQUE + 1; --j != -1; ) {
+                canvas_c::make_stencil(_stencils[i][j], (canvas_c::stencil_type_e)(i + 1), j);
             }
         }
         _initialized = true;

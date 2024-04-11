@@ -22,7 +22,7 @@ struct cgbutton_t : public nocopy_c {
     inline cgbutton_t() : text("") {}
     inline cgbutton_t(const char *text, rect_s rect) : text(text), rect(rect), state(normal) {}
 
-    void draw_in(image_c &image) const;
+    void draw_in(canvas_c &image) const;
     
     const char *text;
     rect_s rect;
@@ -41,7 +41,7 @@ class cgbutton_group_base_c : public nocopy_c {
 
     rect_s next_button_rect(bool first, bool horizontal = false);
     void next_button_pair_rects(bool first, rect_s &left_rect, rect_s &right_rect, int16_t spacing);
-    int update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, image_c &screen, mouse_c::state_e state);
+    int update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, canvas_c &screen, mouse_c::state_e state);
     
     int _tracked_button;
     size_s _size;
@@ -67,13 +67,13 @@ public:
         buttons.emplace_back(right_title, right_rect);
     }
     
-    void draw_all(image_c &screen) {
+    void draw_all(canvas_c &screen) {
         for (auto button = buttons.begin(); button != buttons.end(); button++) {
             button->draw_in(screen);
         }
     }
         
-    int update_buttons(image_c &screen, point_s pos, mouse_c::state_e state) {
+    int update_buttons(canvas_c &screen, point_s pos, mouse_c::state_e state) {
         return update_button_range(buttons.begin(), buttons.end(), pos, screen, state);
     }
 

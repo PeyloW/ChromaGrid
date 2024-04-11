@@ -7,7 +7,7 @@
 
 #include "button.hpp"
 
-void cgbutton_t::draw_in(image_c &image) const {
+void cgbutton_t::draw_in(canvas_c &image) const {
     if (state == hidden) {
         return;
     }
@@ -21,7 +21,7 @@ void cgbutton_t::draw_in(image_c &image) const {
         (int16_t)(rect.origin.y + (state != pressed ? 3 : 4))
     };
     image.with_dirtymap(nullptr, [&] {
-        image.draw(rsc.font, text, at, image_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
+        image.draw(rsc.font, text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
     });
 }
 
@@ -69,7 +69,7 @@ void cgbutton_group_base_c::next_button_pair_rects(bool first, rect_s &left_rect
     right_rect.origin.x += left_rect.size.width + spacing;
 }
 
-int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, image_c &screen, mouse_c::state_e state) {
+int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, canvas_c &screen, mouse_c::state_e state) {
     if (_tracked_button >= 0) {
         auto &button = begin[_tracked_button];
         //assert(button.state == cgbutton_t::pressed);

@@ -19,7 +19,7 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
     _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
 }
 
-void cgscores_scene_c::will_appear(image_c &screen, bool obsured) {
+void cgscores_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     
@@ -60,13 +60,13 @@ void cgscores_scene_c::will_appear(image_c &screen, bool obsured) {
             }
         }
         point_s at = (point_s){(int16_t)(16 + col * 55), (int16_t)(16 + 20 + 10 * row)};
-        screen.draw(rsc.small_mono_font, buf, at, image_c::align_left);
+        screen.draw(rsc.small_mono_font, buf, at, canvas_c::align_left);
         
         index++;
     }
 }
 
-void cgscores_scene_c::update_background(image_c &screen, int ticks) {
+void cgscores_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case -1:

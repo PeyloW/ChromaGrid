@@ -52,17 +52,17 @@ static const char *level_editor_texts[] = {
     nullptr
 };
 
-static void draw_help(const cgresources_c &rsc, image_c &screen, const char *title, const char *texts[]) {
+static void draw_help(const cgresources_c &rsc, canvas_c &screen, const char *title, const char *texts[]) {
     screen.draw(rsc.font, title, (point_s){96, 12});
     rect_s rect = (rect_s){{7, 28}, {176, 48}};
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(rsc.small_font, *text, rect, 2, image_c::align_left);
+        auto size = screen.draw(rsc.small_font, *text, rect, 2, canvas_c::align_left);
         rect.origin.y += size.height + 4;
     }
 }
 
 
-void cghelp_scene_c::will_appear(image_c &screen, bool obsured) {
+void cghelp_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     const auto &rsc = this->rsc;
@@ -83,7 +83,7 @@ void cghelp_scene_c::will_appear(image_c &screen, bool obsured) {
     }
 }
 
-void cghelp_scene_c::update_background(image_c &screen, int ticks) {
+void cghelp_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case -1:

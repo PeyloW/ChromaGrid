@@ -10,7 +10,7 @@
 
 #include "cincludes.hpp"
 #include "types.hpp"
-#include "graphics.hpp"
+#include "canvas.hpp"
 #include "system.hpp"
 #include "iff_file.hpp"
 
@@ -86,8 +86,8 @@ struct __packed_struct level_result_t {
 };
 static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
 
-void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool selected = false);
-void draw_orb(image_c &screen, color_e color, point_s at);
+void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected = false);
+void draw_orb(canvas_c &screen, color_e color, point_s at);
 
 class grid_c;
 
@@ -102,9 +102,9 @@ public:
     level_t(level_recipe_t *recipe);
     ~level_t();
 
-    state_e update_tick(image_c &screen, mouse_c &mouse, int passed_seconds);
+    state_e update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds);
 
-    void draw_all(image_c &screen) const;
+    void draw_all(canvas_c &screen) const;
     
     const tilestate_t &tilestate_at(int x, int y) const;
     
@@ -112,10 +112,10 @@ public:
         *results = _results;
     }
 private:
-    void draw_tile(image_c &screen, int x, int y) const;
-    void draw_time(image_c &screen) const;
-    void draw_orb_counts(image_c &screen) const;
-    void draw_move_count(image_c &screen) const;
+    void draw_tile(canvas_c &screen, int x, int y) const;
+    void draw_time(canvas_c &screen) const;
+    void draw_orb_counts(canvas_c &screen) const;
+    void draw_move_count(canvas_c &screen) const;
 
     level_result_t _results;
     grid_c *_grid;

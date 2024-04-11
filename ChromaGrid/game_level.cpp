@@ -32,12 +32,12 @@ public:
         }
     };
 
-    virtual void will_appear(image_c &screen, bool obsured) {
+    virtual void will_appear(canvas_c &screen, bool obsured) {
         rect_s rect = (rect_s) {
             {0,0},
             {MAIN_MENU_ORIGIN_X, 200}
         };
-        screen.with_stencil(image_c::get_stencil(image_c::orderred, 48), [this, &screen, &rect] {
+        screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 48), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = (rect_s){
@@ -72,7 +72,7 @@ public:
         }
     }
 
-    virtual void update_background(image_c &screen, int ticks) {
+    virtual void update_background(canvas_c &screen, int ticks) {
         int button = update_button_group(screen, _menu_buttons);
         switch (button) {
             case 0:
@@ -125,7 +125,7 @@ static int next_shimmer_ticks() {
     return 100 + (uint16_t)rand() % 200;
 }
 
-void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
+void cglevel_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     char buffer[256] = {0};
     if (_level_num != TEST_LEVEL && rsc.levels[_level_num]->text) {
@@ -133,7 +133,7 @@ void cglevel_scene_c::will_appear(image_c &screen, bool obsured) {
     } else {
         sprintf(buffer, "Level %d", _level_num + 1, rsc.levels[_level_num]->text);
     }
-    screen.draw(rsc.small_font, buffer, (rect_s){ {8, 193}, {304, 6} }, 0, image_c::align_left);
+    screen.draw(rsc.small_font, buffer, (rect_s){ {8, 193}, {304, 6} }, 0, canvas_c::align_left);
 
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
@@ -147,7 +147,7 @@ void cglevel_scene_c::will_disappear(bool obscured) {
     manager.vbl.remove_func((timer_c::func_a_t)&tick_second, this);
 };
 
-void cglevel_scene_c::update_background(image_c &screen, int ticks) {
+void cglevel_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
@@ -176,7 +176,7 @@ void cglevel_scene_c::update_background(image_c &screen, int ticks) {
     }
 }
 
-void cglevel_scene_c::update_foreground(image_c &screen, int ticks) {
+void cglevel_scene_c::update_foreground(canvas_c &screen, int ticks) {
     _shimmer_ticks -= ticks;
     if (_shimmer_tile != -1) {
         if (_shimmer_ticks < -7) {

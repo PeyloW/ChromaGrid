@@ -13,18 +13,18 @@ namespace toybox {
     
     class dither_transition_c : public transition_c {
     public:
-        dither_transition_c(image_c::stencil_type_e dither) : transition_c() {
+        dither_transition_c(canvas_c::stencil_type_e dither) : transition_c() {
             _transition_state.full_restores_left = 2;
-            _transition_state.type = image_c::effective_type(dither);
+            _transition_state.type = canvas_c::effective_type(dither);
             _transition_state.shade = 0;
         }
         
-        virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
-            auto shade = MIN(image_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
-            phys_screen.with_stencil(image_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
-                phys_screen.draw_aligned(log_screen, (point_s){0, 0});
+        virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
+            auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
+            phys_screen.with_stencil(canvas_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
+                phys_screen.draw_aligned(log_screen.get_image(), (point_s){0, 0});
             });
-            if (shade == image_c::STENCIL_FULLY_OPAQUE) {
+            if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
                 _transition_state.full_restores_left--;
             }
             _transition_state.shade += 1 + MAX(1, ticks);
@@ -33,7 +33,7 @@ namespace toybox {
     protected:
         struct {
             int full_restores_left;
-            image_c::stencil_type_e type;
+            canvas_c::stencil_type_e type;
             int shade;
         } _transition_state;
     };
@@ -41,18 +41,18 @@ namespace toybox {
 
 class dither_through_transition_c : public dither_transition_c {
 public:
-    dither_through_transition_c(image_c::stencil_type_e dither, uint8_t through) :
+    dither_through_transition_c(canvas_c::stencil_type_e dither, uint8_t through) :
         dither_transition_c(dither), _through(through) {
             _transition_state.full_restores_left = 4;
         }
     
-    virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
+    virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
         if (_transition_state.full_restores_left > 2) {
-            auto shade = MIN(image_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
-            phys_screen.with_stencil(image_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
+            auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
+            phys_screen.with_stencil(canvas_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
                 phys_screen.fill(_through, (rect_s){{0,0}, phys_screen.get_size()});
             });
-            if (shade == image_c::STENCIL_FULLY_OPAQUE) {
+            if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
                 _transition_state.full_restores_left--;
             }
             if (_transition_state.full_restores_left > 2) {
@@ -89,12 +89,12 @@ public:
     virtual ~fade_through_transition_c() {
         _old_active->set_active();
     }
-    virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
+    virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
         const int count = _count / 2;
         if (count < 17) {
             _palettes[count].set_active();
         } else if (count < 18) {
-            phys_screen.draw_aligned(log_screen, (point_s){0, 0});
+            phys_screen.draw_aligned(log_screen.get_image(), (point_s){0, 0});
         } else if (count < 35) {
             _palettes[34 - count].set_active();
         } else {
@@ -109,11 +109,11 @@ private:
     vector_c<palette_c, 17> _palettes;
 };
 
-transition_c *transition_c::create(image_c::stencil_type_e dither) {
+transition_c *transition_c::create(canvas_c::stencil_type_e dither) {
     return new dither_transition_c(dither);
 }
 
-transition_c *transition_c::create(image_c::stencil_type_e dither, uint8_t through) {
+transition_c *transition_c::create(canvas_c::stencil_type_e dither, uint8_t through) {
     return new dither_through_transition_c(dither, through);
 }
 

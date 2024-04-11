@@ -6,6 +6,7 @@
 //
 
 #include "graphics.hpp"
+#include "canvas.hpp"
 #include "iff_file.hpp"
 
 using namespace toybox;
@@ -143,7 +144,6 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
                 return;
             }
             _size = bmhd.size;
-            _offset = bmhd.offset;
             assert(bmhd.plane_count == 4);
             assert(bmhd.mask_type < mask_type_lasso); // Lasso not supported
             assert(bmhd.compression_type < compression_type_vertical); // DeluxePain ST format not supported
@@ -168,7 +168,6 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
             } else {
                 _maskmap = nullptr;
             }
-            _owns_bitmap = true;
             switch (bmhd.compression_type) {
                 case compression_type_none:
                     image_read(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
@@ -184,10 +183,11 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
                     _maskmap = nullptr;
                 } else if (bmhd.mask_type == mask_type_color) {
                     memset(_maskmap, -1, mask_words << 1);
-                    remap_table_t table;
-                    make_noremap_table(table);
+                    canvas_c::remap_table_t table;
+                    canvas_c::make_noremap_table(table);
                     table[masked_cidx] = MASKED_CIDX;
-                    remap_colors(table, (rect_s){ {0, 0}, _size});
+                    canvas_c canvas(*this);
+                    canvas.remap_colors(table, (rect_s){ {0, 0}, _size});
                 }
             }
         } else {

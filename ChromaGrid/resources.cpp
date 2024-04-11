@@ -9,7 +9,7 @@
 #include "game.hpp"
 #include "iff_file.hpp"
 
-static void remap_to(color_e col, image_c::remap_table_t table, uint8_t masked_idx = image_c::MASKED_CIDX) {
+static void remap_to(color_e col, canvas_c::remap_table_t table, uint8_t masked_idx = image_c::MASKED_CIDX) {
     switch (col) {
         case color_e::gold:
             table[0] = 1;
@@ -86,27 +86,23 @@ cgresources_c::cgresources_c() :
     fuse_break_tile(data_path("fusebrk.aif")),
     music(data_path("music.snd", "Load music"))
 {
-    background.set_offset((point_s){0, 0});
-    tiles.set_offset((point_s){0, 0});
-    selection.set_offset((point_s){0, 0});
     for (int x = 1; x < 3; x++) {
+        canvas_c tiles_cnv(tiles);
         printf("Initialize tiles %d.\n\r", x);
         rect_s rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
-        tiles.draw(tiles, (rect_s){{0, 0}, {48, 80}}, rect.origin);
-        image_c::remap_table_t table;
-        image_c::make_noremap_table(table);
+        tiles_cnv.draw(tiles, (rect_s){{0, 0}, {48, 80}}, rect.origin);
+        canvas_c::remap_table_t table;
+        canvas_c::make_noremap_table(table);
         if (x == 1) {
             remap_to(color_e::gold, table);
         } else {
             remap_to(color_e::silver, table);
         }
-        tiles.remap_colors(table, rect);
+        tiles_cnv.remap_colors(table, rect);
     }
-    orbs.set_offset((point_s){0, 0});
-    cursor.set_offset((point_s){1, 2});
 
     printf("Pre-warm stencils.\n\r");
-    image_c::get_stencil(image_c::orderred, 0);
+    canvas_c::get_stencil(canvas_c::orderred, 0);
     
     printf("Loading user levels.\n\r");
     uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);

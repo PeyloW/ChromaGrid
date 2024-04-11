@@ -14,8 +14,8 @@ public:
     no_transition_c() : transition_c() {
         _full_restores_left = 2;
     }
-    bool tick(image_c &phys_screen, image_c &log_screen, int ticks) {
-        phys_screen.draw_aligned(log_screen, (point_s){0,0});
+    bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
+        phys_screen.draw_aligned(log_screen.get_image(), (point_s){0,0});
         return --_full_restores_left <= 0;
     }
 private:
@@ -75,15 +75,15 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
         
         if (_transition) {
             debug_cpu_color(DEBUG_CPU_RUN_TRANSITION);
-            bool done = _transition->tick(physical_screen.image, get_background_screen(), ticks);
+            bool done = _transition->tick(physical_screen.canvas, get_background_screen(), ticks);
             if (done) {
                 set_transition(nullptr, true);
             }
         } else {
             debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
             auto &scene = top_scene();
-            logical_screen.image.with_dirtymap(logical_screen.dirtymap, [&scene, ticks, &logical_screen] {
-                scene.update_background(logical_screen.image, ticks);
+            logical_screen.canvas.with_dirtymap(logical_screen.dirtymap, [&scene, ticks, &logical_screen] {
+                scene.update_background(logical_screen.canvas, ticks);
             });
             if (scene == top_scene()) {
                 // Merge dirty maps here!
@@ -95,16 +95,16 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
 #endif
                 logical_screen.dirtymap->clear();
                 debug_cpu_color(DEBUG_CPU_PHYS_RESTORE);
-                physical_screen.dirtymap->restore(physical_screen.image, logical_screen.image);
+                physical_screen.dirtymap->restore(physical_screen.canvas, logical_screen.image);
                 
-                physical_screen.image.with_dirtymap(physical_screen.dirtymap, [this, &scene, ticks, &physical_screen] {
+                physical_screen.canvas.with_dirtymap(physical_screen.dirtymap, [this, &scene, ticks, &physical_screen] {
                     debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
                     if (&scene == &top_scene()) {
-                        scene.update_foreground(physical_screen.image, ticks);
+                        scene.update_foreground(physical_screen.canvas, ticks);
                     }
                     if (_overlay_scene) {
                         debug_cpu_color(DEBUG_CPU_OVERLAY_SCENE_TICK);
-                        _overlay_scene->update_foreground(physical_screen.image, ticks);
+                        _overlay_scene->update_foreground(physical_screen.canvas, ticks);
                     }
                 });
 #if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
@@ -119,7 +119,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
         }
         debug_cpu_color(DEBUG_CPU_DONE);
         timer_c::with_paused_timers([this, &physical_screen] {
-            physical_screen.image.set_active();
+            physical_screen.canvas.get_image().set_active();
             _active_physical_screen = (_active_physical_screen + 1) & 0x1;
         });
     }

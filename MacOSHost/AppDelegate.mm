@@ -51,7 +51,7 @@ static void _yieldFunction() {
             scene_manager_c manager;
             auto intro_scene = new cgintro_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
-            manager.run(intro_scene, overlay_scene, transition_c::create(image_c::noise));
+            manager.run(intro_scene, overlay_scene, transition_c::create(canvas_c::noise));
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSApp terminate:nil];
@@ -138,7 +138,6 @@ static void _yieldFunction() {
     }
     [_gameLock lockWhenCondition:1];
     const auto size = g_active_image->get_size();
-    const auto offset = g_active_image->get_offset();
     typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
     color_s palette[16] = { 0 };
     color_s buffer[320 * 200];
@@ -150,20 +149,17 @@ static void _yieldFunction() {
             buffer[i]._ = 0;
         }
     }
-    const_cast<image_c*>(g_active_image)->with_clipping(false, [self, size, offset, &palette, &buffer] () {
-        point_s at;
-        for (at.y = 0; at.y < 200; at.y++) {
-            for (at.x = 0; at.x < 320; at.x++) {
-                const auto real_at = (point_s){ static_cast<int16_t>(at.x + offset.x), static_cast<int16_t>(at.y + offset.y) };
-                const auto c = g_active_image->get_pixel(real_at);
-                if (c != image_c::MASKED_CIDX) {
-                    auto offset = (at.y * size.width + at.x);
-                    buffer[offset] = palette[c];
-                }
+    point_s at;
+    for (at.y = 0; at.y < 200; at.y++) {
+        for (at.x = 0; at.x < 320; at.x++) {
+            const auto c = g_active_image->get_pixel(at);
+            if (c != image_c::MASKED_CIDX) {
+                auto offset = (at.y * size.width + at.x);
+                buffer[offset] = palette[c];
             }
         }
-    });
-    
+    }
+
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
     CGContextRef ctx = CGBitmapContextCreate((void *)buffer, 320, 200, 8, size.width * 4, space, kCGImageAlphaNoneSkipLast);
     CGColorSpaceRelease(space);

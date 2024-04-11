@@ -9,7 +9,7 @@
 #define scene_hpp
 
 #include "system.hpp"
-#include "graphics.hpp"
+#include "canvas.hpp"
 #include "vector.hpp"
 
 #ifdef __M68000__
@@ -35,10 +35,10 @@ namespace toybox {
         scene_c(scene_manager_c &manager) : manager(manager) {};
         virtual ~scene_c() {};
         
-        virtual void will_appear(image_c &screen, bool obsured) = 0;
+        virtual void will_appear(canvas_c &screen, bool obsured) = 0;
         virtual void will_disappear(bool obscured) {};
-        virtual void update_background(image_c &screen, int ticks) {};
-        virtual void update_foreground(image_c &screen, int ticks) {};
+        virtual void update_background(canvas_c &screen, int ticks) {};
+        virtual void update_foreground(canvas_c &screen, int ticks) {};
         
     protected:
         scene_manager_c &manager;
@@ -49,10 +49,10 @@ namespace toybox {
         transition_c() {};
         virtual ~transition_c() {}
         
-        virtual bool tick(image_c &phys_screen, image_c &log_screen, int ticks) = 0;
+        virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) = 0;
         
-        static transition_c *create(image_c::stencil_type_e dither);
-        static transition_c *create(image_c::stencil_type_e dither, uint8_t through);
+        static transition_c *create(canvas_c::stencil_type_e dither);
+        static transition_c *create(canvas_c::stencil_type_e dither, uint8_t through);
         static transition_c *create(color_c through);
     };
         
@@ -73,15 +73,15 @@ namespace toybox {
         scene_c &top_scene() const {
             return *_scene_stack.back();
         };
-        void push(scene_c *scene, transition_c *transition = transition_c::create(image_c::random, 0));
-        void pop(transition_c *transition  = transition_c::create(image_c::random, 0), int count = 1);
-        void replace(scene_c *scene, transition_c *transition = transition_c::create(image_c::random));
+        void push(scene_c *scene, transition_c *transition = transition_c::create(canvas_c::random, 0));
+        void pop(transition_c *transition  = transition_c::create(canvas_c::random, 0), int count = 1);
+        void replace(scene_c *scene, transition_c *transition = transition_c::create(canvas_c::random));
         
         timer_c vbl;
         timer_c clock;
         mouse_c mouse;
         
-        image_c &get_background_screen() { return _screens.back().image; }
+        canvas_c &get_background_screen() { return _screens.back().canvas; }
         
     private:
         transition_c *_transition;
@@ -97,9 +97,10 @@ namespace toybox {
         class screen_c {
         public:
             image_c image;
+            canvas_c canvas;
             dirtymap_c *dirtymap;
-            screen_c() : image((size_s){320, 208}, false, nullptr) {
-                dirtymap = dirtymap_c::create(image);
+            screen_c() : image((size_s){320, 208}, false, nullptr), canvas(image) {
+                dirtymap = dirtymap_c::create(canvas);
             }
         };
         vector_c<screen_c, 3> _screens;

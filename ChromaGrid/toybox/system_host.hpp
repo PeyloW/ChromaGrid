@@ -34,7 +34,7 @@ namespace toybox {
         extern void g_update_mouse(point_s position, bool left, bool right);
         
         class palette_c;
-        class image_c;
+        class canvas_c;
         class sound_c;
         
         extern const palette_c *g_active_palette;

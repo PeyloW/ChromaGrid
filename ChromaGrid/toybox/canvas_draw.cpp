@@ -5,22 +5,22 @@
 //  Created by Fredrik on 2024-02-23.
 //
 
-#include "graphics.hpp"
+#include "canvas.hpp"
 #include "vector.hpp"
 
 using namespace toybox;
 
-void image_c::put_pixel(uint8_t ci, point_s at) const {
+void canvas_c::put_pixel(uint8_t ci, point_s at) const {
     if (_clipping) {
-        if (!_size.contains(at)) return;
+        if (!_image._size.contains(at)) return;
     }
-    assert(_size.contains(at));
-    int word_offset = (at.x / 16) + at.y * _line_words;
+    assert(_image._size.contains(at));
+    int word_offset = (at.x / 16) + at.y * _image._line_words;
     const uint16_t bit = 1 << (15 - at.x & 15);
     const uint16_t mask = ~bit;
-    if (_maskmap != nullptr) {
-        uint16_t *maskmap = this->_maskmap + word_offset;
-        if (ci == MASKED_CIDX) {
+    if (_image._maskmap != nullptr) {
+        uint16_t *maskmap = _image._maskmap + word_offset;
+        if (ci == image_c::MASKED_CIDX) {
             *maskmap &= mask;
         } else {
             *maskmap |= bit;
@@ -28,7 +28,7 @@ void image_c::put_pixel(uint8_t ci, point_s at) const {
     } else if (ci < 0) {
         return;
     }
-    uint16_t *bitmap = this->_bitmap + (word_offset << 2);
+    uint16_t *bitmap = _image._bitmap + (word_offset << 2);
     uint8_t cb = 1;
     for (int bp = 4; --bp != -1; cb <<= 1) {
         if (ci & cb) {
@@ -39,34 +39,11 @@ void image_c::put_pixel(uint8_t ci, point_s at) const {
     }
 }
 
-uint8_t image_c::get_pixel(point_s at) const {
-    if (!_clipping || _size.contains(at)) {
-        int word_offset = (at.x / 16) + at.y * _line_words;
-        const uint16_t bit = 1 << (15 - at.x & 15);
-        if (_maskmap != nullptr) {
-            uint16_t *maskmap = this->_maskmap + word_offset;
-            if (!(*maskmap & bit)) {
-                return MASKED_CIDX;
-            }
-        }
-        uint8_t ci = 0;
-        uint8_t cb = 1;
-        uint16_t *bitmap = this->_bitmap + (word_offset << 2);
-        for (int bp = 4; --bp != -1; cb <<= 1) {
-            if (*bitmap++ & bit) {
-                ci |= cb;
-            }
-        }
-        return ci;
-    }
-    return _maskmap != nullptr ? MASKED_CIDX : 0;
-}
-
-void image_c::remap_colors(remap_table_t table, rect_s rect) const {
-    const_cast<image_c*>(this)->with_clipping(false, [this, table, &rect] {
+void canvas_c::remap_colors(remap_table_t table, rect_s rect) const {
+    const_cast<canvas_c*>(this)->with_clipping(false, [this, table, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                const uint8_t c = get_pixel((point_s){ x, y});
+                const uint8_t c = _image.get_pixel((point_s){ x, y});
                 const uint8_t rc = table[c];
                 if (c != rc) {
                     put_pixel(rc, (point_s){ x, y});
@@ -76,11 +53,11 @@ void image_c::remap_colors(remap_table_t table, rect_s rect) const {
     });
 }
 
-void image_c::fill(uint8_t ci, rect_s rect) const {
-    assert(_maskmap == nullptr);
+void canvas_c::fill(uint8_t ci, rect_s rect) const {
+    assert(_image._maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
-        if (!rect.clip_to(_size, rect.origin)) {
+        if (!rect.clip_to(_image._size, rect.origin)) {
             return;
         }
     }
@@ -90,25 +67,23 @@ void image_c::fill(uint8_t ci, rect_s rect) const {
     imp_fill(ci, rect);
 }
 
-void image_c::draw_aligned(const image_c &src, point_s at) const {
+void canvas_c::draw_aligned(const image_c &src, point_s at) const {
     assert((at.x & 0xf) == 0);
-    assert(src._offset.x == 0);
-    assert(src._offset.y == 0);
     assert((src._size.width & 0xf) == 0);
-    assert(_maskmap == nullptr);
+    assert(_image._maskmap == nullptr);
     assert(src._maskmap == nullptr);
     rect_s rect = (rect_s){ {0, 0}, src.get_size()};
     draw_aligned(src, rect, at);
 }
 
-void image_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
+void canvas_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
     assert((at.x & 0xf) == 0);
     assert((rect.origin.x &0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
-    assert(_maskmap == nullptr);
+    assert(_image._maskmap == nullptr);
     assert(src._maskmap == nullptr);
     if (_clipping) {
-        if (!rect.clip_to(_size, at)) {
+        if (!rect.clip_to(_image._size, at)) {
             return;
         }
     }
@@ -119,19 +94,17 @@ void image_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
     imp_draw_aligned(src, rect, at);
 }
 
-void image_c::draw(const image_c &src, point_s at, const uint8_t color) const {
-    assert(_maskmap == nullptr);
-    const auto offset = src.get_offset();
-    const point_s real_at = (point_s){ (int16_t)(at.x - offset.x), (int16_t)(at.y - offset.y)};
+void canvas_c::draw(const image_c &src, point_s at, const uint8_t color) const {
+    assert(_image._maskmap == nullptr);
     rect_s rect = (rect_s){ {0, 0}, src.get_size()};
-    draw(src, rect, real_at, color);
+    draw(src, rect, at, color);
 }
 
-void image_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t color) const {
-    assert(_maskmap == nullptr);
+void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t color) const {
+    assert(_image._maskmap == nullptr);
     assert(rect.contained_by(get_size()));
     if (_clipping) {
-        if (!rect.clip_to(_size, at)) {
+        if (!rect.clip_to(_image._size, at)) {
             return;
         }
     }
@@ -140,30 +113,30 @@ void image_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t co
         _dirtymap->mark(dirty_rect);
     }
     if (src._maskmap) {
-        if (color == MASKED_CIDX) {
+        if (color == image_c::MASKED_CIDX) {
             imp_draw_masked(src, rect, at);
         } else {
             imp_draw_color(src, rect, at, color);
         }
     } else {
-        assert(color == MASKED_CIDX);
+        assert(color == image_c::MASKED_CIDX);
         imp_draw(src, rect, at);
     }
 }
 
-void image_c::draw_3_patch(const image_c &src, int16_t cap, rect_s in) const {
+void canvas_c::draw_3_patch(const image_c &src, int16_t cap, rect_s in) const {
     rect_s rect = (rect_s){{0, 0}, src.get_size()};
     draw_3_patch(src, rect, cap, in);
 }
 
-void image_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s in) const {
+void canvas_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s in) const {
     assert(in.size.width >= cap * 2);
     assert(rect.size.width > cap * 2);
     assert(rect.size.height == in.size.height);
     if (_dirtymap) {
         _dirtymap->mark(in);
     }
-    const_cast<image_c*>(this)->with_dirtymap(nullptr, [&] {
+    const_cast<canvas_c*>(this)->with_dirtymap(nullptr, [&] {
         const rect_s left_rect = (rect_s){ rect.origin, {cap, rect.size.height}};
         draw(src, left_rect, in.origin);
         const rect_s right_rect = (rect_s){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
@@ -182,7 +155,7 @@ void image_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s 
     });
 }
 
-size_s image_c::draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment, const uint8_t color) const {
+size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment, const uint8_t color) const {
     int len = (int)strlen(text);
     size_s size = font.get_rect(' ').size;
     size.width = 0;
@@ -203,7 +176,7 @@ size_s image_c::draw(const font_c &font, const char *text, point_s at, text_alig
         rect_s dirty_rect = (rect_s){{(int16_t)(at.x - size.width), at.y}, size};
         _dirtymap->mark(dirty_rect);
     }
-    const_cast<image_c*>(this)->with_dirtymap(nullptr, [&] {
+    const_cast<canvas_c*>(this)->with_dirtymap(nullptr, [&] {
         for (int i = len; --i != -1; ) {
             const rect_s &rect = font.get_rect(text[i]);
             at.x -= rect.size.width;
@@ -216,7 +189,7 @@ size_s image_c::draw(const font_c &font, const char *text, point_s at, text_alig
 #define MAX_LINES 8
 static char draw_text_buffer[80 * MAX_LINES];
 
-size_s image_c::draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
+size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
     strcpy(draw_text_buffer, text);
     vector_c<const char *, 12> lines;
 

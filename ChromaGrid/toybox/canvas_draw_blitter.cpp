@@ -5,7 +5,7 @@
 //  Created by Fredrik on 2024-02-24.
 //
 
-#include "graphics.hpp"
+#include "canvas.hpp"
 #include "blitter.hpp"
 
 using namespace toybox;
@@ -25,16 +25,16 @@ static const uint16_t pBlitter_mask[17] = {
     0x0000
 };
 
-static const image_c::stencil_t *pActiveStencil = nullptr;
+static const canvas_c::stencil_t *pActiveStencil = nullptr;
 
-__forceinline static void set_active_stencil(struct blitter_s *blitter, const image_c::stencil_t *const stencil) {
+__forceinline static void set_active_stencil(struct blitter_s *blitter, const canvas_c::stencil_t *const stencil) {
     if (pActiveStencil != stencil) {
         memcpy(blitter->halftoneRAM, stencil, 32);
         pActiveStencil = stencil;
     }
 }
 
-void image_c::imp_fill(uint8_t color, rect_s rect) const {
+void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
     uint16_t dummy_src = 0;
     auto blitter = pBlitter;
 
@@ -48,9 +48,9 @@ void image_c::imp_fill(uint8_t color, rect_s rect) const {
 
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (rect.origin.y * _line_words) + (rect.origin.x / 16);
-    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const uint16_t dst_word_offset = (rect.origin.y * _image._line_words) + (rect.origin.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[rect.origin.x & 15];
@@ -94,7 +94,7 @@ void image_c::imp_fill(uint8_t color, rect_s rect) const {
 
 }
 
-void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, point_s at) const {
+void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert((rect.origin.x & 0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
     assert((at.x & 0xf) == 0);
@@ -114,9 +114,9 @@ void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poin
 
     // Dest
     blitter->dstIncX  = 2;
-    blitter->dstIncY = (uint16_t)(_line_words - copy_words) * 8 + 2;
-    const uint16_t dst_word_offset = at.y * (_line_words * 4) + (at.x / 16) * 4;
-    blitter->pDst = _bitmap + dst_word_offset;
+    blitter->dstIncY = (uint16_t)(_image._line_words - copy_words) * 8 + 2;
+    const uint16_t dst_word_offset = at.y * (_image._line_words * 4) + (at.x / 16) * 4;
+    blitter->pDst = _image._bitmap + dst_word_offset;
 
     // Mask
     blitter->endMask[0] =  0xFFFF;
@@ -137,7 +137,7 @@ void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poin
         blitter->start();
 
         blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
-        blitter->pDst = _bitmap + dst_word_offset;
+        blitter->pDst = _image._bitmap + dst_word_offset;
         blitter->countX  = (uint16_t)(copy_words) * 4;
         blitter->countY = rect.size.height;
 
@@ -151,7 +151,7 @@ void image_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poin
     blitter->start();
 }
 
-void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
+void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
     assert(((rect_s){at, rect.size}).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
@@ -170,9 +170,9 @@ void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) 
     
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)((_line_words - dst_words_dec_1) * 8);
-    const uint16_t dst_word_offset = (at.y * _line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (uint16_t)((_image._line_words - dst_words_dec_1) * 8);
+    const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -222,7 +222,7 @@ void image_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) 
     }
 }
 
-void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
+void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
     assert(((rect_s){at, rect.size}).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
@@ -241,9 +241,9 @@ void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point
     
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (at.y * _line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -315,7 +315,7 @@ void image_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point
     }
 }
 
-void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
+void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
     assert(!rect.size.is_empty());
     assert(((rect_s){at, rect.size}).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
@@ -334,9 +334,9 @@ void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_
     
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (at.y * _line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -390,14 +390,14 @@ void image_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_
     }
 }
 
-void image_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s at) const {
+void canvas_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
     assert(((rect_s){at, rect.size}).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {
             uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
-            if (color != MASKED_CIDX) {
+            if (color != image_c::MASKED_CIDX) {
                 put_pixel(color, point_s{(int16_t)(at.x + x), (int16_t)(at.y + y)});
             }
         }

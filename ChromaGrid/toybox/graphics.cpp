@@ -46,26 +46,11 @@ image_c::image_c(const size_s size, bool masked, palette_c *palette) {
     if (masked) {
         _maskmap = _bitmap + bitmap_words;
     }
-    _owns_bitmap = true;
-}
-
-image_c::image_c(const image_c &image, rect_s rect) {
-    assert((rect.origin.x % 0xf) == 0);
-    memcpy(this, &image, sizeof(image_c));
-    _size = rect.size;
-    int word_offset = image._line_words * rect.origin.y + rect.origin.x / 16;
-    _bitmap += word_offset * 4;
-    if (_maskmap) {
-        _maskmap += word_offset;
-    }
-    _owns_bitmap = false;
 }
 
 image_c::~image_c() {
-    if (_owns_bitmap) {
-        free(_bitmap);
-    }
-    if (_super_image == nullptr && _palette) {
+    free(_bitmap);
+    if (_palette) {
         delete _palette;
     }
 }
@@ -78,6 +63,29 @@ void image_c::set_active() const {
     timer_c::with_paused_timers([this] {
         g_active_image = this;
     });
+}
+
+uint8_t image_c::get_pixel(point_s at) const {
+    if (_size.contains(at)) {
+        int word_offset = (at.x / 16) + at.y * _line_words;
+        const uint16_t bit = 1 << (15 - at.x & 15);
+        if (_maskmap != nullptr) {
+            uint16_t *maskmap = _maskmap + word_offset;
+            if (!(*maskmap & bit)) {
+                return MASKED_CIDX;
+            }
+        }
+        uint8_t ci = 0;
+        uint8_t cb = 1;
+        uint16_t *bitmap = _bitmap + (word_offset << 2);
+        for (int bp = 4; --bp != -1; cb <<= 1) {
+            if (*bitmap++ & bit) {
+                ci |= cb;
+            }
+        }
+        return ci;
+    }
+    return _maskmap != nullptr ? MASKED_CIDX : 0;
 }
 
 font_c::font_c(const image_c &image, size_s character_size) : _image(image) {

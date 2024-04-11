@@ -19,7 +19,7 @@ cgcredits_scene_c::cgcredits_scene_c(scene_manager_c &manager, page_e page) :
     _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
 }
 
-static void draw_credits(const cgresources_c &rsc, image_c &screen) {
+static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
     screen.draw(rsc.font, "Credits", (point_s){96, 16});
 
     struct { const char *credit; const char *person; } credits[] = {
@@ -34,16 +34,16 @@ static void draw_credits(const cgresources_c &rsc, image_c &screen) {
     point_s atc = (point_s){16, 40 +  0};
     point_s atp = (point_s){40, 40 + 10};
     for (auto credit = &credits[0]; credit->credit; credit++) {
-        screen.draw(rsc.font, credit->credit, atc, image_c::align_left);
+        screen.draw(rsc.font, credit->credit, atc, canvas_c::align_left);
         atc.y += 26;
-        screen.draw(rsc.font, credit->person, atp, image_c::align_left);
+        screen.draw(rsc.font, credit->person, atp, canvas_c::align_left);
         atp.y += 26;
     }
 }
 
 // , ,
 
-static void draw_recognitions(const cgresources_c &rsc, image_c &screen) {
+static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
     screen.draw(rsc.font, "Recognitions", (point_s){96, 16});
     const char *texts[] = {
         "This game uses royalty free sound effects from ZapSplat.\n(https://www.zapsplat.com/)",
@@ -59,7 +59,7 @@ static void draw_recognitions(const cgresources_c &rsc, image_c &screen) {
     }
 }
 
-static void draw_dedications(const cgresources_c &rsc, image_c &screen) {
+static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
     screen.draw(rsc.font, "Dedications", (point_s){96, 16});
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
@@ -75,7 +75,7 @@ static void draw_dedications(const cgresources_c &rsc, image_c &screen) {
     }
 }
 
-static void draw_greetings(const cgresources_c &rsc, image_c &screen) {
+static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
     screen.draw(rsc.font, "Greetings", (point_s){96, 16});
     const char *texts[] = {
         "List of specific people.",
@@ -90,7 +90,7 @@ static void draw_greetings(const cgresources_c &rsc, image_c &screen) {
     }
 }
 
-void cgcredits_scene_c::will_appear(image_c &screen, bool obsured) {
+void cgcredits_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
     const auto &rsc = this->rsc;
@@ -112,7 +112,7 @@ void cgcredits_scene_c::will_appear(image_c &screen, bool obsured) {
 }
 
 
-void cgcredits_scene_c::update_background(image_c &screen, int ticks) {
+void cgcredits_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case -1:

@@ -19,7 +19,7 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
-void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
+void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
         
     for (int y = 0; y < 12; y++) {
@@ -47,7 +47,7 @@ void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
                 }
                 rect_s rect = (rect_s){{(int16_t)(col * 16), (int16_t)(row * 16)}, {16, 16}};
                 point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
-                screen.with_stencil(image_c::get_stencil(image_c::orderred, shade), [&] {
+                screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
                     screen.draw_aligned(rsc.tiles, rect, at);
                 });
             }
@@ -60,7 +60,7 @@ void cgintro_scene_c::will_appear(image_c &screen, bool obsured) {
     screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (point_s){96, 170});
 }
 
-void cgintro_scene_c::update_background(image_c &screen, int ticks) {
+void cgintro_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     switch (button) {
         case 0:
@@ -128,7 +128,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     }
 }
 
-void cglevel_select_scene_c::will_appear(image_c &screen, bool obsured) {
+void cglevel_select_scene_c::will_appear(canvas_c &screen, bool obsured) {
     screen.draw_aligned(rsc.background, (point_s){0, 0});
     _menu_buttons.draw_all(screen);
 
@@ -139,7 +139,7 @@ void cglevel_select_scene_c::will_appear(image_c &screen, bool obsured) {
     }
 }
 
-void cglevel_select_scene_c::update_background(image_c &screen, int ticks) {
+void cglevel_select_scene_c::update_background(canvas_c &screen, int ticks) {
     int button = update_button_group(screen, _menu_buttons);
     if (button == 0) {
         manager.pop();

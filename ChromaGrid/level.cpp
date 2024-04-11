@@ -308,17 +308,17 @@ level_t::~level_t() {
 #define ORB_Y_INSET 90
 #define MOVES_Y_INSET 110
 
-void level_t::draw_all(image_c &screen) const {
+void level_t::draw_all(canvas_c &screen) const {
     auto &rsc = cgresources_c::shared();
     for (int y = 0; y < grid_c::GRID_MAX; y++) {
         for (int x = 0; x < grid_c::GRID_MAX; x++) {
             draw_tile(screen, x, y);
         }
     }
-    screen.draw(rsc.font, "TIME:", (point_s){LABEL_X_INSET, TIME_Y_INSET}, image_c::align_left);
+    screen.draw(rsc.font, "TIME:", (point_s){LABEL_X_INSET, TIME_Y_INSET}, canvas_c::align_left);
     draw_time(screen);
     
-    screen.draw(rsc.font, "ORBS:", (point_s){LABEL_X_INSET, ORB_Y_INSET}, image_c::align_left);
+    screen.draw(rsc.font, "ORBS:", (point_s){LABEL_X_INSET, ORB_Y_INSET}, canvas_c::align_left);
     rect_s rect = (rect_s){{0, 0}, {16, 10}};
     for (int i = 0; i < 2; i++) {
         point_s at = (point_s){(int16_t)(ORB_X_INSET + i * ORB_X_SPACING), ORB_Y_INSET - 1};
@@ -327,7 +327,7 @@ void level_t::draw_all(image_c &screen) const {
     }
     draw_orb_counts(screen);
     
-    screen.draw(rsc.font, "MOVES:", (point_s){LABEL_X_INSET, MOVES_Y_INSET}, image_c::align_left);
+    screen.draw(rsc.font, "MOVES:", (point_s){LABEL_X_INSET, MOVES_Y_INSET}, canvas_c::align_left);
     draw_move_count(screen);
 }
 
@@ -342,7 +342,7 @@ inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
     return (rect_s){{tx, ty}, {16, 16}};
 }
 
-inline static void draw_tilestate(image_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
+inline static void draw_tilestate(canvas_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
     const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
     if (state.type == empty) {
         if (state.target != none) {
@@ -355,7 +355,7 @@ inline static void draw_tilestate(image_c &screen, const cgresources_c &rsc, con
     screen.draw_aligned(rsc.tiles, rect, at);
 }
 
-void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool selected) {
+void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
     auto &rsc = cgresources_c::shared();
     if (state.type == empty) {
         const rect_s rect = (rect_s){at, {16, 16}};
@@ -408,7 +408,7 @@ void draw_tilestate(image_c &screen, const tilestate_t &state, point_s at, bool 
     }
 }
 
-inline static void draw_orb(image_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
+inline static void draw_orb(canvas_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
     int16_t tx = (color - 1) * 16 + 3;
     int16_t ty = 10 * shade;
     const rect_s rect = (rect_s){{tx, ty}, {10, 10}};
@@ -416,7 +416,7 @@ inline static void draw_orb(image_c &screen, const cgresources_c &rsc, color_e c
     screen.draw(rsc.orbs, rect, at);
 }
 
-void draw_orb(image_c &screen, color_e color, point_s at) {
+void draw_orb(canvas_c &screen, color_e color, point_s at) {
     auto &rsc = cgresources_c::shared();
     int16_t tx = (color - 1) * 16 + 3;
     const rect_s rect = (rect_s){{tx, 0}, {10, 10}};
@@ -424,7 +424,7 @@ void draw_orb(image_c &screen, color_e color, point_s at) {
     screen.draw(rsc.orbs, rect, at);
 }
 
-void level_t::draw_tile(image_c &screen, int x, int y) const {
+void level_t::draw_tile(canvas_c &screen, int x, int y) const {
     auto &rsc = cgresources_c::shared();
     auto &tile = _grid->tiles[x][y];
     if (tile.state.type == empty && tile.state.target == none) {
@@ -432,8 +432,8 @@ void level_t::draw_tile(image_c &screen, int x, int y) const {
     } else {
         if (tile.transition.step > 0) {
             draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
-            const int shade = image_c::STENCIL_FULLY_OPAQUE - tile.transition.step * image_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
-            auto stencil = image_c::get_stencil(image_c::orderred, shade);
+            const int shade = canvas_c::STENCIL_FULLY_OPAQUE - tile.transition.step * canvas_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
+            auto stencil = canvas_c::get_stencil(canvas_c::orderred, shade);
             screen.with_stencil(stencil, [&, this] {
                 draw_tilestate(screen, rsc, tile.state, x, y);
             });
@@ -450,7 +450,7 @@ void level_t::draw_tile(image_c &screen, int x, int y) const {
     }
 }
 
-void level_t::draw_time(image_c &screen) const {
+void level_t::draw_time(canvas_c &screen) const {
     auto &rsc = cgresources_c::shared();
     int min = _results.time / 60;
     int sec = _results.time % 60;
@@ -465,10 +465,10 @@ void level_t::draw_time(image_c &screen) const {
     const rect_s rect = (rect_s){at, (size_s){32, 8}};
 
     screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, image_c::align_left);
+    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
 }
 
-void level_t::draw_orb_counts(image_c &screen) const {
+void level_t::draw_orb_counts(canvas_c &screen) const {
     auto &rsc = cgresources_c::shared();
 
     for (int i = 0; i < 2; i++) {
@@ -480,11 +480,11 @@ void level_t::draw_orb_counts(image_c &screen) const {
         point_s at = (point_s){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
         rect_s rect = (rect_s){ at, {16, 8}};
         screen.draw(rsc.background, rect, at);
-        screen.draw(rsc.mono_font, buf, at, image_c::align_left);
+        screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
     }
 }
 
-void level_t::draw_move_count(image_c &screen) const {
+void level_t::draw_move_count(canvas_c &screen) const {
     auto &rsc = cgresources_c::shared();
     int moves = _results.moves;
     char buf[4];
@@ -498,10 +498,10 @@ void level_t::draw_move_count(image_c &screen) const {
     const rect_s rect = (rect_s){at, (size_s){24, 8}};
 
     screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, image_c::align_left);
+    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
 }
 
-level_t::state_e level_t::update_tick(image_c &screen, mouse_c &mouse, int passed_seconds) {
+level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds) {
     if (passed_seconds) {
         _results.time -= passed_seconds;
         debug_cpu_color(DEBUG_CPU_LEVEL_DRAW_TIME);

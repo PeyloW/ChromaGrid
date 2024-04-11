@@ -5,7 +5,7 @@
 //  Created by Fredrik on 2024-03-18.
 //
 
-#include "graphics.hpp"
+#include "canvas.hpp"
 
 using namespace toybox;
 
@@ -53,8 +53,8 @@ static void init_lookup_table_if_needed() {
 }
 #endif
 
-dirtymap_c *dirtymap_c::create(const image_c &image) {
-    auto size = image.get_size();
+dirtymap_c *dirtymap_c::create(const canvas_c &canvas) {
+    auto size = canvas.get_image().get_size();
 #if CGDIRTYMAP_BITSET
     init_lookup_table_if_needed();
     size.width = (size.width + (8 * CGDIRTYMAP_TILE_WIDTH - 1)) / (8 * CGDIRTYMAP_TILE_WIDTH);
@@ -176,7 +176,8 @@ void dirtymap_c::merge(const dirtymap_c &dirtymap) {
 #endif
 }
 
-void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
+void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
+    auto &image = canvas.get_image();
     assert(image.get_size() == clean_image.get_size());
 #if CGDIRTYMAP_BITSET
     assert(_size.width * CGDIRTYMAP_TILE_WIDTH * 8 >= clean_image.get_size().width);
@@ -186,7 +187,7 @@ void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
     assert(_size.height * CGDIRTYMAP_TILE_HEIGHT == clean_image.get_size().height);
     assert((image.get_size().width % CGDIRTYMAP_TILE_WIDTH) == 0);
     assert((image.get_size().height % CGDIRTYMAP_TILE_HEIGHT) == 0);
-    const_cast<image_c&>(image).with_clipping(false, [this, &image, &clean_image] {
+    const_cast<canvas_c&>(canvas).with_clipping(false, [this, &canvas, &clean_image] {
 #if CGDIRTYMAP_BITSET
         auto data = _data;
         point_s at = {0, 0};
@@ -211,7 +212,7 @@ void dirtymap_c::restore(image_c &image, const image_c &clean_image) {
                         #if DEBUG_DIRTYMAP
                         printf("Restore {{%d, %d}, {%d, %d}}\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
                         #endif
-                        image.draw_aligned(clean_image, rect, rect.origin);
+                        canvas.draw_aligned(clean_image, rect, rect.origin);
                     }
                 }
                 data++;
