@@ -1,92 +1,13 @@
 //
-//  graphics.cpp
-//  ChromaGrid
+//  font.cpp
+//  toybox
 //
-//  Created by Fredrik on 2024-02-04.
+//  Created by Fredrik on 2024-04-11.
 //
 
-#include "graphics.hpp"
-#include "audio.hpp"
-#include "system.hpp"
+#include "font.hpp"
 
 using namespace toybox;
-
-extern "C" {
-#ifndef __M68000__
-    const sound_c *g_active_sound = nullptr;
-#endif
-    const palette_c *g_active_palette = nullptr;
-    const image_c *g_active_image = nullptr;
-}
-
-color_c color_c::mix(color_c other, int shade) const {
-    assert(shade >= MIX_FULLY_THIS && shade <= MIX_FULLY_OTHER);
-    int r = from_ste(color, 8) * (MIX_FULLY_OTHER - shade) + from_ste(other.color, 8) * shade;
-    int g = from_ste(color, 4) * (MIX_FULLY_OTHER - shade) + from_ste(other.color, 4) * shade;
-    int b = from_ste(color, 0) * (MIX_FULLY_OTHER - shade) + from_ste(other.color, 0) * shade;
-    color_c mixed(r / MIX_FULLY_OTHER, g / MIX_FULLY_OTHER, b / MIX_FULLY_OTHER);
-    return mixed;
-}
-
-void palette_c::set_active() const {
-#ifdef __M68000__
-    memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
-#endif
-    g_active_palette = this;
-}
-
-image_c::image_c(const size_s size, bool masked, palette_c *palette) {
-    memset(this, 0, sizeof(image_c));
-    _palette = palette;
-    this->_size = size;
-    _line_words = ((size.width + 15) / 16);
-    uint16_t bitmap_words = (_line_words * size.height) << 2;
-    uint16_t mask_bytes = masked ? (_line_words * size.height) : 0;
-    _bitmap = reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2));
-    if (masked) {
-        _maskmap = _bitmap + bitmap_words;
-    }
-}
-
-image_c::~image_c() {
-    free(_bitmap);
-    if (_palette) {
-        delete _palette;
-    }
-}
-
-#ifdef __M68000__
-static uint16_t pSetActiveVBLCode[20];
-#endif
-
-void image_c::set_active() const {
-    timer_c::with_paused_timers([this] {
-        g_active_image = this;
-    });
-}
-
-uint8_t image_c::get_pixel(point_s at) const {
-    if (_size.contains(at)) {
-        int word_offset = (at.x / 16) + at.y * _line_words;
-        const uint16_t bit = 1 << (15 - at.x & 15);
-        if (_maskmap != nullptr) {
-            uint16_t *maskmap = _maskmap + word_offset;
-            if (!(*maskmap & bit)) {
-                return MASKED_CIDX;
-            }
-        }
-        uint8_t ci = 0;
-        uint8_t cb = 1;
-        uint16_t *bitmap = _bitmap + (word_offset << 2);
-        for (int bp = 4; --bp != -1; cb <<= 1) {
-            if (*bitmap++ & bit) {
-                ci |= cb;
-            }
-        }
-        return ci;
-    }
-    return _maskmap != nullptr ? MASKED_CIDX : 0;
-}
 
 font_c::font_c(const image_c &image, size_s character_size) : _image(image) {
     const int cols = image.get_size().width / character_size.width;

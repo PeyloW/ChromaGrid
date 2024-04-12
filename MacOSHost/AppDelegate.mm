@@ -7,7 +7,7 @@
 
 #import "AppDelegate.h"
 #import "game.hpp"
-#import "graphics.hpp"
+#import "image.hpp"
 #import "system_host.hpp"
 
 #import <Foundation/Foundation.h>

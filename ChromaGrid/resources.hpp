@@ -8,7 +8,7 @@
 #ifndef resources_hpp
 #define resources_hpp
 
-#include "graphics.hpp"
+#include "image.hpp"
 #include "audio.hpp"
 #include "level.hpp"
 #include "vector.hpp"

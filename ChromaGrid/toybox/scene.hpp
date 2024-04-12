@@ -100,7 +100,7 @@ namespace toybox {
             canvas_c canvas;
             dirtymap_c *dirtymap;
             screen_c() : image((size_s){320, 208}, false, nullptr), canvas(image) {
-                dirtymap = dirtymap_c::create(canvas);
+                dirtymap = canvas.create_dirtymap();
             }
         };
         vector_c<screen_c, 3> _screens;

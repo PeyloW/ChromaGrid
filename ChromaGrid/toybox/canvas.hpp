@@ -8,39 +8,11 @@
 #ifndef canvas_hpp
 #define canvas_hpp
 
-#include "graphics.hpp"
+#include "image.hpp"
+#include "font.hpp"
+#include "dirtymap.hpp"
 
 namespace toybox {
-    
-    class canvas_c;
-    
-#ifndef CGDIRTYMAP_TILE_WIDTH
-#   define CGDIRTYMAP_TILE_WIDTH (16)
-#endif
-#ifndef CGDIRTYMAP_TILE_HEIGHT
-#   define CGDIRTYMAP_TILE_HEIGHT (16)
-#endif
-    static_assert(CGDIRTYMAP_TILE_WIDTH % 16 == 0, "Tile width must be a multiple of 16");
-    
-    class dirtymap_c : public nocopy_c {
-    public:
-        static dirtymap_c *create(const canvas_c &canvas);
-        
-        void mark(const rect_s &rect);
-        void merge(const dirtymap_c &dirtymap);
-        void restore(canvas_c &canvas, const image_c &clean_image);
-        void clear();
-#ifndef __M68000__
-#if DEBUG_DIRTYMAP
-        void debug(const char *name) const;
-#endif
-#endif
-    private:
-        dirtymap_c(const size_s size) : _size(size) {}
-        const size_s _size;
-        uint8_t _data[];
-    };
-    
     
     class canvas_c : public nocopy_c {
     public:
@@ -89,6 +61,7 @@ namespace toybox {
         }
         static const canvas_c::stencil_t *const get_stencil(stencil_type_e type, int shade);
         
+        dirtymap_c *create_dirtymap() const __pure;
         template<class Commands>
         __forceinline void with_dirtymap(dirtymap_c *dirtymap, Commands commands) {
             dirtymap_c *old_dirtymap = _dirtymap;
@@ -96,15 +69,6 @@ namespace toybox {
             commands();
             _dirtymap = old_dirtymap;
         }
-        void restore(const canvas_c &clean_image, bool *const dirtymap) const;
-        void merge_dirtymap(bool *dest, const bool *source) const;
-#ifndef __M68000__
-#if DEBUG_DIRTYMAP
-        void debug_dirtymap(bool *const dirtymap, const char *name) const;
-#else
-        void debug_dirtymap(bool *const dirtymap, const char *name) const {};
-#endif
-#endif
         
         void put_pixel(uint8_t ci, point_s at) const;
         

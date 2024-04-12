@@ -5,6 +5,7 @@
 //  Created by Fredrik on 2024-03-18.
 //
 
+#include "dirtymap.hpp"
 #include "canvas.hpp"
 
 using namespace toybox;
@@ -53,19 +54,18 @@ static void init_lookup_table_if_needed() {
 }
 #endif
 
-dirtymap_c *dirtymap_c::create(const canvas_c &canvas) {
-    auto size = canvas.get_image().get_size();
+int dirtymap_c::instance_size(size_s *size) {
 #if CGDIRTYMAP_BITSET
     init_lookup_table_if_needed();
-    size.width = (size.width + (8 * CGDIRTYMAP_TILE_WIDTH - 1)) / (8 * CGDIRTYMAP_TILE_WIDTH);
-    size.height /= CGDIRTYMAP_TILE_HEIGHT;
-    const int16_t data_size = size.width * (size.height + 1) + 3;
+    size->width = (size->width + (8 * CGDIRTYMAP_TILE_WIDTH - 1)) / (8 * CGDIRTYMAP_TILE_WIDTH);
+    size->height /= CGDIRTYMAP_TILE_HEIGHT;
+    const int16_t data_size = size->width * (size->height + 1) + 3;
 #else
-    size.width /= CGDIRTYMAP_TILE_WIDTH;
-    size.height /= CGDIRTYMAP_TILE_HEIGHT;
-    const int16_t data_size = size.width * size.height;
+    size->width /= CGDIRTYMAP_TILE_WIDTH;
+    size->height /= CGDIRTYMAP_TILE_HEIGHT;
+    const int16_t data_size = size->width * size->height;
 #endif
-    return new (calloc(1, sizeof(dirtymap_c) + data_size)) dirtymap_c(size);
+    return sizeof(dirtymap_c) + data_size;
 }
 
 void dirtymap_c::mark(const rect_s &rect) {
