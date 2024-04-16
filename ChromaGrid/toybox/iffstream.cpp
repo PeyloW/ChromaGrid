@@ -161,10 +161,10 @@ bool iffstream_c::read(iff_chunk_s &chunk) {
     return result;
 }
 
-bool iffstream_c::read(uint8_t *buf, int count) { return _stream.read(buf, count); }
-bool iffstream_c::read(uint16_t *buf, int count) { return _stream.read(buf, count); }
-bool iffstream_c::read(uint32_t *buf, int count) { return _stream.read(buf, count); }
+bool iffstream_c::read(uint8_t *buf, size_t count) { return _stream.read(buf, count); }
+bool iffstream_c::read(uint16_t *buf, size_t count) { return _stream.read(buf, count); }
+bool iffstream_c::read(uint32_t *buf, size_t count) { return _stream.read(buf, count); }
 
-bool iffstream_c::write(const uint8_t *buf, int count) { return _stream.write(buf, count); };
-bool iffstream_c::write(const uint16_t *buf, int count) { return _stream.write(buf, count); };
-bool iffstream_c::write(const uint32_t *buf, int count) { return _stream.write(buf, count); };
+bool iffstream_c::write(const uint8_t *buf, size_t count) { return _stream.write(buf, count); };
+bool iffstream_c::write(const uint16_t *buf, size_t count) { return _stream.write(buf, count); };
+bool iffstream_c::write(const uint32_t *buf, size_t count) { return _stream.write(buf, count); };

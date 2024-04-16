@@ -30,25 +30,25 @@ namespace toystd {
         virtual ptrdiff_t tell() const __pure = 0;
         virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way) = 0;
 
-        virtual bool read(uint8_t *buf, int count = 1) = 0;
-        virtual bool read(uint16_t *buf, int count = 1);
-        virtual bool read(uint32_t *buf, int count = 1);
+        virtual bool read(uint8_t *buf, size_t count = 1) = 0;
+        virtual bool read(uint16_t *buf, size_t count = 1);
+        virtual bool read(uint32_t *buf, size_t count = 1);
         virtual bool read(void *buf, const char *layout);
         template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
         bool read(T *buf) { return read((void *)buf, struct_layout<T>::value); };
-        __forceinline bool read(int8_t *buf, int count = 1) { return read((uint8_t*)buf, count); };
-        __forceinline bool read(int16_t *buf, int count = 1) { return read((uint16_t*)buf, count); };
-        __forceinline bool read(int32_t *buf, int count = 1) { return read((uint32_t*)buf, count); };
+        __forceinline bool read(int8_t *buf, size_t count = 1) { return read((uint8_t*)buf, count); };
+        __forceinline bool read(int16_t *buf, size_t count = 1) { return read((uint16_t*)buf, count); };
+        __forceinline bool read(int32_t *buf, size_t count = 1) { return read((uint32_t*)buf, count); };
 
-        virtual bool write(const uint8_t *buf, int count = 1) = 0;
-        virtual bool write(const uint16_t *buf, int count = 1);
-        virtual bool write(const uint32_t *buf, int count = 1);
+        virtual bool write(const uint8_t *buf, size_t count = 1) = 0;
+        virtual bool write(const uint16_t *buf, size_t count = 1);
+        virtual bool write(const uint32_t *buf, size_t count = 1);
         virtual bool write(const void *buf, const char *layout);
         template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
         bool write(const T *buf) { return write((void *)buf, struct_layout<T>::value); };
-        __forceinline bool write(const int8_t *buf, int count = 1) { return write((uint8_t*)buf, count); };
-        __forceinline bool write(const int16_t *buf, int count = 1) { return write((uint16_t*)buf, count); };
-        __forceinline bool write(const int32_t *buf, int count = 1) { return write((uint32_t*)buf, count); };
+        __forceinline bool write(const int8_t *buf, size_t count = 1) { return write((uint8_t*)buf, count); };
+        __forceinline bool write(const int16_t *buf, size_t count = 1) { return write((uint16_t*)buf, count); };
+        __forceinline bool write(const int32_t *buf, size_t count = 1) { return write((uint32_t*)buf, count); };
         
     protected:
         bool assert_on_error() const __pure { return _assert_on_error; }
@@ -68,14 +68,14 @@ namespace toystd {
         virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
 
         using stream_c::read;
-        virtual bool read(uint8_t *buf, int count = 1);
-        virtual bool read(uint16_t *buf, int count = 1);
-        virtual bool read(uint32_t *buf, int count = 1);
+        virtual bool read(uint8_t *buf, size_t count = 1);
+        virtual bool read(uint16_t *buf, size_t count = 1);
+        virtual bool read(uint32_t *buf, size_t count = 1);
 
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, int count = 1);
-        virtual bool write(const uint16_t *buf, int count = 1);
-        virtual bool write(const uint32_t *buf, int count = 1);
+        virtual bool write(const uint8_t *buf, size_t count = 1);
+        virtual bool write(const uint16_t *buf, size_t count = 1);
+        virtual bool write(const uint32_t *buf, size_t count = 1);
     private:
         stream_c *_owned_stream;
         stream_c &_stream;
@@ -103,9 +103,9 @@ namespace toystd {
         virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
 
         using stream_c::read;
-        virtual bool read(uint8_t *buf, int count = 1);
+        virtual bool read(uint8_t *buf, size_t count = 1);
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, int count = 1);
+        virtual bool write(const uint8_t *buf, size_t count = 1);
         
     private:
         const char *_path;

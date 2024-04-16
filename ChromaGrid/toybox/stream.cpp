@@ -49,10 +49,10 @@ static bool read_or_write_struct(stream_c &stream, void *buf, const char *layout
     return true;
 }
 
-bool stream_c::read(uint16_t *buf, int count) {
+bool stream_c::read(uint16_t *buf, size_t count) {
     return read((uint8_t*)buf, count * 2);
 };
-bool stream_c::read(uint32_t *buf, int count) {
+bool stream_c::read(uint32_t *buf, size_t count) {
     return read((uint8_t*)buf, count * 4);
 };
 bool stream_c::read(void *buf, const char * layout) {
@@ -63,10 +63,10 @@ bool stream_c::read(void *buf, const char * layout) {
     return r;
 }
 
-bool stream_c::write(const uint16_t *buf, int count) {
+bool stream_c::write(const uint16_t *buf, size_t count) {
     return write((uint8_t*)buf, count * 2);
 };
-bool stream_c::write(const uint32_t *buf, int count) {
+bool stream_c::write(const uint32_t *buf, size_t count) {
     return write((uint8_t*)buf, count * 4);
 };
 bool stream_c::write(const void *buf, const char * layout) {
@@ -95,28 +95,28 @@ bool hton_stream_c::good() const { return _stream.good(); };
 ptrdiff_t hton_stream_c::tell() const { return _stream.tell(); }
 ptrdiff_t hton_stream_c::seek(ptrdiff_t pos, seekdir_e way) { return _stream.seek(pos, way); }
 
-__forceinline static void swap_buffer(uint16_t *buf, int count) {
+__forceinline static void swap_buffer(uint16_t *buf, size_t count) {
     while (--count != -1) {
         hton(*buf);
         buf++;
     }
 }
-__forceinline static void swap_buffer(uint32_t *buf, int count) {
+__forceinline static void swap_buffer(uint32_t *buf, size_t count) {
     while (--count != -1) {
         hton(*buf);
         buf++;
     }
 }
 
-bool hton_stream_c::read(uint8_t *buf, int count) { return _stream.read(buf, count); }
-bool hton_stream_c::read(uint16_t *buf, int count) {
+bool hton_stream_c::read(uint8_t *buf, size_t count) { return _stream.read(buf, count); }
+bool hton_stream_c::read(uint16_t *buf, size_t count) {
     bool r = _stream.read(buf, count);
     if (r) {
         swap_buffer(buf, count);
     }
     return r;
 }
-bool hton_stream_c::read(uint32_t *buf, int count) {
+bool hton_stream_c::read(uint32_t *buf, size_t count) {
     bool r = _stream.read(buf, count);
     if (r) {
         swap_buffer(buf, count);
@@ -124,16 +124,16 @@ bool hton_stream_c::read(uint32_t *buf, int count) {
     return r;
 }
 
-bool hton_stream_c::write(const uint8_t *buf, int count) {
+bool hton_stream_c::write(const uint8_t *buf, size_t count) {
     return _stream.write(buf, count);
 };
-bool hton_stream_c::write(const uint16_t *buf, int count) {
+bool hton_stream_c::write(const uint16_t *buf, size_t count) {
     uint16_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint16_t));
     swap_buffer(tmpbuf, count);
     return _stream.write(tmpbuf, count);
 }
-bool hton_stream_c::write(const uint32_t *buf, int count) {
+bool hton_stream_c::write(const uint32_t *buf, size_t count) {
     uint32_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint32_t));
     swap_buffer(tmpbuf, count);
@@ -204,7 +204,7 @@ bool fstream_c::good() const { return is_open(); };
 ptrdiff_t fstream_c::tell() const {
     auto r = ftell(_file);
     if (_assert_on_error) {
-        hard_assert(r);
+        hard_assert(r >= 0);
     }
     return r;
 }
@@ -212,15 +212,15 @@ ptrdiff_t fstream_c::tell() const {
 ptrdiff_t fstream_c::seek(ptrdiff_t pos, stream_c::seekdir_e way) {
     auto r = fseek(_file, pos, way);
     if (_assert_on_error) {
-        hard_assert(r);
+        hard_assert(r >= 0);
     }
     return r;
 }
 
-bool fstream_c::read(uint8_t *buf, int count) {
+bool fstream_c::read(uint8_t *buf, size_t count) {
     return fread(buf, 1, count, _file) == count;
 }
-bool fstream_c::write(const uint8_t *buf, int count) {
+bool fstream_c::write(const uint8_t *buf, size_t count) {
     return fwrite(buf, 1, count, _file) == count;
 }
 

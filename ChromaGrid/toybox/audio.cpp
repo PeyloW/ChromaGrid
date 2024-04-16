@@ -183,14 +183,14 @@ static int _strncmp(const char *s1, const char *s2, size_t max)
 }
 
 music_c::music_c(const char *path) : _track(0) {
-    FILE *file = fopen(path, "r");
-    hard_assert(file);
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    fseek(file, 0L, SEEK_SET);
+    fstream_c file(path);
+    hard_assert(file.good());
+    file.seek(0, stream_c::end);
+    size_t size = file.tell();
+    file.seek(0, toystd::fstream_c::beg);
     
     _sndh = malloc(size);
-    size_t read = fread(_sndh, size, 1, file);
+    size_t read = file.read((uint8_t *)_sndh, size);
     assert(read == 1);
     assert(memcmp((char *)_sndh + 12, "SNDH", 4) == 0);
     _title = nullptr;
