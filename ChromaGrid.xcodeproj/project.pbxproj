@@ -73,6 +73,7 @@
 		A6A0EE982BCDAE0A005B6ED3 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE952BCDAE0A005B6ED3 /* stream.cpp */; };
 		A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6A0EE9E2BCDC3DA005B6ED3 /* iffstream.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EEA02BCDC3DA005B6ED3 /* iffstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE9D2BCDC3DA005B6ED3 /* iffstream.cpp */; };
+		A6A0EEA42BCF339B005B6ED3 /* levels4.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6A0EEA32BCF339B005B6ED3 /* levels4.dat */; };
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
@@ -202,6 +203,7 @@
 		A6A0EE962BCDAE0A005B6ED3 /* stream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stream.hpp; sourceTree = "<group>"; };
 		A6A0EE9D2BCDC3DA005B6ED3 /* iffstream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iffstream.cpp; sourceTree = "<group>"; };
 		A6A0EE9E2BCDC3DA005B6ED3 /* iffstream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = iffstream.hpp; sourceTree = "<group>"; };
+		A6A0EEA32BCF339B005B6ED3 /* levels4.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels4.dat; sourceTree = "<group>"; };
 		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				A6D012CD2BB9D02800D260C2 /* levels1.dat */,
 				A6A0EE2F2BBE3AEC005B6ED3 /* levels2.dat */,
 				A6A0EE312BBE5981005B6ED3 /* levels3.dat */,
+				A6A0EEA32BCF339B005B6ED3 /* levels4.dat */,
 				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
 				A69AE4E42B72851700EBA43D /* test.iff */,
 				A69AE52D2B8D76FA00EBA43D /* button.iff */,
@@ -629,6 +632,7 @@
 				A6A0EE302BBE3AEC005B6ED3 /* levels2.dat in Resources */,
 				A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */,
 				A6A0EE322BBE5981005B6ED3 /* levels3.dat in Resources */,
+				A6A0EEA42BCF339B005B6ED3 /* levels4.dat in Resources */,
 				A69AE5062B82B1E300EBA43D /* music.snd in Resources */,
 				A6E484D32BA293EE004CCA7D /* take.aif in Resources */,
 				A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */,
