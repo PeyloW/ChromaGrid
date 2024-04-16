@@ -89,6 +89,14 @@ public:
         return (state.orb & c) == c;
     }
     
+    __forceinline bool is_remaining() const {
+        if (state.target != none) {
+            return state.target != state.current;
+        } else {
+            return false;
+        }
+    }
+    
     __forceinline bool at_target() const {
         return transition.step == 0 && state.target == state.current;
     }
@@ -252,8 +260,9 @@ public:
     }
     
     template<typename CB>
-    bool tick(CB callback) {
+    bool tick(uint16_t &remaining, CB callback) {
         bool completed = true;
+        remaining = 0;
         for (int y = GRID_MAX; --y != -1; ) {
             for (int x = GRID_MAX; --x != -1; ) {
                 auto &tile = tiles[x][y];
@@ -262,6 +271,9 @@ public:
                     callback(x, y);
                 }
                 completed &= tile.at_target();
+                if (tile.is_remaining()) {
+                    remaining++;
+                }
             }
         }
         return completed;
@@ -280,6 +292,7 @@ level_t::level_t(level_recipe_t *recipe) :
     _results.orbs[1] = recipe->header.orbs[1];
     _results.time = recipe->header.time;
     _results.moves = 0;
+    _remaining = 0;
     
     int off_x = (grid_c::GRID_MAX - recipe->header.width) / 2;
     int off_y = (grid_c::GRID_MAX - recipe->header.height) / 2;
@@ -289,6 +302,9 @@ level_t::level_t(level_recipe_t *recipe) :
             auto &src_tile = recipe->tiles[x + y * recipe->header.width];
             auto &dst_tile = _grid->tiles[off_x + x][off_y + y];
             dst_tile.state = src_tile;
+            if (dst_tile.state.target != none && dst_tile.state.target != dst_tile.state.current) {
+                _remaining++;
+            }
         }
     }
     
@@ -300,13 +316,14 @@ level_t::~level_t() {
 }
 
 #define LABEL_X_INSET 200
-#define TIME_Y_INSET 70
+#define TIME_Y_INSET 65
 #define TIME_X_TRAIL (320 - 8)
 #define ORB_X_INSET 248
 #define ORB_X_LEAD 16
 #define ORB_X_SPACING 32
-#define ORB_Y_INSET 90
-#define MOVES_Y_INSET 110
+#define ORB_Y_INSET 85
+#define MOVES_Y_INSET 105
+#define REMAINING_Y_INSET 125
 
 void level_t::draw_all(canvas_c &screen) const {
     auto &rsc = cgresources_c::shared();
@@ -329,6 +346,9 @@ void level_t::draw_all(canvas_c &screen) const {
     
     screen.draw(rsc.font, "MOVES:", (point_s){LABEL_X_INSET, MOVES_Y_INSET}, canvas_c::align_left);
     draw_move_count(screen);
+
+    screen.draw(rsc.font, "REMAINING:", (point_s){LABEL_X_INSET, REMAINING_Y_INSET}, canvas_c::align_left);
+    draw_remaining_count(screen);
 }
 
 const tilestate_t &level_t::tilestate_at(int x, int y) const {
@@ -501,6 +521,23 @@ void level_t::draw_move_count(canvas_c &screen) const {
     screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
 }
 
+void level_t::draw_remaining_count(canvas_c &screen) const {
+    auto &rsc = cgresources_c::shared();
+    int moves = _remaining;
+    char buf[4];
+    buf[3] = 0;
+    for (int i = 3; --i != -1; ) {
+        uint8_t r = moves % 10;
+        moves /= 10;
+        buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
+    }
+    const point_s at = (point_s){ TIME_X_TRAIL - 24, REMAINING_Y_INSET };
+    const rect_s rect = (rect_s){at, (size_s){24, 8}};
+
+    screen.draw(rsc.background, rect, at);
+    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+}
+
 level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds) {
     if (passed_seconds) {
         _results.time -= passed_seconds;
@@ -554,11 +591,16 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
             }
         }
         debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);
-        auto completed = _grid->tick([this, &screen] (int x, int y) {
+        uint16_t remaining = 0;
+        auto completed = _grid->tick(remaining, [this, &screen] (int x, int y) {
             debug_cpu_color(DEBUG_CPU_LEVEL_GRID_DRAW);
             draw_tile(screen, x, y);
             debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);
         });
+        if (remaining != _remaining) {
+            _remaining = remaining;
+            draw_remaining_count(screen);
+        }
         if (completed) {
             return success;
         }

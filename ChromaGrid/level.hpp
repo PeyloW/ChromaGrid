@@ -134,8 +134,10 @@ private:
     void draw_time(canvas_c &screen) const;
     void draw_orb_counts(canvas_c &screen) const;
     void draw_move_count(canvas_c &screen) const;
+    void draw_remaining_count(canvas_c &screen) const;
 
     level_result_t _results;
+    uint16_t _remaining;
     grid_c *_grid;
 };
 
