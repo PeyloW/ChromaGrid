@@ -7,7 +7,7 @@
 
 #include "resources.hpp"
 #include "game.hpp"
-#include "iff_file.hpp"
+#include "iffstream.hpp"
 
 static void remap_to(color_e col, canvas_c::remap_table_t table, uint8_t masked_idx = image_c::MASKED_CIDX) {
     switch (col) {
@@ -136,23 +136,20 @@ void cgresources_c::load_levels() {
     while (levels.size() < 45) {
         char buf[14];
         sprintf(buf, "levels%d.dat", i++);
-        FILE *file = fopen(data_path(buf), "r");
-        if (file == nullptr) {
+        iffstream_c iff(data_path(buf), fstream_c::input);
+        if (!iff.good()) {
             break;
         }
-        iff_file_c iff(file);
-        iff.with_hard_asserts(true, [&] {
-            iff_group_s list;
-            iff.first(IFF_LIST, IFF_CGLV, list);
-            uint8_t *data = (uint8_t *)calloc(1, list.size);
-            iff_group_s level_group;
-            while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
-                level_recipe_t *recipe = (level_recipe_t *)(data + iff.get_pos());
-                recipe->load(iff, level_group);
-                levels.emplace_back(recipe);
-            }
-        });
-        fclose(file);
+        iff.set_assert_on_error(true);
+        iff_group_s list;
+        iff.first(IFF_LIST, IFF_CGLV, list);
+        uint8_t *data = (uint8_t *)calloc(1, list.size);
+        iff_group_s level_group;
+        while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
+            level_recipe_t *recipe = (level_recipe_t *)(data + iff.tell());
+            recipe->load(iff, level_group);
+            levels.emplace_back(recipe);
+        }
     }
     assert(levels.size() > 0);
 }
@@ -281,65 +278,58 @@ bool cgresources_c::load_user_levels() {
     memcpy(user_levels[6], &level_10, sizeof(level_10));
 
 #else
-    FILE *file =  fopen(user_path("levels.dat"), "r");
-    if (!file) {
+    iffstream_c iff(user_path("levels.dat"), fstream_c::input);
+    if (!iff.good()) {
         return false;
     }
-    iff_file_c iff(file);
-    iff.with_hard_asserts(true, [&] {
-        iff_group_s list;
-        iff.first(IFF_LIST, IFF_CGLV, list);
-        int index = 0;
-        iff_group_s level_group;
-        while (iff.next(list, IFF_FORM, level_group)) {
-            auto recipe = user_levels[index++];
-            recipe->load(iff, level_group);
-        }
-    });
-    fclose(file);
+    iff.set_assert_on_error(true);
+    iff_group_s list;
+    iff.first(IFF_LIST, IFF_CGLV, list);
+    int index = 0;
+    iff_group_s level_group;
+    while (iff.next(list, IFF_FORM, level_group)) {
+        auto recipe = user_levels[index++];
+        recipe->load(iff, level_group);
+    }
 #endif
     return true;
 }
 
 bool cgresources_c::save_user_levels() {
-    iff_file_c iff(user_path("levels.dat"), "w+");
-    if (iff.get_pos() < 0) {
+    iffstream_c iff(user_path("levels.dat"), fstream_c::input | fstream_c::output);
+    if (!iff.good()) {
         return false;
     }
-    iff.with_hard_asserts(true, [&] {
-        iff_group_s list;
-        iff.begin(list, IFF_LIST);
-        iff.write(IFF_CGLV_ID);
-        for (int index = 0; index < user_levels.size(); index++) {
-            auto &recipe = user_levels[index];
-            if (!recipe->empty()) {
-                recipe->save(iff);
-            }
+    iff.set_assert_on_error(true);
+    iff_group_s list;
+    iff.begin(list, IFF_LIST);
+    iff.write(&IFF_CGLV_ID);
+    for (int index = 0; index < user_levels.size(); index++) {
+        auto &recipe = user_levels[index];
+        if (!recipe->empty()) {
+            recipe->save(iff);
         }
-        iff.end(list);
-    });
+    }
+    iff.end(list);
     return true;
 }
 
 bool cgresources_c::load_level_results() {
     bool success = false;
-    FILE *file =  fopen(user_path("scores.dat"), "r");
-    if (file) {
-        iff_file_c iff(file);
-        iff_group_s list;
-        if (iff.first(IFF_LIST, IFF_CGLR, list)) {
-            iff_chunk_s level_chunk;
-            while (iff.next(list, IFF_CGLR, level_chunk)) {
-                level_results.emplace_back();
-                auto &level_result = level_results.back();
-                if (!level_result.load(iff, level_chunk)) {
-                    goto done;
-                }
+    iffstream_c iff(user_path("scores.dat"));
+    if (!iff.good()) goto done;
+    iff_group_s list;
+    if (iff.first(IFF_LIST, IFF_CGLR, list)) {
+        iff_chunk_s level_chunk;
+        while (iff.next(list, IFF_CGLR, level_chunk)) {
+            level_results.emplace_back();
+            auto &level_result = level_results.back();
+            if (!level_result.load(iff, level_chunk)) {
+                goto done;
             }
         }
-        fclose(file);
-        success = level_results.size() <= levels.size();
     }
+    success = level_results.size() <= levels.size();
 done:
     if (!success) {
         level_results.clear();
@@ -351,10 +341,13 @@ done:
 }
 
 bool cgresources_c::save_level_results() {
-    iff_file_c iff(user_path("scores.dat"), "w+");
+    iffstream_c iff(user_path("scores.dat"), fstream_c::input | fstream_c::output);
+    if (!iff.good()) {
+        return false;
+    }
     iff_group_s list;
     if (iff.begin(list, IFF_LIST)) {
-        iff.write(IFF_CGLR_ID);
+        iff.write(&IFF_CGLR_ID);
         for (auto result = level_results.begin(); result != level_results.end(); result++) {
             result->save(iff);
         }

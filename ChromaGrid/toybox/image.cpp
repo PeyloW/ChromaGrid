@@ -8,7 +8,7 @@
 #include "image.hpp"
 #include "system.hpp"
 #include "canvas.hpp"
-#include "iff_file.hpp"
+#include "iffstream.hpp"
 
 using namespace toybox;
 
@@ -99,16 +99,14 @@ struct __packed_struct ilbm_header_s {
 static_assert(sizeof(ilbm_header_s) == 20, "Heade size mismatch");
 
 
-#ifndef __M68000__
-static void hton(ilbm_header_s &bmhd) {
-    hton(bmhd.size);
-    hton(bmhd.offset);
-    hton(bmhd.mask_color);
-    hton(bmhd.page_size);
-};
-#endif
+namespace toystd {
+    template<>
+    struct struct_layout<ilbm_header_s> {
+        static constexpr char * value = "4w4b1w2b2w";
+    };
+}
 
-static void image_read(iff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_read(iffstream_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     uint16_t word_buffer[line_words];
     const int bp_count = (maskmap ? 5 : 4);
     while (--height != -1) {
@@ -135,15 +133,15 @@ static void image_read(iff_file_c &file, uint16_t line_words, int height, uint16
     }
 }
 
-static void image_read_packbits(iff_file_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_read_packbits(iffstream_c &file, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
-        int8_t *buffer = (int8_t*)word_buffer;
-        int8_t *bufferEnd = buffer + (line_words * bp_count * 2);
+        uint8_t *buffer = (uint8_t*)word_buffer;
+        uint8_t *bufferEnd = buffer + (line_words * bp_count * 2);
         while (buffer < bufferEnd) {
             int8_t cmd;
-            if (!file.read(&cmd, 1)) {
+            if (!file.read((uint8_t*)&cmd, 1)) {
                 return; // Failed read
             }
             if (cmd >= 0) {
@@ -153,7 +151,7 @@ static void image_read_packbits(iff_file_c &file, uint16_t line_words, int heigh
                 }
                 buffer += to_read;
             } else if (cmd != -128) {
-                int8_t data;
+                uint8_t data;
                 if (!file.read(&data, 1)) {
                     return; // Failed read
                 }
@@ -185,9 +183,9 @@ static void image_read_packbits(iff_file_c &file, uint16_t line_words, int heigh
 image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
     memset(this, 0, sizeof(image_c));
 
-    iff_file_c file(path);
+    iffstream_c file(path);
     iff_group_s form;
-    if (!file.first(IFF_FORM, IFF_ILBM, form)) {
+    if (!file.good() || !file.first(IFF_FORM, IFF_ILBM, form)) {
         hard_assert(0);
         return; // Not a ILBM
     }
@@ -195,7 +193,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
     ilbm_header_s bmhd;
     while (file.next(form, "*", chunk)) {
         if (iff_id_match(chunk.id, IFF_BMHD)) {
-            if (!file.read(bmhd)) {
+            if (!file.read(&bmhd)) {
                 return;
             }
             _size = bmhd.size;
@@ -337,7 +335,7 @@ static int image_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, in
     return (int)(body - body_begin);
 }
 
-static void image_write_packbits(iff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_write_packbits(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
@@ -356,7 +354,7 @@ static void image_write_packbits(iff_file_c &file, uint16_t line_words, uint16_t
         }
         uint8_t body[line_words * bp_count * 2 + 32];
         int bytes = image_packbits_into_body(body, (const uint8_t *)word_buffer, line_words * bp_count * 2);
-        file.write(body, 1, bytes);
+        file.write(body, bytes);
         
         bitmap += next_line_words * 4;
         if (maskmap) {
@@ -365,7 +363,7 @@ static void image_write_packbits(iff_file_c &file, uint16_t line_words, uint16_t
     }
 }
 
-static void image_write(iff_file_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+static void image_write(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     uint16_t word_buffer[line_words * bp_count];
     while (--height != -1) {
@@ -391,14 +389,14 @@ static void image_write(iff_file_c &file, uint16_t line_words, uint16_t next_lin
 
 
 bool image_c::save(const char *path, bool compressed, bool masked, uint8_t masked_cidx) {
-    iff_file_c ilbm(path, "w+");
-    if (ilbm.get_pos() >= 0) {
-        ilbm.with_hard_asserts(true, [&] {
+    iffstream_c ilbm(path, fstream_c::input | fstream_c::output);
+    if (ilbm.tell() >= 0) {
+        ilbm.set_assert_on_error(true);
             iff_group_s form;
             iff_chunk_s chunk;
             ilbm_header_s header;
             ilbm.begin(form, IFF_FORM);
-            ilbm.write(IFF_ILBM_ID);
+            ilbm.write(&IFF_ILBM_ID);
             {
                 memset(&header, 0, sizeof(ilbm_header_s));
                 header.size = _size;
@@ -412,21 +410,21 @@ bool image_c::save(const char *path, bool compressed, bool masked, uint8_t maske
                 header.aspect[0] = 11;
                 header.page_size = {320, 200};
                 ilbm.begin(chunk, IFF_BMHD);
-                ilbm.write(header);
+                ilbm.write(&header);
                 ilbm.end(chunk);
             }
-            if (_offset.x != 0 || _offset.y != 0) {
+            /* if (_offset.x != 0 || _offset.y != 0) {
                 ilbm.begin(chunk, IFF_GRAB);
                 ilbm.write(_offset);
                 ilbm.end(chunk);
-            }
+            } */
             if (_palette) {
                 uint8_t cmap[48];
                 for (int i = 0; i < 16; i++) {
                     _palette->colors[i].get(&cmap[i * 3 + 0], &cmap[i * 3 + 1], &cmap[i * 3 + 2]);
                 }
                 ilbm.begin(chunk, IFF_CMAP);
-                ilbm.write(cmap, 1, 48);
+                ilbm.write(cmap, 48);
                 ilbm.end(chunk);
             }
             {
@@ -439,7 +437,6 @@ bool image_c::save(const char *path, bool compressed, bool masked, uint8_t maske
                 ilbm.end(chunk);
             }
             ilbm.end(form);
-        });
     }
     return false;
 }

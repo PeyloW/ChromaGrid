@@ -567,21 +567,6 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
     return (int16_t)_results.time > 0 ? normal : failed;
 }
 
-#ifndef __M68000__
-static void hton(level_recipe_t::header_t &header) {
-    hton(header.time);
-};
-#endif
-
-#ifndef __M68000__
-static void hton(level_result_t &result) {
-    hton(result.score);
-    hton(result.time);
-    hton(result.moves);
-};
-#endif
-
-
 bool level_recipe_t::empty() const {
     return header.width == 0 || header.height == 0;
 }
@@ -590,24 +575,28 @@ int level_recipe_t::get_size() const {
     return sizeof(level_recipe_t) + sizeof(tilestate_t) * header.width * header.height;
 }
 
-bool level_recipe_t::save(iff_file_c &iff) {
+bool level_recipe_t::save(iffstream_c &iff) {
     iff_group_s group;
     iff_chunk_s chunk;
     if (iff.begin(group, IFF_FORM)) {
-        iff.write(IFF_CGLV_ID);
+        iff.write(&IFF_CGLV_ID);
         
         iff.begin(chunk, IFF_LVHD);
-        iff.write(header);
+        iff.write(&header);
         iff.end(chunk);
         
         if (text) {
             iff.begin(chunk, IFF_TEXT);
-            iff.write((void *)text, 1, strlen(text) + 1);
+            iff.write((uint8_t *)text, strlen(text) + 1);
             iff.end(chunk);
         }
         
         iff.begin(chunk, IFF_TSTS);
-        iff.write((void *)tiles, sizeof(tilestate_t), header.width * header.height);
+        for (int i = 0; i < header.width * header.height; i++) {
+            if(!iff.write(&tiles[i])) {
+                return false;
+            }
+        }
         iff.end(chunk);
         
         return iff.end(group);
@@ -615,39 +604,42 @@ bool level_recipe_t::save(iff_file_c &iff) {
     return false;
 }
 
-bool level_recipe_t::load(iff_file_c &iff, iff_chunk_s &start_chunk) {
+bool level_recipe_t::load(iffstream_c &iff, iff_chunk_s &start_chunk) {
     assert(start_chunk.id == IFF_FORM_ID);
     iff_group_s group;
     if (iff.expand(start_chunk, group) && group.subtype == IFF_CGLV_ID) {
         iff_chunk_s chunk;
         iff.next(group, IFF_LVHD, chunk);
         assert(chunk.size == sizeof(level_recipe_t::header));
-        iff.read(header);
+        iff.read(&header);
         
         if (iff.next(group, IFF_TEXT, chunk)) {
             text = (const char *)calloc(1, chunk.size);
-            iff.read((void *)text, 1, chunk.size);
+            iff.read((uint8_t *)text, chunk.size);
         }
 
         iff.next(group, IFF_TSTS, chunk);
-        return iff.read(tiles, sizeof(tilestate_t), header.width * header.height);
+        for (int i = 0; i < header.width * header.height; i++) {
+            iff.read(&tiles[i]);
+        }
+        return true;
     }
     return false;
 }
 
-bool level_result_t::save(iff_file_c &iff) {
+bool level_result_t::save(iffstream_c &iff) {
     iff_chunk_s chunk;
     if (iff.begin(chunk, IFF_CGLR)) {
-        iff.write(*this);
+        iff.write(this);
         return iff.end(chunk);
     }
     return false;
 }
 
-bool level_result_t::load(iff_file_c &iff, iff_chunk_s &start_chunk) {
+bool level_result_t::load(iffstream_c &iff, iff_chunk_s &start_chunk) {
     assert(start_chunk.id == IFF_CGLR_ID);
     if (start_chunk.size != sizeof(level_result_t)) {
         return false;
     }
-    return iff.read(*this);
+    return iff.read(this);
 }

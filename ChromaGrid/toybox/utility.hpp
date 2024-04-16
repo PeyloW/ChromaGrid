@@ -12,6 +12,26 @@
 
 namespace toystd {
     
+#ifdef __M68000__
+#   define hton(v)
+#else
+    template<class Type, typename enable_if<sizeof(Type) == 1 && is_arithmetic<Type>::value, bool>::type = true>
+    static inline void hton(Type &value) { }
+    
+    template<class Type, typename enable_if<sizeof(Type) == 2 && is_arithmetic<Type>::value, bool>::type = true>
+    static void inline hton(Type &value) { value = htons(value); }
+    
+    template<class Type, typename enable_if<sizeof(Type) == 4 && is_arithmetic<Type>::value, bool>::type = true>
+    static void inline hton(Type &value) { value = htonl(value); }
+    
+    template<class Type, size_t Count>
+    static void inline hton(Type (&array)[Count]) {
+        for (auto &value : array) {
+            hton(&value);
+        }
+    }
+#endif
+    
     static inline int sqrt(int x) {
         if (x == 0 || x == 1) {
             return x;

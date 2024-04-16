@@ -10,6 +10,12 @@
 
 #include "palette.hpp"
 
+#ifndef CGIMAGE_SUPPORT_SAVE
+#   ifndef __M68000__
+#       define CGIMAGE_SUPPORT_SAVE
+#   endif
+#endif
+
 namespace toybox {
     
     using namespace toystd;

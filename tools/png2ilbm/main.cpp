@@ -7,11 +7,13 @@
 
 #include <iostream>
 #include "types.hpp"
-#include "graphics.hpp"
+#include "image.hpp"
+#include "canvas.hpp"
 
 #include "arguments.hpp"
 #include <png.h>
 
+using namespace toybox;
 
 static void handle_help(arguments_t &args);
 static void handle_palette(arguments_t &args);
@@ -22,7 +24,7 @@ static bool save_palette = true;
 static bool save_masked = false;
 static uint8_t masked_idx = image_c::MASKED_CIDX;
 static bool save_compressed = false;
-static point_s grab_point = {0,0};
+//static point_s grab_point = {0,0};
 
 const arg_handlers_t arg_handlers {
     {"-h",          {"Show this help and exit.", &handle_help}},
@@ -33,10 +35,10 @@ const arg_handlers_t arg_handlers {
         args.pop_front();
     }}},
     {"-c",          {"Save compressed.", [] (arguments_t &) { save_compressed = true; }}},
-    {"-g x,y",      {"Add grab point.", [] (arguments_t &args) {
+/*    {"-g x,y",      {"Add grab point.", [] (arguments_t &args) {
         auto split = split_string(args.front(), ',');
         grab_point = {(int16_t)atoi(split[0].c_str()), (int16_t)atoi(split[1].c_str())};
-    }}},
+    }}},*/
 };
 
 static void handle_help(arguments_t &args) {
@@ -90,6 +92,7 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
     }
 
     image_c cgimage((size_s){width, height}, save_masked, cgpalette);
+    canvas_c cgcanvas(cgimage);
     
     png_bytep row = (png_byte*)malloc(png_get_rowbytes(png,info));
     point_s at;
@@ -99,19 +102,19 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
         for (at.x = 0; at.x < width; at.x++) {
             uint8_t c = row[at.x];
             if (c == masked_idx) {
-                cgimage.put_pixel(image_c::MASKED_CIDX, at);
+                cgcanvas.put_pixel(image_c::MASKED_CIDX, at);
             } else if (c > 15) {
                 if (!has_warned) {
                     printf("WARNING: Color index > 15 found and ignored.\n");
                     has_warned = true;
                 }
             } else {
-                cgimage.put_pixel(c, at);
+                cgcanvas.put_pixel(c, at);
             }
         }
     }
     
-    cgimage.set_offset(grab_point);
+    // cgimage.set_offset(grab_point);
     
     cgimage.save(ilbm_file.c_str(), save_compressed, save_masked);
     

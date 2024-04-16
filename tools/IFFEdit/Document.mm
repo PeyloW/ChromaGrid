@@ -6,9 +6,9 @@
 //
 
 #import "Document.h"
-#include "iff_file.hpp"
+#include "iffstream.hpp"
 
-using namespace toybox;
+using namespace toystd;
 
 @interface ContentFormatter : NSFormatter
 @end
@@ -42,24 +42,24 @@ using namespace toybox;
 @end
 
 @interface IFFChunk ()
-- (instancetype)initWithChunk:(iff_chunk_s)chunk iff:(iff_file_c *)iff;
-- (BOOL)writeToIFF:(iff_file_c *)iff;
+- (instancetype)initWithChunk:(iff_chunk_s)chunk iff:(iffstream_c *)iff;
+- (BOOL)writeToIFF:(iffstream_c *)iff;
 @end
 
 @interface IFFGroup ()
-- (instancetype)initWithGroup:(iff_group_s)group iff:(iff_file_c *)iff;
-- (BOOL)writeToIFF:(iff_file_c *)iff;
+- (instancetype)initWithGroup:(iff_group_s)group iff:(iffstream_c *)iff;
+- (BOOL)writeToIFF:(iffstream_c *)iff;
 @end
 
 @implementation IFFChunk
-- (instancetype)initWithChunk:(iff_chunk_s)chunk iff:(iff_file_c *)iff {
+- (instancetype)initWithChunk:(iff_chunk_s)chunk iff:(iffstream_c *)iff {
     self = [super init];
     if (self) {
         char buf[5];
         iff_id_str(chunk.id, buf);
         _chunkID = [NSString stringWithCString:buf encoding:NSASCIIStringEncoding];
         NSMutableData *data = [NSMutableData dataWithLength:chunk.size];
-        iff->read((uint8_t *)data.bytes, 1, chunk.size);
+        iff->read((uint8_t *)data.bytes, chunk.size);
         _data = data.copy;
     }
     return self;
@@ -72,10 +72,10 @@ using namespace toybox;
     }
     return self;
 }
-- (BOOL)writeToIFF:(iff_file_c *)iff {
+- (BOOL)writeToIFF:(iffstream_c *)iff {
     iff_chunk_s chunk;
     if (iff->begin(chunk, self.chunkID.UTF8String)) {
-        if (iff->write((uint8_t *)_data.bytes, 1, _data.length)) {
+        if (iff->write((uint8_t *)_data.bytes, _data.length)) {
             return iff->end(chunk);
         }
     }
@@ -100,7 +100,7 @@ using namespace toybox;
 @end
 
 @implementation IFFGroup
-- (instancetype)initWithGroup:(iff_group_s)group iff:(iff_file_c *)iff {
+- (instancetype)initWithGroup:(iff_group_s)group iff:(iffstream_c *)iff {
     self = [super init];
     if (self) {
         char buf[5];
@@ -132,11 +132,11 @@ using namespace toybox;
     }
     return self;
 }
-- (BOOL)writeToIFF:(iff_file_c *)iff {
+- (BOOL)writeToIFF:(iffstream_c *)iff {
     iff_group_s group;
     if (iff->begin(group, self.chunkID.UTF8String)) {
         iff_id_t subtype = iff_id_make(self.subtypeID.UTF8String);
-        if (iff->write(subtype)) {
+        if (iff->write(&subtype)) {
             for (IFFChunk *chunk : _subChunks) {
                 if (![chunk writeToIFF:iff]) {
                     return NO;
@@ -182,13 +182,13 @@ using namespace toybox;
 #pragma mark --- Read/write files
 
 - (BOOL)writeToURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing  _Nullable *)outError {
-    iff_file_c iff(url.path.UTF8String, "w+");
+    iffstream_c iff(url.path.UTF8String, fstream_c::input | fstream_c::output);
     return [_rootGroup writeToIFF:&iff];
 }
 
 - (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError *__autoreleasing  _Nullable *)outError {
-    iff_file_c iff(url.path.UTF8String, "r");
-    if (iff.get_pos() >= 0) {
+    iffstream_c iff(url.path.UTF8String);
+    if (iff.tell() >= 0) {
         iff_group_s group;
         if (iff.first("*", "*", group)) {
             _rootGroup = [[IFFGroup alloc] initWithGroup:group iff:&iff];

@@ -12,7 +12,7 @@
 #include "types.hpp"
 #include "canvas.hpp"
 #include "system.hpp"
-#include "iff_file.hpp"
+#include "iffstream.hpp"
 
 using namespace toybox;
 
@@ -50,6 +50,12 @@ struct __packed_struct tilestate_t  {
     }
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
+namespace toystd {
+    template<>
+    struct struct_layout<tilestate_t> {
+        static constexpr char *value = "4b";
+    };
+}
 
 struct level_recipe_t {
     struct __packed_struct header_t {
@@ -62,14 +68,20 @@ struct level_recipe_t {
     static const int MAX_SIZE = 16 + sizeof(tilestate_t) * 12 * 12;
     bool empty() const;
     int get_size() const;
-    bool save(iff_file_c &iff);
-    bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
+    bool save(iffstream_c &iff);
+    bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
 #ifndef __M68000__
 static_assert(__offsetof(level_recipe_t, tiles) == 16, "offset of level_recipe_t::tiles mismatch");
 #endif
-
+namespace toystd {
+    template<>
+    struct struct_layout<level_recipe_t::header_t> {
+        static constexpr char *value = "4b1w";
+    };
+}
+    
 struct __packed_struct level_result_t {
     static const uint16_t FAILED_SCORE = 0;
     static const uint16_t PER_ORB_SCORE = 100;
@@ -81,10 +93,16 @@ struct __packed_struct level_result_t {
     void calculate_score(bool succes);
     void get_subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
-    bool save(iff_file_c &iff);
-    bool load(iff_file_c &iff, iff_chunk_s &start_chunk);
+    bool save(iffstream_c &iff);
+    bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
+namespace toystd {
+    template<>
+    struct struct_layout<level_result_t> {
+        static constexpr char *value = "1w2b2w";
+    };
+}
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected = false);
 void draw_orb(canvas_c &screen, color_e color, point_s at);

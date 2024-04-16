@@ -77,6 +77,9 @@ namespace toystd {
     template<class T, class U> struct is_same : false_type {};
     template<class T> struct is_same<T, T> : true_type {};
     
+    template<class T>
+    struct is_class : bool_constant<__is_class(T)> {};
+    
     template<typename T, typename... Args> struct is_constructible : public bool_constant<sizeof(detail::is_constructible_imp::test<T>(0)) == sizeof(true_type)> {};
     template<typename T> struct is_trivially_constructible : public bool_constant<__has_trivial_constructor(T)> {};
     template<typename T> struct is_default_constructible : public bool_constant<is_constructible<T>::value> {};
@@ -94,6 +97,9 @@ namespace toystd {
         T *ptr() __pure { return (T *)&data; }
         const T *ptr() const __pure { return (T *)&data; }
     };
+    
+    template<typename T>
+    struct struct_layout;
     
 }
 

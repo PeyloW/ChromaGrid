@@ -7,7 +7,7 @@
 
 #include "audio.hpp"
 #include "system.hpp"
-#include "iff_file.hpp"
+#include "iffstream.hpp"
 #ifndef __M68000__
 #include "system_host.hpp"
 #endif
@@ -41,6 +41,12 @@ struct __packed_struct aiff_common_s {
     extended80_s sample_rate;
 };
 static_assert(sizeof(aiff_common_s) == 18, "aiff_common_t size mismatch");
+namespace toystd {
+    template<>
+    struct struct_layout<aiff_common_s> {
+        static constexpr char *value = "1w1l6w";
+    };
+}
 
 struct __packed_struct aiff_ssnd_data_s {
     uint32_t offset;
@@ -48,6 +54,12 @@ struct __packed_struct aiff_ssnd_data_s {
     uint8_t data[];
 };
 static_assert(sizeof(aiff_ssnd_data_s) == 8, "ssnd_data_t size mismatch");
+namespace toystd {
+    template<>
+    struct struct_layout<aiff_ssnd_data_s> {
+        static constexpr char *value = "2l";
+    };
+}
 
 #ifndef __M68000__
 static void hton(extended80_s &ext80) {
@@ -72,9 +84,9 @@ sound_c::sound_c(const char *path) :
     _length(0),
     _rate(0)
 {
-    iff_file_c file(path);
+    iffstream_c file(path);
     iff_group_s form;
-    if (!file.first(IFF_FORM, IFF_AIFF, form)) {
+    if (!file.good() || !file.first(IFF_FORM, IFF_AIFF, form)) {
         hard_assert(0);
         return; // Not a AIFF
     }
@@ -82,7 +94,7 @@ sound_c::sound_c(const char *path) :
     aiff_common_s common;
     while (file.next(form, "*", chunk)) {
         if (iff_id_match(chunk.id, IFF_COMM)) {
-            if (!file.read(common)) {
+            if (!file.read(&common)) {
                 return;
             }
             assert(common.num_channels == 1); // Only mono supported
@@ -92,7 +104,7 @@ sound_c::sound_c(const char *path) :
             assert(_rate >= 11000 && _rate <= 14000); // Ball park ;)
         } else if (iff_id_match(chunk.id, IFF_SSND)) {
             aiff_ssnd_data_s data;
-            if (!file.read(data)) {
+            if (!file.read(&data)) {
                 return;
             }
             assert(data.offset == 0);
@@ -101,12 +113,12 @@ sound_c::sound_c(const char *path) :
             // For target we hack, and make _sample point to full AIFF file.
             _length = form.size + 8;
             _sample = (int8_t *)malloc(_length);
-            file.set_pos(0);
-            file.read(_sample, 1, _length);
+            file.seek(0, stream_c::beg);
+            file.read(_sample, _length);
             return;
 #else
             _sample = (int8_t *)malloc(_length);
-            file.read(_sample, 1, _length);
+            file.read(_sample, _length);
 #endif
         } else {
 #ifndef __M68000__
