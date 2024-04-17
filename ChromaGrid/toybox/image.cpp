@@ -6,7 +6,6 @@
 //
 
 #include "image.hpp"
-#include "system.hpp"
 #include "canvas.hpp"
 #include "iffstream.hpp"
 
@@ -28,12 +27,6 @@ image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette
 #ifdef __M68000__
 static uint16_t pSetActiveVBLCode[20];
 #endif
-
-void image_c::set_active() const {
-    timer_c::with_paused_timers([this] {
-        g_active_image = this;
-    });
-}
 
 uint8_t image_c::get_pixel(point_s at) const {
     if (_size.contains(at)) {

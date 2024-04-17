@@ -90,30 +90,32 @@ static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
     }
 }
 
-void cgcredits_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
-    _menu_buttons.draw_all(screen);
+void cgcredits_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
+    _menu_buttons.draw_all(canvas);
     const auto &rsc = this->rsc;
     
     switch (_page) {
         case credits:
-            draw_credits(rsc, screen);
+            draw_credits(rsc, canvas);
             break;
         case recognitions:
-            draw_recognitions(rsc, screen);
+            draw_recognitions(rsc, canvas);
             break;
         case dedications:
-            draw_dedications(rsc, screen);
+            draw_dedications(rsc, canvas);
             break;
         case greetings:
-            draw_greetings(rsc, screen);
+            draw_greetings(rsc, canvas);
             break;
     }
 }
 
 
-void cgcredits_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cgcredits_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:
             break;

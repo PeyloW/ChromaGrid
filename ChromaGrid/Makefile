@@ -24,7 +24,7 @@ TOYBOX_OBJECTS+=stream.o iffstream.o
 TOYBOX_OBJECTS+=palette.o image.o tileset.o font.o
 TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o canvas_imp.o
 TOYBOX_OBJECTS+=audio.o
-TOYBOX_OBJECTS+=scene.o scene_transition.o
+TOYBOX_OBJECTS+=screen.o scene.o scene_transition.o
 
 CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o

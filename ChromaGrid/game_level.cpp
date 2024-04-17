@@ -32,26 +32,27 @@ public:
         }
     };
 
-    virtual void will_appear(canvas_c &screen, bool obsured) {
+    virtual void will_appear(screen_c &screen, bool obsured) {
+        auto &canvas = screen.get_canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 48), [this, &screen, &rect] {
-            screen.draw_aligned(rsc.background, rect, rect.origin);
+        canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 48), [this, &canvas, &rect] {
+            canvas.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = rect_s(
             MAIN_MENU_ORIGIN_X, 0,
             MAIN_MENU_SIZE_WIDTH, 200
         );
-        screen.draw_aligned(rsc.background, rect, rect.origin);
-        _menu_buttons.draw_all(screen);
+        canvas.draw_aligned(rsc.background, rect, rect.origin);
+        _menu_buttons.draw_all(canvas);
 
         if (_level_num != cglevel_scene_c::TEST_LEVEL) {
             char buf[20];
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level %d Failed" : "Level %d Completed";
             sprintf(buf, title, _level_num + 1);
-            screen.draw(rsc.font, buf, point_s(96, 32));
+            canvas.draw(rsc.font, buf, point_s(96, 32));
         } else {
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
-            screen.draw(rsc.font, title, point_s(96, 32));
+            canvas.draw(rsc.font, title, point_s(96, 32));
         }
         
         if (_results.score != level_result_t::FAILED_SCORE) {
@@ -59,18 +60,19 @@ public:
             uint16_t time_score, orbs_score;
             _results.get_subscores(orbs_score, time_score);
             sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
-            screen.draw(rsc.font, buf, point_s(96, 64));
+            canvas.draw(rsc.font, buf, point_s(96, 64));
             sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
-            screen.draw(rsc.font, buf, point_s(96, 84));
+            canvas.draw(rsc.font, buf, point_s(96, 84));
             sprintf(buf, "Total: %d pts", _results.score);
-            screen.draw(rsc.font, buf, point_s(96, 114));
+            canvas.draw(rsc.font, buf, point_s(96, 114));
             sprintf(buf, "Moves: %d", _results.moves);
-            screen.draw(rsc.font, buf, point_s(96, 144));
+            canvas.draw(rsc.font, buf, point_s(96, 144));
         }
     }
 
-    virtual void update_background(canvas_c &screen, int ticks) {
-        int button = update_button_group(screen, _menu_buttons);
+    virtual void update_background(screen_c &screen, int ticks) {
+        auto &canvas = screen.get_canvas();
+        int button = update_button_group(canvas, _menu_buttons);
         switch (button) {
             case 0:
                 manager.pop();
@@ -122,8 +124,9 @@ static int next_shimmer_ticks() {
     return 100 + (uint16_t)rand() % 200;
 }
 
-void cglevel_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
+void cglevel_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
     char buffer[256] = {0};
     if (_level_num == TEST_LEVEL) {
         sprintf(buffer, "Testing Level");
@@ -132,10 +135,10 @@ void cglevel_scene_c::will_appear(canvas_c &screen, bool obsured) {
     } else {
         sprintf(buffer, "Level %d", _level_num + 1);
     }
-    screen.draw(rsc.small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
+    canvas.draw(rsc.small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
 
-    _menu_buttons.draw_all(screen);
-    _level.draw_all(screen);
+    _menu_buttons.draw_all(canvas);
+    _level.draw_all(canvas);
     _shimmer_ticks = next_shimmer_ticks();
     _shimmer_tile = -1;
     _passed_seconds = 0;
@@ -146,8 +149,9 @@ void cglevel_scene_c::will_disappear(bool obscured) {
     manager.vbl.remove_func((timer_c::func_a_t)&tick_second, this);
 };
 
-void cglevel_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cglevel_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
             manager.pop();
@@ -166,7 +170,7 @@ void cglevel_scene_c::update_background(canvas_c &screen, int ticks) {
     }
     auto passed = _passed_seconds;
     _passed_seconds = 0;
-    auto state = _level.update_tick(screen, manager.mouse, passed);
+    auto state = _level.update_tick(canvas, manager.mouse, passed);
     if (state != level_t::normal) {
         level_result_t results;
         _level.get_results(&results);
@@ -175,7 +179,8 @@ void cglevel_scene_c::update_background(canvas_c &screen, int ticks) {
     }
 }
 
-void cglevel_scene_c::update_foreground(canvas_c &screen, int ticks) {
+void cglevel_scene_c::update_foreground(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
     _shimmer_ticks -= ticks;
     if (_shimmer_tile != -1) {
         if (_shimmer_ticks < -7) {
@@ -184,7 +189,7 @@ void cglevel_scene_c::update_foreground(canvas_c &screen, int ticks) {
         } else {
             int16_t idx = ABS(_shimmer_ticks);
             point_s at(_shimmer_tile % 12 * 16, _shimmer_tile / 12 * 16);
-            screen.draw(rsc.shimmer, idx, at);
+            canvas.draw(rsc.shimmer, idx, at);
         }
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;

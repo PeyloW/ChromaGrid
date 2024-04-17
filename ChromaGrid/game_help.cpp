@@ -62,29 +62,31 @@ static void draw_help(const cgresources_c &rsc, canvas_c &screen, const char *ti
 }
 
 
-void cghelp_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
-    _menu_buttons.draw_all(screen);
+void cghelp_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
+    _menu_buttons.draw_all(canvas);
     const auto &rsc = this->rsc;
     
     switch (_page) {
         case basics:
-            draw_help(rsc, screen, "Basics", basics_texts);
+            draw_help(rsc, canvas, "Basics", basics_texts);
             break;
         case special_tiles:
-            draw_help(rsc, screen, "Special Tiles", special_tiles_texts);
+            draw_help(rsc, canvas, "Special Tiles", special_tiles_texts);
             break;
         case scoring:
-            draw_help(rsc, screen, "Scoring", scoring_texts);
+            draw_help(rsc, canvas, "Scoring", scoring_texts);
             break;
         case level_editor:
-            draw_help(rsc, screen, "Level Editor", level_editor_texts);
+            draw_help(rsc, canvas, "Level Editor", level_editor_texts);
             break;
     }
 }
 
-void cghelp_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cghelp_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:
             break;

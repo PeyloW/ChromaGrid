@@ -48,7 +48,7 @@ static void _yieldFunction() {
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
         {
-            scene_manager_c manager;
+            scene_manager_c manager(size_s(320, 208));
             auto intro_scene = new cgintro_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
             manager.run(intro_scene, overlay_scene, transition_c::create(canvas_c::noise));

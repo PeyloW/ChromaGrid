@@ -78,6 +78,8 @@
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6B6E18A2BD0381F00703630 /* tileset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1882BD0381F00703630 /* tileset.cpp */; };
 		A6B6E18B2BD0381F00703630 /* tileset.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1892BD0381F00703630 /* tileset.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B6E18E2BD04B6100703630 /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E18C2BD04B6100703630 /* screen.cpp */; };
+		A6B6E18F2BD04B6100703630 /* screen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E18D2BD04B6100703630 /* screen.hpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
 		A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012F02BBCE71800D260C2 /* emptyt.iff */; };
@@ -211,6 +213,8 @@
 		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6B6E1882BD0381F00703630 /* tileset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tileset.cpp; sourceTree = "<group>"; };
 		A6B6E1892BD0381F00703630 /* tileset.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tileset.hpp; sourceTree = "<group>"; };
+		A6B6E18C2BD04B6100703630 /* screen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = screen.cpp; sourceTree = "<group>"; };
+		A6B6E18D2BD04B6100703630 /* screen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = screen.hpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
 		A6D012F02BBCE71800D260C2 /* emptyt.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = emptyt.iff; sourceTree = "<group>"; };
@@ -445,6 +449,8 @@
 				A69AE51C2B8AC25300EBA43D /* canvas_imp.cpp */,
 				A69AE5012B82983A00EBA43D /* audio.hpp */,
 				A69AE5002B82983A00EBA43D /* audio.cpp */,
+				A6B6E18D2BD04B6100703630 /* screen.hpp */,
+				A6B6E18C2BD04B6100703630 /* screen.cpp */,
 				A682A3E62B92459500FF2E57 /* scene.hpp */,
 				A682A3E52B92459500FF2E57 /* scene.cpp */,
 				A69612C12BAF9C06008ACD05 /* scene_transition.cpp */,
@@ -480,6 +486,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A6A0EE3F2BC059A6005B6ED3 /* vector.hpp in Headers */,
+				A6B6E18F2BD04B6100703630 /* screen.hpp in Headers */,
 				A6A0EE522BC059F4005B6ED3 /* system.hpp in Headers */,
 				A6A0EE402BC059A6005B6ED3 /* algorithm.hpp in Headers */,
 				A6A0EE412BC059A6005B6ED3 /* static_allocator.hpp in Headers */,
@@ -692,6 +699,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6B6E18E2BD04B6100703630 /* screen.cpp in Sources */,
 				A6A0EE452BC059DC005B6ED3 /* system.cpp in Sources */,
 				A6A0EE8E2BC8DACA005B6ED3 /* image.cpp in Sources */,
 				A6A0EE922BC8DBA2005B6ED3 /* font.cpp in Sources */,

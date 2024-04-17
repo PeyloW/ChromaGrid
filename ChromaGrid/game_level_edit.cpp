@@ -45,21 +45,23 @@ public:
         add_buttons();
     }
 
-    virtual void will_appear(canvas_c &screen, bool obsured) {
+    virtual void will_appear(screen_c &screen, bool obsured) {
+        auto &canvas = screen.get_canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 32), [this, &screen, &rect] {
-            screen.draw_aligned(rsc.background, rect, rect.origin);
+        canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
+            canvas.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = rect_s(
             MAIN_MENU_ORIGIN_X, 0,
             MAIN_MENU_SIZE_WIDTH, 200
         );
-        screen.draw_aligned(rsc.background, rect, rect.origin);
-        _menu_buttons.draw_all(screen);
+        canvas.draw_aligned(rsc.background, rect, rect.origin);
+        _menu_buttons.draw_all(canvas);
     }
     
-    virtual void update_background(canvas_c &screen, int ticks) {
-        int button = update_button_group(screen, _menu_buttons);
+    virtual void update_background(screen_c &screen, int ticks) {
+        auto &canvas = screen.get_canvas();
+        int button = update_button_group(canvas, _menu_buttons);
         auto transition = transition_c::create(canvas_c::random);
         if (button == 0) {
             manager.pop(transition);
@@ -155,16 +157,17 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
     _tile_templates.push_back((tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::both});
 }
 
-void cglevel_edit_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
-    _menu_buttons.draw_all(screen);
-    _count_buttons.draw_all(screen);
-    draw_counts(screen);
+void cglevel_edit_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
+    _menu_buttons.draw_all(canvas);
+    _count_buttons.draw_all(canvas);
+    draw_counts(canvas);
     _selected_template = 1;
-    draw_tile_templates(screen);
+    draw_tile_templates(canvas);
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
-            draw_level_grid(screen, x, y);
+            draw_level_grid(canvas, x, y);
         }
     }
 }
@@ -200,12 +203,13 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
     return copy;
 }
 
-void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
+void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
     } temp;
-    int button = update_button_group(screen, _menu_buttons);
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
             manager.pop();
@@ -231,7 +235,7 @@ void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
             break;
     }
     
-    button = update_button_group(screen, _count_buttons);
+    button = update_button_group(canvas, _count_buttons);
     if (button >= 0) {
         int step = (button & 1) ? -1 : 1;
         int group = button / 2;
@@ -245,7 +249,7 @@ void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
                 _header.orbs[group - 1] = MAX(0, (int8_t)MIN((int8_t)_header.orbs[group - 1], MAX_ORBS));
                 break;
         }
-        draw_counts(screen);
+        draw_counts(canvas);
     }
     
     auto &mouse = manager.mouse;
@@ -261,11 +265,11 @@ void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
         auto r_next = next_state(current, mouse_c::right);
         if (lb || rb) {
             _level_grid[tx][ty] = lb ? l_next : r_next;
-            draw_level_grid(screen, tx, ty);
+            draw_level_grid(canvas, tx, ty);
         } else if (current.type == _tile_templates[_selected_template].type && _tile_templates[_selected_template].orb != color_e::both && _tile_templates[_selected_template].target != color_e::both) {
-            draw_tile_template_at(screen, l_next, _selected_template);
+            draw_tile_template_at(canvas, l_next, _selected_template);
         } else {
-            draw_tile_template_at(screen, _tile_templates[_selected_template], _selected_template);
+            draw_tile_template_at(canvas, _tile_templates[_selected_template], _selected_template);
         }
     }
     
@@ -280,7 +284,7 @@ void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
             int i = ty * 6 + tx;
             if (i < _tile_templates.size()) {
                 _selected_template = i;
-                draw_tile_templates(screen);
+                draw_tile_templates(canvas);
             }
         }
     }

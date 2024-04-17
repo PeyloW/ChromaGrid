@@ -9,7 +9,7 @@
 #define scene_hpp
 
 #include "system.hpp"
-#include "canvas.hpp"
+#include "screen.hpp"
 #include "vector.hpp"
 
 #ifdef __M68000__
@@ -35,10 +35,10 @@ namespace toybox {
         scene_c(scene_manager_c &manager) : manager(manager) {};
         virtual ~scene_c() {};
         
-        virtual void will_appear(canvas_c &screen, bool obsured) = 0;
+        virtual void will_appear(screen_c &screen, bool obsured) = 0;
         virtual void will_disappear(bool obscured) {};
-        virtual void update_background(canvas_c &screen, int ticks) {};
-        virtual void update_foreground(canvas_c &screen, int ticks) {};
+        virtual void update_background(screen_c &screen, int ticks) {};
+        virtual void update_foreground(screen_c &screen, int ticks) {};
         
     protected:
         scene_manager_c &manager;
@@ -49,7 +49,7 @@ namespace toybox {
         transition_c() {};
         virtual ~transition_c() {}
         
-        virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) = 0;
+        virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) = 0;
         
         static transition_c *create(canvas_c::stencil_type_e dither);
         static transition_c *create(canvas_c::stencil_type_e dither, uint8_t through);
@@ -62,7 +62,7 @@ namespace toybox {
         int16_t _old_blitter_mode;
         uint8_t _old_conterm;
     public:
-        scene_manager_c();
+        scene_manager_c(size_s screen_size = size_s(320, 200));
         ~scene_manager_c();
         
         void run(scene_c *rootscene, scene_c *overlay_scene = nullptr, transition_c *transition = nullptr);
@@ -81,7 +81,7 @@ namespace toybox {
         timer_c clock;
         mouse_c mouse;
         
-        canvas_c &get_background_screen() { return _screens.back().canvas; }
+        screen_c &get_background_screen() { return _screens.back(); }
         
     private:
         transition_c *_transition;
@@ -94,15 +94,6 @@ namespace toybox {
         }
         inline void set_transition(transition_c *transition, bool done = false);
         
-        class screen_c {
-        public:
-            image_c image;
-            canvas_c canvas;
-            dirtymap_c *dirtymap;
-            screen_c() : image(size_s(320, 208), false, nullptr), canvas(image) {
-                dirtymap = canvas.create_dirtymap();
-            }
-        };
         vector_c<screen_c, 3> _screens;
         int _active_physical_screen;
     };

@@ -19,19 +19,20 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
     _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
 }
 
-void cgscores_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
-    _menu_buttons.draw_all(screen);
+void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
+    _menu_buttons.draw_all(canvas);
     
     switch (_scoring) {
         case score:
-            screen.draw(rsc.font, "Hi-Scores", point_s(96, 16));
+            canvas.draw(rsc.font, "Hi-Scores", point_s(96, 16));
             break;
         case time:
-            screen.draw(rsc.font, "Best Times", point_s(96, 16));
+            canvas.draw(rsc.font, "Best Times", point_s(96, 16));
             break;
         case moves:
-            screen.draw(rsc.font, "Least Moves", point_s(96, 16));
+            canvas.draw(rsc.font, "Least Moves", point_s(96, 16));
             break;
     }
     
@@ -60,14 +61,15 @@ void cgscores_scene_c::will_appear(canvas_c &screen, bool obsured) {
             }
         }
         point_s at(16 + col * 55, 16 + 20 + 10 * row);
-        screen.draw(rsc.small_mono_font, buf, at, canvas_c::align_left);
+        canvas.draw(rsc.small_mono_font, buf, at, canvas_c::align_left);
         
         index++;
     }
 }
 
-void cgscores_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cgscores_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:
             break;

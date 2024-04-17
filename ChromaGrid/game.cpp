@@ -16,7 +16,7 @@ extern "C" {
 }
 #endif
 
-void cgoverlay_scene_c::will_appear(canvas_c &screen, bool obsured) {
+void cgoverlay_scene_c::will_appear(screen_c &screen, bool obsured) {
     rsc.music.set_active(1);
     rsc.background.get_palette()->set_active();
 }
@@ -27,8 +27,9 @@ void cgoverlay_scene_c::will_disappear(bool obscured) {
     }
 }
 
-void cgoverlay_scene_c::update_foreground(canvas_c &screen, int ticks) {
-    screen.with_clipping(true, [this, &screen] {
+void cgoverlay_scene_c::update_foreground(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    canvas.with_clipping(true, [this, &canvas] {
         /*
         if (manager.mouse.is_pressed(cgmouse_c::left)) {
             auto &logical = manager.get_logical_screen();
@@ -42,6 +43,6 @@ void cgoverlay_scene_c::update_foreground(canvas_c &screen, int ticks) {
         point_s at = manager.mouse.get_postion();
         at.x -= 2;
         at.y -= 2;
-        screen.draw(rsc.cursor, at);
+        canvas.draw(rsc.cursor, at);
     });
 }

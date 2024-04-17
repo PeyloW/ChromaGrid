@@ -30,8 +30,6 @@ namespace toybox {
         image_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
         ~image_c() = default;
 
-        void set_active() const;
-
 #ifdef CGIMAGE_SUPPORT_SAVE
         bool save(const char *path, bool compressed, bool masked, uint8_t masked_cidx = MASKED_CIDX);
 #endif

@@ -19,8 +19,9 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
-void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
+void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
         
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
@@ -47,21 +48,22 @@ void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
                 }
                 int16_t idx = col + row * 9;
                 point_s at(x * 16, y * 16);
-                screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
-                    screen.draw_aligned(rsc.tiles, idx, at);
+                canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
+                    canvas.draw_aligned(rsc.tiles, idx, at);
                 });
             }
         }
     }
     
-    _menu_buttons.draw_all(screen);
+    _menu_buttons.draw_all(canvas);
     
-    screen.draw(rsc.font, "Welcome to Chroma Grid.", point_s(96, 150));
-    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
+    canvas.draw(rsc.font, "Welcome to Chroma Grid.", point_s(96, 150));
+    canvas.draw(rsc.font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
 }
 
-void cgintro_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
             manager.pop();
@@ -128,19 +130,21 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     }
 }
 
-void cglevel_select_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, point_s());
-    _menu_buttons.draw_all(screen);
+void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
+    auto &canvas = screen.get_canvas();
+    canvas.draw_aligned(rsc.background, point_s());
+    _menu_buttons.draw_all(canvas);
 
-    screen.draw(rsc.font, "Choose Level", point_s(96, 16));
+    canvas.draw(rsc.font, "Choose Level", point_s(96, 16));
 
     for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
-        group->draw_all(screen);
+        group->draw_all(canvas);
     }
 }
 
-void cglevel_select_scene_c::update_background(canvas_c &screen, int ticks) {
-    int button = update_button_group(screen, _menu_buttons);
+void cglevel_select_scene_c::update_background(screen_c &screen, int ticks) {
+    auto &canvas = screen.get_canvas();
+    int button = update_button_group(canvas, _menu_buttons);
     if (button == 0) {
         manager.pop();
         return;
@@ -148,7 +152,7 @@ void cglevel_select_scene_c::update_background(canvas_c &screen, int ticks) {
 
     int row = 0;
     for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
-        button = update_button_group(screen, *group);
+        button = update_button_group(canvas, *group);
         if (button >= 0) {
             int level = row * 5 + button;
             auto transition = transition_c::create(g_active_palette->colors[0]);
