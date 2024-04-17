@@ -350,24 +350,21 @@ const tilestate_t &level_t::tilestate_at(int x, int y) const {
     return _grid->tiles[x][y].state;
 }
 
-inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
-    int16_t tx = state.target * 16;
-    tx += state.current * 48;
-    int16_t ty = (state.type - 1) * 16;
-    return rect_s(tx, ty, 16, 16);
+inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
+    int16_t idx = state.target + state.current * 3;
+    idx += (state.type - 1) * 9;
+    return idx;
 }
 
 inline static void draw_tilestate(canvas_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
     const point_s at(x * 16, y * 16);
     if (state.type == empty) {
         if (state.target != none) {
-            const rect_s rect((state.target - 1) * 16, 0, 16, 16);
-            screen.draw(rsc.empty_tile, rect, at);
+            screen.draw(rsc.empty_tile, (state.target - 1), at);
         }
         return;
     }
-    const rect_s rect = tilestate_src_rect(state);
-    screen.draw_aligned(rsc.tiles, rect, at);
+    screen.draw_aligned(rsc.tiles, tilestate_tile_index(state), at);
 }
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
@@ -382,23 +379,19 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
                 point_s o_at = at;
                 o_at.x += 2;
                 o_at.y += 2;
-                rect_s rect(16, 0, 16, 16);
-                screen.draw(rsc.empty_tile, rect, o_at);
+                screen.draw(rsc.empty_tile, 1, o_at);
                 o_at.x -= 4;
                 o_at.y -= 4;
-                rect.origin.x = 0;
-                screen.draw(rsc.empty_tile, rect, o_at);
+                screen.draw(rsc.empty_tile, 0, o_at);
                 break;
             }
             default: {
-                const rect_s rect((state.target - 1) * 16, 0, 16, 16);
-                screen.draw(rsc.empty_tile, rect, at);
+                screen.draw(rsc.empty_tile, (state.target - 1), at);
                 break;
             }
         }
     } else {
-        const rect_s rect = tilestate_src_rect(state);
-        screen.draw(rsc.tiles, rect, at);
+        screen.draw(rsc.tiles, tilestate_tile_index(state), at);
     }
     point_s o_at = at;
     switch (state.orb) {
@@ -424,19 +417,16 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
 }
 
 inline static void draw_orb(canvas_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
-    int16_t tx = (color - 1) * 16 + 3;
-    int16_t ty = 10 * shade;
-    const rect_s rect(tx, ty, 10, 10);
-    const point_s at(x * 16 + 3, y * 16 + 3);
-    screen.draw(rsc.orbs, rect, at);
+    int16_t idx = (color - 1);
+    idx += shade * 2;
+    const point_s at(x * 16, y * 16 + 3);
+    screen.draw(rsc.orbs, idx, at);
 }
 
 void draw_orb(canvas_c &screen, color_e color, point_s at) {
     auto &rsc = cgresources_c::shared();
-    int16_t tx = (color - 1) * 16 + 3;
-    const rect_s rect(tx, 0, 10, 10);
-    at.x += 3;
-    screen.draw(rsc.orbs, rect, at);
+    int16_t idx = (color - 1);
+    screen.draw(rsc.orbs, idx, at);
 }
 
 void level_t::draw_tile(canvas_c &screen, int x, int y) const {

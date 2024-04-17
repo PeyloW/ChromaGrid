@@ -100,7 +100,7 @@ Legend: __Required__, Expected , _Optional_
     * [x] __Game logic ;)__
         * [x] __Count down timer__
         * [x] Count moves
-    * [ ] _Per level scroll text_
+    * [x] _Per level scroll text_
     * [ ] In game music, _one or more tracks_
 * [ ] Game over scene
     * [x] Scoring summary

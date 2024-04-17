@@ -45,10 +45,10 @@ void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
                         case 1: col = 2; break;
                     }
                 }
-                rect_s rect(col * 16, row * 16, 16, 16);
+                int16_t idx = col + row * 9;
                 point_s at(x * 16, y * 16);
                 screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
-                    screen.draw_aligned(rsc.tiles, rect, at);
+                    screen.draw_aligned(rsc.tiles, idx, at);
                 });
             }
         }

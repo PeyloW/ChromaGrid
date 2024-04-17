@@ -9,6 +9,7 @@
 #define canvas_hpp
 
 #include "image.hpp"
+#include "tileset.hpp"
 #include "font.hpp"
 #include "dirtymap.hpp"
 
@@ -85,8 +86,14 @@ namespace toybox {
         
         void draw_aligned(const image_c &src, point_s at) const;
         void draw_aligned(const image_c &src, rect_s rect, point_s at) const;
+        void draw_aligned(const tileset_c &src, int idx, point_s at) const;
+        void draw_aligned(const tileset_c &src, point_s tile, point_s at) const;
         void draw(const image_c &src, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
         void draw(const image_c &src, rect_s rect, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
+        void draw(const tileset_c &src, int idx, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
+        void draw(const tileset_c &src, point_s tile, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
+
+        
         
         void draw_3_patch(const image_c &src, int16_t cap, rect_s in) const;
         void draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s in) const;

@@ -108,6 +108,14 @@ void canvas_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
     imp_draw_aligned(src, rect, at);
 }
 
+void canvas_c::draw_aligned(const tileset_c &src, int idx, point_s at) const {
+    draw_aligned(*src.get_image(), src.get_rect(idx), at);
+}
+
+void canvas_c::draw_aligned(const tileset_c &src, point_s tile, point_s at) const {
+    draw_aligned(*src.get_image(), src.get_rect(tile), at);
+}
+
 void canvas_c::draw(const image_c &src, point_s at, const uint8_t color) const {
     assert(_image._maskmap == nullptr);
     rect_s rect(point_s(), src.get_size());
@@ -136,6 +144,14 @@ void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t c
         assert(color == image_c::MASKED_CIDX);
         imp_draw(src, rect, at);
     }
+}
+
+void canvas_c::draw(const tileset_c &src, int idx, point_s at, const uint8_t color) const {
+    draw(*src.get_image(), src.get_rect(idx), at, color);
+}
+
+void canvas_c::draw(const tileset_c &src, point_s tile, point_s at, const uint8_t color) const {
+    draw(*src.get_image(), src.get_rect(tile), at, color);
 }
 
 void canvas_c::draw_3_patch(const image_c &src, int16_t cap, rect_s in) const {

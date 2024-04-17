@@ -16,13 +16,13 @@
 class cgresources_c : public nocopy_c {
 public:
     image_c background;
-    image_c tiles;
-    image_c empty_tile;
-    image_c orbs;
+    tileset_c tiles;
+    tileset_c empty_tile;
+    tileset_c orbs;
     image_c cursor;
     image_c button;
     image_c selection;
-    image_c shimmer;
+    tileset_c shimmer;
     font_c font;
     font_c mono_font;
     font_c small_font;

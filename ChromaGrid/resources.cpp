@@ -65,13 +65,13 @@ static const char *user_path(const char *file, const char *m = nullptr) {
 
 cgresources_c::cgresources_c() :
     background(data_path("BACKGRND.IFF", "Load images"), false),
-    tiles(data_path("TILES.IFF"), false),
-    empty_tile(data_path("emptyt.iff"), true, 6),
-    orbs(data_path("ORBS.IFF"), true, 6),
+    tiles(new image_c(data_path("TILES.IFF"), false), size_s(16, 16)),
+    empty_tile(new image_c(data_path("emptyt.iff"), true, 6), size_s(16, 16)),
+    orbs(new image_c(data_path("ORBS.IFF"), true, 6), size_s(16, 10)),
     cursor(data_path("CURSOR.IFF"), true, 0),
     button(data_path("BUTTON.IFF"), true, 6),
     selection(data_path("SELECT.IFF"), true, 6),
-    shimmer(data_path("shimmer.iff"), true, 6),
+    shimmer(new image_c(data_path("shimmer.iff"), true, 6), size_s(16, 16)),
     font(new image_c(data_path("FONT.IFF", "Load fonts"), true, 0), size_s(8, 8), 4, 2, 4),
     mono_font(font.get_image(), size_s(8, 8)),
     small_font(new image_c(data_path("FONT6.IFF"), true, 0), size_s(6, 6), 3, 0, 6),
@@ -85,10 +85,10 @@ cgresources_c::cgresources_c() :
     music(data_path("music.snd", "Load music"))
 {
     for (int x = 1; x < 3; x++) {
-        canvas_c tiles_cnv(tiles);
+        canvas_c tiles_cnv(*tiles.get_image());
         printf("Initialize tiles %d.\n\r", x);
         rect_s rect(x * 48, 0, 48, 80);
-        tiles_cnv.draw(tiles, rect_s(0, 0, 48, 80), rect.origin);
+        tiles_cnv.draw(*tiles.get_image(), rect_s(0, 0, 48, 80), rect.origin);
         canvas_c::remap_table_t table;
         canvas_c::make_noremap_table(table);
         if (x == 1) {

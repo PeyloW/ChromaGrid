@@ -21,7 +21,7 @@ LDFLAGS+=-Wl,--traditional-format
 
 TOYBOX_OBJECTS=system.o system_m68k.o cpp_runtime.o
 TOYBOX_OBJECTS+=stream.o iffstream.o
-TOYBOX_OBJECTS+=palette.o image.o font.o
+TOYBOX_OBJECTS+=palette.o image.o tileset.o font.o
 TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o canvas_imp.o
 TOYBOX_OBJECTS+=audio.o
 TOYBOX_OBJECTS+=scene.o scene_transition.o

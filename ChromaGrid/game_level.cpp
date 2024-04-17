@@ -182,9 +182,9 @@ void cglevel_scene_c::update_foreground(canvas_c &screen, int ticks) {
             _shimmer_ticks = next_shimmer_ticks();
             _shimmer_tile = -1;
         } else {
-            rect_s rect(0, ABS(_shimmer_ticks) * 16, 16, 16);
+            int16_t idx = ABS(_shimmer_ticks);
             point_s at(_shimmer_tile % 12 * 16, _shimmer_tile / 12 * 16);
-            screen.draw(rsc.shimmer, rect, at);
+            screen.draw(rsc.shimmer, idx, at);
         }
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;
