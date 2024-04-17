@@ -33,9 +33,9 @@ public:
     };
 
     virtual void will_appear(screen_c &screen, bool obsured) {
-        auto &canvas = screen.get_canvas();
+        auto &canvas = screen.canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 48), [this, &canvas, &rect] {
+        canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 48), [this, &canvas, &rect] {
             canvas.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = rect_s(
@@ -58,7 +58,7 @@ public:
         if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];
             uint16_t time_score, orbs_score;
-            _results.get_subscores(orbs_score, time_score);
+            _results.subscores(orbs_score, time_score);
             sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
             canvas.draw(rsc.font, buf, point_s(96, 64));
             sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
@@ -71,7 +71,7 @@ public:
     }
 
     virtual void update_background(screen_c &screen, int ticks) {
-        auto &canvas = screen.get_canvas();
+        auto &canvas = screen.canvas();
         int button = update_button_group(canvas, _menu_buttons);
         switch (button) {
             case 0:
@@ -125,7 +125,7 @@ static int next_shimmer_ticks() {
 }
 
 void cglevel_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
     char buffer[256] = {0};
     if (_level_num == TEST_LEVEL) {
@@ -150,7 +150,7 @@ void cglevel_scene_c::will_disappear(bool obscured) {
 };
 
 void cglevel_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
@@ -173,14 +173,14 @@ void cglevel_scene_c::update_background(screen_c &screen, int ticks) {
     auto state = _level.update_tick(canvas, manager.mouse, passed);
     if (state != level_t::normal) {
         level_result_t results;
-        _level.get_results(&results);
+        _level.results(&results);
         results.calculate_score(state == level_t::success);
         manager.replace(new cglevel_ended_scene_c(manager, _level_num, results));
     }
 }
 
 void cglevel_scene_c::update_foreground(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     _shimmer_ticks -= ticks;
     if (_shimmer_tile != -1) {
         if (_shimmer_ticks < -7) {

@@ -23,9 +23,9 @@ screen_c::~screen_c() {
     }
 }
 
-image_c &screen_c::get_image() const { return *(image_c*)&_image; }
-canvas_c &screen_c::get_canvas() const { return *(canvas_c*)&_canvas; }
-dirtymap_c *screen_c::get_dirtymap() const { return _dirtymap; }
+image_c &screen_c::image() const { return *(image_c*)&_image; }
+canvas_c &screen_c::canvas() const { return *(canvas_c*)&_canvas; }
+dirtymap_c *screen_c::dirtymap() const { return _dirtymap; }
 
 void screen_c::set_active() const {
     timer_c::with_paused_timers([this] {

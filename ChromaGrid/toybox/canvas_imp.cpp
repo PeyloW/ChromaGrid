@@ -98,10 +98,10 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     assert((rect.origin.x & 0xf) == 0);
     assert((rect.size.width & 0xf) == 0);
     assert((at.x & 0xf) == 0);
-    assert((srcImage.get_size().width & 0xf) == 0);
+    assert((srcImage.size().width & 0xf) == 0);
     assert(!rect.size.is_empty());
-    assert(rect_s(at, rect.size).contained_by(get_size()));
-    assert(rect.contained_by(srcImage.get_size()));
+    assert(rect_s(at, rect.size).contained_by(size()));
+    assert(rect.contained_by(srcImage.size()));
         
     auto blitter = pBlitter;
     const uint16_t copy_words = (rect.size.width / 16);
@@ -153,8 +153,8 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
 
 void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(rect_s(at, rect.size).contained_by(get_size()));
-    assert(rect.contained_by(srcImage.get_size()));
+    assert(rect_s(at, rect.size).contained_by(size()));
+    assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)rect.max_x();
@@ -224,8 +224,8 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
 
 void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(rect_s(at, rect.size).contained_by(get_size()));
-    assert(rect.contained_by(srcImage.get_size()));
+    assert(rect_s(at, rect.size).contained_by(size()));
+    assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)rect.max_x();
@@ -317,8 +317,8 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
 
 void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
     assert(!rect.size.is_empty());
-    assert(rect_s(at, rect.size).contained_by(get_size()));
-    assert(rect.contained_by(srcImage.get_size()));
+    assert(rect_s(at, rect.size).contained_by(size()));
+    assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
     const uint16_t src_max_x    = (uint16_t)rect.max_x();
@@ -392,8 +392,8 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
 
 void canvas_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(rect_s(at, rect.size).contained_by(get_size()));
-    assert(rect.contained_by(srcImage.get_size()));
+    assert(rect_s(at, rect.size).contained_by(size()));
+    assert(rect.contained_by(srcImage.size()));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {
             uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});

@@ -254,11 +254,11 @@ bool mouse_c::is_pressed(button_e button) const {
     return (g_mouse_buttons & (1 << button)) != 0;
 }
 
-mouse_c::state_e mouse_c::get_state(button_e button) const {
+mouse_c::state_e mouse_c::state(button_e button) const {
     return g_mouse_button_states[button];
 }
 
-point_s mouse_c::get_postion() {
+point_s mouse_c::postion() {
     point_s clamped_point = point_s(
         MIN(g_mouse_limit.max_x(), MAX(g_mouse_position.x, g_mouse_limit.origin.x)),
         MIN(g_mouse_limit.max_y(), MAX(g_mouse_position.y, g_mouse_limit.origin.y))

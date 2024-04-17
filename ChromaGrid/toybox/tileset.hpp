@@ -20,17 +20,17 @@ namespace toybox {
         tileset_c(const shared_ptr_c<image_c> &image, size_s tile_size);
         ~tileset_c() = default;
         
-        inline const shared_ptr_c<image_c> &get_image() const __pure {
+        inline const shared_ptr_c<image_c> &image() const __pure {
             return _image;
         }
         
-        size_s get_tile_size() const __pure { return _rects[0].size; }
+        size_s tile_size() const __pure { return _rects[0].size; }
         
         int16_t max_index() const __pure;
         point_s max_tile() const __pure;
 
-        const rect_s &get_rect(const int16_t i) const __pure;
-        const rect_s &get_rect(const point_s tile) const __pure;
+        const rect_s &tile_rect(const int16_t i) const __pure;
+        const rect_s &tile_rect(const point_s tile) const __pure;
 
     private:
         const shared_ptr_c<image_c> _image;

@@ -107,7 +107,7 @@ namespace toystd {
             return *this;
         }
 
-        uint16_t get_count() const __pure { return _count->count; }
+        uint16_t use_count() const __pure { return _count->count; }
         void reset(T* p = nullptr) {
             if (this->_ptr != p) cleanup();
             this->_ptr = p;

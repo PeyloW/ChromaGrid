@@ -22,10 +22,10 @@ namespace toybox {
         font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
         ~font_c() = default;
         
-        inline const shared_ptr_c<image_c> &get_image() const {
+        inline const shared_ptr_c<image_c> &image() const {
             return _image;
         }
-        inline const rect_s &get_rect(const char c) const {
+        inline const rect_s &char_rect(const char c) const {
             if (c < 32 || c > 127) {
                 return _rects[0];
             } else {

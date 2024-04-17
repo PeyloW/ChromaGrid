@@ -37,10 +37,10 @@ namespace toybox {
         __forceinline void ser_palette(const shared_ptr_c<palette_c> &palette) {
             _palette = palette;
         }
-        __forceinline shared_ptr_c<palette_c> &get_palette() const {
+        __forceinline shared_ptr_c<palette_c> &palette() const {
             return *(shared_ptr_c<palette_c>*)&_palette;
         }
-        __forceinline size_s get_size() const { return _size; }
+        __forceinline size_s size() const { return _size; }
         uint8_t get_pixel(point_s at) const;
         
     private:

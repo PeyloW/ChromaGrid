@@ -26,14 +26,14 @@ static tile_changes_e cgp_tile_changes = no_changes;
 void level_result_t::calculate_score(bool succes) {
     if (succes) {
         uint16_t orbs_score, time_score;
-        get_subscores(orbs_score, time_score);
+        subscores(orbs_score, time_score);
         score = orbs_score + time_score;
     } else {
         score = 0;
     }
 }
 
-void level_result_t::get_subscores(uint16_t &orbs_score, uint16_t &time_score) const {
+void level_result_t::subscores(uint16_t &orbs_score, uint16_t &time_score) const {
     assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
     assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
     orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
@@ -438,7 +438,7 @@ void level_t::draw_tile(canvas_c &screen, int x, int y) const {
         if (tile.transition.step > 0) {
             draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
             const int shade = canvas_c::STENCIL_FULLY_OPAQUE - tile.transition.step * canvas_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
-            auto stencil = canvas_c::get_stencil(canvas_c::orderred, shade);
+            auto stencil = canvas_c::stencil(canvas_c::orderred, shade);
             screen.with_stencil(stencil, [&, this] {
                 draw_tilestate(screen, rsc, tile.state, x, y);
             });
@@ -531,13 +531,13 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
     }
     debug_cpu_color(DBEUG_CPU_LEVEL_TICK);
 
-    auto at = mouse.get_postion();
+    auto at = mouse.postion();
     at.x /= 16; at.y /= 16;
 
     if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
         debug_cpu_color(DBEUG_CPU_LEVEL_RESOLVE);
-        bool lb = mouse.get_state(mouse_c::left) == mouse_c::clicked;
-        bool rb = mouse.get_state(mouse_c::right) == mouse_c::clicked;
+        bool lb = mouse.state(mouse_c::left) == mouse_c::clicked;
+        bool rb = mouse.state(mouse_c::right) == mouse_c::clicked;
         if (lb || rb) {
             cgp_tile_changes = no_changes;
             // Try remove an orb
@@ -598,7 +598,7 @@ bool level_recipe_t::empty() const {
     return header.width == 0 || header.height == 0;
 }
 
-int level_recipe_t::get_size() const {
+int level_recipe_t::size() const {
     return sizeof(level_recipe_t) + sizeof(tilestate_t) * header.width * header.height;
 }
 

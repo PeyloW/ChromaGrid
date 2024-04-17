@@ -177,16 +177,16 @@ void dirtymap_c::merge(const dirtymap_c &dirtymap) {
 }
 
 void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
-    auto &image = canvas.get_image();
-    assert(image.get_size() == clean_image.get_size());
+    auto &image = canvas.image();
+    assert(image.size() == clean_image.size());
 #if CGDIRTYMAP_BITSET
-    assert(_size.width * CGDIRTYMAP_TILE_WIDTH * 8 >= clean_image.get_size().width);
+    assert(_size.width * CGDIRTYMAP_TILE_WIDTH * 8 >= clean_image.size().width);
 #else
-    assert(_size.width * CGDIRTYMAP_TILE_WIDTH == clean_image.get_size().width);
+    assert(_size.width * CGDIRTYMAP_TILE_WIDTH == clean_image.size().width);
 #endif
-    assert(_size.height * CGDIRTYMAP_TILE_HEIGHT == clean_image.get_size().height);
-    assert((image.get_size().width % CGDIRTYMAP_TILE_WIDTH) == 0);
-    assert((image.get_size().height % CGDIRTYMAP_TILE_HEIGHT) == 0);
+    assert(_size.height * CGDIRTYMAP_TILE_HEIGHT == clean_image.size().height);
+    assert((image.size().width % CGDIRTYMAP_TILE_WIDTH) == 0);
+    assert((image.size().height % CGDIRTYMAP_TILE_HEIGHT) == 0);
     const_cast<canvas_c&>(canvas).with_clipping(false, [this, &canvas, &clean_image] {
 #if CGDIRTYMAP_BITSET
         auto data = _data;
@@ -222,7 +222,7 @@ void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
             at.y += CGDIRTYMAP_TILE_HEIGHT;
         }
 #else
-        const auto image_size = image.get_size();
+        const auto image_size = image.size();
         int16_t y = image_size.height - CGDIRTYMAP_TILE_HEIGHT;
         for (int16_t row = _size.height; --row != -1; y -= CGDIRTYMAP_TILE_HEIGHT) {
             const int16_t row_offset = row * _size.width;

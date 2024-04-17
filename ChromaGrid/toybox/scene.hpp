@@ -81,7 +81,7 @@ namespace toybox {
         timer_c clock;
         mouse_c mouse;
         
-        screen_c &get_background_screen() { return _screens.back(); }
+        screen_c &background_screen() { return _screens.back(); }
         
     private:
         transition_c *_transition;

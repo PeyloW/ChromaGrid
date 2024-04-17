@@ -12,7 +12,7 @@ using namespace toybox;
 
 tileset_c::tileset_c(const shared_ptr_c<image_c> &image, size_s tile_size) :
     _image(image),
-    _max_tile(image->get_size().width / tile_size.width, image->get_size().height / tile_size.height),
+    _max_tile(image->size().width / tile_size.width, image->size().height / tile_size.height),
     _rects()
 {
     assert(_max_tile.x > 0 && _max_tile.y > 0);
@@ -36,11 +36,11 @@ point_s tileset_c::max_tile() const {
     return _max_tile;
 }
 
-const rect_s &tileset_c::get_rect(const int16_t i) const {
+const rect_s &tileset_c::tile_rect(const int16_t i) const {
     assert(i >= 0 && i < max_index());
     return _rects[i];
 }
-const rect_s &tileset_c::get_rect(const point_s tile) const {
+const rect_s &tileset_c::tile_rect(const point_s tile) const {
     assert(tile.x >= 0 && tile.x < _max_tile.x && tile.y >= 0 && tile.y < _max_tile.y);
     return _rects[tile.x + _max_tile.x * tile.y];
 }

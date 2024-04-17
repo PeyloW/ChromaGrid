@@ -28,7 +28,7 @@ public:
     cgresources_c &rsc;
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
-        return buttons.update_buttons(screen, manager.mouse.get_postion(), manager.mouse.get_state(mouse_c::left));
+        return buttons.update_buttons(screen, manager.mouse.postion(), manager.mouse.state(mouse_c::left));
     }
 };
 

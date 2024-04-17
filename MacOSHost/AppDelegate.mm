@@ -71,7 +71,7 @@ static void _yieldFunction() {
     g_vbl_interupt();
     [self setNeedsDisplay:YES];
     if (g_active_sound) {
-        NSData *data = [NSData dataWithBytesNoCopy:(void *)g_active_sound->get_sample() length:g_active_sound->get_length() freeWhenDone:NO];
+        NSData *data = [NSData dataWithBytesNoCopy:(void *)g_active_sound->sample() length:g_active_sound->length() freeWhenDone:NO];
         _sound = [[NSSound alloc] initWithData:data];
         [_sound play];
         g_active_sound = nullptr;
@@ -137,7 +137,7 @@ static void _yieldFunction() {
         return;
     }
     [_gameLock lockWhenCondition:1];
-    const auto size = g_active_image->get_size();
+    const auto size = g_active_image->size();
     typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
     color_s palette[16] = { 0 };
     color_s buffer[320 * 200];

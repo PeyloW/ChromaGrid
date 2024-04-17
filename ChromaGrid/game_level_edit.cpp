@@ -46,9 +46,9 @@ public:
     }
 
     virtual void will_appear(screen_c &screen, bool obsured) {
-        auto &canvas = screen.get_canvas();
+        auto &canvas = screen.canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
+        canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
             canvas.draw_aligned(rsc.background, rect, rect.origin);
         });
         rect = rect_s(
@@ -60,7 +60,7 @@ public:
     }
     
     virtual void update_background(screen_c &screen, int ticks) {
-        auto &canvas = screen.get_canvas();
+        auto &canvas = screen.canvas();
         int button = update_button_group(canvas, _menu_buttons);
         auto transition = transition_c::create(canvas_c::random);
         if (button == 0) {
@@ -158,7 +158,7 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
 }
 
 void cglevel_edit_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(canvas);
     _count_buttons.draw_all(canvas);
@@ -204,7 +204,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
 }
 
 void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
@@ -253,9 +253,9 @@ void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
     }
     
     auto &mouse = manager.mouse;
-    bool lb = mouse.get_state(mouse_c::left) == mouse_c::clicked;
-    bool rb = mouse.get_state(mouse_c::right) == mouse_c::clicked;
-    const auto pos = mouse.get_postion();
+    bool lb = mouse.state(mouse_c::left) == mouse_c::clicked;
+    bool rb = mouse.state(mouse_c::right) == mouse_c::clicked;
+    const auto pos = mouse.postion();
     
     if (pos.x < MAIN_MENU_ORIGIN_X && pos.y < MAIN_MENU_SIZE_HEIGHT) {
         int tx = pos.x / 16;

@@ -69,7 +69,7 @@ struct level_recipe_t {
     tilestate_t tiles[];
     static const int MAX_SIZE = 16 + sizeof(tilestate_t) * 12 * 12;
     bool empty() const;
-    int get_size() const;
+    int size() const;
     bool save(iffstream_c &iff);
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
@@ -93,7 +93,7 @@ struct __packed_struct level_result_t {
     uint16_t time;
     uint16_t moves;
     void calculate_score(bool succes);
-    void get_subscores(uint16_t &orbs_score, uint16_t &time_score) const;
+    void subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
     bool save(iffstream_c &iff);
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
@@ -128,7 +128,7 @@ public:
     
     const tilestate_t &tilestate_at(int x, int y) const;
     
-    void get_results(level_result_t *results) const {
+    void results(level_result_t *results) const {
         *results = _results;
     }
 private:

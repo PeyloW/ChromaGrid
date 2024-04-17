@@ -20,7 +20,7 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
 }
 
 void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
         
     for (int y = 0; y < 12; y++) {
@@ -48,7 +48,7 @@ void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
                 }
                 int16_t idx = col + row * 9;
                 point_s at(x * 16, y * 16);
-                canvas.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
+                canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, shade), [&] {
                     canvas.draw_aligned(rsc.tiles, idx, at);
                 });
             }
@@ -62,7 +62,7 @@ void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
 }
 
 void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
@@ -131,7 +131,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 }
 
 void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(canvas);
 
@@ -143,7 +143,7 @@ void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
 }
 
 void cglevel_select_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     if (button == 0) {
         manager.pop();

@@ -42,8 +42,8 @@ namespace toybox {
         canvas_c(image_c &image);
         ~canvas_c();
 
-        image_c &get_image() const { return _image; }
-        size_s get_size() const { return _image.get_size(); }
+        image_c &image() const { return _image; }
+        size_s size() const { return _image.size(); }
         
         template<class Commands>
         __forceinline void with_clipping(bool clip, Commands commands) {
@@ -60,7 +60,7 @@ namespace toybox {
             commands();
             _stencil = old_stencil;
         }
-        static const canvas_c::stencil_t *const get_stencil(stencil_type_e type, int shade);
+        static const canvas_c::stencil_t *const stencil(stencil_type_e type, int shade);
         
         dirtymap_c *create_dirtymap() const __pure;
         template<class Commands>

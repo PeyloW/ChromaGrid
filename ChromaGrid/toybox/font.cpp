@@ -10,7 +10,7 @@
 using namespace toybox;
 
 font_c::font_c(const shared_ptr_c<image_c> &image, size_s character_size) : _image(image) {
-    const int cols = image->get_size().width / character_size.width;
+    const int cols = image->size().width / character_size.width;
     for (int i = 0; i < 96; i++) {
         const int col = i % cols;
         const int row = i / cols;
@@ -22,7 +22,7 @@ font_c::font_c(const shared_ptr_c<image_c> &image, size_s character_size) : _ima
 }
 
 font_c::font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_req_space) : _image(image)  {
-    const int cols = image->get_size().width / max_size.width;
+    const int cols = image->size().width / max_size.width;
     for (int i = 0; i < 96; i++) {
         const int col = i % cols;
         const int row = i / cols;

@@ -39,9 +39,9 @@ void blitter_s::start(bool hog) {
         uint16_t src;
         switch (HOP) {
             case hop_one: src = 0xffff; break;
-            case hop_halftone: src = get_halftone(); break;
+            case hop_halftone: src = halftone(); break;
             case hop_src: src = buffer >> get_skew(); break;
-            case hop_src_and_halftone: src = (buffer >> get_skew()) & get_halftone(); break;
+            case hop_src_and_halftone: src = (buffer >> get_skew()) & halftone(); break;
             default: assert(0); break;
         }
         const uint16_t dst = *pDst;

@@ -131,7 +131,7 @@ void canvas_c::make_stencil(stencil_t stencil, stencil_type_e type, int shade) {
     }
 }
 
-const canvas_c::stencil_t *const canvas_c::get_stencil(stencil_type_e type, int shade) {
+const canvas_c::stencil_t *const canvas_c::stencil(stencil_type_e type, int shade) {
     assert(shade >= canvas_c::STENCIL_FULLY_TRANSPARENT);
     assert(shade <= canvas_c::STENCIL_FULLY_OPAQUE);
     assert(type < random);

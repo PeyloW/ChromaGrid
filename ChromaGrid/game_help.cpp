@@ -63,7 +63,7 @@ static void draw_help(const cgresources_c &rsc, canvas_c &screen, const char *ti
 
 
 void cghelp_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(canvas);
     const auto &rsc = this->rsc;
@@ -85,7 +85,7 @@ void cghelp_scene_c::will_appear(screen_c &screen, bool obsured) {
 }
 
 void cghelp_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.get_canvas();
+    auto &canvas = screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:

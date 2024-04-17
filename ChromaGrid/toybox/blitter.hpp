@@ -62,7 +62,7 @@ namespace toybox {
         __forceinline bool is_fxsr() const {
             return (skew & cgblitter_fxsr_bit) != 0;
         }
-        __forceinline uint16_t get_halftone() const {
+        __forceinline uint16_t halftone() const {
             return halftoneRAM[mode & 0xf];
         }
 #ifdef __M68000__

@@ -17,12 +17,12 @@ namespace toybox {
         screen_c(size_s screen_size = size_s(320, 200));
         ~screen_c();
         
-        image_c &get_image() const __pure;
-        canvas_c &get_canvas() const __pure;
-        dirtymap_c *get_dirtymap() const __pure;
+        image_c &image() const __pure;
+        canvas_c &canvas() const __pure;
+        dirtymap_c *dirtymap() const __pure;
         
-        size_s get_size() const __pure { return _image.get_size(); }
-        point_s get_offset() const __pure { return _offset; }
+        size_s size() const __pure { return _image.size(); }
+        point_s offset() const __pure { return _offset; }
         void set_offset(point_s o) { _offset = o; }
 
         void set_active() const;

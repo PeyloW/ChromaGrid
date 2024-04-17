@@ -23,9 +23,9 @@ namespace toybox {
         
         void set_active() const;
         
-        const int8_t *get_sample() const { return _sample.get(); }
-        uint32_t get_length() const { return _length; }
-        uint16_t get_rate() const { return _rate; }
+        const int8_t *sample() const { return _sample.get(); }
+        uint32_t length() const { return _length; }
+        uint16_t rate() const { return _rate; }
         
     private:
         unique_ptr_c<int8_t> _sample;
@@ -40,10 +40,10 @@ namespace toybox {
         
         void set_active(int track) const; // Track starts at 1, not 0
         
-        const char *get_title() const { return _title; }
-        const char *get_composer() const { return _composer; }
-        int get_track_count() const { return _track_count; }
-        uint8_t get_replay_freq() const { return _freq; }
+        const char *title() const { return _title; }
+        const char *composer() const { return _composer; }
+        int track_count() const { return _track_count; }
+        uint8_t replay_freq() const { return _freq; }
         
     private:
         unique_ptr_c<uint8_t> _sndh;

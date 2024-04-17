@@ -73,7 +73,7 @@ namespace toybox {
 #endif
     }
     
-    static int16_t get_screen_mode() {
+    static int16_t screen_mode() {
 #ifdef __M68000__
         return Getrez();
 #else
@@ -160,9 +160,9 @@ namespace toybox {
         void update_state();  // Call once per vbl
         
         bool is_pressed(button_e button) const;
-        state_e get_state(button_e button) const;
+        state_e state(button_e button) const;
         
-        point_s get_postion();
+        point_s postion();
         
     };
     
