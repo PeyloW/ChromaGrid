@@ -17,9 +17,9 @@
 
 #define LEVEL_EDIT_BUTTON_ORIGIN_X (MAIN_MENU_ORIGIN_X + MAIN_MENU_MARGINS * 2)
 #define LEVEL_EDIT_BUTTON_ORIGIN_Y (56)
-#define LEVEL_EDIT_BUTTON_ORIGIN (point_s){LEVEL_EDIT_BUTTON_ORIGIN_X, LEVEL_EDIT_BUTTON_ORIGIN_Y}
+#define LEVEL_EDIT_BUTTON_ORIGIN (point_s(LEVEL_EDIT_BUTTON_ORIGIN_X, LEVEL_EDIT_BUTTON_ORIGIN_Y))
 #define LEVEL_EDIT_BUTTON_SIZE_WIDTH    (48)
-#define LEVEL_EDIT_BUTTON_SIZE (size_s){LEVEL_EDIT_BUTTON_SIZE_WIDTH, 14}
+#define LEVEL_EDIT_BUTTON_SIZE (size_s(LEVEL_EDIT_BUTTON_SIZE_WIDTH, 14))
 #define LEVEL_EDIT_BUTTON_SPACING (2)
 
 static int button_to_level_idx(int button_idx) {
@@ -46,17 +46,14 @@ public:
     }
 
     virtual void will_appear(canvas_c &screen, bool obsured) {
-        rect_s rect = (rect_s) {
-            {0,0},
-            {MAIN_MENU_ORIGIN_X, 200}
-        };
+        rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 32), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
-        rect = (rect_s){
-            (point_s){MAIN_MENU_ORIGIN_X, 0},
-            (size_s){MAIN_MENU_SIZE_WIDTH, 200}
-        };
+        rect = rect_s(
+            MAIN_MENU_ORIGIN_X, 0,
+            MAIN_MENU_SIZE_WIDTH, 200
+        );
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
     }
@@ -159,7 +156,7 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
 }
 
 void cglevel_edit_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(screen);
     _count_buttons.draw_all(screen);
     draw_counts(screen);
@@ -273,10 +270,10 @@ void cglevel_edit_scene_c::update_background(canvas_c &screen, int ticks) {
     }
     
     if (lb || rb) {
-        rect_s rect = (rect_s){
-            {LEVEL_EDIT_TEMPLATE_ORIGIN_X, LEVEL_EDIT_TEMPLATE_ORIGIN_Y},
-            {LEVEL_EDIT_TEMPLATE_SIZE_WIDTH, LEVEL_EDIT_TEMPLATE_SIZE_HEIGHT}
-        };
+        rect_s rect(
+            LEVEL_EDIT_TEMPLATE_ORIGIN_X, LEVEL_EDIT_TEMPLATE_ORIGIN_Y,
+            LEVEL_EDIT_TEMPLATE_SIZE_WIDTH, LEVEL_EDIT_TEMPLATE_SIZE_HEIGHT
+        );
         if (lb && rect.contains(pos)) {
             int tx = (pos.x - LEVEL_EDIT_TEMPLATE_ORIGIN_X) / 16;
             int ty = (pos.y - LEVEL_EDIT_TEMPLATE_ORIGIN_Y) / 16;
@@ -298,12 +295,12 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
     buf[2] = '0' + (sec / 10);
     buf[3] = '0' + (sec % 10);
     buf[4] = 0;
-    const point_s at = (point_s){ 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3};
-    const rect_s rect = (rect_s){at, (size_s){32, 8}};
+    const point_s at = point_s( 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3);
+    const rect_s rect = rect_s(at, size_s(32, 8));
     screen.draw(rsc.background, rect, at);
     screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
     for (int i = 1; i < 3; i++) {
-        point_s at = (point_s){ 320 - 32 - 8 - MAIN_MENU_MARGINS * 2 + 3, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
+        point_s at(320 - 32 - 8 - MAIN_MENU_MARGINS * 2 + 3, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i);
         draw_orb(screen, (color_e)i, at);
         
         char buf[3];
@@ -311,8 +308,8 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
         buf[0] = d1 ? '0' + d1 :  ' ';
         buf[1] = '0' + _header.orbs[i - 1] % 10;
         buf[2] = 0;
-        at = (point_s){ 320 - 16 - MAIN_MENU_MARGINS * 2, (int16_t)(LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i)};
-        rect_s rect = (rect_s){ at, {16, 8}};
+        at.x = 320 - 16 - MAIN_MENU_MARGINS * 2;
+        rect_s rect(at, size_s(16, 8));
         screen.draw(rsc.background, rect, at);
         screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
     }
@@ -321,7 +318,7 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
 
 void cglevel_edit_scene_c::draw_tile_template_at(canvas_c &screen, const tilestate_t &state, int index) const {
     int16_t x = LEVEL_EDIT_TEMPLATE_ORIGIN_X + index * 16;
-    point_s at = (point_s){x, LEVEL_EDIT_TEMPLATE_ORIGIN_Y};
+    point_s at(x, LEVEL_EDIT_TEMPLATE_ORIGIN_Y);
     draw_tilestate(screen, state, at, _selected_template == index);
 }
 
@@ -332,7 +329,7 @@ void cglevel_edit_scene_c::draw_tile_templates(canvas_c &screen) const {
 }
 
 void cglevel_edit_scene_c::draw_level_grid(canvas_c &screen, int x, int y) const {
-    point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
+    point_s at(x * 16, y * 16);
     draw_tilestate(screen, _level_grid[x][y], at);
 }
 

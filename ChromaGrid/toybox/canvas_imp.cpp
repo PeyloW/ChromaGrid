@@ -100,7 +100,7 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     assert((at.x & 0xf) == 0);
     assert((srcImage.get_size().width & 0xf) == 0);
     assert(!rect.size.is_empty());
-    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect_s(at, rect.size).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
         
     auto blitter = pBlitter;
@@ -153,7 +153,7 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
 
 void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect_s(at, rect.size).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
@@ -224,7 +224,7 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
 
 void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect_s(at, rect.size).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
@@ -317,7 +317,7 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
 
 void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point_s at, uint16_t color) const {
     assert(!rect.size.is_empty());
-    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect_s(at, rect.size).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
     auto blitter = pBlitter;
 
@@ -392,7 +392,7 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
 
 void canvas_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, point_s at) const {
     assert(!rect.size.is_empty());
-    assert(((rect_s){at, rect.size}).contained_by(get_size()));
+    assert(rect_s(at, rect.size).contained_by(get_size()));
     assert(rect.contained_by(srcImage.get_size()));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {

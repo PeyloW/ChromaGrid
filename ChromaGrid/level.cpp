@@ -250,7 +250,7 @@ public:
         visit_adjecent_at(x, y, [this, &updates] (tile_c &tile, int x, int y) {
             if (is_orb_solved_at(x, y)) {
                 tile.state.current = tile.state.orb;
-                updates.push_back((point_s){(int16_t)x, (int16_t)y});
+                updates.emplace_back(x, y);
             }
         });
         for (auto update = updates.begin(); update != updates.end(); update++) {
@@ -327,22 +327,22 @@ void level_t::draw_all(canvas_c &screen) const {
             draw_tile(screen, x, y);
         }
     }
-    screen.draw(rsc.font, "TIME:", (point_s){LABEL_X_INSET, TIME_Y_INSET}, canvas_c::align_left);
+    screen.draw(rsc.font, "TIME:", point_s(LABEL_X_INSET, TIME_Y_INSET), canvas_c::align_left);
     draw_time(screen);
     
-    screen.draw(rsc.font, "ORBS:", (point_s){LABEL_X_INSET, ORB_Y_INSET}, canvas_c::align_left);
-    rect_s rect = (rect_s){{0, 0}, {16, 10}};
+    screen.draw(rsc.font, "ORBS:", point_s(LABEL_X_INSET, ORB_Y_INSET), canvas_c::align_left);
+    rect_s rect(0, 0, 16, 10);
     for (int i = 0; i < 2; i++) {
-        point_s at = (point_s){(int16_t)(ORB_X_INSET + i * ORB_X_SPACING), ORB_Y_INSET - 1};
+        point_s at = point_s(ORB_X_INSET + i * ORB_X_SPACING, ORB_Y_INSET - 1);
         draw_orb(screen, (color_e)(i + 1), at);
         rect.origin.x += 16;
     }
     draw_orb_counts(screen);
     
-    screen.draw(rsc.font, "MOVES:", (point_s){LABEL_X_INSET, MOVES_Y_INSET}, canvas_c::align_left);
+    screen.draw(rsc.font, "MOVES:", point_s(LABEL_X_INSET, MOVES_Y_INSET), canvas_c::align_left);
     draw_move_count(screen);
 
-    screen.draw(rsc.font, "REMAINING:", (point_s){LABEL_X_INSET, REMAINING_Y_INSET}, canvas_c::align_left);
+    screen.draw(rsc.font, "REMAINING:", point_s(LABEL_X_INSET, REMAINING_Y_INSET), canvas_c::align_left);
     draw_remaining_count(screen);
 }
 
@@ -354,14 +354,14 @@ inline static const rect_s tilestate_src_rect(const tilestate_t &state) {
     int16_t tx = state.target * 16;
     tx += state.current * 48;
     int16_t ty = (state.type - 1) * 16;
-    return (rect_s){{tx, ty}, {16, 16}};
+    return rect_s(tx, ty, 16, 16);
 }
 
 inline static void draw_tilestate(canvas_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
-    const point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
+    const point_s at(x * 16, y * 16);
     if (state.type == empty) {
         if (state.target != none) {
-            const rect_s rect = (rect_s){ {(int16_t)((state.target - 1) * 16), 0}, { 16, 16 } };
+            const rect_s rect((state.target - 1) * 16, 0, 16, 16);
             screen.draw(rsc.empty_tile, rect, at);
         }
         return;
@@ -373,7 +373,7 @@ inline static void draw_tilestate(canvas_c &screen, const cgresources_c &rsc, co
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
     auto &rsc = cgresources_c::shared();
     if (state.type == empty) {
-        const rect_s rect = (rect_s){at, {16, 16}};
+        const rect_s rect(at, size_s(16, 16));
         screen.draw(rsc.background, rect, at);
         switch (state.target) {
             case none:
@@ -382,16 +382,16 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
                 point_s o_at = at;
                 o_at.x += 2;
                 o_at.y += 2;
-                rect_s rect = (rect_s){ {16, 0}, { 16, 16 } };
+                rect_s rect(16, 0, 16, 16);
                 screen.draw(rsc.empty_tile, rect, o_at);
                 o_at.x -= 4;
                 o_at.y -= 4;
-                rect = (rect_s){ {0, 0}, { 16, 16 } };
+                rect.origin.x = 0;
                 screen.draw(rsc.empty_tile, rect, o_at);
                 break;
             }
             default: {
-                const rect_s rect = (rect_s){ {(int16_t)((state.target - 1) * 16), 0}, { 16, 16 } };
+                const rect_s rect((state.target - 1) * 16, 0, 16, 16);
                 screen.draw(rsc.empty_tile, rect, at);
                 break;
             }
@@ -426,15 +426,15 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
 inline static void draw_orb(canvas_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
     int16_t tx = (color - 1) * 16 + 3;
     int16_t ty = 10 * shade;
-    const rect_s rect = (rect_s){{tx, ty}, {10, 10}};
-    const point_s at = (point_s){(int16_t)(x * 16 + 3), (int16_t)(y * 16 + 3)};
+    const rect_s rect(tx, ty, 10, 10);
+    const point_s at(x * 16 + 3, y * 16 + 3);
     screen.draw(rsc.orbs, rect, at);
 }
 
 void draw_orb(canvas_c &screen, color_e color, point_s at) {
     auto &rsc = cgresources_c::shared();
     int16_t tx = (color - 1) * 16 + 3;
-    const rect_s rect = (rect_s){{tx, 0}, {10, 10}};
+    const rect_s rect(tx, 0, 10, 10);
     at.x += 3;
     screen.draw(rsc.orbs, rect, at);
 }
@@ -476,8 +476,8 @@ void level_t::draw_time(canvas_c &screen) const {
     buf[3] = '0' + (sec % 10);
     buf[4] = 0;
     
-    const point_s at = (point_s){ TIME_X_TRAIL - 32, TIME_Y_INSET };
-    const rect_s rect = (rect_s){at, (size_s){32, 8}};
+    const point_s at = point_s(TIME_X_TRAIL - 32, TIME_Y_INSET);
+    const rect_s rect = rect_s(at, size_s(32, 8));
 
     screen.draw(rsc.background, rect, at);
     screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
@@ -492,8 +492,8 @@ void level_t::draw_orb_counts(canvas_c &screen) const {
         buf[0] = d1 ? '0' + d1 :  ' ';
         buf[1] = '0' + _results.orbs[i] % 10;
         buf[2] = 0;
-        point_s at = (point_s){(int16_t)(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING), ORB_Y_INSET};
-        rect_s rect = (rect_s){ at, {16, 8}};
+        point_s at(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING, ORB_Y_INSET);
+        rect_s rect(at, size_s(16, 8));
         screen.draw(rsc.background, rect, at);
         screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
     }
@@ -509,8 +509,8 @@ void level_t::draw_move_count(canvas_c &screen) const {
         moves /= 10;
         buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
     }
-    const point_s at = (point_s){ TIME_X_TRAIL - 24, MOVES_Y_INSET };
-    const rect_s rect = (rect_s){at, (size_s){24, 8}};
+    const point_s at = point_s(TIME_X_TRAIL - 24, MOVES_Y_INSET);
+    const rect_s rect = rect_s(at, size_s(24, 8));
 
     screen.draw(rsc.background, rect, at);
     screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
@@ -526,8 +526,8 @@ void level_t::draw_remaining_count(canvas_c &screen) const {
         moves /= 10;
         buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
     }
-    const point_s at = (point_s){ TIME_X_TRAIL - 24, REMAINING_Y_INSET };
-    const rect_s rect = (rect_s){at, (size_s){24, 8}};
+    const point_s at = point_s(TIME_X_TRAIL - 24, REMAINING_Y_INSET);
+    const rect_s rect = rect_s(at, size_s(24, 8));
 
     screen.draw(rsc.background, rect, at);
     screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);

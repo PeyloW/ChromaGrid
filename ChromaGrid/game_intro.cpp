@@ -20,7 +20,7 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
 }
 
 void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
         
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
@@ -45,8 +45,8 @@ void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
                         case 1: col = 2; break;
                     }
                 }
-                rect_s rect = (rect_s){{(int16_t)(col * 16), (int16_t)(row * 16)}, {16, 16}};
-                point_s at = (point_s){(int16_t)(x * 16), (int16_t)(y * 16)};
+                rect_s rect(col * 16, row * 16, 16, 16);
+                point_s at(x * 16, y * 16);
                 screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, shade), [&] {
                     screen.draw_aligned(rsc.tiles, rect, at);
                 });
@@ -56,8 +56,8 @@ void cgintro_scene_c::will_appear(canvas_c &screen, bool obsured) {
     
     _menu_buttons.draw_all(screen);
     
-    screen.draw(rsc.font, "Welcome to Chroma Grid.", (point_s){96, 150 });
-    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", (point_s){96, 170});
+    screen.draw(rsc.font, "Welcome to Chroma Grid.", point_s(96, 150));
+    screen.draw(rsc.font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
 }
 
 void cgintro_scene_c::update_background(canvas_c &screen, int ticks) {
@@ -103,8 +103,8 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     
     static char title_buf[3 * 45];
     int index = 0;
-    point_s origin = (point_s){16, 40};
-    const size_s size = (size_s){26, 14};
+    point_s origin = point_s(16, 40);
+    const size_s size = size_s(26, 14);
     bool disable = false;
     for (auto result = rsc.level_results.begin(); result != rsc.level_results.end(); result++) {
         int col = index % 5;
@@ -129,10 +129,10 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 }
 
 void cglevel_select_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(screen);
 
-    screen.draw(rsc.font, "Choose Level", (point_s){96, 16});
+    screen.draw(rsc.font, "Choose Level", point_s(96, 16));
 
     for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
         group->draw_all(screen);

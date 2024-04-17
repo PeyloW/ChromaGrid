@@ -33,17 +33,14 @@ public:
     };
 
     virtual void will_appear(canvas_c &screen, bool obsured) {
-        rect_s rect = (rect_s) {
-            {0,0},
-            {MAIN_MENU_ORIGIN_X, 200}
-        };
+        rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         screen.with_stencil(canvas_c::get_stencil(canvas_c::orderred, 48), [this, &screen, &rect] {
             screen.draw_aligned(rsc.background, rect, rect.origin);
         });
-        rect = (rect_s){
-            (point_s){MAIN_MENU_ORIGIN_X, 0},
-            (size_s){MAIN_MENU_SIZE_WIDTH, 200}
-        };
+        rect = rect_s(
+            MAIN_MENU_ORIGIN_X, 0,
+            MAIN_MENU_SIZE_WIDTH, 200
+        );
         screen.draw_aligned(rsc.background, rect, rect.origin);
         _menu_buttons.draw_all(screen);
 
@@ -51,10 +48,10 @@ public:
             char buf[20];
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level %d Failed" : "Level %d Completed";
             sprintf(buf, title, _level_num + 1);
-            screen.draw(rsc.font, buf, (point_s){96, 32});
+            screen.draw(rsc.font, buf, point_s(96, 32));
         } else {
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
-            screen.draw(rsc.font, title, (point_s){96, 32});
+            screen.draw(rsc.font, title, point_s(96, 32));
         }
         
         if (_results.score != level_result_t::FAILED_SCORE) {
@@ -62,13 +59,13 @@ public:
             uint16_t time_score, orbs_score;
             _results.get_subscores(orbs_score, time_score);
             sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
-            screen.draw(rsc.font, buf, (point_s){96, 64});
+            screen.draw(rsc.font, buf, point_s(96, 64));
             sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
-            screen.draw(rsc.font, buf, (point_s){96, 84});
+            screen.draw(rsc.font, buf, point_s(96, 84));
             sprintf(buf, "Total: %d pts", _results.score);
-            screen.draw(rsc.font, buf, (point_s){96, 114});
+            screen.draw(rsc.font, buf, point_s(96, 114));
             sprintf(buf, "Moves: %d", _results.moves);
-            screen.draw(rsc.font, buf, (point_s){96, 144});
+            screen.draw(rsc.font, buf, point_s(96, 144));
         }
     }
 
@@ -126,7 +123,7 @@ static int next_shimmer_ticks() {
 }
 
 void cglevel_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
     char buffer[256] = {0};
     if (_level_num == TEST_LEVEL) {
         sprintf(buffer, "Testing Level");
@@ -135,7 +132,7 @@ void cglevel_scene_c::will_appear(canvas_c &screen, bool obsured) {
     } else {
         sprintf(buffer, "Level %d", _level_num + 1);
     }
-    screen.draw(rsc.small_font, buffer, (rect_s){ {8, 193}, {304, 6} }, 0, canvas_c::align_left);
+    screen.draw(rsc.small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
 
     _menu_buttons.draw_all(screen);
     _level.draw_all(screen);
@@ -185,8 +182,8 @@ void cglevel_scene_c::update_foreground(canvas_c &screen, int ticks) {
             _shimmer_ticks = next_shimmer_ticks();
             _shimmer_tile = -1;
         } else {
-            rect_s rect = (rect_s){{0, (int16_t)(ABS(_shimmer_ticks) * 16)}, {16, 16}};
-            point_s at = (point_s){(int16_t)(_shimmer_tile % 12 * 16), (int16_t)(_shimmer_tile / 12 * 16)};
+            rect_s rect(0, ABS(_shimmer_ticks) * 16, 16, 16);
+            point_s at(_shimmer_tile % 12 * 16, _shimmer_tile / 12 * 16);
             screen.draw(rsc.shimmer, rect, at);
         }
     } else if (_shimmer_ticks <= 0) {

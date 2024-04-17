@@ -20,7 +20,7 @@ cgcredits_scene_c::cgcredits_scene_c(scene_manager_c &manager, page_e page) :
 }
 
 static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Credits", (point_s){96, 16});
+    screen.draw(rsc.font, "Credits", point_s(96, 16));
 
     struct { const char *credit; const char *person; } credits[] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
@@ -31,8 +31,8 @@ static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
         {nullptr}
     };
     
-    point_s atc = (point_s){16, 40 +  0};
-    point_s atp = (point_s){40, 40 + 10};
+    point_s atc(16, 40 +  0);
+    point_s atp(40, 40 + 10);
     for (auto credit = &credits[0]; credit->credit; credit++) {
         screen.draw(rsc.font, credit->credit, atc, canvas_c::align_left);
         atc.y += 26;
@@ -44,7 +44,7 @@ static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
 // , ,
 
 static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Recognitions", (point_s){96, 16});
+    screen.draw(rsc.font, "Recognitions", point_s(96, 16));
     const char *texts[] = {
         "This game uses royalty free sound effects from ZapSplat.\n(https://www.zapsplat.com/)",
         "This game uses libcmini by Thorsten Otto, Oliver and Markus, for the superiour speed and size.\n(https://github.com/freemint/libcmini)",
@@ -52,7 +52,7 @@ static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
         "Original game idea conceived by Peter 'Eagle' Nyman of Friendchip, now realized 32 years later.",
         nullptr
     };
-    rect_s rect = (rect_s){{16, 40}, {160, 48}};
+    rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
@@ -60,7 +60,7 @@ static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
 }
 
 static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Dedications", (point_s){96, 16});
+    screen.draw(rsc.font, "Dedications", point_s(96, 16));
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
         "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe it all.",
@@ -68,7 +68,7 @@ static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
         "Herve would also like to thank... people",
         nullptr
     };
-    rect_s rect = (rect_s){{16, 40}, {160, 48}};
+    rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
@@ -76,14 +76,14 @@ static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
 }
 
 static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Greetings", (point_s){96, 16});
+    screen.draw(rsc.font, "Greetings", point_s(96, 16));
     const char *texts[] = {
         "List of specific people.",
         "List of active Atari groups.",
         "List of the great groups that inspired us.",
         nullptr
     };
-    rect_s rect = (rect_s){{16, 40}, {160, 48}};
+    rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
         auto size = screen.draw(rsc.small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
@@ -91,7 +91,7 @@ static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
 }
 
 void cgcredits_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(screen);
     const auto &rsc = this->rsc;
     

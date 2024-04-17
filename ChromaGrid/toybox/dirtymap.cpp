@@ -207,8 +207,8 @@ void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
                     int16_t *bitrun = (int16_t*)bitrunlist->bit_runs;
                     for (int16_t r = bitrunlist->num_runs; --r != -1; ) {
                         rect_s rect;
-                        rect.origin = (point_s){ (int16_t)(at.x + *bitrun++), at.y};
-                        rect.size = (size_s){ *bitrun++, height};
+                        rect.origin = point_s(at.x + *bitrun++, at.y);
+                        rect.size = size_s(*bitrun++, height);
                         #if DEBUG_DIRTYMAP
                         printf("Restore {{%d, %d}, {%d, %d}}\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
                         #endif
@@ -230,8 +230,8 @@ void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
             for (int16_t col = _size.width; --col != -1; x -= CGDIRTYMAP_TILE_WIDTH) {
                 if (_data[col + row_offset]) {
                     _data[col + row_offset] = false;
-                    point_s at = (point_s){x, y};
-                    rect_s rect = (rect_s){at, {CGDIRTYMAP_TILE_WIDTH, CGDIRTYMAP_TILE_HEIGHT}};
+                    point_s at(x, y);
+                    rect_s rect(at, size_s(CGDIRTYMAP_TILE_WIDTH, CGDIRTYMAP_TILE_HEIGHT));
                     image.draw_aligned(clean_image, rect, at);
                 }
             }

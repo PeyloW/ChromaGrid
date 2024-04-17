@@ -220,10 +220,10 @@ void timer_c::wait(int ticks) {
 
 mouse_c::mouse_c(rect_s limit) {
     g_mouse_limit = limit;
-    g_mouse_position = (point_s){
-        static_cast<int16_t>(limit.origin.x + limit.size.width / 2),
-        static_cast<int16_t>(limit.origin.y + limit.size.height / 2)
-    };
+    g_mouse_position = point_s(
+        limit.origin.x + limit.size.width / 2,
+        limit.origin.y + limit.size.height / 2
+    );
 #ifdef __M68000__
     g_keyboard_vectors = Kbdvbase();
     g_system_mouse_interupt = g_keyboard_vectors->mousevec;
@@ -259,10 +259,10 @@ mouse_c::state_e mouse_c::get_state(button_e button) const {
 }
 
 point_s mouse_c::get_postion() {
-    point_s clamped_point = (point_s){
-        (int16_t)(MIN(g_mouse_limit.max_x(), MAX(g_mouse_position.x, g_mouse_limit.origin.x))),
-        (int16_t)(MIN(g_mouse_limit.max_y(), MAX(g_mouse_position.y, g_mouse_limit.origin.y)))
-    };
+    point_s clamped_point = point_s(
+        MIN(g_mouse_limit.max_x(), MAX(g_mouse_position.x, g_mouse_limit.origin.x)),
+        MIN(g_mouse_limit.max_y(), MAX(g_mouse_position.y, g_mouse_limit.origin.y))
+    );
     g_mouse_position = clamped_point;
     return clamped_point;
 }

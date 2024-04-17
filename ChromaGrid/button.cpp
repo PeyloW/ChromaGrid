@@ -11,22 +11,22 @@ void cgbutton_t::draw_in(canvas_c &image) const {
     if (state == hidden) {
         return;
     }
-    static const rect_s button_rect_normal = (rect_s){{8,0},{32,14}};
-    static const rect_s button_rect_disabled = (rect_s){{8,14},{32,14}};
+    static const rect_s button_rect_normal(8, 0, 32, 14);
+    static const rect_s button_rect_disabled(8, 14, 32, 14);
 
     const auto &rsc = cgresources_c::shared();
     image.draw_3_patch(rsc.button, state != disabled ? button_rect_normal : button_rect_disabled, 8, rect);
-    point_s at = (point_s){
-        (int16_t)(rect.origin.x + rect.size.width / 2),
-        (int16_t)(rect.origin.y + (state != pressed ? 3 : 4))
-    };
+    point_s at(
+        rect.origin.x + rect.size.width / 2,
+        rect.origin.y + (state != pressed ? 3 : 4)
+    );
     image.with_dirtymap(nullptr, [&] {
         image.draw(rsc.font, text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
     });
 }
 
 rect_s cgbutton_group_base_c::next_button_rect(bool first, bool horizontal) {
-    rect_s rect = (rect_s){_group_rect.origin, _size};
+    rect_s rect(_group_rect.origin, _size);
     if (horizontal) {
         int16_t expand = _size.width + (!first ? ABS(_spacing) : 0);
         if (_spacing < 0) {
@@ -52,7 +52,7 @@ rect_s cgbutton_group_base_c::next_button_rect(bool first, bool horizontal) {
 }
 
 void cgbutton_group_base_c::next_button_pair_rects(bool first, rect_s &left_rect, rect_s &right_rect, int16_t spacing) {
-    left_rect = (rect_s){{_group_rect.origin.x, 0}, _size};
+    left_rect = rect_s(point_s(_group_rect.origin.x, 0), _size);
     int16_t extra = !first ? ABS(_spacing) : 0;
     int16_t step = _size.height + ABS(_spacing);
     if (_spacing < 0) {

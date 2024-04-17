@@ -56,10 +56,11 @@ void canvas_c::remap_colors(remap_table_t table, rect_s rect) const {
     const_cast<canvas_c*>(this)->with_clipping(false, [this, table, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
-                const uint8_t c = _image.get_pixel((point_s){ x, y});
+                const point_s at(x, y);
+                const uint8_t c = _image.get_pixel(at);
                 const uint8_t rc = table[c];
                 if (c != rc) {
-                    put_pixel(rc, (point_s){ x, y});
+                    put_pixel(rc, at);
                 }
             }
         }
@@ -85,7 +86,7 @@ void canvas_c::draw_aligned(const image_c &src, point_s at) const {
     assert((src._size.width & 0xf) == 0);
     assert(_image._maskmap == nullptr);
     assert(src._maskmap == nullptr);
-    rect_s rect = (rect_s){ {0, 0}, src.get_size()};
+    rect_s rect(point_s(), src.get_size());
     draw_aligned(src, rect, at);
 }
 
@@ -101,7 +102,7 @@ void canvas_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
         }
     }
     if (_dirtymap) {
-        const rect_s dirty_rect = (rect_s){ at, rect.size };
+        const rect_s dirty_rect(at, rect.size);
         _dirtymap->mark(dirty_rect);
     }
     imp_draw_aligned(src, rect, at);
@@ -109,7 +110,7 @@ void canvas_c::draw_aligned(const image_c &src, rect_s rect, point_s at) const {
 
 void canvas_c::draw(const image_c &src, point_s at, const uint8_t color) const {
     assert(_image._maskmap == nullptr);
-    rect_s rect = (rect_s){ {0, 0}, src.get_size()};
+    rect_s rect(point_s(), src.get_size());
     draw(src, rect, at, color);
 }
 
@@ -122,7 +123,7 @@ void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t c
         }
     }
     if (_dirtymap) {
-        const rect_s dirty_rect = (rect_s){at, rect.size};
+        const rect_s dirty_rect(at, rect.size);
         _dirtymap->mark(dirty_rect);
     }
     if (src._maskmap) {
@@ -138,7 +139,7 @@ void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t c
 }
 
 void canvas_c::draw_3_patch(const image_c &src, int16_t cap, rect_s in) const {
-    rect_s rect = (rect_s){{0, 0}, src.get_size()};
+    rect_s rect(point_s(), src.get_size());
     draw_3_patch(src, rect, cap, in);
 }
 
@@ -150,13 +151,19 @@ void canvas_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s
         _dirtymap->mark(in);
     }
     const_cast<canvas_c*>(this)->with_dirtymap(nullptr, [&] {
-        const rect_s left_rect = (rect_s){ rect.origin, {cap, rect.size.height}};
+        const rect_s left_rect(rect.origin, size_s(cap, rect.size.height));
         draw(src, left_rect, in.origin);
-        const rect_s right_rect = (rect_s){{(int16_t)(rect.origin.x + rect.size.width - cap), rect.origin.y}, {cap, rect.size.height}};
-        const point_s right_at = (point_s){(int16_t)(in.origin.x + in.size.width - cap), in.origin.y};
+        const rect_s right_rect(
+            rect.origin.x + rect.size.width - cap, rect.origin.y,
+            cap, rect.size.height
+        );
+        const point_s right_at(in.origin.x + in.size.width - cap, in.origin.y);
         draw(src, right_rect, right_at);
-        rect_s middle_rect = (rect_s){{(int16_t)(rect.origin.x + cap), rect.origin.y}, {(int16_t)(rect.size.width - cap * 2), rect.size.height} };
-        point_s at = (point_s){(int16_t)(in.origin.x + cap), in.origin.y };
+        rect_s middle_rect(
+            rect.origin.x + cap, rect.origin.y,
+            rect.size.width - cap * 2, rect.size.height
+        );
+        point_s at(in.origin.x + cap, in.origin.y);
         int16_t to_draw = in.size.width - cap * 2;
         while (to_draw > 0) {
             const int16_t width = MIN(to_draw, middle_rect.size.width);
@@ -186,7 +193,7 @@ size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_ali
             break;
     }
     if (_dirtymap) {
-        rect_s dirty_rect = (rect_s){{(int16_t)(at.x - size.width), at.y}, size};
+        rect_s dirty_rect(point_s(at.x - size.width, at.y), size);
         _dirtymap->mark(dirty_rect);
     }
     const_cast<canvas_c*>(this)->with_dirtymap(nullptr, [&] {
@@ -241,8 +248,8 @@ size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t 
     point_s at;
     switch (alignment) {
         case align_left: at = in.origin; break;
-        case align_center: at = (point_s){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
-        case align_right: at = (point_s){(int16_t)( in.origin.x + in.size.width / 2), in.origin.y}; break;
+        case align_center: at = point_s( in.origin.x + in.size.width / 2, in.origin.y); break;
+        case align_right: at = point_s( in.origin.x + in.size.width / 2, in.origin.y); break;
     }
     size_s max_size = {0,0};
     bool first = true;

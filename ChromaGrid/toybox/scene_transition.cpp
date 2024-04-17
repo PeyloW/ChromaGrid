@@ -22,7 +22,7 @@ namespace toybox {
         virtual bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
             auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
             phys_screen.with_stencil(canvas_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
-                phys_screen.draw_aligned(log_screen.get_image(), (point_s){0, 0});
+                phys_screen.draw_aligned(log_screen.get_image(), point_s());
             });
             if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
                 _transition_state.full_restores_left--;
@@ -50,7 +50,7 @@ public:
         if (_transition_state.full_restores_left > 2) {
             auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
             phys_screen.with_stencil(canvas_c::get_stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
-                phys_screen.fill(_through, (rect_s){{0,0}, phys_screen.get_size()});
+                phys_screen.fill(_through, rect_s(point_s(), phys_screen.get_size()));
             });
             if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
                 _transition_state.full_restores_left--;
@@ -94,7 +94,7 @@ public:
         if (count < 17) {
             _palettes[count].set_active();
         } else if (count < 18) {
-            phys_screen.draw_aligned(log_screen.get_image(), (point_s){0, 0});
+            phys_screen.draw_aligned(log_screen.get_image(), point_s());
         } else if (count < 35) {
             _palettes[34 - count].set_active();
         } else {

@@ -233,7 +233,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
                     canvas_c::make_noremap_table(table);
                     table[masked_cidx] = MASKED_CIDX;
                     canvas_c canvas(*this);
-                    canvas.remap_colors(table, (rect_s){ {0, 0}, _size});
+                    canvas.remap_colors(table, rect_s(point_s(), _size));
                 }
             }
         } else {

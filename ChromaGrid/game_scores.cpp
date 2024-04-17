@@ -20,18 +20,18 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
 }
 
 void cgscores_scene_c::will_appear(canvas_c &screen, bool obsured) {
-    screen.draw_aligned(rsc.background, (point_s){0, 0});
+    screen.draw_aligned(rsc.background, point_s());
     _menu_buttons.draw_all(screen);
     
     switch (_scoring) {
         case score:
-            screen.draw(rsc.font, "Hi-Scores", (point_s){96, 16});
+            screen.draw(rsc.font, "Hi-Scores", point_s(96, 16));
             break;
         case time:
-            screen.draw(rsc.font, "Best Times", (point_s){96, 16});
+            screen.draw(rsc.font, "Best Times", point_s(96, 16));
             break;
         case moves:
-            screen.draw(rsc.font, "Least Moves", (point_s){96, 16});
+            screen.draw(rsc.font, "Least Moves", point_s(96, 16));
             break;
     }
     
@@ -59,7 +59,7 @@ void cgscores_scene_c::will_appear(canvas_c &screen, bool obsured) {
                     break;
             }
         }
-        point_s at = (point_s){(int16_t)(16 + col * 55), (int16_t)(16 + 20 + 10 * row)};
+        point_s at(16 + col * 55, 16 + 20 + 10 * row);
         screen.draw(rsc.small_mono_font, buf, at, canvas_c::align_left);
         
         index++;

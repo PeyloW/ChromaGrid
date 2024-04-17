@@ -74,10 +74,10 @@ cgresources_c::cgresources_c() :
     shimmer(data_path("shimmer.iff"), true, 6),
     _font_image(data_path("FONT.IFF", "Load fonts"), true, 0),
     _small_font_image(data_path("FONT6.IFF"), true, 0),
-    font(_font_image, (size_s){8, 8}, 4, 2, 4),
-    mono_font(_font_image, (size_s){8, 8}),
-    small_font(_small_font_image, (size_s){6, 6}, 3, 0, 6),
-    small_mono_font(_small_font_image, (size_s){6, 6}),
+    font(_font_image, size_s(8, 8), 4, 2, 4),
+    mono_font(_font_image, size_s(8, 8)),
+    small_font(_small_font_image, size_s(6, 6), 3, 0, 6),
+    small_mono_font(_small_font_image, size_s(6, 6)),
     drop_orb(data_path("drop.aif", "Load audio")),
     take_orb(data_path("take.aif")),
     fuse_orb(data_path("fuse.aif")),
@@ -89,8 +89,8 @@ cgresources_c::cgresources_c() :
     for (int x = 1; x < 3; x++) {
         canvas_c tiles_cnv(tiles);
         printf("Initialize tiles %d.\n\r", x);
-        rect_s rect = {{static_cast<int16_t>(x * 48), 0}, {48, 80}};
-        tiles_cnv.draw(tiles, (rect_s){{0, 0}, {48, 80}}, rect.origin);
+        rect_s rect(x * 48, 0, 48, 80);
+        tiles_cnv.draw(tiles, rect_s(0, 0, 48, 80), rect.origin);
         canvas_c::remap_table_t table;
         canvas_c::make_noremap_table(table);
         if (x == 1) {

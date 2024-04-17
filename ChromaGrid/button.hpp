@@ -36,7 +36,7 @@ class cgbutton_group_base_c : public nocopy_c {
         _size(size),
         _spacing(spacing)
     {
-        _group_rect = (rect_s){ origin, { 0, 0 }};
+        _group_rect = rect_s(origin, size_s());
     }
 
     rect_s next_button_rect(bool first, bool horizontal = false);

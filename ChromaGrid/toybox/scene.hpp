@@ -99,7 +99,7 @@ namespace toybox {
             image_c image;
             canvas_c canvas;
             dirtymap_c *dirtymap;
-            screen_c() : image((size_s){320, 208}, false, nullptr), canvas(image) {
+            screen_c() : image(size_s(320, 208), false, nullptr), canvas(image) {
                 dirtymap = canvas.create_dirtymap();
             }
         };

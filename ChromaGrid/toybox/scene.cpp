@@ -15,7 +15,7 @@ public:
         _full_restores_left = 2;
     }
     bool tick(canvas_c &phys_screen, canvas_c &log_screen, int ticks) {
-        phys_screen.draw_aligned(log_screen.get_image(), (point_s){0,0});
+        phys_screen.draw_aligned(log_screen.get_image(), point_s());
         return --_full_restores_left <= 0;
     }
 private:
@@ -27,7 +27,7 @@ scene_manager_c::scene_manager_c() :
     _old_blitter_mode(blitter_mode(-1)),
     vbl(timer_c::vbl),
     clock(timer_c::clock),
-    mouse((rect_s){{0,0}, {320, 192}})
+    mouse(rect_s(0, 0, 320, 192))
 {
 #ifdef __M68000__
     blitter_mode(0);
