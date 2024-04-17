@@ -16,6 +16,7 @@ template <class T, size_t Count>
 class static_allocator_c {
     struct block_t;
 public:
+    static const size_t alloc_size = sizeof(T);
     typedef block_t *type;
     static void *allocate() {
         if (first_block == nullptr) init_blocks();
@@ -42,7 +43,7 @@ public:
 private:
     struct block_t {
         block_t *next;
-        uint8_t data[sizeof(T)];
+        uint8_t data[alloc_size];
     };
 #ifndef __M68000__
     inline static int _alloc_count = 0;

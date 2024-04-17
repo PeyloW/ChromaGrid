@@ -28,6 +28,7 @@ public:
         _node_s(_node_s *next, Args&&... args) : next(next), value(forward<Args>(args)...) {}
         inline ~_node_s() = default;
         void *operator new(size_t count) {
+            assert(allocator::alloc_size >= count);
             return allocator::allocate();
         }
         void operator delete(void *ptr) noexcept {

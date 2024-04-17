@@ -71,6 +71,7 @@ namespace toystd {
             shared_count_t() : count(1) {}
             uint16_t count;
             void *operator new(size_t count) {
+                assert(allocator::alloc_size >= count);
                 return allocator::allocate();
             }
             void operator delete(void *ptr) noexcept {
