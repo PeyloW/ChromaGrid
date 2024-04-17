@@ -310,11 +310,6 @@ level_t::level_t(level_recipe_t *recipe) :
     
 }
 
-
-level_t::~level_t() {
-    free(_grid);
-}
-
 #define LABEL_X_INSET 200
 #define TIME_Y_INSET 65
 #define TIME_X_TRAIL (320 - 8)

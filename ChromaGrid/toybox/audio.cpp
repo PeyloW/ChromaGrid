@@ -112,13 +112,13 @@ sound_c::sound_c(const char *path) :
 #ifndef __M68000__
             // For target we hack, and make _sample point to full AIFF file.
             _length = form.size + 8;
-            _sample = (int8_t *)malloc(_length);
+            _sample.reset((int8_t *)malloc(_length));
             file.seek(0, stream_c::beg);
-            file.read(_sample, _length);
+            file.read(_sample.get(), _length);
             return;
 #else
-            _sample = (int8_t *)malloc(_length);
-            file.read(_sample, _length);
+            _sample.reset((int8_t *)malloc(_length));
+            file.read(_sample.get(), _length);
 #endif
         } else {
 #ifndef __M68000__
@@ -127,11 +127,6 @@ sound_c::sound_c(const char *path) :
             file.skip(chunk);
         }
     }
-}
-
-sound_c::~sound_c() {
-    free(_sample);
-    _sample = nullptr;
 }
 
 void sound_c::set_active() const {
@@ -189,18 +184,18 @@ music_c::music_c(const char *path) : _track(0) {
     size_t size = file.tell();
     file.seek(0, toystd::fstream_c::beg);
     
-    _sndh = malloc(size);
-    size_t read = file.read((uint8_t *)_sndh, size);
+    _sndh.reset((uint8_t *)malloc(size));
+    size_t read = file.read(_sndh.get(), size);
     assert(read == 1);
-    assert(memcmp((char *)_sndh + 12, "SNDH", 4) == 0);
+    assert(memcmp(_sndh + 12, "SNDH", 4) == 0);
     _title = nullptr;
     _composer = nullptr;
     _track_count = 1;
     _freq = 50;
-    char *header_str = (char *)_sndh + 16;
-    while (_strncmp(header_str, "HDNS", 4) != 0 && (header_str < (char *)_sndh + 200)) {
+    char *header_str = (char *)(_sndh + 16);
+    while (_strncmp(header_str, "HDNS", 4) != 0 && ((uint8_t*)header_str < _sndh + 200)) {
         int len = (int)strlen(header_str);
-        if (len > 0) {
+         if (len > 0) {
             if (len > 100) {
                 break;
             }
@@ -223,7 +218,7 @@ music_c::music_c(const char *path) : _track(0) {
         while (*++header_str == 0);
     }
 #ifdef __M68000__
-    codegen_s::make_trampoline(g_music_init_code, _sndh, false);
+    codegen_s::make_trampoline(g_music_init_code, _sndh + 0, false);
     codegen_s::make_trampoline(g_music_exit_code, _sndh + 4, false);
     codegen_s::make_trampoline(g_music_play_code, _sndh + 8, false);
 #endif

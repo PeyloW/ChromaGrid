@@ -78,22 +78,16 @@ bool stream_c::write(const void *buf, const char * layout) {
 }
 
 
-hton_stream_c::hton_stream_c(stream_c *stream) : stream_c(), _owned_stream(stream), _stream(*_owned_stream) {}
-hton_stream_c::hton_stream_c(stream_c &stream) : stream_c(), _owned_stream(nullptr), _stream(stream) {}
-hton_stream_c::~hton_stream_c() {
-    if (_owned_stream) {
-        delete _owned_stream;
-    }
-}
+hton_stream_c::hton_stream_c(stream_c *stream) : stream_c(), _stream(stream) {}
 
 void hton_stream_c::set_assert_on_error(bool assert) {
     stream_c::set_assert_on_error(assert);
-    _stream.set_assert_on_error(assert);
+    _stream->set_assert_on_error(assert);
 }
 
-bool hton_stream_c::good() const { return _stream.good(); };
-ptrdiff_t hton_stream_c::tell() const { return _stream.tell(); }
-ptrdiff_t hton_stream_c::seek(ptrdiff_t pos, seekdir_e way) { return _stream.seek(pos, way); }
+bool hton_stream_c::good() const { return _stream->good(); };
+ptrdiff_t hton_stream_c::tell() const { return _stream->tell(); }
+ptrdiff_t hton_stream_c::seek(ptrdiff_t pos, seekdir_e way) { return _stream->seek(pos, way); }
 
 __forceinline static void swap_buffer(uint16_t *buf, size_t count) {
     while (--count != -1) {
@@ -108,16 +102,16 @@ __forceinline static void swap_buffer(uint32_t *buf, size_t count) {
     }
 }
 
-bool hton_stream_c::read(uint8_t *buf, size_t count) { return _stream.read(buf, count); }
+bool hton_stream_c::read(uint8_t *buf, size_t count) { return _stream->read(buf, count); }
 bool hton_stream_c::read(uint16_t *buf, size_t count) {
-    bool r = _stream.read(buf, count);
+    bool r = _stream->read(buf, count);
     if (r) {
         swap_buffer(buf, count);
     }
     return r;
 }
 bool hton_stream_c::read(uint32_t *buf, size_t count) {
-    bool r = _stream.read(buf, count);
+    bool r = _stream->read(buf, count);
     if (r) {
         swap_buffer(buf, count);
     }
@@ -125,19 +119,19 @@ bool hton_stream_c::read(uint32_t *buf, size_t count) {
 }
 
 bool hton_stream_c::write(const uint8_t *buf, size_t count) {
-    return _stream.write(buf, count);
+    return _stream->write(buf, count);
 };
 bool hton_stream_c::write(const uint16_t *buf, size_t count) {
     uint16_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint16_t));
     swap_buffer(tmpbuf, count);
-    return _stream.write(tmpbuf, count);
+    return _stream->write(tmpbuf, count);
 }
 bool hton_stream_c::write(const uint32_t *buf, size_t count) {
     uint32_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint32_t));
     swap_buffer(tmpbuf, count);
-    return _stream.write(tmpbuf, count);
+    return _stream->write(tmpbuf, count);
 }
 
 

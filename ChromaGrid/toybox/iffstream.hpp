@@ -73,9 +73,9 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
     
     class iffstream_c : public stream_c {
     public:
-        iffstream_c(stream_c &stream);
+        iffstream_c(stream_c *stream);
         iffstream_c(const char *path, fstream_c::openmode_e mode = fstream_c::input);
-        ~iffstream_c();
+        ~iffstream_c() = default;
                 
         virtual void set_assert_on_error(bool assert);
 
@@ -109,9 +109,8 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
         bool read(iff_group_s &group);
         bool read(iff_chunk_s &chunk);
 
-        stream_c *_owned_stream;
-        stream_c &_stream;
-        
+        unique_ptr_c<stream_c> _stream;
+
 #define IFF_MAX_NESTING_DEPTH 8
         struct chunk_start_s {
             iff_id_t id;

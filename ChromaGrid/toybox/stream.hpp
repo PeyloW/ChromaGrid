@@ -10,6 +10,7 @@
 
 #include "cincludes.hpp"
 #include "utility.hpp"
+#include "memory.hpp"
 
 namespace toystd {
     
@@ -58,8 +59,7 @@ namespace toystd {
     class hton_stream_c : public stream_c {
     public:
         hton_stream_c(stream_c *stream);
-        hton_stream_c(stream_c &stream);
-        virtual ~hton_stream_c();
+        virtual ~hton_stream_c() {};
 
         virtual void set_assert_on_error(bool assert);
 
@@ -77,8 +77,7 @@ namespace toystd {
         virtual bool write(const uint16_t *buf, size_t count = 1);
         virtual bool write(const uint32_t *buf, size_t count = 1);
     private:
-        stream_c *_owned_stream;
-        stream_c &_stream;
+        unique_ptr_c<stream_c> _stream;
     };
     
     

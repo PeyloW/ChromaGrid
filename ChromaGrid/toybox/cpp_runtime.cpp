@@ -7,7 +7,6 @@
 
 #include "cincludes.hpp"
 
-#ifdef __M68000__
 
 void *operator new (size_t n) {
     return malloc(n);
@@ -22,6 +21,8 @@ void operator delete (void* p) noexcept {
 void operator delete[] (void* p) noexcept {
     free(p);
 }
+
+#ifdef __M68000__
 
 extern "C" void __cxa_pure_virtual() {
     while (1);

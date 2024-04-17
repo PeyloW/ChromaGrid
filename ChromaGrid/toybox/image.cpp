@@ -19,14 +19,13 @@ image_c::image_c(const size_s size, bool masked, palette_c *palette) {
     _line_words = ((size.width + 15) / 16);
     uint16_t bitmap_words = (_line_words * size.height) << 2;
     uint16_t mask_bytes = masked ? (_line_words * size.height) : 0;
-    _bitmap = reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2));
+    _bitmap.reset(reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2)));
     if (masked) {
         _maskmap = _bitmap + bitmap_words;
     }
 }
 
 image_c::~image_c() {
-    free(_bitmap);
     if (_palette) {
         delete _palette;
     }
@@ -214,7 +213,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
             const uint16_t bitmap_words = (_line_words * _size.height) << 2;
             const bool needs_mask_words = masked || (bmhd.mask_type == mask_type_plane);
             const uint16_t mask_words = needs_mask_words ? (bitmap_words >> 2) : 0;
-            _bitmap = reinterpret_cast<uint16_t*>(malloc((bitmap_words + mask_words) << 1));
+            _bitmap.reset((uint16_t*)(malloc((bitmap_words + mask_words) << 1)));
             assert(_bitmap);
             if (needs_mask_words) {
                 _maskmap = _bitmap + bitmap_words;
@@ -223,10 +222,10 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
             }
             switch (bmhd.compression_type) {
                 case compression_type_none:
-                    image_read(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_read(file, _line_words, _size.height, _bitmap.get(), bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
                     break;
                 case compression_type_packbits:
-                    image_read_packbits(file, _line_words, _size.height, _bitmap, bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_read_packbits(file, _line_words, _size.height, _bitmap.get(), bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
                     break;
                 default:
                     break;
@@ -430,9 +429,9 @@ bool image_c::save(const char *path, bool compressed, bool masked, uint8_t maske
             {
                 ilbm.begin(chunk, IFF_BODY);
                 if (compressed) {
-                    image_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(), header.mask_type == mask_type_plane ? _maskmap : nullptr);
                 } else {
-                    image_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap,  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    image_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(),  header.mask_type == mask_type_plane ? _maskmap : nullptr);
                 }
                 ilbm.end(chunk);
             }

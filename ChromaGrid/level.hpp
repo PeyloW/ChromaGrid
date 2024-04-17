@@ -13,7 +13,9 @@
 #include "canvas.hpp"
 #include "system.hpp"
 #include "iffstream.hpp"
+#include "memory.hpp"
 
+using namespace toystd;
 using namespace toybox;
 
 DEFINE_IFF_ID (CGLV); // ChromaGrid LeVel
@@ -118,7 +120,7 @@ public:
     } state_e;
     
     level_t(level_recipe_t *recipe);
-    ~level_t();
+    ~level_t() = default;
 
     state_e update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds);
 
@@ -138,7 +140,7 @@ private:
 
     level_result_t _results;
     uint16_t _remaining;
-    grid_c *_grid;
+    unique_ptr_c<grid_c> _grid;
 };
 
 #endif /* grid_h */

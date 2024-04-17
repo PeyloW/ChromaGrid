@@ -9,6 +9,7 @@
 #define image_hpp
 
 #include "palette.hpp"
+#include "memory.hpp"
 
 #ifndef CGIMAGE_SUPPORT_SAVE
 #   ifndef __M68000__
@@ -41,7 +42,7 @@ namespace toybox {
         
     private:
         palette_c *_palette;
-        uint16_t *_bitmap;
+        unique_ptr_c<uint16_t> _bitmap;
         uint16_t *_maskmap;
         size_s _size;
         uint16_t _line_words;

@@ -74,6 +74,7 @@
 		A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6A0EE9E2BCDC3DA005B6ED3 /* iffstream.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EEA02BCDC3DA005B6ED3 /* iffstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A0EE9D2BCDC3DA005B6ED3 /* iffstream.cpp */; };
 		A6A0EEA42BCF339B005B6ED3 /* levels4.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6A0EEA32BCF339B005B6ED3 /* levels4.dat */; };
+		A6A0EEA62BCF4D5B005B6ED3 /* memory.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6A0EEA52BCF4D5B005B6ED3 /* memory.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A4192F2B9954DD0062339B /* game_level_edit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A4192D2B9954DD0062339B /* game_level_edit.cpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
@@ -204,6 +205,7 @@
 		A6A0EE9D2BCDC3DA005B6ED3 /* iffstream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iffstream.cpp; sourceTree = "<group>"; };
 		A6A0EE9E2BCDC3DA005B6ED3 /* iffstream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = iffstream.hpp; sourceTree = "<group>"; };
 		A6A0EEA32BCF339B005B6ED3 /* levels4.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels4.dat; sourceTree = "<group>"; };
+		A6A0EEA52BCF4D5B005B6ED3 /* memory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = memory.hpp; sourceTree = "<group>"; };
 		A6A4192D2B9954DD0062339B /* game_level_edit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_level_edit.cpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
@@ -450,6 +452,7 @@
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
 				A6E484E22BAE709B004CCA7D /* type_traits.hpp */,
 				A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */,
+				A6A0EEA52BCF4D5B005B6ED3 /* memory.hpp */,
 				A6E484E02BAE6D49004CCA7D /* utility.hpp */,
 				A66B7CF52BB3BC7F00374307 /* algorithm.hpp */,
 				A6E484E12BAE6DB3004CCA7D /* vector.hpp */,
@@ -479,6 +482,7 @@
 				A6A0EE8A2BC8D729005B6ED3 /* dirtymap.hpp in Headers */,
 				A6A0EE972BCDAE0A005B6ED3 /* stream.hpp in Headers */,
 				A6A0EE8D2BC8DACA005B6ED3 /* image.hpp in Headers */,
+				A6A0EEA62BCF4D5B005B6ED3 /* memory.hpp in Headers */,
 				A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */,
 				A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */,
 				A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */,
