@@ -23,10 +23,6 @@ public:
     image_c button;
     image_c selection;
     image_c shimmer;
-private:
-    image_c _font_image;
-    image_c _small_font_image;
-public:
     font_c font;
     font_c mono_font;
     font_c small_font;

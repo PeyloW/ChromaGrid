@@ -200,7 +200,7 @@ size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_ali
         for (int i = len; --i != -1; ) {
             const rect_s &rect = font.get_rect(text[i]);
             at.x -= rect.size.width;
-            draw(font.get_image(), rect, at, color);
+            draw(*font.get_image(), rect, at, color);
         }
     });
     return size;

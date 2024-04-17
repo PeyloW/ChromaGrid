@@ -9,6 +9,7 @@
 #define font_hpp
 
 #include "image.hpp"
+#include "memory.h"
 
 namespace toybox {
     
@@ -17,10 +18,10 @@ namespace toybox {
     
     class font_c : public nocopy_c {
     public:
-        font_c(const image_c &image, size_s character_size);
-        font_c(const image_c &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
+        font_c(const shared_ptr_c<image_c> &image, size_s character_size);
+        font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
         
-        inline const image_c &get_image() const {
+        inline const shared_ptr_c<image_c> &get_image() const {
             return _image;
         }
         inline const rect_s &get_rect(const char c) const {
@@ -32,7 +33,7 @@ namespace toybox {
         }
         
     private:
-        const image_c &_image;
+        const shared_ptr_c<image_c> _image;
         rect_s _rects[96];
     };
        

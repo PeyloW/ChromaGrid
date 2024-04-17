@@ -86,16 +86,12 @@ namespace toystd {
     public:
         shared_ptr_c(T* ptr = nullptr) : basic_ptr_c<T>(ptr), _count(ptr ? new detail::shared_count_t() : nullptr) {}
         ~shared_ptr_c() { cleanup(); }
-        shared_ptr_c(const shared_ptr_c &o) {
-            if (this->_ptr != o._ptr) cleanup();
-            this->_ptr = o._ptr;
+        shared_ptr_c(const shared_ptr_c &o) : basic_ptr_c<T>(o._ptr), _count(nullptr) {
             take_count(o._count);
         }
-        shared_ptr_c(shared_ptr_c &&o) {
-            if (this->_ptr != o._ptr) cleanup();
-            this->_ptr = o._ptr;
-            take_count(o._count);
-            o.cleanup();
+        shared_ptr_c(shared_ptr_c &&o) : basic_ptr_c<T>(o._ptr), _count(o._count) {
+            o._ptr = nullptr;
+            o._count = nullptr;
         }
         shared_ptr_c& operator=(const shared_ptr_c &o) {
             if (this->_ptr != o._ptr) cleanup();

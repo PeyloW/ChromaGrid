@@ -9,8 +9,8 @@
 
 using namespace toybox;
 
-font_c::font_c(const image_c &image, size_s character_size) : _image(image) {
-    const int cols = image.get_size().width / character_size.width;
+font_c::font_c(const shared_ptr_c<image_c> &image, size_s character_size) : _image(image) {
+    const int cols = image->get_size().width / character_size.width;
     for (int i = 0; i < 96; i++) {
         const int col = i % cols;
         const int row = i / cols;
@@ -21,8 +21,8 @@ font_c::font_c(const image_c &image, size_s character_size) : _image(image) {
     }
 }
 
-font_c::font_c(const image_c &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_req_space) : _image(image)  {
-    const int cols = image.get_size().width / max_size.width;
+font_c::font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_req_space) : _image(image)  {
+    const int cols = image->get_size().width / max_size.width;
     for (int i = 0; i < 96; i++) {
         const int col = i % cols;
         const int row = i / cols;
@@ -35,7 +35,7 @@ font_c::font_c(const image_c &image, size_s max_size, uint8_t space_width, uint8
                 for (int fc = 0; fc < rect.size.width; fc++) {
                     for (int fcc = 0; fcc < rect.size.height; fcc++) {
                         const point_s at = point_s(rect.origin.x + fc, rect.origin.y + fcc);
-                        if (image.get_pixel(at) != image_c::MASKED_CIDX) {
+                        if (image->get_pixel(at) != image_c::MASKED_CIDX) {
                             fc = MAX(0, fcc >= lead_req_space ? fc : fc - 1);
                             rect.origin.x += fc;
                             rect.size.width -= fc;
@@ -53,7 +53,7 @@ font_c::font_c(const image_c &image, size_s max_size, uint8_t space_width, uint8
                 for (int fc = 0; fc < rect.size.width; fc++) {
                     for (int fcc = 0; fcc < rect.size.height; fcc++) {
                         const point_s at = point_s(max_at.x - fc, max_at.y - fcc);
-                        if (image.get_pixel(at) != image_c::MASKED_CIDX) {
+                        if (image->get_pixel(at) != image_c::MASKED_CIDX) {
                             fc = MAX(0, fcc >= trail_req_space ? fc : fc - 1);
                             rect.size.width -= fc;
                             goto trailing_done;
