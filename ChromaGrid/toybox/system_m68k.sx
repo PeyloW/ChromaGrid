@@ -27,7 +27,7 @@ timer_func_func:        ds.l    1
 timer_func_context:     ds.l    1
 
     .struct
-image_palette:          ds.l    1
+image_palette:          ds.l    2
 image_bitmap:           ds.l    1
 image_maskmap:          ds.l    1
 image_size:             ds.w    2

@@ -8,9 +8,11 @@
 #include "system.hpp"
 #include "forward_list.hpp"
 #include "algorithm.hpp"
+#include "memory.hpp"
 
 extern "C" {
 
+    using namespace toystd;
     using namespace toybox;
     
 #ifndef __M68000__
@@ -95,6 +97,9 @@ point_s g_mouse_position;
 
 template<>
 timer_func_list_c::allocator::type timer_func_list_c::allocator::first_block = nullptr;
+
+template<>
+detail::shared_count_t::allocator::type detail::shared_count_t::allocator::first_block = nullptr;
 
 timer_c::timer_c(timer_e timer) : _timer(timer) {
     assert(timer == vbl || timer == clock);

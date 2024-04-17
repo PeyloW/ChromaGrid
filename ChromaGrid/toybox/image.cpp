@@ -12,7 +12,7 @@
 
 using namespace toybox;
 
-image_c::image_c(const size_s size, bool masked, palette_c *palette) {
+image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette) {
     memset(this, 0, sizeof(image_c));
     _palette = palette;
     this->_size = size;
@@ -22,12 +22,6 @@ image_c::image_c(const size_s size, bool masked, palette_c *palette) {
     _bitmap.reset(reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2)));
     if (masked) {
         _maskmap = _bitmap + bitmap_words;
-    }
-}
-
-image_c::~image_c() {
-    if (_palette) {
-        delete _palette;
     }
 }
 
@@ -207,7 +201,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
             if (!file.read(cmpa, 48)) {
                 return; // Could not read palette
             }
-            _palette = new palette_c(&cmpa[0]);
+            _palette.reset(new palette_c(&cmpa[0]));
         } else if (iff_id_match(chunk.id, IFF_BODY)) {
             _line_words = ((_size.width + 15) / 16);
             const uint16_t bitmap_words = (_line_words * _size.height) << 2;

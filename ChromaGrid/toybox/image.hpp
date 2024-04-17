@@ -26,9 +26,9 @@ namespace toybox {
     public:
         static const uint8_t MASKED_CIDX = 0x10;
         
-        image_c(const size_s size, bool masked, palette_c *palette);
+        image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette);
         image_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
-        ~image_c();
+        ~image_c() = default;
 
         void set_active() const;
 
@@ -36,12 +36,17 @@ namespace toybox {
         bool save(const char *path, bool compressed, bool masked, uint8_t masked_cidx = MASKED_CIDX);
 #endif
                 
-        __forceinline palette_c *get_palette() const { return _palette; }
+        __forceinline void ser_palette(const shared_ptr_c<palette_c> &palette) {
+            _palette = palette;
+        }
+        __forceinline shared_ptr_c<palette_c> &get_palette() const {
+            return *(shared_ptr_c<palette_c>*)&_palette;
+        }
         __forceinline size_s get_size() const { return _size; }
         uint8_t get_pixel(point_s at) const;
         
     private:
-        palette_c *_palette;
+        shared_ptr_c<palette_c> _palette;
         unique_ptr_c<uint16_t> _bitmap;
         uint16_t *_maskmap;
         size_s _size;
