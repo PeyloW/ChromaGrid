@@ -9,6 +9,7 @@
 #include "system.hpp"
 #include "resources.hpp"
 #include "blitter.hpp"
+#include "audio_mixer.hpp"
 
 #ifdef __M68000__
 extern "C" {
@@ -17,13 +18,13 @@ extern "C" {
 #endif
 
 void cgoverlay_scene_c::will_appear(screen_c &screen, bool obsured) {
-    rsc.music.set_active(1);
+    audio_mixer_c::shared().play(rsc.music);
     rsc.background.palette()->set_active();
 }
 
 void cgoverlay_scene_c::will_disappear(bool obscured) {
     if (obscured == false) {
-        rsc.music.set_active(0);
+        audio_mixer_c::shared().stop(rsc.music);
     }
 }
 

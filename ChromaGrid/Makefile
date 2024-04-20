@@ -12,7 +12,7 @@ FLAGS=-m68000 -mshort -mfastcall
 FLAGS+=-g0 -DNDEBUG -s
 #FLAGS+=-DDEBUG_CPU
 FLAGS+=-DALLOW_FULL_LEVEL_SELECT
-CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer
+CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
@@ -23,7 +23,7 @@ TOYBOX_OBJECTS=system.o system_m68k.o cpp_runtime.o
 TOYBOX_OBJECTS+=stream.o iffstream.o
 TOYBOX_OBJECTS+=palette.o image.o tileset.o font.o
 TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o canvas_imp.o
-TOYBOX_OBJECTS+=audio.o
+TOYBOX_OBJECTS+=audio.o audio_mixer.o
 TOYBOX_OBJECTS+=screen.o scene.o scene_transition.o
 
 CG_OBJECTS=main.o

@@ -17,11 +17,10 @@ namespace toybox {
     using namespace toystd;
     
     class sound_c : public nocopy_c {
+        friend class audio_mixer_c;
     public:
         sound_c(const char *path);
         ~sound_c() = default;
-        
-        void set_active() const;
         
         const int8_t *sample() const { return _sample.get(); }
         uint32_t length() const { return _length; }
@@ -34,12 +33,11 @@ namespace toybox {
     };
     
     class music_c : public nocopy_c {
+        friend class audio_mixer_c;
     public:
         music_c(const char *path);
-        ~music_c();
-        
-        void set_active(int track) const; // Track starts at 1, not 0
-        
+        ~music_c() = default;
+                
         const char *title() const { return _title; }
         const char *composer() const { return _composer; }
         int track_count() const { return _track_count; }
@@ -51,9 +49,13 @@ namespace toybox {
         char *_composer;
         int _track_count;
         uint8_t _freq;
-        mutable int _track;
+#ifdef __M68000__
+        uint16_t _music_init_code[8];
+        uint16_t _music_exit_code[8];
+        uint16_t _music_play_code[8];
+#endif
     };
-    
+
 }
 
 #endif /* audio_hpp */

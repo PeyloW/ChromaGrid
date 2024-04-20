@@ -48,6 +48,7 @@ private:
     bool load_level_results();
     bool load_user_levels();
     cgresources_c();
+    ~cgresources_c() {};
 };
 
 #endif /* resources_hpp */

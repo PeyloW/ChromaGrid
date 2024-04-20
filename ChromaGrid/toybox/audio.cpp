@@ -6,11 +6,8 @@
 //
 
 #include "audio.hpp"
-#include "system.hpp"
 #include "iffstream.hpp"
-#ifndef __M68000__
-#include "system_host.hpp"
-#endif
+#include "system.hpp"
 
 using namespace toybox;
 
@@ -129,42 +126,6 @@ sound_c::sound_c(const char *path) :
     }
 }
 
-void sound_c::set_active() const {
-#ifdef __M68000__
-    g_microwire_write(0x4c | 40); // Max master volume (0 to 40)
-    g_microwire_write(0x50 | 20); // Right volume (0 to 20)
-    g_microwire_write(0x54 | 20); // Left volume (0 to 20)
-
-    uint8_t * ste_dma_control  = (uint8_t*)0xffff8901;
-    uint8_t * ste_dmo_mode  = (uint8_t*)0xffff8921;
-    uint8_t * ste_dma_start = (uint8_t*)0xffff8903;
-    uint8_t * ste_dms_end   = (uint8_t*)0xffff890f;
-    // Stop audio
-    *ste_dma_control &= 0xFE;
-    // Set start address, high to low byte
-    size_t tmp = (size_t)_sample;
-    ste_dma_start[0] = (uint8_t)((tmp >> 16)&0xff);
-    ste_dma_start[2] = (uint8_t)((tmp >>  8)&0xff);
-    ste_dma_start[4] = (uint8_t)((tmp       )&0xff);
-    // Set end address, high to low byte
-    tmp += _length;
-    ste_dms_end[0] = (uint8_t)((tmp >> 16)&0xff);
-    ste_dms_end[2] = (uint8_t)((tmp >>  8)&0xff);
-    ste_dms_end[4] = (uint8_t)((tmp       )&0xff);
-    // Set mode, and start
-    *ste_dmo_mode = 0x81; // 8 bit mono @ 12.5kHz
-    *ste_dma_control = 1; // Play once
-#else
-    g_active_sound = (sound_c *)this;
-#endif
-}
-
-#ifdef __M68000__
-static uint16_t g_music_init_code[8];
-static uint16_t g_music_exit_code[8];
-static uint16_t g_music_play_code[8];
-#endif
-
 // libcmini (version used) has a buggy strncmp :(
 static int _strncmp(const char *s1, const char *s2, size_t max)
 {
@@ -177,7 +138,7 @@ static int _strncmp(const char *s1, const char *s2, size_t max)
     return cmp;
 }
 
-music_c::music_c(const char *path) : _track(0) {
+music_c::music_c(const char *path) {
     fstream_c file(path);
     hard_assert(file.good());
     file.seek(0, stream_c::end);
@@ -218,37 +179,8 @@ music_c::music_c(const char *path) : _track(0) {
         while (*++header_str == 0);
     }
 #ifdef __M68000__
-    codegen_s::make_trampoline(g_music_init_code, _sndh + 0, false);
-    codegen_s::make_trampoline(g_music_exit_code, _sndh + 4, false);
-    codegen_s::make_trampoline(g_music_play_code, _sndh + 8, false);
+    codegen_s::make_trampoline(_music_init_code, _sndh + 0, false);
+    codegen_s::make_trampoline(_music_exit_code, _sndh + 4, false);
+    codegen_s::make_trampoline(_music_play_code, _sndh + 8, false);
 #endif
-}
-
-music_c::~music_c() {
-    if (_track > 0) {
-        set_active(0);
-    }
-}
-
-void music_c::set_active(int track) const {
-    if (_track != track) {
-        timer_c::with_paused_timers([this, track] {
-#ifdef __M68000__
-            timer_c clock(timer_c::clock);
-            if (_track > 0) {
-                // Exit driver
-                ((timer_c::func_t)g_music_exit_code)();
-                // remove VBL
-                clock.remove_func((timer_c::func_t)g_music_play_code);
-            }
-            if (track > 0) {
-                // init driver
-                ((timer_c::func_i_t)g_music_init_code)(track);
-                // add VBL
-                clock.add_func((timer_c::func_t)g_music_play_code, _freq);
-            }
-#endif
-        });
-        _track = track;
-    }
 }

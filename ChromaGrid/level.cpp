@@ -7,6 +7,7 @@
 
 #include "level.hpp"
 #include "resources.hpp"
+#include "audio_mixer.hpp"
 
 typedef enum __packed {
     no_changes = 0,
@@ -561,18 +562,19 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
                 draw_move_count(screen);
             }
             auto &rsc = cgresources_c::shared();
+            auto &mixer = audio_mixer_c::shared();
             if (cgp_tile_changes >= (broke_glass + fused_orb)) {
-                rsc.fuse_break_tile.set_active();
+                mixer.play(rsc.fuse_break_tile);
             } else if (cgp_tile_changes >= broke_glass) {
-                rsc.break_tile.set_active();
+                mixer.play(rsc.break_tile);
             } else if (cgp_tile_changes >= fused_orb) {
-                rsc.fuse_orb.set_active();
+                mixer.play(rsc.fuse_orb);
             } else if (cgp_tile_changes >= added_orb) {
-                rsc.drop_orb.set_active();
+                mixer.play(rsc.drop_orb);
             } else if (cgp_tile_changes >= removed_orb) {
-                rsc.take_orb.set_active();
+                mixer.play(rsc.take_orb);
             } else {
-                rsc.no_drop_orb.set_active();
+                mixer.play(rsc.no_drop_orb);
             }
         }
         debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);

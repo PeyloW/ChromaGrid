@@ -17,9 +17,9 @@ namespace toybox {
         screen_c(size_s screen_size = size_s(320, 200));
         ~screen_c();
         
-        image_c &image() const __pure;
-        canvas_c &canvas() const __pure;
-        dirtymap_c *dirtymap() const __pure;
+        image_c &image() const { return *(image_c*)&_image; }
+        canvas_c &canvas() const { return *(canvas_c*)&_canvas; }
+        dirtymap_c *dirtymap() const { return _dirtymap; }
         
         size_s size() const __pure { return _image.size(); }
         point_s offset() const __pure { return _offset; }

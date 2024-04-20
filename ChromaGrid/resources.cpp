@@ -30,11 +30,8 @@ static void remap_to(color_e col, canvas_c::remap_table_t table, uint8_t masked_
 }
 
 cgresources_c& cgresources_c::shared() {
-    static cgresources_c *rsc = nullptr;
-    if (rsc == nullptr) {
-        rsc = new cgresources_c();
-    }
-    return *rsc;
+    static cgresources_c s_rsc;
+    return s_rsc;
 }
 
 static const char *data_path(const char *file, const char *m = nullptr) {
