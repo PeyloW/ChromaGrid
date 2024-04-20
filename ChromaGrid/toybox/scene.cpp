@@ -27,12 +27,14 @@ scene_manager_c::scene_manager_c(size_s screen_size) :
     _old_blitter_mode(blitter_mode(-1)),
     vbl(timer_c::vbl),
     clock(timer_c::clock),
-    mouse(rect_s(0, 0, 320, 192))
+    mouse(rect_s(point_s(), TOYBOX_SCREEN_SIZE_DEFAULT))
 {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     blitter_mode(0);
     _old_conterm = *(uint8_t*)0x484;
     *(uint8_t*)0x484 = 0;
+#   endif
 #endif
     _overlay_scene = nullptr;
     _active_physical_screen = 0;
@@ -45,7 +47,9 @@ scene_manager_c::scene_manager_c(size_s screen_size) :
 
 scene_manager_c::~scene_manager_c() {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     *(uint8_t*)0x484 = _old_conterm;
+#   endif
 #endif
     blitter_mode(_old_blitter_mode);
     super(_super_token);
@@ -89,7 +93,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
                 // Merge dirty maps here!
                 _screens[0].dirtymap()->merge(*logical_screen.dirtymap());
                 _screens[1].dirtymap()->merge(*logical_screen.dirtymap());
-#if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
+#if TOYBOX_DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
                 logical_screen.dirtymap->debug("log");
                 physical_screen.dirtymap->debug("phys");
 #endif
@@ -107,7 +111,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
                         _overlay_scene->update_foreground(physical_screen, ticks);
                     }
                 });
-#if DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
+#if TOYBOX_DEBUG_RESTORE_SCREEN && DEBUG_DIRTYMAP
                 physical_screen.dirtymap->debug("AF next");
 #endif
             }

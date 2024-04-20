@@ -38,11 +38,11 @@ static void init_lookup_table_if_needed() {
         for (int16_t i = 0; i < 8; ) {
             // If the current bit is 1, start a new run
             if ((input >> i) & 1) {
-                int16_t start = i * CGDIRTYMAP_TILE_WIDTH;
-                int16_t length = CGDIRTYMAP_TILE_WIDTH;
+                int16_t start = i * TOYBOX_DIRTYMAP_TILE_SIZE.width;
+                int16_t length = TOYBOX_DIRTYMAP_TILE_SIZE.width;
                 result->bit_runs[result->num_runs].start = start;
                 while ((input >> (i + 1)) & 1) {
-                    length += CGDIRTYMAP_TILE_WIDTH;
+                    length += TOYBOX_DIRTYMAP_TILE_SIZE.width;
                     i++;
                 }
                 result->bit_runs[result->num_runs].length = length;
@@ -55,23 +55,17 @@ static void init_lookup_table_if_needed() {
 #endif
 
 int dirtymap_c::instance_size(size_s *size) {
-#if CGDIRTYMAP_BITSET
     init_lookup_table_if_needed();
-    size->width = (size->width + (8 * CGDIRTYMAP_TILE_WIDTH - 1)) / (8 * CGDIRTYMAP_TILE_WIDTH);
-    size->height /= CGDIRTYMAP_TILE_HEIGHT;
+    size->width = (size->width + (8 * TOYBOX_DIRTYMAP_TILE_SIZE.width - 1)) / (8 * TOYBOX_DIRTYMAP_TILE_SIZE.width);
+    size->height /= TOYBOX_DIRTYMAP_TILE_SIZE.height;
     const int16_t data_size = size->width * (size->height + 1) + 3;
-#else
-    size->width /= CGDIRTYMAP_TILE_WIDTH;
-    size->height /= CGDIRTYMAP_TILE_HEIGHT;
-    const int16_t data_size = size->width * size->height;
-#endif
     return sizeof(dirtymap_c) + data_size;
 }
 
 void dirtymap_c::mark(const rect_s &rect) {
-    const int16_t x1 = rect.origin.x / CGDIRTYMAP_TILE_WIDTH;
-    const int16_t x2 = (rect.max_x()) / CGDIRTYMAP_TILE_WIDTH;
-    const int16_t y1 = rect.origin.y / CGDIRTYMAP_TILE_HEIGHT;
+    const int16_t x1 = rect.origin.x / TOYBOX_DIRTYMAP_TILE_SIZE.width;
+    const int16_t x2 = (rect.max_x()) / TOYBOX_DIRTYMAP_TILE_SIZE.width;
+    const int16_t y1 = rect.origin.y / TOYBOX_DIRTYMAP_TILE_SIZE.height;
     assert(y1 < _size.height);
 #if CGDIRTYMAP_BITSET
 #define BITS_PER_BYTE 8
@@ -82,7 +76,7 @@ void dirtymap_c::mark(const rect_s &rect) {
         0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF
     };
 
-    const int16_t extra_rows = ((rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT - y1);
+    const int16_t extra_rows = ((rect.origin.y + rect.size.height - 1) / TOYBOX_DIRTYMAP_TILE_SIZE.height - y1);
     assert(y1 + extra_rows < _size.height);
     const int16_t start_byte = x1 / BITS_PER_BYTE;
     assert(start_byte < _size.width);
@@ -126,19 +120,9 @@ void dirtymap_c::mark(const rect_s &rect) {
             }
         }
     }
-#else
-    const int16_t y2 = (rect.origin.y + rect.size.height - 1) / CGDIRTYMAP_TILE_HEIGHT;
-    for (int16_t y = y1; y <= y2; y++) {
-        const int16_t line_offset = y * _size.width;
-        for (int16_t x = x1; x <= x2; x++) {
-            _data[x + line_offset] = true;
-        }
-    }
-#endif
 }
 
 void dirtymap_c::merge(const dirtymap_c &dirtymap) {
-#if CGDIRTYMAP_BITSET
     uint32_t *l_dest = (uint32_t*)_data;
     const uint32_t *l_source = (uint32_t*)dirtymap._data;
     int16_t long_count = (_size.width * _size.height + 3) / 4;
@@ -150,45 +134,16 @@ void dirtymap_c::merge(const dirtymap_c &dirtymap) {
             l_dest++;
         }
     } while (--long_count != -1);
-#else
-    assert(_size == dirtymap._size);
-    int16_t count = _size.width * _size.height;
-    int16_t l_count = count / 4;
-    if (l_count * 4 == count) {
-        uint32_t *l_dest = (uint32_t*)_data;
-        const uint32_t *l_source = (uint32_t*)dirtymap._data;
-        while (--l_count != -1) {
-            uint32_t v = *l_source++;
-            if (v) {
-                *l_dest++ |= v;
-            } else {
-                l_dest++;
-            }
-        }
-    } else {
-        // slow path
-        uint8_t *dest = _data;
-        const uint8_t *source = dirtymap._data;
-        while (--count != -1) {
-            *dest++ |= *source++;
-        }
-    }
-#endif
 }
 
 void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
     auto &image = canvas.image();
     assert(image.size() == clean_image.size());
-#if CGDIRTYMAP_BITSET
-    assert(_size.width * CGDIRTYMAP_TILE_WIDTH * 8 >= clean_image.size().width);
-#else
-    assert(_size.width * CGDIRTYMAP_TILE_WIDTH == clean_image.size().width);
-#endif
-    assert(_size.height * CGDIRTYMAP_TILE_HEIGHT == clean_image.size().height);
-    assert((image.size().width % CGDIRTYMAP_TILE_WIDTH) == 0);
-    assert((image.size().height % CGDIRTYMAP_TILE_HEIGHT) == 0);
+    assert(_size.width * TOYBOX_DIRTYMAP_TILE_SIZE.width * 8 >= clean_image.size().width);
+    assert(_size.height * TOYBOX_DIRTYMAP_TILE_SIZE.height == clean_image.size().height);
+    assert((image.size().width % TOYBOX_DIRTYMAP_TILE_SIZE.width) == 0);
+    assert((image.size().height % TOYBOX_DIRTYMAP_TILE_SIZE.height) == 0);
     const_cast<canvas_c&>(canvas).with_clipping(false, [this, &canvas, &clean_image] {
-#if CGDIRTYMAP_BITSET
         auto data = _data;
         point_s at = {0, 0};
         for (int16_t row = _size.height; --row != -1; ) {
@@ -201,7 +156,7 @@ void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
                             data[height * _size.width] = 0;
                             height++;
                         }
-                        return height * CGDIRTYMAP_TILE_HEIGHT;
+                        return height * TOYBOX_DIRTYMAP_TILE_SIZE.height;
                     }();
                     auto bitrunlist = lookup_table[(int16_t)byte];
                     int16_t *bitrun = (int16_t*)bitrunlist->bit_runs;
@@ -209,34 +164,18 @@ void dirtymap_c::restore(canvas_c &canvas, const image_c &clean_image) {
                         rect_s rect;
                         rect.origin = point_s(at.x + *bitrun++, at.y);
                         rect.size = size_s(*bitrun++, height);
-                        #if DEBUG_DIRTYMAP
+                        #if TOYBOX_DEBUG_DIRTYMAP
                         printf("Restore {{%d, %d}, {%d, %d}}\n", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
                         #endif
                         canvas.draw_aligned(clean_image, rect, rect.origin);
                     }
                 }
                 data++;
-                at.x += CGDIRTYMAP_TILE_WIDTH * 8;
+                at.x += TOYBOX_DIRTYMAP_TILE_SIZE.width * 8;
             }
             at.x = 0;
-            at.y += CGDIRTYMAP_TILE_HEIGHT;
+            at.y += TOYBOX_DIRTYMAP_TILE_SIZE.height;
         }
-#else
-        const auto image_size = image.size();
-        int16_t y = image_size.height - CGDIRTYMAP_TILE_HEIGHT;
-        for (int16_t row = _size.height; --row != -1; y -= CGDIRTYMAP_TILE_HEIGHT) {
-            const int16_t row_offset = row * _size.width;
-            int16_t x = image_size.width - CGDIRTYMAP_TILE_WIDTH;
-            for (int16_t col = _size.width; --col != -1; x -= CGDIRTYMAP_TILE_WIDTH) {
-                if (_data[col + row_offset]) {
-                    _data[col + row_offset] = false;
-                    point_s at(x, y);
-                    rect_s rect(at, size_s(CGDIRTYMAP_TILE_WIDTH, CGDIRTYMAP_TILE_HEIGHT));
-                    image.draw_aligned(clean_image, rect, at);
-                }
-            }
-        }
-#endif
     });
 }
 
@@ -244,11 +183,9 @@ void dirtymap_c::clear() {
     memset(_data, 0, _size.width * _size.height);
 }
 
-#ifndef __M68000__
-#if DEBUG_DIRTYMAP
-void cgdirtymap_c::debug(const char *name) const {
+#if TOYBOX_DEBUG_DIRTYMAP
+void dirtymap_c::debug(const char *name) const {
     printf("Dirtymap %d columns [%s]\n", _size.width, name);
-#if CGDIRTYMAP_BITSET
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
     ((byte) & 0x01 ? '1' : '0'), \
@@ -267,17 +204,6 @@ void cgdirtymap_c::debug(const char *name) const {
         }
         printf("\n");
     }
-#else
-    for (int16_t row = 0; row < _size.height; row++) {
-        char buf[_size.width + 1];
-        const int16_t row_offset = row * _size.width;
-        for (int16_t col = 0; col < _size.width; col++) {
-            buf[col] = _data[col + row_offset] ? 'X' : '-';
-        }
-        buf[_size.width] = 0;
-        printf("  row %2d: %s\n", row, buf);
-    }
-#endif
 }
 #endif
 #endif

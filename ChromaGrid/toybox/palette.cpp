@@ -30,7 +30,11 @@ color_c color_c::mix(color_c other, int shade) const {
 
 void palette_c::set_active() const {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     memcpy(reinterpret_cast<uint16_t*>(0xffff8240), colors, sizeof(colors));
+#   else
+#       error "Unsupported target"
+#   endif
 #endif
     g_active_palette = this;
 }

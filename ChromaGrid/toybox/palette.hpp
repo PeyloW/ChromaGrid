@@ -11,8 +11,6 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 
-#define DEBUG_DIRTYMAP 0
-
 namespace toybox {
     
     using namespace toystd;
@@ -25,7 +23,11 @@ namespace toybox {
         color_c(const uint8_t r, const uint8_t g, const uint8_t b) : color(to_ste(r, 8) | to_ste(g, 4) | to_ste(b, 0)) {}
         void set_at(const int i) const {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
             reinterpret_cast<uint16_t*>(0xffff8240)[i] = color;
+#   else
+#       error "Unsupported target"
+#   endif
 #endif
         }
         void get(uint8_t *r, uint8_t *g, uint8_t *b) const {

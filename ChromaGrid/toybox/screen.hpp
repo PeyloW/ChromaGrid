@@ -14,7 +14,7 @@ namespace toybox {
     
     class screen_c {
     public:
-        screen_c(size_s screen_size = size_s(320, 200));
+        screen_c(size_s screen_size = TOYBOX_SCREEN_SIZE_DEFAULT);
         ~screen_c();
         
         image_c &image() const { return *(image_c*)&_image; }

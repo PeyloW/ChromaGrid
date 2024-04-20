@@ -47,6 +47,7 @@ static mouse_c::state_e g_mouse_button_states[2];
 point_s g_mouse_position;
 
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     extern timer_c::func_t g_system_vbl_interupt;
     extern void g_vbl_interupt();
     extern int16_t g_system_vbl_freq;
@@ -55,6 +56,9 @@ point_s g_mouse_position;
     extern timer_c::func_a_t g_system_mouse_interupt;
     extern void g_mouse_interupt(void *);
     static _KBDVECS *g_keyboard_vectors = nullptr;
+#   else
+#       error "Usupported target"
+#   endif
 #else
     void (*g_yield_function)() = nullptr;
 
@@ -130,6 +134,7 @@ timer_c::~timer_c() {
     assert(g_timer_ref_counts[_timer] >= 0);
     if (g_timer_ref_counts[_timer] == 0) {
         with_paused_timers([this] {
+#   if TOYBOX_TARGET_ATARI
             switch (_timer) {
                 case vbl:
                 #ifdef __M68000__
@@ -142,6 +147,9 @@ timer_c::~timer_c() {
                 #endif
                     break;
             }
+#else
+#  error "Unsupported target"
+#endif
         });
     }
 }
@@ -225,15 +233,23 @@ mouse_c::mouse_c(rect_s limit) {
         limit.origin.y + limit.size.height / 2
     );
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     g_keyboard_vectors = Kbdvbase();
     g_system_mouse_interupt = g_keyboard_vectors->mousevec;
     g_keyboard_vectors->mousevec = &g_mouse_interupt;
+#   else
+#       error "Unsupported target"
+#   endif
 #endif
 }
 
 mouse_c::~mouse_c() {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
     g_keyboard_vectors->mousevec = g_system_mouse_interupt;
+#   else
+#       error "Unsupported target"
+#   endif
 #endif
 }
 

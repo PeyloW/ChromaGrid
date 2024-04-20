@@ -9,6 +9,7 @@
 
 using namespace toybox;
 
+#if TOYBOX_TARGET_ATARI
 #ifndef __M68000__
 
 #define DEBUG_BLITTER 0
@@ -109,5 +110,6 @@ void blitter_s::start(bool hog) {
 }
 
 #else
-#error "For host machine only"
+#   error "For host machine only"
+#endif
 #endif

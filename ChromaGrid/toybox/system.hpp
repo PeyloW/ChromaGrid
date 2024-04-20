@@ -53,33 +53,41 @@ namespace toybox {
         }
     };
     
+#   if TOYBOX_TARGET_ATARI
     extern "C" void g_microwire_write(uint16_t value);
+#   endif
     
 #endif
     
     static int32_t super(int32_t v) {
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
         return Super((void *)v);
+#   else
+#       error "Unsuported target"
+#   endif
 #else
         return 0;
 #endif
     }
     
+#if TOYBOX_TARGET_ATARI
     static int16_t blitter_mode(int16_t m) {
-#ifdef __M68000__
+#   ifdef __M68000__
         return Blitmode(m);
-#else
+#   else
         return 0;
-#endif
+#   endif
     }
     
     static int16_t screen_mode() {
-#ifdef __M68000__
+#   ifdef __M68000__
         return Getrez();
-#else
+#   else
         return 0;
-#endif
+#   endif
     }
+#endif
         
     extern "C" {
         class palette_c;
@@ -91,12 +99,16 @@ namespace toybox {
     static int16_t set_screen(void *log, void *phys, int16_t mode) {
         int16_t rez = 0;
 #ifdef __M68000__
+#   if TOYBOX_TARGET_ATARI
         log = log ?: (void *)-1;
         phys = phys ?: (void *)-1;
         rez = Getrez();
         Setscreen(log, phys, mode);
         void *new_phys = Physbase();
         //hard_assert(new_phys == phys);
+#   else
+#       error "Unsupported target"
+#   endif
 #endif
         return rez;
     }

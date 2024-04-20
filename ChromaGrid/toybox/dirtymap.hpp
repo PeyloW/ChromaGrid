@@ -15,13 +15,7 @@ namespace toybox {
     class image_c;
     class canvas_c;
 
-#ifndef CGDIRTYMAP_TILE_WIDTH
-#   define CGDIRTYMAP_TILE_WIDTH (16)
-#endif
-#ifndef CGDIRTYMAP_TILE_HEIGHT
-#   define CGDIRTYMAP_TILE_HEIGHT (16)
-#endif
-    static_assert(CGDIRTYMAP_TILE_WIDTH % 16 == 0, "Tile width must be a multiple of 16");
+    static_assert(TOYBOX_DIRTYMAP_TILE_SIZE.width % 16 == 0, "Tile width must be a multiple of 16");
     
     class dirtymap_c : public nocopy_c {
         friend class canvas_c;
@@ -30,10 +24,8 @@ namespace toybox {
         void merge(const dirtymap_c &dirtymap);
         void restore(canvas_c &canvas, const image_c &clean_image);
         void clear();
-#ifndef __M68000__
-#if DEBUG_DIRTYMAP
+#if TOYBOX_DEBUG_DIRTYMAP
         void debug(const char *name) const;
-#endif
 #endif
     private:
         static int instance_size(size_s *size);

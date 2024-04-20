@@ -24,10 +24,6 @@ image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette
     }
 }
 
-#ifdef __M68000__
-static uint16_t pSetActiveVBLCode[20];
-#endif
-
 uint8_t image_c::get_pixel(point_s at) const {
     if (_size.contains(at)) {
         int word_offset = (at.x / 16) + at.y * _line_words;
@@ -239,7 +235,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
 }
 
 
-#ifdef CGIMAGE_SUPPORT_SAVE
+#if TOYBOX_IMAGE_SUPPORTS_SAVE
 
 
 static int image_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, int row_byte_count) {

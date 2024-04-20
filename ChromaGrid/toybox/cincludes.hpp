@@ -9,6 +9,8 @@
 #ifndef cincludes_h
 #define cincludes_h
 
+#include "config.hpp"
+
 extern "C" {
     
 #define __pure __attribute__ ((pure))

@@ -15,6 +15,8 @@ namespace toybox {
     
     using namespace toystd;
 
+#if TOYBOX_TARGET_ATARI
+    
     typedef enum {
         hop_one = 0,
         hop_halftone = 1,
@@ -88,6 +90,10 @@ namespace toybox {
     static struct blitter_s *pBlitter = (struct blitter_s *)0xffff8a00;
 #else
     extern struct blitter_s *pBlitter;
+#endif
+    
+#else
+#   error "Unsupported target"
 #endif
     
 }

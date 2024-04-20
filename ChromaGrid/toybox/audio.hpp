@@ -32,6 +32,7 @@ namespace toybox {
         uint16_t _rate;
     };
     
+#if TOYBOX_TARGET_ATARI
     class music_c : public nocopy_c {
         friend class audio_mixer_c;
     public:
@@ -55,6 +56,9 @@ namespace toybox {
         uint16_t _music_play_code[8];
 #endif
     };
+#else
+#   error "Unsupported target"
+#endif
 
 }
 

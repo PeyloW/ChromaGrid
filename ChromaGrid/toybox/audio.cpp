@@ -58,24 +58,6 @@ namespace toystd {
     };
 }
 
-#ifndef __M68000__
-static void hton(extended80_s &ext80) {
-    hton(ext80.exp);
-    hton(ext80.fracs[0]);
-}
-static void hton(aiff_common_s &common) {
-    hton(common.num_channels);
-    hton(common.num_sample_frames);
-    hton(common.sample_size);
-    hton(common.sample_rate);
-}
-static void hton(aiff_ssnd_data_s &ssnd) {
-    hton(ssnd.offset);
-    hton(ssnd.block_size);
-}
-#endif
-
-
 sound_c::sound_c(const char *path) :
     _sample(nullptr),
     _length(0),
@@ -125,6 +107,8 @@ sound_c::sound_c(const char *path) :
         }
     }
 }
+
+#if TOYBOX_TARGET_ATARI
 
 // libcmini (version used) has a buggy strncmp :(
 static int _strncmp(const char *s1, const char *s2, size_t max)
@@ -184,3 +168,7 @@ music_c::music_c(const char *path) {
     codegen_s::make_trampoline(_music_play_code, _sndh + 8, false);
 #endif
 }
+
+#else
+#   error "Unsupported target"
+#endif

@@ -82,6 +82,7 @@
 		A6B6E18F2BD04B6100703630 /* screen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E18D2BD04B6100703630 /* screen.hpp */; };
 		A6B6E1922BD4308C00703630 /* audio_mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1902BD4308C00703630 /* audio_mixer.cpp */; };
 		A6B6E1932BD4308C00703630 /* audio_mixer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1912BD4308C00703630 /* audio_mixer.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B6E1952BD44B2B00703630 /* config.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1942BD44B2B00703630 /* config.hpp */; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
 		A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012F02BBCE71800D260C2 /* emptyt.iff */; };
@@ -219,6 +220,7 @@
 		A6B6E18D2BD04B6100703630 /* screen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = screen.hpp; sourceTree = "<group>"; };
 		A6B6E1902BD4308C00703630 /* audio_mixer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio_mixer.cpp; sourceTree = "<group>"; };
 		A6B6E1912BD4308C00703630 /* audio_mixer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio_mixer.hpp; sourceTree = "<group>"; };
+		A6B6E1942BD44B2B00703630 /* config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
 		A6D012F02BBCE71800D260C2 /* emptyt.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = emptyt.iff; sourceTree = "<group>"; };
@@ -467,6 +469,7 @@
 		A6E484DF2BAE6C80004CCA7D /* toystd */ = {
 			isa = PBXGroup;
 			children = (
+				A6B6E1942BD44B2B00703630 /* config.hpp */,
 				A69AE4C52B6EC28800EBA43D /* cincludes.hpp */,
 				A6E484E22BAE709B004CCA7D /* type_traits.hpp */,
 				A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */,
@@ -500,6 +503,7 @@
 				A6A0EE442BC059DC005B6ED3 /* palette.hpp in Headers */,
 				A6A0EE422BC059A6005B6ED3 /* utility.hpp in Headers */,
 				A6A0EE8A2BC8D729005B6ED3 /* dirtymap.hpp in Headers */,
+				A6B6E1952BD44B2B00703630 /* config.hpp in Headers */,
 				A6A0EE972BCDAE0A005B6ED3 /* stream.hpp in Headers */,
 				A6A0EE8D2BC8DACA005B6ED3 /* image.hpp in Headers */,
 				A6B6E18B2BD0381F00703630 /* tileset.hpp in Headers */,

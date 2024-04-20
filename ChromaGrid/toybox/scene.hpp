@@ -12,12 +12,6 @@
 #include "screen.hpp"
 #include "vector.hpp"
 
-#ifdef __M68000__
-#   define DEBUG_RESTORE_SCREEN 0
-#else
-#   define DEBUG_RESTORE_SCREEN 1
-#endif
-
 namespace toybox {
     
 #define DEBUG_CPU_RUN_TRANSITION 0x100
@@ -62,7 +56,7 @@ namespace toybox {
         int16_t _old_blitter_mode;
         uint8_t _old_conterm;
     public:
-        scene_manager_c(size_s screen_size = size_s(320, 200));
+        scene_manager_c(size_s screen_size = TOYBOX_SCREEN_SIZE_MAX);
         ~scene_manager_c();
         
         void run(scene_c *rootscene, scene_c *overlay_scene = nullptr, transition_c *transition = nullptr);
