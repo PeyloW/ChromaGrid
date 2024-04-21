@@ -270,8 +270,8 @@ size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t 
     }
     size_s max_size = {0,0};
     bool first = true;
-    for (auto line = lines.begin(); line != lines.end(); line++) {
-        const auto size = draw(font, *line, at, alignment, color);
+    for (auto &line : lines) {
+        const auto size = draw(font, line, at, alignment, color);
         at.y += size.height + line_spacing;
         max_size.width = MAX(max_size.width, size.width);
         max_size.height += size.height + (!first ? line_spacing : 0);

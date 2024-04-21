@@ -95,7 +95,7 @@ struct __packed_struct level_result_t {
     void calculate_score(bool succes);
     void subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
-    bool save(iffstream_c &iff);
+    bool save(iffstream_c &iff) const;
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");

@@ -361,8 +361,8 @@ bool cgresources_c::save_level_results() {
     iff_group_s list;
     if (iff.begin(list, IFF_LIST)) {
         iff.write(&IFF_CGLR_ID);
-        for (auto result = level_results.begin(); result != level_results.end(); result++) {
-            result->save(iff);
+        for (const auto &result : level_results) {
+            result.save(iff);
         }
         return iff.end(list);
     }

@@ -67,9 +67,9 @@ public:
         buttons.emplace_back(right_title, right_rect);
     }
     
-    void draw_all(canvas_c &screen) {
-        for (auto button = buttons.begin(); button != buttons.end(); button++) {
-            button->draw_in(screen);
+    void draw_all(canvas_c &screen) const {
+        for (const auto &button : buttons) {
+            button.draw_in(screen);
         }
     }
         

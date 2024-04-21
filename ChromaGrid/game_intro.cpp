@@ -108,7 +108,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     point_s origin = point_s(16, 40);
     const size_s size = size_s(26, 14);
     bool disable = false;
-    for (auto result = rsc.level_results.begin(); result != rsc.level_results.end(); result++) {
+    for (const auto &result : rsc.level_results) {
         int col = index % 5;
         if (col == 0) {
             _select_button_groups.emplace_back(origin, size, 8);
@@ -121,7 +121,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 
         button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
 #ifndef ALLOW_FULL_LEVEL_SELECT
-        if (result->score == 0) {
+        if (result.score == 0) {
             disable = true;
         }
 #endif
@@ -137,8 +137,8 @@ void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
 
     canvas.draw(rsc.font, "Choose Level", point_s(96, 16));
 
-    for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
-        group->draw_all(canvas);
+    for (const auto &group : _select_button_groups) {
+        group.draw_all(canvas);
     }
 }
 
@@ -151,8 +151,8 @@ void cglevel_select_scene_c::update_background(screen_c &screen, int ticks) {
     }
 
     int row = 0;
-    for (auto group = _select_button_groups.begin(); group != _select_button_groups.end(); group++) {
-        button = update_button_group(canvas, *group);
+    for (auto &group : _select_button_groups) {
+        button = update_button_group(canvas, group);
         if (button >= 0) {
             int level = row * 5 + button;
             auto transition = transition_c::create(g_active_palette->colors[0]);

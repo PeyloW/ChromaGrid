@@ -254,8 +254,8 @@ public:
                 updates.emplace_back(x, y);
             }
         });
-        for (auto update = updates.begin(); update != updates.end(); update++) {
-            auto &tile = tiles[update->x][update->y];
+        for (const auto &update : updates) {
+            auto &tile = tiles[update.x][update.y];
             tile.solve_remove_orb();
         }
     }
@@ -656,7 +656,7 @@ bool level_recipe_t::load(iffstream_c &iff, iff_chunk_s &start_chunk) {
     return false;
 }
 
-bool level_result_t::save(iffstream_c &iff) {
+bool level_result_t::save(iffstream_c &iff) const {
     iff_chunk_s chunk;
     if (iff.begin(chunk, IFF_CGLR)) {
         iff.write(this);
