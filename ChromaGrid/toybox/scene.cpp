@@ -115,10 +115,6 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
                 physical_screen.dirtymap->debug("AF next");
 #endif
             }
-
-            for (auto scene = _deletion_stack.begin(); scene != _deletion_stack.end(); scene++) {
-                delete *scene;
-            }
             _deletion_stack.clear();
         }
         debug_cpu_color(DEBUG_CPU_DONE);

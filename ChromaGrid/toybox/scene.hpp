@@ -81,10 +81,10 @@ namespace toybox {
         transition_c *_transition;
         scene_c *_overlay_scene;
         vector_c<scene_c *, 8> _scene_stack;
-        vector_c<scene_c *, 8> _deletion_stack;
+        vector_c<unique_ptr_c<scene_c>, 8> _deletion_stack;
         
         inline void enqueue_delete(scene_c *scene) {
-            _deletion_stack.push_back(scene);
+            _deletion_stack.emplace_back(scene);
         }
         inline void set_transition(transition_c *transition, bool done = false);
         
