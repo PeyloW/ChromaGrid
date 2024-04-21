@@ -23,7 +23,7 @@ dirtymap_c *canvas_c::create_dirtymap() const {
     return new (calloc(1, bytes)) dirtymap_c(size);
 }
 
-void canvas_c::put_pixel(uint8_t ci, point_s at) const {
+void canvas_c::put_pixel(int ci, point_s at) const {
     if (_clipping) {
         if (!_image._size.contains(at)) return;
     }
@@ -33,12 +33,13 @@ void canvas_c::put_pixel(uint8_t ci, point_s at) const {
     const uint16_t mask = ~bit;
     if (_image._maskmap != nullptr) {
         uint16_t *maskmap = _image._maskmap + word_offset;
-        if (ci == image_c::MASKED_CIDX) {
+        if (image_c::is_masked(ci)) {
             *maskmap &= mask;
+            ci = 0;
         } else {
             *maskmap |= bit;
         }
-    } else if (ci < 0) {
+    } else if (image_c::is_masked(ci)) {
         return;
     }
     uint16_t *bitmap = _image._bitmap + (word_offset << 2);
@@ -52,13 +53,13 @@ void canvas_c::put_pixel(uint8_t ci, point_s at) const {
     }
 }
 
-void canvas_c::remap_colors(remap_table_t table, rect_s rect) const {
-    const_cast<canvas_c*>(this)->with_clipping(false, [this, table, &rect] {
+void canvas_c::remap_colors(const remap_table_c &table, rect_s rect) const {
+    const_cast<canvas_c*>(this)->with_clipping(false, [this, &table, &rect] {
         for (int16_t y = rect.origin.y; y < rect.origin.y + rect.size.height; y++) {
             for (int16_t x = rect.origin.x; x < rect.origin.x + rect.size.width; x++) {
                 const point_s at(x, y);
-                const uint8_t c = _image.get_pixel(at);
-                const uint8_t rc = table[c];
+                const int c = _image.get_pixel(at);
+                const int rc = table[c];
                 if (c != rc) {
                     put_pixel(rc, at);
                 }
@@ -116,13 +117,13 @@ void canvas_c::draw_aligned(const tileset_c &src, point_s tile, point_s at) cons
     draw_aligned(*src.image(), src.tile_rect(tile), at);
 }
 
-void canvas_c::draw(const image_c &src, point_s at, const uint8_t color) const {
+void canvas_c::draw(const image_c &src, point_s at, const int color) const {
     assert(_image._maskmap == nullptr);
     rect_s rect(point_s(), src.size());
     draw(src, rect, at, color);
 }
 
-void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t color) const {
+void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const int color) const {
     assert(_image._maskmap == nullptr);
     assert(rect.contained_by(size()));
     if (_clipping) {
@@ -135,22 +136,22 @@ void canvas_c::draw(const image_c &src, rect_s rect, point_s at, const uint8_t c
         _dirtymap->mark(dirty_rect);
     }
     if (src._maskmap) {
-        if (color == image_c::MASKED_CIDX) {
+        if (image_c::is_masked(color)) {
             imp_draw_masked(src, rect, at);
         } else {
             imp_draw_color(src, rect, at, color);
         }
     } else {
-        assert(color == image_c::MASKED_CIDX);
+        assert(image_c::is_masked(color));
         imp_draw(src, rect, at);
     }
 }
 
-void canvas_c::draw(const tileset_c &src, int idx, point_s at, const uint8_t color) const {
+void canvas_c::draw(const tileset_c &src, int idx, point_s at, const int color) const {
     draw(*src.image(), src.tile_rect(idx), at, color);
 }
 
-void canvas_c::draw(const tileset_c &src, point_s tile, point_s at, const uint8_t color) const {
+void canvas_c::draw(const tileset_c &src, point_s tile, point_s at, const int color) const {
     draw(*src.image(), src.tile_rect(tile), at, color);
 }
 
@@ -191,7 +192,7 @@ void canvas_c::draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s
     });
 }
 
-size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment, const uint8_t color) const {
+size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment, const int color) const {
     int len = (int)strlen(text);
     size_s size = font.char_rect(' ').size;
     size.width = 0;
@@ -225,7 +226,7 @@ size_s canvas_c::draw(const font_c &font, const char *text, point_s at, text_ali
 #define MAX_LINES 8
 static char draw_text_buffer[80 * MAX_LINES];
 
-size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing, text_alignment_e alignment, const uint8_t color) const {
+size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing, text_alignment_e alignment, const int color) const {
     strcpy(draw_text_buffer, text);
     vector_c<const char *, 12> lines;
 
@@ -279,34 +280,3 @@ size_s canvas_c::draw(const font_c &font, const char *text, rect_s in, uint16_t 
     return  max_size;
 }
 
-#if 0
-#ifndef __M68000__
-
-void image_c::imp_draw_aligned(const image_c &srcImage, point_s point) const {
-    assert(size().contains(point));
-    assert((point.x & 0xf) == 0);
-    assert((srcImage.size().width & 0xf) == 0);
-    const auto size = srcImage.size();
-    const int word_offset = (point.x / 16) + point.y * _line_words;
-    for (int y = 0; y < size.height; y++) {
-        memcpy(_bitmap + (word_offset + _line_words * y) * 4,
-               srcImage._bitmap + (srcImage._line_words * y * 4),
-               size.width / 2);
-    }
-}
-
-void image_c::imp_draw_rect(const image_c &srcImage, rect_s *const rect, point_s point) const {
-    assert(size().contains(point));
-    for (int y = 0; y < rect->size.height; y++) {
-        for (int x = 0; x < rect->size.width; x++) {
-            uint8_t color = srcImage.pixel(point_s{(int16_t)(rect->origin.x + x), (int16_t)(rect->origin.y + y)});
-            if (color != MASKED_CIDX) {
-                put_pixel(color, point_s{(int16_t)(point.x + x), (int16_t)(point.y + y)});
-            }
-        }
-    }
-}
-
-#endif
-
-#endif

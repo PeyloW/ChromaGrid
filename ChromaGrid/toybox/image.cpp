@@ -24,7 +24,7 @@ image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette
     }
 }
 
-uint8_t image_c::get_pixel(point_s at) const {
+int image_c::get_pixel(point_s at) const {
     if (_size.contains(at)) {
         int word_offset = (at.x / 16) + at.y * _line_words;
         const uint16_t bit = 1 << (15 - at.x & 15);
@@ -162,7 +162,7 @@ static void image_read_packbits(iffstream_c &file, uint16_t line_words, int heig
     }
 }
 
-image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
+image_c::image_c(const char *path, bool masked, int masked_cidx) {
     memset(this, 0, sizeof(image_c));
 
     iffstream_c file(path);
@@ -218,8 +218,7 @@ image_c::image_c(const char *path, bool masked, uint8_t masked_cidx) {
                     _maskmap = nullptr;
                 } else if (bmhd.mask_type == mask_type_color) {
                     memset(_maskmap, -1, mask_words << 1);
-                    canvas_c::remap_table_t table;
-                    canvas_c::make_noremap_table(table);
+                    canvas_c::remap_table_c table;
                     table[masked_cidx] = MASKED_CIDX;
                     canvas_c canvas(*this);
                     canvas.remap_colors(table, rect_s(point_s(), _size));
@@ -370,7 +369,7 @@ static void image_write(iffstream_c &file, uint16_t line_words, uint16_t next_li
 }
 
 
-bool image_c::save(const char *path, bool compressed, bool masked, uint8_t masked_cidx) {
+bool image_c::save(const char *path, bool compressed, bool masked, int masked_cidx) {
     iffstream_c ilbm(path, fstream_c::input | fstream_c::output);
     if (ilbm.tell() >= 0) {
         ilbm.set_assert_on_error(true);

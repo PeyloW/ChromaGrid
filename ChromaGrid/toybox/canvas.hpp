@@ -17,7 +17,14 @@ namespace toybox {
     
     class canvas_c : public nocopy_c {
     public:
-        typedef uint8_t remap_table_t[17];
+        class remap_table_c : nocopy_c {
+        public:
+            remap_table_c() { for (int i = -1; i < 16; i++) (*this)[i] = i; }
+            int& operator[](int i) { return _table[i + 1]; }
+            const int& operator[](int i) const { return _table[i + 1]; }
+        private:
+            int _table[17];
+        };
         
         static const int STENCIL_FULLY_TRANSPARENT = 0;
         static const int STENCIL_FULLY_OPAQUE = 64;
@@ -71,14 +78,9 @@ namespace toybox {
             _dirtymap = old_dirtymap;
         }
         
-        void put_pixel(uint8_t ci, point_s at) const;
+        void put_pixel(int ci, point_s at) const;
         
-        inline static void make_noremap_table(remap_table_t table) {
-            for (int i = image_c::MASKED_CIDX + 1; --i != -1; ) {
-                table[i] = i;
-            }
-        }
-        void remap_colors(remap_table_t table, rect_s rect) const;
+        void remap_colors(const remap_table_c &table, rect_s rect) const;
         
         static void make_stencil(stencil_t stencil, stencil_type_e type, int shade);
         
@@ -88,18 +90,18 @@ namespace toybox {
         void draw_aligned(const image_c &src, rect_s rect, point_s at) const;
         void draw_aligned(const tileset_c &src, int idx, point_s at) const;
         void draw_aligned(const tileset_c &src, point_s tile, point_s at) const;
-        void draw(const image_c &src, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
-        void draw(const image_c &src, rect_s rect, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
-        void draw(const tileset_c &src, int idx, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
-        void draw(const tileset_c &src, point_s tile, point_s at, const uint8_t color = image_c::MASKED_CIDX) const;
+        void draw(const image_c &src, point_s at, const int color = image_c::MASKED_CIDX) const;
+        void draw(const image_c &src, rect_s rect, point_s at, const int color = image_c::MASKED_CIDX) const;
+        void draw(const tileset_c &src, int idx, point_s at, const int color = image_c::MASKED_CIDX) const;
+        void draw(const tileset_c &src, point_s tile, point_s at, const int color = image_c::MASKED_CIDX) const;
 
         
         
         void draw_3_patch(const image_c &src, int16_t cap, rect_s in) const;
         void draw_3_patch(const image_c &src, rect_s rect, int16_t cap, rect_s in) const;
         
-        size_s draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment = align_center, const uint8_t color = image_c::MASKED_CIDX) const;
-        size_s draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing = 0, text_alignment_e alignment = align_center, const uint8_t color = image_c::MASKED_CIDX) const;
+        size_s draw(const font_c &font, const char *text, point_s at, text_alignment_e alignment = align_center, const int color = image_c::MASKED_CIDX) const;
+        size_s draw(const font_c &font, const char *text, rect_s in, uint16_t line_spacing = 0, text_alignment_e alignment = align_center, const int color = image_c::MASKED_CIDX) const;
     private:
         image_c &_image;
         dirtymap_c *_dirtymap;

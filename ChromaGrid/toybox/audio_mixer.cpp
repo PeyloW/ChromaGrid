@@ -55,6 +55,7 @@ void audio_mixer_c::stop(const sound_c &sound) {
 #if TOYBOX_TARGET_ATARI
 
 void audio_mixer_c::play(const music_c &music, int track) {
+    return;
     if (_active_music) {
         stop(*_active_music);
     }

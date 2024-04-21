@@ -9,7 +9,7 @@
 #include "game.hpp"
 #include "iffstream.hpp"
 
-static void remap_to(color_e col, canvas_c::remap_table_t table, uint8_t masked_idx = image_c::MASKED_CIDX) {
+static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx = image_c::MASKED_CIDX) {
     switch (col) {
         case color_e::gold:
             table[0] = 1;
@@ -86,8 +86,7 @@ cgresources_c::cgresources_c() :
         printf("Initialize tiles %d.\n\r", x);
         rect_s rect(x * 48, 0, 48, 80);
         tiles_cnv.draw(*tiles.image(), rect_s(0, 0, 48, 80), rect.origin);
-        canvas_c::remap_table_t table;
-        canvas_c::make_noremap_table(table);
+        canvas_c::remap_table_c table;
         if (x == 1) {
             remap_to(color_e::gold, table);
         } else {

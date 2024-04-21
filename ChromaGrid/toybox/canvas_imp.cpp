@@ -396,8 +396,8 @@ void canvas_c::imp_draw_rect_SLOW(const image_c &srcImage, const rect_s &rect, p
     assert(rect.contained_by(srcImage.size()));
     for (int y = rect.size.height; --y != -1; ) {
         for (int x = rect.size.width; --x != -1 ; ) {
-            uint8_t color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
-            if (color != image_c::MASKED_CIDX) {
+            int color = srcImage.get_pixel(point_s{(int16_t)(rect.origin.x + x), (int16_t)(rect.origin.y + y)});
+            if (!image_c::is_masked(color)) {
                 put_pixel(color, point_s{(int16_t)(at.x + x), (int16_t)(at.y + y)});
             }
         }

@@ -56,3 +56,17 @@
 #       define TOYBOX_DEBUG_RESTORE_SCREEN 1
 #   endif
 #endif
+
+#ifndef TOYBOX_RESERVE_A6_GLOBAL
+#   define TOYBOX_RESERVE_A6_GLOBAL 1
+#endif
+
+#if TOYBOX_RESERVE_A6_GLOBAL
+extern "C" {
+#   ifdef __M68000__
+    register void *g_global_ptr __asm__("a6");
+#   else
+    extern void *g_global_ptr;
+#   endif
+}
+#endif

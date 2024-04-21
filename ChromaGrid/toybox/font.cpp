@@ -35,7 +35,7 @@ font_c::font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t spac
                 for (int fc = 0; fc < rect.size.width; fc++) {
                     for (int fcc = 0; fcc < rect.size.height; fcc++) {
                         const point_s at = point_s(rect.origin.x + fc, rect.origin.y + fcc);
-                        if (image->get_pixel(at) != image_c::MASKED_CIDX) {
+                        if (!image_c::is_masked(image->get_pixel(at))) {
                             fc = MAX(0, fcc >= lead_req_space ? fc : fc - 1);
                             rect.origin.x += fc;
                             rect.size.width -= fc;
@@ -53,7 +53,7 @@ font_c::font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t spac
                 for (int fc = 0; fc < rect.size.width; fc++) {
                     for (int fcc = 0; fcc < rect.size.height; fcc++) {
                         const point_s at = point_s(max_at.x - fc, max_at.y - fcc);
-                        if (image->get_pixel(at) != image_c::MASKED_CIDX) {
+                        if (!image_c::is_masked(image->get_pixel(at))) {
                             fc = MAX(0, fcc >= trail_req_space ? fc : fc - 1);
                             rect.size.width -= fc;
                             goto trailing_done;

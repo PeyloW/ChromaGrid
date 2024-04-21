@@ -7,7 +7,6 @@
 
 #include "cincludes.hpp"
 
-
 void *operator new (size_t n) {
     return malloc(n);
 }

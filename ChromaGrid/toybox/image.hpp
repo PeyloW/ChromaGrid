@@ -18,17 +18,18 @@ namespace toybox {
     class image_c : public nocopy_c {
         friend class canvas_c;
     public:
-        static const uint8_t MASKED_CIDX = 0x10;
+        static const int MASKED_CIDX = -1;
+        static constexpr bool is_masked(int i) __pure { return i < 0; }
         typedef enum __packed {
             interweaved, interleaved, continious
         } bitplane_layout_e;
         
         image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette);
-        image_c(const char *path, bool masked, uint8_t masked_cidx = MASKED_CIDX);
+        image_c(const char *path, bool masked, int masked_cidx = MASKED_CIDX);
         ~image_c() = default;
 
 #if TOYBOX_IMAGE_SUPPORTS_SAVE
-        bool save(const char *path, bool compressed, bool masked, uint8_t masked_cidx = MASKED_CIDX);
+        bool save(const char *path, bool compressed, bool masked, int masked_cidx = MASKED_CIDX);
 #endif
                 
         __forceinline void ser_palette(const shared_ptr_c<palette_c> &palette) {
@@ -41,7 +42,7 @@ namespace toybox {
         __forceinline bool masked() const { return _maskmap != nullptr; }
         __forceinline bitplane_layout_e layout() const { return interweaved; }
 
-        uint8_t get_pixel(point_s at) const;
+        int get_pixel(point_s at) const;
         
     private:
         shared_ptr_c<palette_c> _palette;
