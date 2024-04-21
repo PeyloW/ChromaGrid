@@ -22,23 +22,23 @@ void audio_mixer_c::play(const sound_c &sound, uint8_t priority) {
 #ifdef __M68000__
 #   if TOYBOX_TARGET_ATARI
     uint8_t * ste_dma_control  = (uint8_t*)0xffff8901;
-    uint8_t * ste_dmo_mode  = (uint8_t*)0xffff8921;
+    uint8_t * ste_dma_mode  = (uint8_t*)0xffff8921;
     uint8_t * ste_dma_start = (uint8_t*)0xffff8903;
-    uint8_t * ste_dms_end   = (uint8_t*)0xffff890f;
+    uint8_t * ste_dma_end   = (uint8_t*)0xffff890f;
     // Stop audio
     *ste_dma_control &= 0xFE;
     // Set start address, high to low byte
-    size_t tmp = (size_t)sound._sample;
+    size_t tmp = (size_t)sound._sample.get();
     ste_dma_start[0] = (uint8_t)((tmp >> 16)&0xff);
     ste_dma_start[2] = (uint8_t)((tmp >>  8)&0xff);
     ste_dma_start[4] = (uint8_t)((tmp       )&0xff);
     // Set end address, high to low byte
     tmp += sound._length;
-    ste_dms_end[0] = (uint8_t)((tmp >> 16)&0xff);
-    ste_dms_end[2] = (uint8_t)((tmp >>  8)&0xff);
-    ste_dms_end[4] = (uint8_t)((tmp       )&0xff);
+    ste_dma_end[0] = (uint8_t)((tmp >> 16)&0xff);
+    ste_dma_end[2] = (uint8_t)((tmp >>  8)&0xff);
+    ste_dma_end[4] = (uint8_t)((tmp       )&0xff);
     // Set mode, and start
-    *ste_dmo_mode = 0x81; // 8 bit mono @ 12.5kHz
+    *ste_dma_mode = 0x81; // 8 bit mono @ 12.5kHz
     *ste_dma_control = 1; // Play once
 #   else
 #       error "Unsupported target"
@@ -55,7 +55,6 @@ void audio_mixer_c::stop(const sound_c &sound) {
 #if TOYBOX_TARGET_ATARI
 
 void audio_mixer_c::play(const music_c &music, int track) {
-    return;
     if (_active_music) {
         stop(*_active_music);
     }
