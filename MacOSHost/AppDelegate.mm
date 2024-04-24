@@ -48,6 +48,10 @@ static void _yieldFunction() {
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:path];
     dispatch_async(dispatch_queue_create("game_queue", NULL), ^{
         {
+            auto &m = machine_c::shared();
+            printf("Type %d\n\r", m.type());
+            printf("Type %zu\n\r", m.max_memory());
+            printf("Type %zu\n\r", m.user_memory());
             scene_manager_c manager(size_s(320, 208));
             auto intro_scene = new cgintro_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
@@ -130,14 +134,15 @@ static void _yieldFunction() {
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
-    if (g_active_image == NULL) {
+    auto active_image = machine_c::shared().active_image();
+    if (active_image == NULL) {
         NSRect bounds = [self bounds];
         [[NSColor blackColor] set];
         [NSBezierPath fillRect:bounds];
         return;
     }
     [_gameLock lockWhenCondition:1];
-    const auto size = g_active_image->size();
+    const auto size = active_image->size();
     typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
     color_s palette[16] = { 0 };
     color_s buffer[320 * 200];
@@ -152,7 +157,7 @@ static void _yieldFunction() {
     point_s at;
     for (at.y = 0; at.y < 200; at.y++) {
         for (at.x = 0; at.x < 320; at.x++) {
-            const auto c = g_active_image->get_pixel(at);
+            const auto c = active_image->get_pixel(at);
             if (c != image_c::MASKED_CIDX) {
                 auto offset = (at.y * size.width + at.x);
                 buffer[offset] = palette[c];

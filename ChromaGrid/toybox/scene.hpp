@@ -51,13 +51,9 @@ namespace toybox {
     };
         
     class scene_manager_c : public nocopy_c {
-    private:
-        int32_t _super_token;
-        int16_t _old_blitter_mode;
-        uint8_t _old_conterm;
     public:
         scene_manager_c(size_s screen_size = TOYBOX_SCREEN_SIZE_MAX);
-        ~scene_manager_c();
+        ~scene_manager_c() = default;
         
         void run(scene_c *rootscene, scene_c *overlay_scene = nullptr, transition_c *transition = nullptr);
         

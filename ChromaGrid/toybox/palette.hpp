@@ -70,8 +70,6 @@ namespace toybox {
         palette_c() : basic_palette_c<16>() {}
         palette_c(uint16_t *cs) : basic_palette_c<16>(cs) {}
         palette_c(uint8_t *c) : basic_palette_c<16>(c) {}
-
-        void set_active() const;
     };
     
 }

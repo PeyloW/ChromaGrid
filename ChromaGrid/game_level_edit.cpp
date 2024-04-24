@@ -227,7 +227,8 @@ void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
         }
         case 3: { // Try level
             make_recipe(temp.recipe);
-            auto transition = transition_c::create(g_active_palette->colors[0]);
+            auto color = machine_c::shared().active_palette()->colors[0];
+            auto transition = transition_c::create(color);
             manager.push(new cglevel_scene_c(manager, &temp.recipe), transition);
             break;
         }

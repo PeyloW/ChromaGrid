@@ -24,8 +24,6 @@ namespace toybox {
         size_s size() const __pure { return _image.size(); }
         point_s offset() const __pure { return _offset; }
         void set_offset(point_s o) { _offset = o; }
-
-        void set_active() const;
         
     private:
         image_c _image;

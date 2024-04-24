@@ -8,7 +8,8 @@
 // 0 = Not Atari target
 // 1 = STfm
 // 2 = STe
-// 3 = Falcon030
+// 3 = TT
+// 4 = Falcon030
 #ifndef TOYBOX_TARGET_ATARI
 #   define TOYBOX_TARGET_ATARI 2
 #endif

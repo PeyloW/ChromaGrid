@@ -19,7 +19,7 @@ extern "C" {
 
 void cgoverlay_scene_c::will_appear(screen_c &screen, bool obsured) {
     audio_mixer_c::shared().play(rsc.music);
-    rsc.background.palette()->set_active();
+    machine_c::shared().set_active_palette(rsc.background.palette().get());
 }
 
 void cgoverlay_scene_c::will_disappear(bool obscured) {

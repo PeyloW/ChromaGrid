@@ -15,6 +15,7 @@ extern "C" {
     
 #define __pure __attribute__ ((pure))
 #define __forceinline __attribute__((__always_inline__))
+#define __neverinline __attribute__((noinline))
 #define __packed __attribute__((packed))
 #define __packed_struct __attribute__((packed, aligned(2)))
 

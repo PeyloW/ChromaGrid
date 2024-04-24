@@ -75,28 +75,29 @@ public:
         _count = 0;
         uint8_t r, g, b;
         through.get(&r, &g, &b);
-        _old_active = g_active_palette;
-        assert(_old_active);
+        _old_palette = machine_c::shared().active_palette();
+        assert(_old_palette);
         for (int i = 0; i <= 16; i++) {
             _palettes.emplace_back();
             auto &palette = _palettes.back();
             int shade = i * color_c::MIX_FULLY_OTHER / 16;
             for (int j = 0; j < 16; j++) {
-                palette.colors[j] = _old_active->colors[j].mix(through, shade);
+                palette.colors[j] = _old_palette->colors[j].mix(through, shade);
             }
         }
     }
     virtual ~fade_through_transition_c() {
-        _old_active->set_active();
+        machine_c::shared().set_active_palette(_old_palette);
     }
     virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) {
         const int count = _count / 2;
+        auto &m = machine_c::shared();
         if (count < 17) {
-            _palettes[count].set_active();
+            m.set_active_palette(&_palettes[count]);
         } else if (count < 18) {
             phys_screen.canvas().draw_aligned(log_screen.image(), point_s());
         } else if (count < 35) {
-            _palettes[34 - count].set_active();
+            m.set_active_palette(&_palettes[34 - count]);
         } else {
             return true;
         }
@@ -104,7 +105,7 @@ public:
         return false;
     }
 private:
-    const palette_c *_old_active;
+    const palette_c *_old_palette;
     int _count;
     vector_c<palette_c, 17> _palettes;
 };

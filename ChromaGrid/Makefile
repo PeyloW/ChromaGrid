@@ -9,7 +9,8 @@ AR=/opt/cross-mint-OLD/bin/m68k-atari-mint-ar
 
 FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
-FLAGS+=-g0 -DNDEBUG -s
+FLAGS+=-g0 -DNDEBUG
+FLAGS+=-s
 #FLAGS+=-DDEBUG_CPU
 FLAGS+=-DALLOW_FULL_LEVEL_SELECT
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics

@@ -18,13 +18,8 @@ screen_c::screen_c(size_s screen_size) :
 }
 
 screen_c::~screen_c() {
-    if (g_active_image == &_image) {
-        g_active_image = nullptr;
+    auto &m = machine_c::shared();
+    if (m.active_image() == &_image) {
+        m.set_active_image(nullptr);
     }
-}
-
-void screen_c::set_active() const {
-    timer_c::with_paused_timers([this] {
-        g_active_image = &_image;
-    });
 }

@@ -83,7 +83,8 @@ void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
         case 5: {
 #ifndef ALLOW_FULL_LEVEL_SELECT
             if (rsc.level_results.front().score == 0) {
-                auto transition = transition_c::create(g_active_palette->colors[0]);
+                auto color = machine_c::shared().active_palette()->colors[0];
+                auto transition = transition_c::create(color);
                 manager.push(new cglevel_scene_c(manager, 0), transition);
             } else 
 #endif
@@ -155,7 +156,8 @@ void cglevel_select_scene_c::update_background(screen_c &screen, int ticks) {
         button = update_button_group(canvas, group);
         if (button >= 0) {
             int level = row * 5 + button;
-            auto transition = transition_c::create(g_active_palette->colors[0]);
+            auto color = machine_c::shared().active_palette()->colors[0];
+            auto transition = transition_c::create(color);
             manager.replace(new cglevel_scene_c(manager, level), transition);
             return;
         }

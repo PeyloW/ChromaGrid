@@ -23,19 +23,11 @@ private:
 };
 
 scene_manager_c::scene_manager_c(size_s screen_size) :
-    _super_token(super(0)),
-    _old_blitter_mode(blitter_mode(-1)),
     vbl(timer_c::vbl),
     clock(timer_c::clock),
     mouse(rect_s(point_s(), TOYBOX_SCREEN_SIZE_DEFAULT))
 {
-#ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
-    blitter_mode(0);
-    _old_conterm = *(uint8_t*)0x484;
-    *(uint8_t*)0x484 = 0;
-#   endif
-#endif
+    machine_c::shared();
     _overlay_scene = nullptr;
     _active_physical_screen = 0;
     _transition = nullptr;
@@ -45,23 +37,9 @@ scene_manager_c::scene_manager_c(size_s screen_size) :
     srand48(time(nullptr));
 }
 
-scene_manager_c::~scene_manager_c() {
-#ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
-    *(uint8_t*)0x484 = _old_conterm;
-#   endif
-#endif
-    blitter_mode(_old_blitter_mode);
-    super(_super_token);
-}
-
 #define DEBUG_NO_SET_SCREEN 0
 
 void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_c *transition) {
-#if !DEBUG_NO_SET_SCREEN
-    int16_t old_mode = set_screen(nullptr, nullptr, 0);
-#endif
-
     set_overlay_scene(overlayscene);
     push(rootscene, transition);
 
@@ -119,13 +97,10 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
         }
         debug_cpu_color(DEBUG_CPU_DONE);
         timer_c::with_paused_timers([this, &physical_screen] {
-            physical_screen.set_active();
+            machine_c::shared().set_active_image(&physical_screen.image());
             _active_physical_screen = (_active_physical_screen + 1) & 0x1;
         });
     }
-#if !DEBUG_NO_SET_SCREEN
-    (void)set_screen(nullptr, nullptr, old_mode);
-#endif
 }
 
 void scene_manager_c::set_overlay_scene(scene_c *overlay_scene) {

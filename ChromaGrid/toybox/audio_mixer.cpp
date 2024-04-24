@@ -95,6 +95,9 @@ void audio_mixer_c::stop_all() {
     }
 }
 
+#   if TOYBOX_TARGET_ATARI
+    extern "C" void g_microwire_write(uint16_t value);
+#   endif
 
 audio_mixer_c::audio_mixer_c() : _active_music(nullptr), _active_track(0) {
 #ifdef __M68000__

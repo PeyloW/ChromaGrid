@@ -79,7 +79,8 @@ public:
                 return;
             case 1: {
                 auto next_level = (_results.score == level_result_t::FAILED_SCORE) ? _level_num: (_level_num + 1) % rsc.levels.size();
-                auto transition = transition_c::create(g_active_palette->colors[0]);
+                auto color = machine_c::shared().active_palette()->colors[0];
+                auto transition = transition_c::create(color);
                 manager.replace(new cglevel_scene_c(manager, next_level), transition);
                 return;
             }
@@ -157,7 +158,8 @@ void cglevel_scene_c::update_background(screen_c &screen, int ticks) {
             manager.pop();
             return;
         case 1: {
-            auto transition = transition_c::create(g_active_palette->colors[0]);
+            auto color = machine_c::shared().active_palette()->colors[0];
+            auto transition = transition_c::create(color);
             if (_level_num == -1) {
                 manager.replace(new cglevel_scene_c(manager, _recipe), transition);
             } else {
