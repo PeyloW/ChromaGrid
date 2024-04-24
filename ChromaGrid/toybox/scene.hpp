@@ -8,7 +8,8 @@
 #ifndef scene_hpp
 #define scene_hpp
 
-#include "system.hpp"
+#include "timer.hpp"
+#include "input.hpp"
 #include "screen.hpp"
 #include "vector.hpp"
 
@@ -67,8 +68,8 @@ namespace toybox {
         void pop(transition_c *transition  = transition_c::create(canvas_c::random, 0), int count = 1);
         void replace(scene_c *scene, transition_c *transition = transition_c::create(canvas_c::random));
         
-        timer_c vbl;
-        timer_c clock;
+        timer_c &vbl;
+        timer_c &clock;
         mouse_c mouse;
         
         screen_c &background_screen() { return _screens.back(); }

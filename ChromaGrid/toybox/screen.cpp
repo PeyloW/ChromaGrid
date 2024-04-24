@@ -6,7 +6,7 @@
 //
 
 #include "screen.hpp"
-#include "system.hpp"
+#include "machine.hpp"
 
 using namespace toybox;
 

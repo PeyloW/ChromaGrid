@@ -6,6 +6,7 @@
 //
 
 #include "scene.hpp"
+#include "machine.hpp"
 
 using namespace toybox;
 

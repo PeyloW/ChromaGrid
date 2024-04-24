@@ -6,7 +6,7 @@
 //
 
 #include "game.hpp"
-#include "system.hpp"
+#include "machine.hpp"
 
 extern "C" {
 #include <ext.h>

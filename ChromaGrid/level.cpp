@@ -8,6 +8,7 @@
 #include "level.hpp"
 #include "resources.hpp"
 #include "audio_mixer.hpp"
+#include "system_helpers.hpp"
 
 typedef enum __packed {
     no_changes = 0,

@@ -6,6 +6,7 @@
 //
 
 #include "game.hpp"
+#include "machine.hpp"
 
 #define MAX_ORBS 50
 #define MAX_TIME (5*60)

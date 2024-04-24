@@ -6,7 +6,11 @@
 //
 
 #include "cincludes.hpp"
+#include "memory.hpp"
 
+template<>
+toystd::detail::shared_count_t::allocator::type toystd::detail::shared_count_t::allocator::first_block = nullptr;
+ 
 void *operator new (size_t n) {
     return malloc(n);
 }

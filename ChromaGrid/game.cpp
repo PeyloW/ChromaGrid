@@ -6,7 +6,7 @@
 //
 
 #include "game.hpp"
-#include "system.hpp"
+#include "machine.hpp"
 #include "resources.hpp"
 #include "blitter.hpp"
 #include "audio_mixer.hpp"

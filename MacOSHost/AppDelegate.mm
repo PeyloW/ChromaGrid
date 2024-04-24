@@ -9,6 +9,7 @@
 #import "game.hpp"
 #import "image.hpp"
 #import "system_host.hpp"
+#include "machine.hpp"
 
 #import <Foundation/Foundation.h>
 

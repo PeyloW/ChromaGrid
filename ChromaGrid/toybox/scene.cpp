@@ -6,6 +6,8 @@
 //
 
 #include "scene.hpp"
+#include "machine.hpp"
+#include "system_helpers.hpp"
 
 using namespace toybox;
 
@@ -23,8 +25,8 @@ private:
 };
 
 scene_manager_c::scene_manager_c(size_s screen_size) :
-    vbl(timer_c::vbl),
-    clock(timer_c::clock),
+    vbl(timer_c::shared(timer_c::vbl)),
+    clock(timer_c::shared(timer_c::clock)),
     mouse(rect_s(point_s(), TOYBOX_SCREEN_SIZE_DEFAULT))
 {
     machine_c::shared();

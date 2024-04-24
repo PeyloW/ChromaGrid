@@ -20,7 +20,8 @@ CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
 LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format
 
-TOYBOX_OBJECTS=system.o system_m68k.o cpp_runtime.o
+TOYBOX_OBJECTS=cpp_runtime.o
+TOYBOX_OBJECTS+=machine.o timer.o input.o system_m68k.o
 TOYBOX_OBJECTS+=stream.o iffstream.o
 TOYBOX_OBJECTS+=palette.o image.o tileset.o font.o
 TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o canvas_imp.o

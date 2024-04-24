@@ -11,7 +11,7 @@
 #include "cincludes.hpp"
 #include "types.hpp"
 #include "canvas.hpp"
-#include "system.hpp"
+#include "input.hpp"
 #include "iffstream.hpp"
 #include "memory.hpp"
 

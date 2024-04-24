@@ -7,6 +7,7 @@
 
 #include "game.hpp"
 #include "utility.hpp"
+#include "machine.hpp"
 
 cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) : 
     cggame_scene_c(manager),

@@ -10,7 +10,7 @@
 
 #include "types.hpp"
 #include "resources.hpp"
-#include "system.hpp"
+#include "system_helpers.hpp"
 
 struct cgbutton_t : public nocopy_c {
     typedef enum __packed {

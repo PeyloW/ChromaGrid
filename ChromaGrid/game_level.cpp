@@ -6,6 +6,7 @@
 //
 
 #include "game.hpp"
+#include "machine.hpp"
 
 
 class cglevel_ended_scene_c : public cggame_scene_c {

@@ -38,7 +38,6 @@
 		A6A0EE422BC059A6005B6ED3 /* utility.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6E484E02BAE6D49004CCA7D /* utility.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69612D72BB1BE9F008ACD05 /* forward_list.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE442BC059DC005B6ED3 /* palette.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4CA2B6FEFE500EBA43D /* palette.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6A0EE452BC059DC005B6ED3 /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4EB2B791FF100EBA43D /* system.cpp */; };
 		A6A0EE462BC059DC005B6ED3 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E52B92459500FF2E57 /* scene.cpp */; };
 		A6A0EE482BC059DC005B6ED3 /* dirtymap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484DC2BA92889004CCA7D /* dirtymap.cpp */; };
 		A6A0EE4B2BC059DC005B6ED3 /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C92B6FEFE500EBA43D /* palette.cpp */; };
@@ -47,7 +46,7 @@
 		A6A0EE4F2BC059DC005B6ED3 /* canvas_stencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */; };
 		A6A0EE502BC059DC005B6ED3 /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5002B82983A00EBA43D /* audio.cpp */; };
 		A6A0EE512BC059F2005B6ED3 /* types.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4F42B79253A00EBA43D /* types.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6A0EE522BC059F4005B6ED3 /* system.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4EC2B791FF100EBA43D /* system.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6A0EE522BC059F4005B6ED3 /* system_helpers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE532BC059F9005B6ED3 /* system_host.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4FA2B793CEF00EBA43D /* system_host.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE5202B8BB71E00EBA43D /* blitter.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE562BC05A31005B6ED3 /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
@@ -83,6 +82,12 @@
 		A6B6E1922BD4308C00703630 /* audio_mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1902BD4308C00703630 /* audio_mixer.cpp */; };
 		A6B6E1932BD4308C00703630 /* audio_mixer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1912BD4308C00703630 /* audio_mixer.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B6E1952BD44B2B00703630 /* config.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1942BD44B2B00703630 /* config.hpp */; };
+		A6B6E1982BD94C9200703630 /* machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1962BD94C9200703630 /* machine.cpp */; };
+		A6B6E1992BD94C9200703630 /* machine.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1972BD94C9200703630 /* machine.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B6E19C2BD94D3C00703630 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E19A2BD94D3C00703630 /* timer.cpp */; };
+		A6B6E19D2BD94D3C00703630 /* timer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E19B2BD94D3C00703630 /* timer.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6B6E1A02BD94F3700703630 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E19E2BD94F3700703630 /* input.cpp */; };
+		A6B6E1A12BD94F3700703630 /* input.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E19F2BD94F3700703630 /* input.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CD2BB9D02800D260C2 /* levels1.dat */; };
 		A6D012D02BBA317D00D260C2 /* shimmer.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012CF2BBA317D00D260C2 /* shimmer.iff */; };
 		A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6D012F02BBCE71800D260C2 /* emptyt.iff */; };
@@ -169,8 +174,7 @@
 		A69AE4DC2B70693500EBA43D /* backgrnd.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgrnd.iff; sourceTree = "<group>"; };
 		A69AE4E42B72851700EBA43D /* test.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.iff; sourceTree = "<group>"; };
 		A69AE4E82B77FED300EBA43D /* cursor.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = cursor.iff; sourceTree = "<group>"; };
-		A69AE4EB2B791FF100EBA43D /* system.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
-		A69AE4EC2B791FF100EBA43D /* system.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system.hpp; sourceTree = "<group>"; };
+		A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_helpers.hpp; sourceTree = "<group>"; };
 		A69AE4EF2B79202A00EBA43D /* system_m68k.sx */ = {isa = PBXFileReference; lastKnownFileType = text; path = system_m68k.sx; sourceTree = "<group>"; };
 		A69AE4F42B79253A00EBA43D /* types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
 		A69AE4FA2B793CEF00EBA43D /* system_host.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_host.hpp; sourceTree = "<group>"; };
@@ -221,6 +225,12 @@
 		A6B6E1902BD4308C00703630 /* audio_mixer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio_mixer.cpp; sourceTree = "<group>"; };
 		A6B6E1912BD4308C00703630 /* audio_mixer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio_mixer.hpp; sourceTree = "<group>"; };
 		A6B6E1942BD44B2B00703630 /* config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
+		A6B6E1962BD94C9200703630 /* machine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = machine.cpp; sourceTree = "<group>"; };
+		A6B6E1972BD94C9200703630 /* machine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = machine.hpp; sourceTree = "<group>"; };
+		A6B6E19A2BD94D3C00703630 /* timer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
+		A6B6E19B2BD94D3C00703630 /* timer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = timer.hpp; sourceTree = "<group>"; };
+		A6B6E19E2BD94F3700703630 /* input.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = input.cpp; sourceTree = "<group>"; };
+		A6B6E19F2BD94F3700703630 /* input.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = input.hpp; sourceTree = "<group>"; };
 		A6D012CD2BB9D02800D260C2 /* levels1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels1.dat; sourceTree = "<group>"; };
 		A6D012CF2BBA317D00D260C2 /* shimmer.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = shimmer.iff; sourceTree = "<group>"; };
 		A6D012F02BBCE71800D260C2 /* emptyt.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = emptyt.iff; sourceTree = "<group>"; };
@@ -433,9 +443,14 @@
 			children = (
 				A6E484DF2BAE6C80004CCA7D /* toystd */,
 				A69AE4F42B79253A00EBA43D /* types.hpp */,
-				A69AE4EC2B791FF100EBA43D /* system.hpp */,
+				A6B6E1972BD94C9200703630 /* machine.hpp */,
+				A6B6E1962BD94C9200703630 /* machine.cpp */,
+				A6B6E19B2BD94D3C00703630 /* timer.hpp */,
+				A6B6E19A2BD94D3C00703630 /* timer.cpp */,
+				A6B6E19F2BD94F3700703630 /* input.hpp */,
+				A6B6E19E2BD94F3700703630 /* input.cpp */,
+				A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */,
 				A69AE4FA2B793CEF00EBA43D /* system_host.hpp */,
-				A69AE4EB2B791FF100EBA43D /* system.cpp */,
 				A69AE4EF2B79202A00EBA43D /* system_m68k.sx */,
 				A69AE4CA2B6FEFE500EBA43D /* palette.hpp */,
 				A69AE4C92B6FEFE500EBA43D /* palette.cpp */,
@@ -496,12 +511,13 @@
 			files = (
 				A6A0EE3F2BC059A6005B6ED3 /* vector.hpp in Headers */,
 				A6B6E18F2BD04B6100703630 /* screen.hpp in Headers */,
-				A6A0EE522BC059F4005B6ED3 /* system.hpp in Headers */,
+				A6A0EE522BC059F4005B6ED3 /* system_helpers.hpp in Headers */,
 				A6B6E1932BD4308C00703630 /* audio_mixer.hpp in Headers */,
 				A6A0EE402BC059A6005B6ED3 /* algorithm.hpp in Headers */,
 				A6A0EE412BC059A6005B6ED3 /* static_allocator.hpp in Headers */,
 				A6A0EE442BC059DC005B6ED3 /* palette.hpp in Headers */,
 				A6A0EE422BC059A6005B6ED3 /* utility.hpp in Headers */,
+				A6B6E19D2BD94D3C00703630 /* timer.hpp in Headers */,
 				A6A0EE8A2BC8D729005B6ED3 /* dirtymap.hpp in Headers */,
 				A6B6E1952BD44B2B00703630 /* config.hpp in Headers */,
 				A6A0EE972BCDAE0A005B6ED3 /* stream.hpp in Headers */,
@@ -512,6 +528,8 @@
 				A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */,
 				A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */,
 				A6A0EE572BC05A39005B6ED3 /* audio.hpp in Headers */,
+				A6B6E1A12BD94F3700703630 /* input.hpp in Headers */,
+				A6B6E1992BD94C9200703630 /* machine.hpp in Headers */,
 				A6A0EE582BC05A3E005B6ED3 /* scene.hpp in Headers */,
 				A6A0EE3C2BC05999005B6ED3 /* cincludes.hpp in Headers */,
 				A6A0EE872BC78FE8005B6ED3 /* canvas.hpp in Headers */,
@@ -711,7 +729,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A6B6E18E2BD04B6100703630 /* screen.cpp in Sources */,
-				A6A0EE452BC059DC005B6ED3 /* system.cpp in Sources */,
 				A6A0EE8E2BC8DACA005B6ED3 /* image.cpp in Sources */,
 				A6A0EE922BC8DBA2005B6ED3 /* font.cpp in Sources */,
 				A6A0EE462BC059DC005B6ED3 /* scene.cpp in Sources */,
@@ -721,10 +738,13 @@
 				A6A0EE4D2BC059DC005B6ED3 /* canvas_imp.cpp in Sources */,
 				A6A0EE982BCDAE0A005B6ED3 /* stream.cpp in Sources */,
 				A6A0EE4E2BC059DC005B6ED3 /* scene_transition.cpp in Sources */,
+				A6B6E19C2BD94D3C00703630 /* timer.cpp in Sources */,
 				A6A0EEA02BCDC3DA005B6ED3 /* iffstream.cpp in Sources */,
 				A6B6E1922BD4308C00703630 /* audio_mixer.cpp in Sources */,
+				A6B6E1A02BD94F3700703630 /* input.cpp in Sources */,
 				A6A0EE4F2BC059DC005B6ED3 /* canvas_stencil.cpp in Sources */,
 				A6A0EE502BC059DC005B6ED3 /* audio.cpp in Sources */,
+				A6B6E1982BD94C9200703630 /* machine.cpp in Sources */,
 				A6A0EE562BC05A31005B6ED3 /* blitter.cpp in Sources */,
 				A6A0EE3E2BC059A6005B6ED3 /* cpp_runtime.cpp in Sources */,
 				A6A0EE882BC78FE8005B6ED3 /* canvas.cpp in Sources */,
