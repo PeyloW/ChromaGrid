@@ -12,15 +12,16 @@
 using namespace toybox;
 
 image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette) {
-    memset(this, 0, sizeof(image_c));
     _palette = palette;
-    this->_size = size;
+    _size = size;
     _line_words = ((size.width + 15) / 16);
     uint16_t bitmap_words = (_line_words * size.height) << 2;
     uint16_t mask_bytes = masked ? (_line_words * size.height) : 0;
     _bitmap.reset(reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2)));
     if (masked) {
         _maskmap = _bitmap + bitmap_words;
+    } else {
+        _maskmap = nullptr;
     }
 }
 
@@ -162,9 +163,10 @@ static void image_read_packbits(iffstream_c &file, uint16_t line_words, int heig
     }
 }
 
-image_c::image_c(const char *path, bool masked, int masked_cidx) {
-    memset(this, 0, sizeof(image_c));
-
+image_c::image_c(const char *path, int masked_cidx) :
+    _palette(nullptr), _bitmap(nullptr), _maskmap(nullptr), _size(), _line_words(0)
+{
+    bool masked = false;
     iffstream_c file(path);
     iff_group_s form;
     if (!file.good() || !file.first(IFF_FORM, IFF_ILBM, form)) {
@@ -180,11 +182,19 @@ image_c::image_c(const char *path, bool masked, int masked_cidx) {
             }
             _size = bmhd.size;
             assert(bmhd.plane_count == 4);
-            assert(bmhd.mask_type < mask_type_lasso); // Lasso not supported
-            assert(bmhd.compression_type < compression_type_vertical); // DeluxePain ST format not supported
-            if (masked_cidx != MASKED_CIDX && masked) {
+            if (masked_cidx != MASKED_CIDX) {
+                assert(bmhd.mask_type != mask_type_plane);
                 bmhd.mask_color = masked_cidx;
+                masked = true;
+            } else if (bmhd.mask_type == mask_type_color) {
+                masked_cidx = bmhd.mask_color;
+                masked = true;
+            } else if (bmhd.mask_type == mask_type_plane) {
+                masked = true;
+            } else {
+                assert(bmhd.mask_type == mask_type_none);
             }
+            assert(bmhd.compression_type < compression_type_vertical); // DeluxePain ST format not supported
         } else if (iff_id_match(chunk.id, IFF_CMAP)) {
             uint8_t cmpa[48];
             if (!file.read(cmpa, 48)) {
@@ -219,7 +229,7 @@ image_c::image_c(const char *path, bool masked, int masked_cidx) {
                 } else if (bmhd.mask_type == mask_type_color) {
                     memset(_maskmap, -1, mask_words << 1);
                     canvas_c::remap_table_c table;
-                    table[masked_cidx] = MASKED_CIDX;
+                    table[bmhd.mask_color] = MASKED_CIDX;
                     canvas_c canvas(*this);
                     canvas.remap_colors(table, rect_s(point_s(), _size));
                 }

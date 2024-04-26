@@ -16,11 +16,14 @@ namespace toybox {
     using namespace toystd;
     
     
-    class font_c : public nocopy_c {
+    class font_c : public asset_c {
     public:
         font_c(const shared_ptr_c<image_c> &image, size_s character_size);
         font_c(const shared_ptr_c<image_c> &image, size_s max_size, uint8_t space_width, uint8_t lead_req_space, uint8_t trail_rew_space);
-        ~font_c() = default;
+        virtual ~font_c() {};
+        
+        type_e asset_type() const { return font; }
+        size_t memory_cost() const { return _image->memory_cost(); }
         
         inline const shared_ptr_c<image_c> &image() const {
             return _image;

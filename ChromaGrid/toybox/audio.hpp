@@ -9,6 +9,7 @@
 #define audio_hpp
 
 #include "cincludes.hpp"
+#include "asset.hpp"
 #include "types.hpp"
 #include "memory.hpp"
 
@@ -16,11 +17,14 @@ namespace toybox {
     
     using namespace toystd;
     
-    class sound_c : public nocopy_c {
+    class sound_c : public asset_c {
         friend class audio_mixer_c;
     public:
         sound_c(const char *path);
-        ~sound_c() = default;
+        virtual ~sound_c() {};
+        
+        type_e asset_type() const { return sound; }
+        size_t memory_cost() const { return _length; }
         
         const int8_t *sample() const { return _sample.get(); }
         uint32_t length() const { return _length; }
@@ -33,12 +37,15 @@ namespace toybox {
     };
     
 #if TOYBOX_TARGET_ATARI
-    class music_c : public nocopy_c {
+    class music_c : public asset_c {
         friend class audio_mixer_c;
     public:
         music_c(const char *path);
-        ~music_c() = default;
-                
+        virtual ~music_c() {};
+
+        type_e asset_type() const { return music; }
+        size_t memory_cost() const { return _length; }
+        
         const char *title() const { return _title; }
         const char *composer() const { return _composer; }
         int track_count() const { return _track_count; }
@@ -46,6 +53,7 @@ namespace toybox {
         
     private:
         unique_ptr_c<uint8_t> _sndh;
+        size_t _length;
         char *_title;
         char *_composer;
         int _track_count;

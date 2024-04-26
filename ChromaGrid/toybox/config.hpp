@@ -22,6 +22,8 @@
 #   define TOYBOX_TARGET_AMIGA 0
 #endif
 
+#define TOYBOX_ASSET_COUNT 32
+
 #ifndef TOYBOX_IMAGE_SUPPORTS_SAVE
 #   ifdef __M68000__
 #       define TOYBOX_IMAGE_SUPPORTS_SAVE 0

@@ -10,12 +10,13 @@
 
 #include "palette.hpp"
 #include "memory.hpp"
+#include "asset.hpp"
 
 namespace toybox {
     
     using namespace toystd;
     
-    class image_c : public nocopy_c {
+    class image_c : public asset_c {
         friend class canvas_c;
     public:
         static const int MASKED_CIDX = -1;
@@ -25,8 +26,11 @@ namespace toybox {
         } bitplane_layout_e;
         
         image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette);
-        image_c(const char *path, bool masked, int masked_cidx = MASKED_CIDX);
-        ~image_c() = default;
+        image_c(const char *path, int masked_cidx = MASKED_CIDX);
+        virtual ~image_c() {};
+        
+        type_e asset_type() const { return image; }
+        size_t memory_cost() const { return _size.width * _size.height / 2; }
 
 #if TOYBOX_IMAGE_SUPPORTS_SAVE
         bool save(const char *path, bool compressed, bool masked, int masked_cidx = MASKED_CIDX);

@@ -130,6 +130,7 @@ music_c::music_c(const char *path) {
     file.seek(0, toystd::fstream_c::beg);
     
     _sndh.reset((uint8_t *)malloc(size));
+    _length = size;
     size_t read = file.read(_sndh.get(), size);
     assert(read == 1);
     assert(memcmp(_sndh + 12, "SNDH", 4) == 0);
