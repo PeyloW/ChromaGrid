@@ -37,6 +37,8 @@ cgresources_c& cgresources_c::shared() {
 static const char *data_path(const char *file, const char *m = nullptr) {
     static char buffer[256];
     if (m) {
+        // TODO: Crashes on target, not host?
+        //tbout << m << endl;
         printf("%s\n\r", m);
     }
 #ifdef __M68000__
@@ -127,10 +129,12 @@ cgresources_c::cgresources_c() :
 
 void cgresources_c::load_levels() {
     int i = 1;
+    char buf[14];
+    strstream_c str(buf, 14);
     while (levels.size() < 45) {
-        char buf[14];
-        sprintf(buf, "levels%d.dat", i++);
-        iffstream_c iff(data_path(buf), fstream_c::input);
+        str.reset();
+        str << "levels" << i++ << ".dat" << ends;
+        iffstream_c iff(data_path(str.str()), fstream_c::input);
         if (!iff.good()) {
             break;
         }

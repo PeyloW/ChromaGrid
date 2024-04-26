@@ -39,20 +39,20 @@ void blitter_s::start(bool hog) {
     const auto write_dst = [this, &buffer] (const uint16_t mask) {
         uint16_t src;
         switch (HOP) {
-            case hop_one: src = 0xffff; break;
-            case hop_halftone: src = halftone(); break;
-            case hop_src: src = buffer >> get_skew(); break;
-            case hop_src_and_halftone: src = (buffer >> get_skew()) & halftone(); break;
+            case hop_e::one: src = 0xffff; break;
+            case hop_e::halftone: src = halftone(); break;
+            case hop_e::src: src = buffer >> get_skew(); break;
+            case hop_e::src_and_halftone: src = (buffer >> get_skew()) & halftone(); break;
             default: assert(0); break;
         }
         const uint16_t dst = *pDst;
         uint16_t opd;
         switch (LOP) {
-            case lop_zero: opd = 0; break;
-            case lop_one: opd = 0xffff; break;
-            case lop_src: opd = src; break;
-            case lop_src_or_dst: opd = src | dst; break;
-            case lop_notsrc_and_dst: opd = ~src & dst; break;
+            case lop_e::zero: opd = 0; break;
+            case lop_e::one: opd = 0xffff; break;
+            case lop_e::src: opd = src; break;
+            case lop_e::src_or_dst: opd = src | dst; break;
+            case lop_e::notsrc_and_dst: opd = ~src & dst; break;
             default: assert(0); opd = 0; break;
         }
         if (mask == 0xffff) {

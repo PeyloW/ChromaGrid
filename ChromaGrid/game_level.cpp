@@ -48,8 +48,9 @@ public:
 
         if (_level_num != cglevel_scene_c::TEST_LEVEL) {
             char buf[20];
-            const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level %d Failed" : "Level %d Completed";
-            sprintf(buf, title, _level_num + 1);
+            strstream_c str(buf, 20);
+            const bool failed = _results.score == level_result_t::FAILED_SCORE;
+            str << "Level " << _level_num + 1 << (failed ? " Failed" : " Completed") << ends;
             canvas.draw(rsc.font, buf, point_s(96, 32));
         } else {
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
@@ -58,15 +59,19 @@ public:
         
         if (_results.score != level_result_t::FAILED_SCORE) {
             char buf[32];
+            strstream_c str(buf, 32);
             uint16_t time_score, orbs_score;
             _results.subscores(orbs_score, time_score);
-            sprintf(buf, "Time: %d x 10 = %d", _results.time, time_score);
+            str << "Time: " << _results.time << " x 10 = " << time_score << ends;
             canvas.draw(rsc.font, buf, point_s(96, 64));
-            sprintf(buf, "Orbs: %d x 100 = %d", _results.orbs[0] + _results.orbs[1], orbs_score);
+            str.reset();
+            str << "Orbs: " << _results.orbs[0] + _results.orbs[1] << " x 100 = " << orbs_score << ends;
             canvas.draw(rsc.font, buf, point_s(96, 84));
-            sprintf(buf, "Total: %d pts", _results.score);
+            str.reset();
+            str << "Total: " << _results.score << " pts" << ends;
             canvas.draw(rsc.font, buf, point_s(96, 114));
-            sprintf(buf, "Moves: %d", _results.moves);
+            str.reset();
+            str << "Moves: " << _results.moves << ends;
             canvas.draw(rsc.font, buf, point_s(96, 144));
         }
     }
@@ -130,13 +135,17 @@ void cglevel_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
     canvas.draw_aligned(rsc.background, point_s());
     char buffer[256] = {0};
+    strstream_c str(buffer, 256);
     if (_level_num == TEST_LEVEL) {
-        sprintf(buffer, "Testing Level");
-    } else if (rsc.levels[_level_num]->text) {
-        sprintf(buffer, "Level %d: %s", _level_num + 1, rsc.levels[_level_num]->text);
+        str << "Testing level";
     } else {
-        sprintf(buffer, "Level %d", _level_num + 1);
+        str << "Level " << _level_num + 1;
+        auto text = rsc.levels[_level_num]->text;
+        if (text) {
+            str << ": " << text;
+        }
     }
+    str << ends;
     canvas.draw(rsc.small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
 
     _menu_buttons.draw_all(canvas);

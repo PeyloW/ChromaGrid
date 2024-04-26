@@ -17,29 +17,29 @@ namespace toybox {
 
 #if TOYBOX_TARGET_ATARI
     
-    typedef enum {
-        hop_one = 0,
-        hop_halftone = 1,
-        hop_src = 2,
-        hop_src_and_halftone = 3
-    } hop_e;
-    
-    typedef enum {
-        lop_zero = 0,
-        lop_src = 3,
-        lop_notsrc_and_dst = 4,
-        lop_src_or_dst = 7,
-        lop_one = 15
-    } lop_e;
-    
-    static const uint8_t cgblitter_skew_mask = 0x0f;
-    static const uint8_t cgblitter_nfsr_bit = (1<<6);
-    static const uint8_t cgblitter_fxsr_bit = (1<<7);
-    
-    static const uint8_t cgblitter_hog_bit = (1<<6);
-    static const uint8_t cgblitter_busy_bit = (1<<7);
-    
     struct blitter_s {
+        enum class hop_e : uint8_t {
+            one = 0,
+            halftone = 1,
+            src = 2,
+            src_and_halftone = 3
+        };
+        
+        enum class lop_e : uint8_t {
+            zero = 0,
+            src = 3,
+            notsrc_and_dst = 4,
+            src_or_dst = 7,
+            one = 15
+        };
+
+        static const uint8_t skew_mask = 0x0f;
+        static const uint8_t nfsr_bit = (1<<6);
+        static const uint8_t fxsr_bit = (1<<7);
+        
+        static const uint8_t hog_bit = (1<<6);
+        static const uint8_t busy_bit = (1<<7);
+
         uint16_t halftoneRAM[16];
         int16_t srcIncX;
         int16_t srcIncY;
@@ -50,19 +50,19 @@ namespace toybox {
         uint16_t *pDst;
         uint16_t countX;
         uint16_t countY;
-        uint8_t  HOP;
-        uint8_t  LOP;
+        hop_e  HOP;
+        lop_e  LOP;
         volatile uint8_t  mode;
         uint8_t  skew;
         
         __forceinline uint8_t get_skew() const {
-            return skew & cgblitter_skew_mask;
+            return skew & skew_mask;
         }
         __forceinline bool is_nfsr() const {
-            return (skew & cgblitter_nfsr_bit) != 0;
+            return (skew & nfsr_bit) != 0;
         }
         __forceinline bool is_fxsr() const {
-            return (skew & cgblitter_fxsr_bit) != 0;
+            return (skew & fxsr_bit) != 0;
         }
         __forceinline uint16_t halftone() const {
             return halftoneRAM[mode & 0xf];

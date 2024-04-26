@@ -105,11 +105,18 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 {
     _menu_buttons.add_button("Back");
     
-    static char title_buf[3 * 45];
+    static char title_buf[3 * 45] = { 0 };
+    if (!title_buf[0]) {
+        strstream_c str(title_buf, 3 * 45);
+        for (int i = 1; i <= rsc.level_results.size(); i++) {
+            str << i << ends;
+        }
+    }
     int index = 0;
     point_s origin = point_s(16, 40);
     const size_s size = size_s(26, 14);
     bool disable = false;
+    char *title = title_buf;
     for (const auto &result : rsc.level_results) {
         int col = index % 5;
         if (col == 0) {
@@ -117,9 +124,8 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
             origin.y += 14 + 2;
         }
         auto &button_group = _select_button_groups.back();
-        auto title = title_buf + index * 3;
-        sprintf(title, "%d", index + 1);
         button_group.add_button(title, true);
+        title += strlen(title) + 1;
 
         button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
 #ifndef ALLOW_FULL_LEVEL_SELECT

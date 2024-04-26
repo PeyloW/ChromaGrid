@@ -11,10 +11,10 @@
 using namespace toybox;
 
 static const uint8_t pBlitter_skewflags[4] = {
-    cgblitter_nfsr_bit,
-    cgblitter_fxsr_bit,
+    blitter_s::nfsr_bit,
+    blitter_s::fxsr_bit,
     0,
-    cgblitter_nfsr_bit|cgblitter_fxsr_bit,
+    blitter_s::nfsr_bit|blitter_s::fxsr_bit,
 };
 
 static const uint16_t pBlitter_mask[17] = {
@@ -69,9 +69,9 @@ void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
     // Operation flags
     if (_stencil) {
         set_active_stencil(blitter, _stencil);
-        blitter->HOP = hop_halftone;
+        blitter->HOP = blitter_s::hop_e::halftone;
     } else {
-        blitter->HOP = hop_one;
+        blitter->HOP = blitter_s::hop_e::one;
     }
     blitter->skew = 0;
     
@@ -79,9 +79,9 @@ void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
     // Color 4 planes
     for (int i = 4; --i != -1; ) {
         if ((color & 1) == 0) {
-            blitter->LOP = lop_notsrc_and_dst;
+            blitter->LOP = blitter_s::lop_e::notsrc_and_dst;
         } else {
-            blitter->LOP = lop_src_or_dst;
+            blitter->LOP = blitter_s::lop_e::src_or_dst;
         }
         blitter->pDst   = dts_bitmap;
         blitter->countY = rect.size.height;
@@ -131,8 +131,8 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     // Operation flags
     if (_stencil) {
         set_active_stencil(blitter, _stencil);
-        blitter->HOP = hop_halftone;
-        blitter->LOP = lop_notsrc_and_dst;
+        blitter->HOP = blitter_s::hop_e::halftone;
+        blitter->LOP = blitter_s::lop_e::notsrc_and_dst;
         blitter->mode = at.y & 0xf;
         blitter->start();
 
@@ -141,11 +141,11 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
         blitter->countX  = (uint16_t)(copy_words) * 4;
         blitter->countY = rect.size.height;
 
-        blitter->HOP = hop_src_and_halftone;
-        blitter->LOP = lop_src_or_dst;
+        blitter->HOP = blitter_s::hop_e::src_and_halftone;
+        blitter->LOP = blitter_s::lop_e::src_or_dst;
     } else {
-        blitter->HOP = hop_src;
-        blitter->LOP = lop_src;
+        blitter->HOP = blitter_s::hop_e::src;
+        blitter->LOP = blitter_s::lop_e::src;
     }
     
     blitter->start();
@@ -182,9 +182,9 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
         end_mask_0 &= end_mask_2;
         end_mask_2 = end_mask_0;
         if (src_words_dec_1 != 0) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
         } else if ((rect.origin.x & 15) > (at.x & 15)) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
             blitter->srcIncY -= 8;
         }
     } else {
@@ -205,8 +205,8 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = hop_src;
-    blitter->LOP = lop_src;
+    blitter->HOP = blitter_s::hop_e::src;
+    blitter->LOP = blitter_s::lop_e::src;
     blitter->skew = skew;
 
     // Move 4 planes
@@ -253,9 +253,9 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
         end_mask_0 &= end_mask_2;
         end_mask_2 = end_mask_0;
         if (src_words_dec_1 != 0) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
         } else if ((rect.origin.x & 15) > (at.x & 15)) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
             blitter->srcIncY -= 2;
         }
     } else {
@@ -276,8 +276,8 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = hop_src;
-    blitter->LOP = lop_notsrc_and_dst;
+    blitter->HOP = blitter_s::hop_e::src;
+    blitter->LOP = blitter_s::lop_e::notsrc_and_dst;
     blitter->skew = skew;
 
     // Mask 4 planes
@@ -300,7 +300,7 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
     dts_bitmap -= 4;
     
     // Update operation flags
-    blitter->LOP = lop_src_or_dst;
+    blitter->LOP = blitter_s::lop_e::src_or_dst;
 
     // Draw 4 planes
     for (int i = 4; --i != -1; ) {
@@ -346,9 +346,9 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
         end_mask_0 &= end_mask_2;
         end_mask_2 = end_mask_0;
         if (src_words_dec_1 != 0) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
         } else if ((rect.origin.x & 15) > (at.x & 15)) {
-            skew |= cgblitter_fxsr_bit;
+            skew |= blitter_s::fxsr_bit;
             blitter->srcIncY -= 2;
         }
     } else {
@@ -369,15 +369,15 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
     blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
     
     // Operation flags
-    blitter->HOP = hop_src;
+    blitter->HOP = blitter_s::hop_e::src;
     blitter->skew = skew;
 
     // Color 4 planes
     for (int i = 4; --i != -1; ) {
         if ((color & 1) == 0) {
-            blitter->LOP = lop_notsrc_and_dst;
+            blitter->LOP = blitter_s::lop_e::notsrc_and_dst;
         } else {
-            blitter->LOP = lop_src_or_dst;
+            blitter->LOP = blitter_s::lop_e::src_or_dst;
         }
         blitter->pDst   = dts_bitmap;
         blitter->pSrc   = src_maskmap;

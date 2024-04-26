@@ -82,6 +82,7 @@ private:
     void add_buttons() {
         bool save = _recipe != nullptr;
         static char buf[4*10];
+        strstream_c str(buf, 4 * 10);
         _menu_buttons.add_button("Cancel");
         char *start = buf;
         char *prev_start;
@@ -90,11 +91,11 @@ private:
             bool empty = rsc.user_levels[level_idx]->empty();
             int pair_idx = level_idx & 0x1;
             
+            start = str.str() + str.tell();
             if (save && !empty) {
-                sprintf(start, "#%1d", level_idx + 1);
-            } else {
-                sprintf(start, "%1d", level_idx + 1);
+                str << '#';
             }
+            str << level_idx + 1 << ends;
             if (pair_idx == 1) {
                 _menu_buttons.add_button_pair(prev_start, start);
                 if (!save) {
@@ -107,7 +108,6 @@ private:
                 }
             }
             prev_start = start;
-            start += 4;
         }
     }
     cgbutton_group_c<11> _menu_buttons;

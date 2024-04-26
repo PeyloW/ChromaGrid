@@ -37,31 +37,37 @@ void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
     }
     
     int index = 0;
+    char buf[12];
+    strstream_c str(buf, 12);
     for (auto &result : rsc.level_results) {
-        char buf[12];
         int col = index % 3;
         int row = index / 3;
+        str.reset();
+        str.fill(' ');
+        str.width(2);
+        str << index + 1 << ':';
         if (result.score == 0) {
             if (_scoring == time) {
-                sprintf(buf, "%2d: -:--", index + 1);
+                str << " -:--" << ends;
             } else {
-                sprintf(buf, "%2d:    -", index + 1);
+                str << "    -" << ends;
             }
         } else {
             switch (_scoring) {
                 case score:
-                    sprintf(buf, "%2d:%5d", index + 1, result.score);
+                    str << setw(5) << result.score;
                     break;
                 case time:
-                    sprintf(buf, "%2d: %d:%0d", index + 1, result.time / 60, result.time % 60);
+                    str << result.time / 60 << ':' << setfill('0') << result.time % 60;
                     break;
                 case moves:
-                    sprintf(buf, "%2d: %4d", index + 1, result.moves);
+                    str << setw(5) << result.moves;
                     break;
             }
         }
+        str << ends;
         point_s at(16 + col * 55, 16 + 20 + 10 * row);
-        canvas.draw(rsc.small_mono_font, buf, at, canvas_c::align_left);
+        canvas.draw(rsc.small_mono_font, str.str(), at, canvas_c::align_left);
         
         index++;
     }

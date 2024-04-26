@@ -15,7 +15,7 @@ iffstream_c::iffstream_c(const char *path, fstream_c::openmode_e mode) :
 #ifdef __M68000__
     stream_c(), _stream(new fstream_c(path, mode))
 #else
-stream_c(), _stream(new hton_stream_c(new fstream_c(path, mode)))
+stream_c(), _stream(new swap_stream_c(new fstream_c(path, mode)))
 #endif
 {}
 
