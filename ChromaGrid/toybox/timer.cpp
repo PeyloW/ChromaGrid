@@ -15,7 +15,7 @@ using namespace toybox;
 
 #ifndef __M68000__
 #include <unistd.h>
-#include "system_host.hpp"
+#include "host_bridge.hpp"
 #endif
 
 typedef struct __packed_struct {
@@ -48,8 +48,6 @@ extern "C" {
 #       error "Usupported target"
 #   endif
 #else
-    void (*g_yield_function)() = nullptr;
-    
     static void g_do_timer(timer_func_list_c &timer_funcs, int freq) {
         for (auto &timer_func : timer_funcs) {
             bool trigger = false;
@@ -206,7 +204,7 @@ void timer_c::wait(int ticks) {
     const auto wait_tick = tick() + ticks;
     while (wait_tick >= tick()) {
 #ifndef __M68000__
-        g_yield_function();
+        host_bridge_c::shared().yield();
 #endif
     }
 }

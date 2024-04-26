@@ -8,10 +8,32 @@
 #import "AppDelegate.h"
 #import "game.hpp"
 #import "image.hpp"
-#import "system_host.hpp"
+#import "host_bridge.hpp"
 #include "machine.hpp"
 
 #import <Foundation/Foundation.h>
+
+class cg_host_bridge_c : public host_bridge_c {
+public:
+    cg_host_bridge_c() : _lock([[NSConditionLock alloc] initWithCondition:0]) {}
+    
+    void yield() override {
+        [_lock lockWhenCondition:0];
+        [_lock unlockWithCondition:1];
+        usleep(100);
+        [_lock lockWhenCondition:1];
+        [_lock unlockWithCondition:0];
+    }
+    
+    void play(const sound_c &sound) override {
+        NSData *data = [NSData dataWithBytesNoCopy:(void *)sound.sample() length:sound.length() freeWhenDone:NO];
+        NSSound *snd = [[NSSound alloc] initWithData:data];
+        [snd play];
+    }
+    
+private:
+    NSConditionLock *_lock;
+};
 
 @interface AppDelegate ()
 @property (strong) IBOutlet NSWindow *window;
@@ -25,22 +47,16 @@
     bool _left;
     bool _right;
     NSTrackingRectTag _trackingRect;
-    NSSound *_sound;
+    cg_host_bridge_c _bridge;
 }
 
 static NSConditionLock *_gameLock;
 
 static void _yieldFunction() {
-    [_gameLock lockWhenCondition:0];
-    [_gameLock unlockWithCondition:1];
-    usleep(100);
-    [_gameLock lockWhenCondition:1];
-    [_gameLock unlockWithCondition:0];
 }
 
 - (void)_cg_commonInit {
-    _gameLock = [[NSConditionLock alloc] initWithCondition:0];
-    g_yield_function = &_yieldFunction;
+    host_bridge_c::set_shared(_bridge);
     _vblTimer = [NSTimer timerWithTimeInterval:1.0 / 50 target:self selector:@selector(fireVBLTimer:) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_vblTimer forMode:NSDefaultRunLoopMode];
     _timerCTimer = [NSTimer timerWithTimeInterval:1.0 / 200 target:self selector:@selector(fireTimerCTimer:) userInfo:nil repeats:YES];
@@ -73,18 +89,12 @@ static void _yieldFunction() {
 }
 
 - (void)fireVBLTimer:(NSTimer *)timer {
-    g_vbl_interupt();
+    _bridge.vbl_interupt();
     [self setNeedsDisplay:YES];
-    if (g_active_sound) {
-        NSData *data = [NSData dataWithBytesNoCopy:(void *)g_active_sound->sample() length:g_active_sound->length() freeWhenDone:NO];
-        _sound = [[NSSound alloc] initWithData:data];
-        [_sound play];
-        g_active_sound = nullptr;
-    }
 }
 
 - (void)fireTimerCTimer:(NSTimer *)timer {
-    g_clock_interupt();
+    _bridge.clock_interupt();
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
@@ -104,7 +114,7 @@ static void _yieldFunction() {
 }
 
 - (void)_updateMouse {
-    g_update_mouse(_mouse, _left, _right);
+    _bridge.update_mouse(_mouse, _left, _right);
 }
 
 - (void)mouseMoved:(NSEvent *)event {
@@ -136,6 +146,8 @@ static void _yieldFunction() {
 
 - (void)drawRect:(NSRect)dirtyRect {
     auto active_image = machine_c::shared().active_image();
+    auto active_palette = machine_c::shared().active_palette();
+
     if (active_image == NULL) {
         NSRect bounds = [self bounds];
         [[NSColor blackColor] set];
@@ -149,9 +161,9 @@ static void _yieldFunction() {
     color_s buffer[320 * 200];
     memset(buffer, 0, sizeof(color_s) * 320 * 200);
 
-    if (g_active_palette) {
+    if (active_palette) {
         for (int i = 0; i < 16; i++) {
-            g_active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
+            active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
             buffer[i]._ = 0;
         }
     }

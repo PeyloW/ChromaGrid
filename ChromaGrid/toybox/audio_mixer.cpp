@@ -8,7 +8,7 @@
 #include "audio_mixer.hpp"
 #include "timer.hpp"
 #ifndef __M68000__
-#include "system_host.hpp"
+#include "host_bridge.hpp"
 #endif
 
 using namespace toybox;
@@ -44,7 +44,7 @@ void audio_mixer_c::play(const sound_c &sound, uint8_t priority) {
 #       error "Unsupported target"
 #   endif
 #else
-    g_active_sound = &sound;
+    host_bridge_c::shared().play(sound);
 #endif
 }
 
