@@ -69,8 +69,9 @@ static void _yieldFunction() {
             printf("Type %d\n\r", m.type());
             printf("Type %zu\n\r", m.max_memory());
             printf("Type %zu\n\r", m.user_memory());
+            asset_manager_c::set_shared(new cgasset_manager());
             scene_manager_c manager(size_s(320, 208));
-            auto intro_scene = new cgintro_scene_c(manager);
+            auto intro_scene = new cgmenu_scene_c(manager);
             auto overlay_scene = new cgoverlay_scene_c(manager);
             manager.run(intro_scene, overlay_scene, transition_c::create(canvas_c::noise));
         }

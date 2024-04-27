@@ -29,53 +29,55 @@ static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx
     table[masked_idx] = image_c::MASKED_CIDX;
 }
 
-cgresources_c& cgresources_c::shared() {
-    static cgresources_c s_rsc;
-    return s_rsc;
+cgasset_manager::cgasset_manager() : 
+    asset_manager_c()
+{
+    /*
+    FONT, MONO_FONT, SMALL_FONT, SMALL_MONO_FONT,
+    DROP_ORB, TAKE_ORB, FUSE_ORB, NO_DROP_ORB, BREAK_TILE, FUSE_BREAK_TILE,
+    MUSIC,
+    LEVELS, LEVEL_RESULTS, USER_LEVELS,
+     */
+
+    add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "backgrnd.iff"));
+    add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
+    add_asset_def(TILES, asset_def_s(asset_c::tileset, 2, "tiles.iff"));
+    add_asset_def(EMPTY_TILE, asset_def_s(asset_c::tileset, 2, "emptyt.iff"));
+    add_asset_def(ORBS, asset_def_s(asset_c::tileset, 2, "orbs.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new tileset_c(new image_c(path), size_s(16, 10));
+    }));
+    add_asset_def(CURSOR, asset_def_s(asset_c::image, 2, "cursor.iff"));
+    add_asset_def(BUTTON, asset_def_s(asset_c::image, 2, "button.iff"));
+    add_asset_def(SELECTION, asset_def_s(asset_c::image, 2, "select.iff"));
+    add_asset_def(SHIMMER, asset_def_s(asset_c::tileset, 2, "shimmer.iff"));
+ 
+    add_asset_def(FONT, asset_def_s(asset_c::font, 2, "font.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new font_c(new image_c(path), size_s(8, 8), 4, 2, 4);
+    }));
+    add_asset_def(MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new font_c(manager.font(FONT).image(), size_s(8, 8), 4, 2, 4);
+    }));
+    add_asset_def(SMALL_FONT, asset_def_s(asset_c::font, 2, "font6.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new font_c(new image_c(path), size_s(6, 6), 3, 0, 6);
+    }));
+    add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new font_c(manager.font(SMALL_FONT).image(), size_s(6, 6));
+    }));
+
+    add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 2, "drop.aif"));
+    add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 2, "take.aif"));
+    add_asset_def(FUSE_ORB, asset_def_s(asset_c::sound, 2, "fuse.aif"));
+    add_asset_def(NO_DROP_ORB, asset_def_s(asset_c::sound, 2, "tock.aif"));
+    add_asset_def(BREAK_TILE, asset_def_s(asset_c::sound, 2, "break.aif"));
+    add_asset_def(FUSE_BREAK_TILE, asset_def_s(asset_c::sound, 2, "fusebrk.aif"));
+
+    add_asset_def(MUSIC, asset_def_s(asset_c::music, 2, "music.snd"));
 }
 
-static const char *data_path(const char *file, const char *m = nullptr) {
-    static char buffer[256];
-    if (m) {
-        // TODO: Crashes on target, not host?
-        //tbout << m << endl;
-        printf("%s\n\r", m);
-    }
-#ifdef __M68000__
-    strcpy(buffer, "data\\");
-#else
-    strcpy(buffer, "");
-#endif
-    strcat(buffer, file);
-    return buffer;
-}
+/*
+cgassets_c::cgassets_c() :
 
-static const char *user_path(const char *file, const char *m = nullptr) {
-#ifdef __M68000__
-    return file;
-#else
-    static char buffer[256];
-    strcpy(buffer, "/tmp/");
-    strcat(buffer, file);
-    return buffer;
-#endif
-}
-
-
-cgresources_c::cgresources_c() :
-    background(data_path("BACKGRND.IFF", "Load images")),
-    tiles(new image_c(data_path("TILES.IFF")), size_s(16, 16)),
-    empty_tile(new image_c(data_path("emptyt.iff")), size_s(16, 16)),
-    orbs(new image_c(data_path("ORBS.IFF")), size_s(16, 10)),
-    cursor(data_path("CURSOR.IFF")),
-    button(data_path("BUTTON.IFF")),
-    selection(data_path("SELECT.IFF")),
-    shimmer(new image_c(data_path("shimmer.iff")), size_s(16, 16)),
-    font(new image_c(data_path("FONT.IFF", "Load fonts")), size_s(8, 8), 4, 2, 4),
-    mono_font(font.image(), size_s(8, 8)),
-    small_font(new image_c(data_path("FONT6.IFF")), size_s(6, 6), 3, 0, 6),
-    small_mono_font(small_font.image(), size_s(6, 6)),
-    drop_orb(data_path("drop.aif", "Load audio")),
+ drop_orb(data_path("drop.aif", "Load audio")),
     take_orb(data_path("take.aif")),
     fuse_orb(data_path("fuse.aif")),
     no_drop_orb(data_path("tock.aif")),
@@ -96,9 +98,6 @@ cgresources_c::cgresources_c() :
         }
         tiles_cnv.remap_colors(table, rect);
     }
-
-    printf("Pre-warm stencils.\n\r");
-    canvas_c::stencil(canvas_c::orderred, 0);
     
     printf("Loading user levels.\n\r");
     uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
@@ -110,31 +109,59 @@ cgresources_c::cgresources_c() :
     printf("Loading levels.\n\r");
     load_levels();
     load_level_results();
-    /*
-        // Make one, if we cannot load.
-        level_recipe_t *recipe = (level_recipe_t *)calloc(1, sizeof(level_recipe_t) + sizeof(tilestate_t) * 4);
-        recipe->header.width = 2;
-        recipe->header.height = 2;
-        recipe->header.time = 75;
-        recipe->header.orbs[0] = 3;
-        recipe->header.orbs[1] = 4;
-        recipe->text = nullptr;
-        recipe->tiles[0] = { tiletype_e::regular, color_e::none, color_e::none, color_e::none };
-        recipe->tiles[1] = { tiletype_e::glass, color_e::gold, color_e::none, color_e::none };
-        recipe->tiles[2] = { tiletype_e::blocked, color_e::none, color_e::none, color_e::none };
-        recipe->tiles[3] = { tiletype_e::regular, color_e::silver, color_e::none, color_e::gold };
-        levels.push_back(recipe);
-    */
+}
+*/
+
+asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
+    auto asset = asset_manager_c::create_asset(id, def);
+    if (id == TILES) {
+        tileset_c &tiles = *(tileset_c*)asset;
+        for (int x = 1; x < 3; x++) {
+            canvas_c tiles_cnv(*tiles.image());
+            rect_s rect(x * 48, 0, 48, 80);
+            tiles_cnv.draw(*tiles.image(), rect_s(0, 0, 48, 80), rect.origin);
+            canvas_c::remap_table_c table;
+            if (x == 1) {
+                remap_to(color_e::gold, table);
+            } else {
+                remap_to(color_e::silver, table);
+            }
+            tiles_cnv.remap_colors(table, rect);
+        }
+    }
+    return asset;
 }
 
-void cgresources_c::load_levels() {
+cgasset_manager::levels_c &cgasset_manager::levels() const {
+    if (_levels.size() == 0) {
+        load_levels();
+    }
+    return (levels_c&)_levels;
+}
+
+cgasset_manager::level_results_c &cgasset_manager::level_results() const {
+    if (_level_results.size() == 0) {
+        load_level_results();
+    }
+    return (level_results_c&)_level_results;
+}
+
+cgasset_manager::user_levels_c &cgasset_manager::user_levels() const {
+    if (_user_levels.size() == 0) {
+        load_user_levels();
+    }
+    return (user_levels_c&)_user_levels;
+}
+
+void cgasset_manager::load_levels() const {
+    auto &levels = (levels_c&)_levels;
     int i = 1;
     char buf[14];
     strstream_c str(buf, 14);
     while (levels.size() < 45) {
         str.reset();
         str << "levels" << i++ << ".dat" << ends;
-        iffstream_c iff(data_path(str.str()), fstream_c::input);
+        iffstream_c iff(data_path(str.str()).get(), fstream_c::input);
         if (!iff.good()) {
             break;
         }
@@ -152,177 +179,38 @@ void cgresources_c::load_levels() {
     assert(levels.size() > 0);
 }
 
-bool cgresources_c::load_user_levels() {
-#if 0
-    struct level_recipe_11_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[121][4]; };
-    auto level_11 = (level_recipe_11_s){ {11, 11, 10, 10}, 150, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {3, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 2, 0, 0}, {4, 2, 0, 2}, {0, 2, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0},
-      {3, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    // Level 12 too large
-
-    struct level_recipe_13_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[144][4]; };
-    auto level_13 = (level_recipe_13_s){ {12, 12, 10, 10}, 150, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 2, 0, 2}, {4, 2, 0, 2}, {4, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {4, 2, 0, 2}, {4, 0, 0, 0}, {4, 0, 0, 0}, {4, 2, 0, 2}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {4, 2, 0, 2}, {4, 0, 0, 0}, {4, 0, 0, 0}, {4, 2, 0, 2}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 2, 0, 2}, {4, 2, 0, 2}, {4, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    struct level_recipe_14_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[144][4]; };
-    auto level_14 = (level_recipe_14_s){ {12, 12, 10, 10}, 180, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    struct level_recipe_15_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[144][4]; };
-    auto level_15 = (level_recipe_15_s){ {12, 12, 10, 10}, 150, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 2, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 1, 0, 1}, {0, 2, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {4, 1, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    // Level 16 too large
-
-    // Level 17 too large
-
-    // Level 18 too large
-
-    // Level 19 too large
-
-    struct level_recipe_20_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[132][4]; };
-    auto level_20 = (level_recipe_20_s){ {11, 12, 10, 10}, 225, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {4, 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {4, 1, 0, 1}, {3, 0, 0, 0}, {4, 1, 0, 1}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0},
-      {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0},
-      {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {3, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 1, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    // Level 21 too large
-
-    // Level 22 too large
-
-    // Level 23 too large
-
-    // Level 24 too large
-
-    // Level 25 too large
-
-    // Level 26 too large
-
-    // Level 27 too large
-
-    struct level_recipe_28_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[81][4]; };
-    auto level_28 = (level_recipe_28_s){ {9, 9, 10, 10}, 135, nullptr, {
-      {0, 0, 0, 0}, {3, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 2, 0, 0}, {0, 0, 0, 0},
-      {3, 1, 0, 0}, {3, 0, 0, 0}, {3, 1, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 2, 0, 0}, {3, 0, 0, 0}, {3, 2, 0, 0},
-      {0, 0, 0, 0}, {3, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 2, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 1, 0, 1}, {4, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 2, 0, 0}, {4, 2, 0, 2}, {3, 0, 0, 0}, {4, 2, 0, 2}, {0, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 2, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 1, 0, 1}, {4, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {3, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 1, 0, 0}, {0, 0, 0, 0},
-      {3, 2, 0, 0}, {3, 0, 0, 0}, {3, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {3, 1, 0, 0}, {3, 0, 0, 0}, {3, 1, 0, 0},
-      {0, 0, 0, 0}, {3, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 1, 0, 0}, {0, 0, 0, 0},
-    }};
-
-    struct level_recipe_29_s { uint8_t a[4]; uint16_t c; const char *ptr; uint8_t d[144][4]; };
-    auto level_29 = (level_recipe_29_s){ {12, 12, 10, 10}, 180, nullptr, {
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 0, 0, 0}, {4, 0, 0, 0}, {4, 0, 0, 0}, {4, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {4, 2, 0, 2}, {3, 0, 0, 2}, {3, 0, 0, 0}, {3, 0, 0, 2}, {4, 2, 0, 2}, {4, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {4, 0, 0, 0}, {3, 0, 0, 2}, {3, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 2}, {4, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {4, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 2}, {4, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 2}, {4, 2, 0, 2}, {4, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {4, 0, 0, 0}, {4, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 2, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
-      {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0},
-    }};
-
-    memcpy(user_levels[0], &level_11, sizeof(level_11));
-    memcpy(user_levels[1], &level_13, sizeof(level_13));
-    memcpy(user_levels[2], &level_14, sizeof(level_14));
-    memcpy(user_levels[3], &level_15, sizeof(level_15));
-    memcpy(user_levels[4], &level_20, sizeof(level_20));
-    memcpy(user_levels[5], &level_28, sizeof(level_28));
-    memcpy(user_levels[6], &level_29, sizeof(level_29));
-
-#else
-    iffstream_c iff(user_path("levels.dat"), fstream_c::input);
-    if (!iff.good()) {
-        return false;
+void cgasset_manager::load_user_levels() const {
+    auto &user_levels = (user_levels_c&)_user_levels;
+    uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
+    for (int i = 0; i < 10; i++) {
+        user_levels.push_back((level_recipe_t *)(recipes + i * level_recipe_t::MAX_SIZE));
     }
-    iff.set_assert_on_error(true);
-    iff_group_s list;
-    iff.first(IFF_LIST, IFF_CGLV, list);
-    int index = 0;
-    iff_group_s level_group;
-    while (iff.next(list, IFF_FORM, level_group)) {
-        auto recipe = user_levels[index++];
-        recipe->load(iff, level_group);
+    iffstream_c iff(user_path("levels.dat").get(), fstream_c::input);
+    if (iff.good()) {
+        iff.set_assert_on_error(true);
+        iff_group_s list;
+        iff.first(IFF_LIST, IFF_CGLV, list);
+        int index = 0;
+        iff_group_s level_group;
+        while (iff.next(list, IFF_FORM, level_group)) {
+            auto recipe = user_levels[index++];
+            recipe->load(iff, level_group);
+        }
     }
-#endif
-    return true;
 }
 
-bool cgresources_c::save_user_levels() {
-    iffstream_c iff(user_path("levels.dat"), fstream_c::input | fstream_c::output);
+bool cgasset_manager::save_user_levels() const {
+    iffstream_c iff(user_path("levels.dat").get(), fstream_c::input | fstream_c::output);
     if (!iff.good()) {
         return false;
     }
+    auto &levels = user_levels();
     iff.set_assert_on_error(true);
     iff_group_s list;
     iff.begin(list, IFF_LIST);
     iff.write(&IFF_CGLV_ID);
-    for (int index = 0; index < user_levels.size(); index++) {
-        auto &recipe = user_levels[index];
+    for (int index = 0; index < levels.size(); index++) {
+        auto &recipe = levels[index];
         if (!recipe->empty()) {
             recipe->save(iff);
         }
@@ -331,9 +219,10 @@ bool cgresources_c::save_user_levels() {
     return true;
 }
 
-bool cgresources_c::load_level_results() {
+void cgasset_manager::load_level_results() const {
+    auto &level_results = (level_results_c&)_level_results;
     bool success = false;
-    iffstream_c iff(user_path("scores.dat"));
+    iffstream_c iff(user_path("scores.dat").get());
     if (!iff.good()) goto done;
     iff_group_s list;
     if (iff.first(IFF_LIST, IFF_CGLR, list)) {
@@ -346,26 +235,26 @@ bool cgresources_c::load_level_results() {
             }
         }
     }
-    success = level_results.size() <= levels.size();
+    success = level_results.size() <= levels().size();
 done:
     if (!success) {
         level_results.clear();
     }
-    while (level_results.size() < levels.size()) {
+    while (level_results.size() < levels().size()) {
         level_results.emplace_back();
     }
-    return success;
 }
 
-bool cgresources_c::save_level_results() {
-    iffstream_c iff(user_path("scores.dat"), fstream_c::input | fstream_c::output);
+bool cgasset_manager::save_level_results() const {
+    iffstream_c iff(user_path("scores.dat").get(), fstream_c::input | fstream_c::output);
     if (!iff.good()) {
         return false;
     }
+    auto &results = level_results();
     iff_group_s list;
     if (iff.begin(list, IFF_LIST)) {
         iff.write(&IFF_CGLR_ID);
-        for (const auto &result : level_results) {
+        for (const auto &result : results) {
             result.save(iff);
         }
         return iff.end(list);

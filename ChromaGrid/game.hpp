@@ -22,27 +22,30 @@ public:
 #define MAIN_MENU_BUTTONS_ORIGIN (point_s(MAIN_MENU_ORIGIN_X + MAIN_MENU_MARGINS, MAIN_MENU_SIZE_HEIGHT - MAIN_MENU_MARGINS))
 #define MAIN_MENU_BUTTONS_SIZE (size_s(MAIN_MENU_SIZE_WIDTH - MAIN_MENU_MARGINS * 2, 14))
 #define MAIN_MENU_BUTTONS_SPACING ((int16_t)-6)
-    cggame_scene_c(scene_manager_c &manager) :
-        scene_c(manager),
-        rsc(cgresources_c::shared()) {};
-    cgresources_c &rsc;
+    cggame_scene_c(scene_manager_c &manager);
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
         return buttons.update_buttons(screen, manager.mouse.postion(), manager.mouse.state(mouse_c::left));
     }
+protected:
+    cgasset_manager &assets;
+    image_c &background;
+    font_c &font;
+    font_c &small_font;
 };
 
 class cgoverlay_scene_c : public cggame_scene_c {
 public:
-    cgoverlay_scene_c(scene_manager_c &manager) : cggame_scene_c(manager) {}
-    virtual void will_appear(screen_c &screen, bool obsured);
-    virtual void will_disappear(bool obscured);
+    cgoverlay_scene_c(scene_manager_c &manager) : 
+        cggame_scene_c(manager)
+    {}
+    virtual void will_appear(screen_c &screen, bool obsured) {};
     virtual void update_foreground(screen_c &screen, int ticks);
 };
 
-class cgintro_scene_c : public cggame_scene_c {
+class cgmenu_scene_c : public cggame_scene_c {
 public:
-    cgintro_scene_c(scene_manager_c &manager);
+    cgmenu_scene_c(scene_manager_c &manager);
     virtual void will_appear(screen_c &screen, bool obsured);
     virtual void update_background(screen_c &screen, int ticks);
 private:

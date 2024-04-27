@@ -12,43 +12,41 @@
 #include "audio.hpp"
 #include "level.hpp"
 #include "vector.hpp"
+#include "asset.hpp"
 
-class cgresources_c : public nocopy_c {
+typedef enum __packed {
+    INTRO, BACKGROUND, TILES, EMPTY_TILE, ORBS, CURSOR, BUTTON, SELECTION, SHIMMER,
+    FONT, MONO_FONT, SMALL_FONT, SMALL_MONO_FONT,
+    DROP_ORB, TAKE_ORB, FUSE_ORB, NO_DROP_ORB, BREAK_TILE, FUSE_BREAK_TILE,
+    MUSIC
+} cgassets_e;
+
+class cgasset_manager : public asset_manager_c {
 public:
-    image_c background;
-    tileset_c tiles;
-    tileset_c empty_tile;
-    tileset_c orbs;
-    image_c cursor;
-    image_c button;
-    image_c selection;
-    tileset_c shimmer;
-    font_c font;
-    font_c mono_font;
-    font_c small_font;
-    font_c small_mono_font;
-    sound_c drop_orb;
-    sound_c take_orb;
-    sound_c fuse_orb;
-    sound_c no_drop_orb;
-    sound_c break_tile;
-    sound_c fuse_break_tile;
-    music_c music;
-    
-    vector_c<level_recipe_t*, 45> levels;
-    vector_c<level_result_t, 45> level_results;
-    vector_c<level_recipe_t*, 10> user_levels;
+    cgasset_manager();
+    virtual ~cgasset_manager() {}
 
-    bool save_user_levels();
-    bool save_level_results();
+    static cgasset_manager &shared() { return (cgasset_manager &)asset_manager_c::shared(); }
     
-    static cgresources_c& shared();
+    typedef vector_c<level_recipe_t*, 45> levels_c;
+    typedef vector_c<level_result_t, 45> level_results_c;
+    typedef vector_c<level_recipe_t*, 10> user_levels_c;
+
+    levels_c &levels() const;
+    level_results_c &level_results() const;
+    user_levels_c &user_levels() const;
+
+    bool save_user_levels() const;
+    bool save_level_results() const;
+protected:
+    virtual asset_c *create_asset(int id, const asset_def_s &def) const;
 private:
-    void load_levels();
-    bool load_level_results();
-    bool load_user_levels();
-    cgresources_c();
-    ~cgresources_c() {};
+    void load_levels() const;
+    void load_level_results() const;
+    void load_user_levels() const;
+    levels_c _levels;
+    level_results_c _level_results;
+    user_levels_c _user_levels;
 };
 
 #endif /* resources_hpp */

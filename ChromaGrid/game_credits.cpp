@@ -19,8 +19,8 @@ cgcredits_scene_c::cgcredits_scene_c(scene_manager_c &manager, page_e page) :
     _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
 }
 
-static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Credits", point_s(96, 16));
+static void draw_credits(font_c &font, font_c &small_font, canvas_c &screen) {
+    screen.draw(font, "Credits", point_s(96, 16));
 
     struct { const char *credit; const char *person; } credits[] = {
         {"Code:", "Fredrik 'PeyloW' Olsson"},
@@ -34,17 +34,17 @@ static void draw_credits(const cgresources_c &rsc, canvas_c &screen) {
     point_s atc(16, 40 +  0);
     point_s atp(40, 40 + 10);
     for (auto credit = &credits[0]; credit->credit; credit++) {
-        screen.draw(rsc.font, credit->credit, atc, canvas_c::align_left);
+        screen.draw(font, credit->credit, atc, canvas_c::align_left);
         atc.y += 26;
-        screen.draw(rsc.font, credit->person, atp, canvas_c::align_left);
+        screen.draw(font, credit->person, atp, canvas_c::align_left);
         atp.y += 26;
     }
 }
 
 // , ,
 
-static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Recognitions", point_s(96, 16));
+static void draw_recognitions(font_c &font, font_c &small_font, canvas_c &screen) {
+    screen.draw(font, "Recognitions", point_s(96, 16));
     const char *texts[] = {
         "This game uses royalty free sound effects from ZapSplat.\n(https://www.zapsplat.com/)",
         "This game uses libcmini by Thorsten Otto, Oliver and Markus, for the superiour speed and size.\n(https://github.com/freemint/libcmini)",
@@ -54,13 +54,13 @@ static void draw_recognitions(const cgresources_c &rsc, canvas_c &screen) {
     };
     rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(rsc.small_font, *text, rect, 2);
+        auto size = screen.draw(small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
-static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Dedications", point_s(96, 16));
+static void draw_dedications(font_c &font, font_c &small_font, canvas_c &screen) {
+    screen.draw(font, "Dedications", point_s(96, 16));
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
         "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe it all.",
@@ -70,13 +70,13 @@ static void draw_dedications(const cgresources_c &rsc, canvas_c &screen) {
     };
     rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(rsc.small_font, *text, rect, 2);
+        auto size = screen.draw(small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
-static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
-    screen.draw(rsc.font, "Greetings", point_s(96, 16));
+static void draw_greetings(font_c &font, font_c &small_font, canvas_c &screen) {
+    screen.draw(font, "Greetings", point_s(96, 16));
     const char *texts[] = {
         "List of specific people.",
         "List of active Atari groups.",
@@ -85,29 +85,28 @@ static void draw_greetings(const cgresources_c &rsc, canvas_c &screen) {
     };
     rect_s rect(16, 40, 160, 48);
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(rsc.small_font, *text, rect, 2);
+        auto size = screen.draw(small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
 }
 
 void cgcredits_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
-    const auto &rsc = this->rsc;
     
     switch (_page) {
         case credits:
-            draw_credits(rsc, canvas);
+            draw_credits(font, assets.font(SMALL_FONT), canvas);
             break;
         case recognitions:
-            draw_recognitions(rsc, canvas);
+            draw_recognitions(font, assets.font(SMALL_FONT), canvas);
             break;
         case dedications:
-            draw_dedications(rsc, canvas);
+            draw_dedications(font, assets.font(SMALL_FONT), canvas);
             break;
         case greetings:
-            draw_greetings(rsc, canvas);
+            draw_greetings(font, assets.font(SMALL_FONT), canvas);
             break;
     }
 }

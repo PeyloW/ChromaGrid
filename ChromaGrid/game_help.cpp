@@ -52,11 +52,13 @@ static const char *level_editor_texts[] = {
     nullptr
 };
 
-static void draw_help(const cgresources_c &rsc, canvas_c &screen, const char *title, const char *texts[]) {
-    screen.draw(rsc.font, title, point_s(96, 12));
+static void draw_help(const cgasset_manager &rsc, canvas_c &screen, const char *title, const char *texts[]) {
+    auto &font = rsc.font(FONT);
+    auto &small_font = rsc.font(SMALL_FONT);
+    screen.draw(font, title, point_s(96, 12));
     rect_s rect(7, 28, 176, 48);
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(rsc.small_font, *text, rect, 2, canvas_c::align_left);
+        auto size = screen.draw(small_font, *text, rect, 2, canvas_c::align_left);
         rect.origin.y += size.height + 4;
     }
 }
@@ -64,22 +66,21 @@ static void draw_help(const cgresources_c &rsc, canvas_c &screen, const char *ti
 
 void cghelp_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
-    const auto &rsc = this->rsc;
     
     switch (_page) {
         case basics:
-            draw_help(rsc, canvas, "Basics", basics_texts);
+            draw_help(assets, canvas, "Basics", basics_texts);
             break;
         case special_tiles:
-            draw_help(rsc, canvas, "Special Tiles", special_tiles_texts);
+            draw_help(assets, canvas, "Special Tiles", special_tiles_texts);
             break;
         case scoring:
-            draw_help(rsc, canvas, "Scoring", scoring_texts);
+            draw_help(assets, canvas, "Scoring", scoring_texts);
             break;
         case level_editor:
-            draw_help(rsc, canvas, "Level Editor", level_editor_texts);
+            draw_help(assets, canvas, "Level Editor", level_editor_texts);
             break;
     }
 }

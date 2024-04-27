@@ -26,8 +26,8 @@ public:
                 _menu_buttons.add_button("Retry Level");
             } else {
                 _menu_buttons.add_button("Next Level");
-                if (rsc.level_results[level_num].merge_from(results)) {
-                    rsc.save_level_results();
+                if (assets.level_results()[level_num].merge_from(results)) {
+                    assets.save_level_results();
                 }
             }
         }
@@ -35,15 +35,16 @@ public:
 
     virtual void will_appear(screen_c &screen, bool obsured) {
         auto &canvas = screen.canvas();
+        
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 48), [this, &canvas, &rect] {
-            canvas.draw_aligned(rsc.background, rect, rect.origin);
+            canvas.draw_aligned(background, rect, rect.origin);
         });
         rect = rect_s(
             MAIN_MENU_ORIGIN_X, 0,
             MAIN_MENU_SIZE_WIDTH, 200
         );
-        canvas.draw_aligned(rsc.background, rect, rect.origin);
+        canvas.draw_aligned(background, rect, rect.origin);
         _menu_buttons.draw_all(canvas);
 
         if (_level_num != cglevel_scene_c::TEST_LEVEL) {
@@ -51,10 +52,10 @@ public:
             strstream_c str(buf, 20);
             const bool failed = _results.score == level_result_t::FAILED_SCORE;
             str << "Level " << _level_num + 1 << (failed ? " Failed" : " Completed") << ends;
-            canvas.draw(rsc.font, buf, point_s(96, 32));
+            canvas.draw(font, buf, point_s(96, 32));
         } else {
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
-            canvas.draw(rsc.font, title, point_s(96, 32));
+            canvas.draw(font, title, point_s(96, 32));
         }
         
         if (_results.score != level_result_t::FAILED_SCORE) {
@@ -63,16 +64,16 @@ public:
             uint16_t time_score, orbs_score;
             _results.subscores(orbs_score, time_score);
             str << "Time: " << _results.time << " x 10 = " << time_score << ends;
-            canvas.draw(rsc.font, buf, point_s(96, 64));
+            canvas.draw(font, buf, point_s(96, 64));
             str.reset();
             str << "Orbs: " << _results.orbs[0] + _results.orbs[1] << " x 100 = " << orbs_score << ends;
-            canvas.draw(rsc.font, buf, point_s(96, 84));
+            canvas.draw(font, buf, point_s(96, 84));
             str.reset();
             str << "Total: " << _results.score << " pts" << ends;
-            canvas.draw(rsc.font, buf, point_s(96, 114));
+            canvas.draw(font, buf, point_s(96, 114));
             str.reset();
             str << "Moves: " << _results.moves << ends;
-            canvas.draw(rsc.font, buf, point_s(96, 144));
+            canvas.draw(font, buf, point_s(96, 144));
         }
     }
 
@@ -84,7 +85,7 @@ public:
                 manager.pop();
                 return;
             case 1: {
-                auto next_level = (_results.score == level_result_t::FAILED_SCORE) ? _level_num: (_level_num + 1) % rsc.levels.size();
+                auto next_level = (_results.score == level_result_t::FAILED_SCORE) ? _level_num: (_level_num + 1) % assets.levels().size();
                 auto color = machine_c::shared().active_palette()->colors[0];
                 auto transition = transition_c::create(color);
                 manager.replace(new cglevel_scene_c(manager, next_level), transition);
@@ -106,7 +107,7 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, int level) :
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _level_num(level),
     _recipe(nullptr),
-    _level(rsc.levels[level])
+    _level(assets.levels()[level])
 {
     _menu_buttons.add_button("Main Menu");
     _menu_buttons.add_button("Restart");
@@ -133,20 +134,20 @@ static int next_shimmer_ticks() {
 
 void cglevel_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     char buffer[256] = {0};
     strstream_c str(buffer, 256);
     if (_level_num == TEST_LEVEL) {
         str << "Testing level";
     } else {
         str << "Level " << _level_num + 1;
-        auto text = rsc.levels[_level_num]->text;
+        auto text = assets.levels()[_level_num]->text;
         if (text) {
             str << ": " << text;
         }
     }
     str << ends;
-    canvas.draw(rsc.small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
+    canvas.draw(assets.font(SMALL_FONT), buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
 
     _menu_buttons.draw_all(canvas);
     _level.draw_all(canvas);
@@ -201,7 +202,7 @@ void cglevel_scene_c::update_foreground(screen_c &screen, int ticks) {
         } else {
             int16_t idx = ABS(_shimmer_ticks);
             point_s at(_shimmer_tile % 12 * 16, _shimmer_tile / 12 * 16);
-            canvas.draw(rsc.shimmer, idx, at);
+            canvas.draw(assets.tileset(SHIMMER), idx, at);
         }
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;

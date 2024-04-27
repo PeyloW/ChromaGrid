@@ -323,16 +323,17 @@ level_t::level_t(level_recipe_t *recipe) :
 #define REMAINING_Y_INSET 125
 
 void level_t::draw_all(canvas_c &screen) const {
-    auto &rsc = cgresources_c::shared();
+    auto &font = cgasset_manager::shared().font(FONT);
+    
     for (int y = 0; y < grid_c::GRID_MAX; y++) {
         for (int x = 0; x < grid_c::GRID_MAX; x++) {
             draw_tile(screen, x, y);
         }
     }
-    screen.draw(rsc.font, "TIME:", point_s(LABEL_X_INSET, TIME_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "TIME:", point_s(LABEL_X_INSET, TIME_Y_INSET), canvas_c::align_left);
     draw_time(screen);
     
-    screen.draw(rsc.font, "ORBS:", point_s(LABEL_X_INSET, ORB_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "ORBS:", point_s(LABEL_X_INSET, ORB_Y_INSET), canvas_c::align_left);
     rect_s rect(0, 0, 16, 10);
     for (int i = 0; i < 2; i++) {
         point_s at = point_s(ORB_X_INSET + i * ORB_X_SPACING, ORB_Y_INSET - 1);
@@ -341,10 +342,10 @@ void level_t::draw_all(canvas_c &screen) const {
     }
     draw_orb_counts(screen);
     
-    screen.draw(rsc.font, "MOVES:", point_s(LABEL_X_INSET, MOVES_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "MOVES:", point_s(LABEL_X_INSET, MOVES_Y_INSET), canvas_c::align_left);
     draw_move_count(screen);
 
-    screen.draw(rsc.font, "REMAINING:", point_s(LABEL_X_INSET, REMAINING_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "REMAINING:", point_s(LABEL_X_INSET, REMAINING_Y_INSET), canvas_c::align_left);
     draw_remaining_count(screen);
 }
 
@@ -358,22 +359,23 @@ inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
     return idx;
 }
 
-inline static void draw_tilestate(canvas_c &screen, const cgresources_c &rsc, const tilestate_t &state, int x, int y) {
+inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &rsc, const tilestate_t &state, int x, int y) {
     const point_s at(x * 16, y * 16);
     if (state.type == empty) {
         if (state.target != none) {
-            screen.draw(rsc.empty_tile, (state.target - 1), at);
+            screen.draw(rsc.tileset(EMPTY_TILE), (state.target - 1), at);
         }
         return;
     }
-    screen.draw_aligned(rsc.tiles, tilestate_tile_index(state), at);
+    screen.draw_aligned(rsc.tileset(TILES), tilestate_tile_index(state), at);
 }
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
     if (state.type == empty) {
+        auto &empty_tile = rsc.tileset(EMPTY_TILE);
         const rect_s rect(at, size_s(16, 16));
-        screen.draw(rsc.background, rect, at);
+        screen.draw(rsc.image(BACKGROUND), rect, at);
         switch (state.target) {
             case none:
                 break;
@@ -381,19 +383,19 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
                 point_s o_at = at;
                 o_at.x += 2;
                 o_at.y += 2;
-                screen.draw(rsc.empty_tile, 1, o_at);
+                screen.draw(empty_tile, 1, o_at);
                 o_at.x -= 4;
                 o_at.y -= 4;
-                screen.draw(rsc.empty_tile, 0, o_at);
+                screen.draw(empty_tile, 0, o_at);
                 break;
             }
             default: {
-                screen.draw(rsc.empty_tile, (state.target - 1), at);
+                screen.draw(empty_tile, (state.target - 1), at);
                 break;
             }
         }
     } else {
-        screen.draw(rsc.tiles, tilestate_tile_index(state), at);
+        screen.draw(rsc.tileset(TILES), tilestate_tile_index(state), at);
     }
     point_s o_at = at;
     switch (state.orb) {
@@ -414,25 +416,25 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
             break;
     }
     if (selected) {
-        screen.draw(rsc.selection, at);
+        screen.draw(rsc.image(SELECTION), at);
     }
 }
 
-inline static void draw_orb(canvas_c &screen, const cgresources_c &rsc, color_e color, int shade, int x, int y) {
+inline static void draw_orb(canvas_c &screen, const cgasset_manager &rsc, color_e color, int shade, int x, int y) {
     int16_t idx = (color - 1);
     idx += shade * 2;
     const point_s at(x * 16, y * 16 + 3);
-    screen.draw(rsc.orbs, idx, at);
+    screen.draw(rsc.tileset(ORBS), idx, at);
 }
 
 void draw_orb(canvas_c &screen, color_e color, point_s at) {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
     int16_t idx = (color - 1);
-    screen.draw(rsc.orbs, idx, at);
+    screen.draw(rsc.tileset(ORBS), idx, at);
 }
 
 void level_t::draw_tile(canvas_c &screen, int x, int y) const {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
     auto &tile = _grid->tiles[x][y];
     if (tile.state.type == empty && tile.state.target == none) {
         return;
@@ -458,7 +460,7 @@ void level_t::draw_tile(canvas_c &screen, int x, int y) const {
 }
 
 void level_t::draw_time(canvas_c &screen) const {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
     int min = _results.time / 60;
     int sec = _results.time % 60;
     char buf[5];
@@ -471,13 +473,15 @@ void level_t::draw_time(canvas_c &screen) const {
     const point_s at = point_s(TIME_X_TRAIL - 32, TIME_Y_INSET);
     const rect_s rect = rect_s(at, size_s(32, 8));
 
-    screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+    screen.draw(rsc.image(BACKGROUND), rect, at);
+    screen.draw(rsc.font(MONO_FONT), buf, at, canvas_c::align_left);
 }
 
 void level_t::draw_orb_counts(canvas_c &screen) const {
-    auto &rsc = cgresources_c::shared();
-
+    auto &rsc = cgasset_manager::shared();
+    auto &background = rsc.image(BACKGROUND);
+    auto &mono_font = rsc.font(MONO_FONT);
+    
     for (int i = 0; i < 2; i++) {
         char buf[3];
         auto d1 = _results.orbs[i] / 10;
@@ -486,13 +490,15 @@ void level_t::draw_orb_counts(canvas_c &screen) const {
         buf[2] = 0;
         point_s at(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING, ORB_Y_INSET);
         rect_s rect(at, size_s(16, 8));
-        screen.draw(rsc.background, rect, at);
-        screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+        screen.draw(background, rect, at);
+        screen.draw(mono_font, buf, at, canvas_c::align_left);
     }
 }
 
 void level_t::draw_move_count(canvas_c &screen) const {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
+    auto &background = rsc.image(BACKGROUND);
+    auto &mono_font = rsc.font(MONO_FONT);
     int moves = _results.moves;
     char buf[4];
     buf[3] = 0;
@@ -504,12 +510,14 @@ void level_t::draw_move_count(canvas_c &screen) const {
     const point_s at = point_s(TIME_X_TRAIL - 24, MOVES_Y_INSET);
     const rect_s rect = rect_s(at, size_s(24, 8));
 
-    screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+    screen.draw(background, rect, at);
+    screen.draw(mono_font, buf, at, canvas_c::align_left);
 }
 
 void level_t::draw_remaining_count(canvas_c &screen) const {
-    auto &rsc = cgresources_c::shared();
+    auto &rsc = cgasset_manager::shared();
+    auto &background = rsc.image(BACKGROUND);
+    auto &mono_font = rsc.font(MONO_FONT);
     int moves = _remaining;
     char buf[4];
     buf[3] = 0;
@@ -521,8 +529,8 @@ void level_t::draw_remaining_count(canvas_c &screen) const {
     const point_s at = point_s(TIME_X_TRAIL - 24, REMAINING_Y_INSET);
     const rect_s rect = rect_s(at, size_s(24, 8));
 
-    screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+    screen.draw(background, rect, at);
+    screen.draw(mono_font, buf, at, canvas_c::align_left);
 }
 
 level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds) {
@@ -562,20 +570,24 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
                 draw_orb_counts(screen);
                 draw_move_count(screen);
             }
-            auto &rsc = cgresources_c::shared();
-            auto &mixer = audio_mixer_c::shared();
+            int sound_index = -1;
             if (cgp_tile_changes >= (broke_glass + fused_orb)) {
-                mixer.play(rsc.fuse_break_tile);
+                sound_index = FUSE_BREAK_TILE;
             } else if (cgp_tile_changes >= broke_glass) {
-                mixer.play(rsc.break_tile);
+                sound_index = BREAK_TILE;
             } else if (cgp_tile_changes >= fused_orb) {
-                mixer.play(rsc.fuse_orb);
+                sound_index = FUSE_ORB;
             } else if (cgp_tile_changes >= added_orb) {
-                mixer.play(rsc.drop_orb);
+                sound_index = DROP_ORB;
             } else if (cgp_tile_changes >= removed_orb) {
-                mixer.play(rsc.take_orb);
+                sound_index = TAKE_ORB;
             } else {
-                mixer.play(rsc.no_drop_orb);
+                sound_index = NO_DROP_ORB;
+            }
+            if (sound_index >= 0) {
+                auto &rsc = cgasset_manager::shared();
+                auto &mixer = audio_mixer_c::shared();
+                mixer.play(rsc.sound(sound_index));
             }
         }
         debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);

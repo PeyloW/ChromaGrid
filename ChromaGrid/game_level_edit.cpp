@@ -50,13 +50,13 @@ public:
         auto &canvas = screen.canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
-            canvas.draw_aligned(rsc.background, rect, rect.origin);
+            canvas.draw_aligned(background, rect, rect.origin);
         });
         rect = rect_s(
             MAIN_MENU_ORIGIN_X, 0,
             MAIN_MENU_SIZE_WIDTH, 200
         );
-        canvas.draw_aligned(rsc.background, rect, rect.origin);
+        canvas.draw_aligned(background, rect, rect.origin);
         _menu_buttons.draw_all(canvas);
     }
     
@@ -67,19 +67,21 @@ public:
         if (button == 0) {
             manager.pop(transition);
         } else if (button > 0) {
+            auto &user_levels = assets.user_levels();
             if (_recipe) {
-                memcpy(rsc.user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
-                rsc.save_user_levels();
+                memcpy(user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
+                assets.save_user_levels();
                 manager.pop(transition);
             } else {
                 manager.pop(nullptr);
-                manager.replace(new cglevel_edit_scene_c(manager, rsc.user_levels[button_to_level_idx(button)]), transition);
+                manager.replace(new cglevel_edit_scene_c(manager, user_levels[button_to_level_idx(button)]), transition);
             }
         }
     }
     
 private:
     void add_buttons() {
+        auto &user_levels = assets.user_levels();
         bool save = _recipe != nullptr;
         static char buf[4*10];
         strstream_c str(buf, 4 * 10);
@@ -88,7 +90,7 @@ private:
         char *prev_start;
         for (int button_idx = 1; button_idx < 11; button_idx++) {
             int level_idx = button_to_level_idx(button_idx);
-            bool empty = rsc.user_levels[level_idx]->empty();
+            bool empty = user_levels[level_idx]->empty();
             int pair_idx = level_idx & 0x1;
             
             start = str.str() + str.tell();
@@ -99,7 +101,7 @@ private:
             if (pair_idx == 1) {
                 _menu_buttons.add_button_pair(prev_start, start);
                 if (!save) {
-                    if (rsc.user_levels[level_idx - 1]->empty()) {
+                    if (user_levels[level_idx - 1]->empty()) {
                         _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;
                     }
                     if (empty) {
@@ -160,7 +162,7 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
 
 void cglevel_edit_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     _count_buttons.draw_all(canvas);
     draw_counts(canvas);
@@ -293,6 +295,7 @@ void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
 }
 
 void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
+    auto &mono_font = assets.font(MONO_FONT);
     int min = _header.time / 60;
     int sec = _header.time % 60;
     char buf[5];
@@ -303,8 +306,8 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
     buf[4] = 0;
     const point_s at = point_s( 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3);
     const rect_s rect = rect_s(at, size_s(32, 8));
-    screen.draw(rsc.background, rect, at);
-    screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+    screen.draw(background, rect, at);
+    screen.draw(mono_font, buf, at, canvas_c::align_left);
     for (int i = 1; i < 3; i++) {
         point_s at(320 - 32 - 8 - MAIN_MENU_MARGINS * 2 + 3, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i);
         draw_orb(screen, (color_e)i, at);
@@ -316,8 +319,8 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
         buf[2] = 0;
         at.x = 320 - 16 - MAIN_MENU_MARGINS * 2;
         rect_s rect(at, size_s(16, 8));
-        screen.draw(rsc.background, rect, at);
-        screen.draw(rsc.mono_font, buf, at, canvas_c::align_left);
+        screen.draw(background, rect, at);
+        screen.draw(mono_font, buf, at, canvas_c::align_left);
     }
 }
 

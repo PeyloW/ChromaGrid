@@ -9,7 +9,7 @@
 #include "utility.hpp"
 #include "machine.hpp"
 
-cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) : 
+cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) : 
     cggame_scene_c(manager),
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
@@ -20,10 +20,13 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) :
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
-void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
+void cgmenu_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
-        
+    auto &tiles = assets.tileset(TILES);
+    machine_c::shared().set_active_palette(background.palette().get());
+    assets.preload(2);
+    
+    canvas.draw_aligned(background, point_s());
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
             int dx = ABS(x * 2 - 11);
@@ -50,7 +53,7 @@ void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
                 int16_t idx = col + row * 9;
                 point_s at(x * 16, y * 16);
                 canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, shade), [&] {
-                    canvas.draw_aligned(rsc.tiles, idx, at);
+                    canvas.draw_aligned(tiles, idx, at);
                 });
             }
         }
@@ -58,11 +61,11 @@ void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
     
     _menu_buttons.draw_all(canvas);
     
-    canvas.draw(rsc.font, "Welcome to Chroma Grid.", point_s(96, 150));
-    canvas.draw(rsc.font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
+    canvas.draw(font, "Welcome to Chroma Grid.", point_s(96, 150));
+    canvas.draw(font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
 }
 
-void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
+void cgmenu_scene_c::update_background(screen_c &screen, int ticks) {
     auto &canvas = screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
@@ -83,7 +86,7 @@ void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
             break;
         case 5: {
 #ifndef ALLOW_FULL_LEVEL_SELECT
-            if (rsc.level_results.front().score == 0) {
+            if (assets.level_results().front().score == 0) {
                 auto color = machine_c::shared().active_palette()->colors[0];
                 auto transition = transition_c::create(color);
                 manager.push(new cglevel_scene_c(manager, 0), transition);
@@ -104,11 +107,12 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
 {
     _menu_buttons.add_button("Back");
+    auto &level_results = assets.level_results();
     
     static char title_buf[3 * 45] = { 0 };
     if (!title_buf[0]) {
         strstream_c str(title_buf, 3 * 45);
-        for (int i = 1; i <= rsc.level_results.size(); i++) {
+        for (int i = 1; i <= level_results.size(); i++) {
             str << i << ends;
         }
     }
@@ -117,7 +121,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     const size_s size = size_s(26, 14);
     bool disable = false;
     char *title = title_buf;
-    for (const auto &result : rsc.level_results) {
+    for (const auto &result : level_results) {
         int col = index % 5;
         if (col == 0) {
             _select_button_groups.emplace_back(origin, size, 8);
@@ -140,10 +144,10 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 
 void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
 
-    canvas.draw(rsc.font, "Choose Level", point_s(96, 16));
+    canvas.draw(font, "Choose Level", point_s(96, 16));
 
     for (const auto &group : _select_button_groups) {
         group.draw_all(canvas);

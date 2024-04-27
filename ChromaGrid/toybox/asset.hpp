@@ -43,22 +43,22 @@ namespace toybox {
         void preload(uint32_t sets);
         void unload(uint32_t sets);
 
-        shared_ptr_c<asset_c> &asset(int id) const __pure;
+        asset_c &asset(int id) const __pure;
         
-        shared_ptr_c<image_c> &image(int id) const __pure { return (shared_ptr_c<image_c>&)(asset(id)); }
-        shared_ptr_c<tileset_c> &tileset(int id) const __pure { return (shared_ptr_c<tileset_c>&)(asset(id)); }
-        shared_ptr_c<font_c> &font(int id) const __pure { return (shared_ptr_c<font_c>&)(asset(id)); }
-        shared_ptr_c<sound_c> &sound(int id) const __pure { return (shared_ptr_c<sound_c>&)(asset(id)); }
-        shared_ptr_c<music_c> &music(int id) const __pure { return (shared_ptr_c<music_c>&)(asset(id)); }
+        image_c &image(int id) const __pure { return (image_c&)(asset(id)); }
+        tileset_c &tileset(int id) const __pure { return (tileset_c&)(asset(id)); }
+        font_c &font(int id) const __pure { return (font_c&)(asset(id)); }
+        sound_c &sound(int id) const __pure { return (sound_c&)(asset(id)); }
+        music_c &music(int id) const __pure { return (music_c&)(asset(id)); }
 
     protected:
         struct asset_def_s {
-            typedef asset_c*(*asset_create_f)(const asset_def_s &def);
-            asset_def_s(asset_c::type_e type, uint32_t sets, const char *path = nullptr, asset_create_f create = nullptr) :
-                type(type), sets(sets), path(path), create(create) {}
+            typedef asset_c*(*asset_create_f)(const asset_manager_c &manager, const char *path);
+            asset_def_s(asset_c::type_e type, uint32_t sets, const char *file = nullptr, asset_create_f create = nullptr) :
+                type(type), sets(sets), file(file), create(create) {}
             asset_c::type_e type;
             uint32_t sets;
-            const char *path;
+            const char *file;
             asset_create_f create;
         };
         asset_manager_c();
@@ -66,10 +66,12 @@ namespace toybox {
         void add_asset_def(int id, const asset_def_s &def);
         int add_asset_def(const asset_def_s &def);
         
-        virtual asset_c *create_asset(int id, const asset_def_s &def);
+        virtual unique_ptr_c<char> data_path(const char *file) const;
+        virtual unique_ptr_c<char> user_path(const char *file) const;
+        virtual asset_c *create_asset(int id, const asset_def_s &def) const;
     private:
         vector_c<asset_def_s, TOYBOX_ASSET_COUNT> _asset_defs;
-        mutable vector_c<shared_ptr_c<asset_c>, TOYBOX_ASSET_COUNT> _assets;
+        mutable vector_c<unique_ptr_c<asset_c>, TOYBOX_ASSET_COUNT> _assets;
     };
     
 }

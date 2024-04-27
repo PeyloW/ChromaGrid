@@ -21,25 +21,25 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
 
 void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
-    canvas.draw_aligned(rsc.background, point_s());
+    canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     
     switch (_scoring) {
         case score:
-            canvas.draw(rsc.font, "Hi-Scores", point_s(96, 16));
+            canvas.draw(font, "Hi-Scores", point_s(96, 16));
             break;
         case time:
-            canvas.draw(rsc.font, "Best Times", point_s(96, 16));
+            canvas.draw(font, "Best Times", point_s(96, 16));
             break;
         case moves:
-            canvas.draw(rsc.font, "Least Moves", point_s(96, 16));
+            canvas.draw(font, "Least Moves", point_s(96, 16));
             break;
     }
     
     int index = 0;
     char buf[12];
     strstream_c str(buf, 12);
-    for (auto &result : rsc.level_results) {
+    for (auto &result : assets.level_results()) {
         int col = index % 3;
         int row = index / 3;
         str.reset();
@@ -67,7 +67,7 @@ void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
         }
         str << ends;
         point_s at(16 + col * 55, 16 + 20 + 10 * row);
-        canvas.draw(rsc.small_mono_font, str.str(), at, canvas_c::align_left);
+        canvas.draw(assets.font(SMALL_MONO_FONT), str.str(), at, canvas_c::align_left);
         
         index++;
     }

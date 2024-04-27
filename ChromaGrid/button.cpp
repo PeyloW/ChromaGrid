@@ -14,14 +14,14 @@ void cgbutton_t::draw_in(canvas_c &image) const {
     static const rect_s button_rect_normal(8, 0, 32, 14);
     static const rect_s button_rect_disabled(8, 14, 32, 14);
 
-    const auto &rsc = cgresources_c::shared();
-    image.draw_3_patch(rsc.button, state != disabled ? button_rect_normal : button_rect_disabled, 8, rect);
+    const auto &rsc = cgasset_manager::shared();
+    image.draw_3_patch(rsc.image(BUTTON), state != disabled ? button_rect_normal : button_rect_disabled, 8, rect);
     point_s at(
         rect.origin.x + rect.size.width / 2,
         rect.origin.y + (state != pressed ? 3 : 4)
     );
     image.with_dirtymap(nullptr, [&] {
-        image.draw(rsc.font, text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
+        image.draw(rsc.font(FONT), text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
     });
 }
 
