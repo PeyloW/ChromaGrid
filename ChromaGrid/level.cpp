@@ -359,23 +359,23 @@ inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
     return idx;
 }
 
-inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &rsc, const tilestate_t &state, int x, int y) {
+inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &assets, const tilestate_t &state, int x, int y) {
     const point_s at(x * 16, y * 16);
     if (state.type == empty) {
         if (state.target != none) {
-            screen.draw(rsc.tileset(EMPTY_TILE), (state.target - 1), at);
+            screen.draw(assets.tileset(EMPTY_TILE), (state.target - 1), at);
         }
         return;
     }
-    screen.draw_aligned(rsc.tileset(TILES), tilestate_tile_index(state), at);
+    screen.draw_aligned(assets.tileset(TILES), tilestate_tile_index(state), at);
 }
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
-    auto &rsc = cgasset_manager::shared();
+    auto &assets = cgasset_manager::shared();
     if (state.type == empty) {
-        auto &empty_tile = rsc.tileset(EMPTY_TILE);
+        auto &empty_tile = assets.tileset(EMPTY_TILE);
         const rect_s rect(at, size_s(16, 16));
-        screen.draw(rsc.image(BACKGROUND), rect, at);
+        screen.draw(assets.image(BACKGROUND), rect, at);
         switch (state.target) {
             case none:
                 break;
@@ -395,7 +395,7 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
             }
         }
     } else {
-        screen.draw(rsc.tileset(TILES), tilestate_tile_index(state), at);
+        screen.draw(assets.tileset(TILES), tilestate_tile_index(state), at);
     }
     point_s o_at = at;
     switch (state.orb) {
@@ -416,51 +416,51 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
             break;
     }
     if (selected) {
-        screen.draw(rsc.image(SELECTION), at);
+        screen.draw(assets.image(SELECTION), at);
     }
 }
 
-inline static void draw_orb(canvas_c &screen, const cgasset_manager &rsc, color_e color, int shade, int x, int y) {
+inline static void draw_orb(canvas_c &screen, const cgasset_manager &assets, color_e color, int shade, int x, int y) {
     int16_t idx = (color - 1);
     idx += shade * 2;
     const point_s at(x * 16, y * 16 + 3);
-    screen.draw(rsc.tileset(ORBS), idx, at);
+    screen.draw(assets.tileset(ORBS), idx, at);
 }
 
 void draw_orb(canvas_c &screen, color_e color, point_s at) {
-    auto &rsc = cgasset_manager::shared();
+    auto &assets = cgasset_manager::shared();
     int16_t idx = (color - 1);
-    screen.draw(rsc.tileset(ORBS), idx, at);
+    screen.draw(assets.tileset(ORBS), idx, at);
 }
 
 void level_t::draw_tile(canvas_c &screen, int x, int y) const {
-    auto &rsc = cgasset_manager::shared();
+    auto &assets = cgasset_manager::shared();
     auto &tile = _grid->tiles[x][y];
     if (tile.state.type == empty && tile.state.target == none) {
         return;
     } else {
         if (tile.transition.step > 0) {
-            draw_tilestate(screen, rsc, tile.transition.from_state, x, y);
+            draw_tilestate(screen, assets, tile.transition.from_state, x, y);
             const int shade = canvas_c::STENCIL_FULLY_OPAQUE - tile.transition.step * canvas_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
             auto stencil = canvas_c::stencil(canvas_c::orderred, shade);
             screen.with_stencil(stencil, [&, this] {
-                draw_tilestate(screen, rsc, tile.state, x, y);
+                draw_tilestate(screen, assets, tile.state, x, y);
             });
         } else {
-            draw_tilestate(screen, rsc, tile.state, x, y);
+            draw_tilestate(screen, assets, tile.state, x, y);
         }
         
         if (tile.state.orb != color_e::none) {
-            draw_orb(screen, rsc, tile.state.orb, 0, x, y);
+            draw_orb(screen, assets, tile.state.orb, 0, x, y);
         } else if (tile.transition.step > 0 && tile.transition.from_state.orb != color_e::none) {
             const int shade = 7 - tile.transition.step * 7 / tile_c::STEP_MAX;
-            draw_orb(screen, rsc, tile.transition.from_state.orb, shade, x, y);
+            draw_orb(screen, assets, tile.transition.from_state.orb, shade, x, y);
         }
     }
 }
 
 void level_t::draw_time(canvas_c &screen) const {
-    auto &rsc = cgasset_manager::shared();
+    auto &assets = cgasset_manager::shared();
     int min = _results.time / 60;
     int sec = _results.time % 60;
     char buf[5];
@@ -473,14 +473,14 @@ void level_t::draw_time(canvas_c &screen) const {
     const point_s at = point_s(TIME_X_TRAIL - 32, TIME_Y_INSET);
     const rect_s rect = rect_s(at, size_s(32, 8));
 
-    screen.draw(rsc.image(BACKGROUND), rect, at);
-    screen.draw(rsc.font(MONO_FONT), buf, at, canvas_c::align_left);
+    screen.draw(assets.image(BACKGROUND), rect, at);
+    screen.draw(assets.font(MONO_FONT), buf, at, canvas_c::align_left);
 }
 
 void level_t::draw_orb_counts(canvas_c &screen) const {
-    auto &rsc = cgasset_manager::shared();
-    auto &background = rsc.image(BACKGROUND);
-    auto &mono_font = rsc.font(MONO_FONT);
+    auto &assets = cgasset_manager::shared();
+    auto &background = assets.image(BACKGROUND);
+    auto &mono_font = assets.font(MONO_FONT);
     
     for (int i = 0; i < 2; i++) {
         char buf[3];
@@ -496,9 +496,9 @@ void level_t::draw_orb_counts(canvas_c &screen) const {
 }
 
 void level_t::draw_move_count(canvas_c &screen) const {
-    auto &rsc = cgasset_manager::shared();
-    auto &background = rsc.image(BACKGROUND);
-    auto &mono_font = rsc.font(MONO_FONT);
+    auto &assets = cgasset_manager::shared();
+    auto &background = assets.image(BACKGROUND);
+    auto &mono_font = assets.font(MONO_FONT);
     int moves = _results.moves;
     char buf[4];
     buf[3] = 0;
@@ -515,9 +515,9 @@ void level_t::draw_move_count(canvas_c &screen) const {
 }
 
 void level_t::draw_remaining_count(canvas_c &screen) const {
-    auto &rsc = cgasset_manager::shared();
-    auto &background = rsc.image(BACKGROUND);
-    auto &mono_font = rsc.font(MONO_FONT);
+    auto &assets = cgasset_manager::shared();
+    auto &background = assets.image(BACKGROUND);
+    auto &mono_font = assets.font(MONO_FONT);
     int moves = _remaining;
     char buf[4];
     buf[3] = 0;
@@ -585,9 +585,9 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
                 sound_index = NO_DROP_ORB;
             }
             if (sound_index >= 0) {
-                auto &rsc = cgasset_manager::shared();
+                auto &assets = cgasset_manager::shared();
                 auto &mixer = audio_mixer_c::shared();
-                mixer.play(rsc.sound(sound_index));
+                mixer.play(assets.sound(sound_index));
             }
         }
         debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);

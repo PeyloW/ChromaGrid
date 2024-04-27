@@ -52,9 +52,9 @@ static const char *level_editor_texts[] = {
     nullptr
 };
 
-static void draw_help(const cgasset_manager &rsc, canvas_c &screen, const char *title, const char *texts[]) {
-    auto &font = rsc.font(FONT);
-    auto &small_font = rsc.font(SMALL_FONT);
+static void draw_help(const cgasset_manager &assets, canvas_c &screen, const char *title, const char *texts[]) {
+    auto &font = assets.font(FONT);
+    auto &small_font = assets.font(SMALL_FONT);
     screen.draw(font, title, point_s(96, 12));
     rect_s rect(7, 28, 176, 48);
     for (auto text = &texts[0]; *text; text++) {

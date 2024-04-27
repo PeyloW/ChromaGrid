@@ -13,6 +13,16 @@
 #include "resources.hpp"
 #include "button.hpp"
 
+
+class cgintro_scene_c : public scene_c {
+public:
+    cgintro_scene_c(scene_manager_c &manager);
+    virtual void will_appear(screen_c &screen, bool obsured);
+    virtual void update_background(screen_c &screen, int ticks);
+private:
+    int _update_count;
+};
+
 class cggame_scene_c : public scene_c {
 public:
 #define MAIN_MENU_ORIGIN_X (192)

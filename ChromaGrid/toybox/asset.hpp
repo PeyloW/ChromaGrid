@@ -43,13 +43,13 @@ namespace toybox {
         void preload(uint32_t sets);
         void unload(uint32_t sets);
 
-        asset_c &asset(int id) const __pure;
+        asset_c &asset(int id) const;
         
-        image_c &image(int id) const __pure { return (image_c&)(asset(id)); }
-        tileset_c &tileset(int id) const __pure { return (tileset_c&)(asset(id)); }
-        font_c &font(int id) const __pure { return (font_c&)(asset(id)); }
-        sound_c &sound(int id) const __pure { return (sound_c&)(asset(id)); }
-        music_c &music(int id) const __pure { return (music_c&)(asset(id)); }
+        image_c &image(int id) const { return (image_c&)(asset(id)); }
+        tileset_c &tileset(int id) const { return (tileset_c&)(asset(id)); }
+        font_c &font(int id) const { return (font_c&)(asset(id)); }
+        sound_c &sound(int id) const { return (sound_c&)(asset(id)); }
+        music_c &music(int id) const { return (music_c&)(asset(id)); }
 
     protected:
         struct asset_def_s {

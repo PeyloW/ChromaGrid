@@ -23,8 +23,6 @@ cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) :
 void cgmenu_scene_c::will_appear(screen_c &screen, bool obsured) {
     auto &canvas = screen.canvas();
     auto &tiles = assets.tileset(TILES);
-    machine_c::shared().set_active_palette(background.palette().get());
-    assets.preload(2);
     
     canvas.draw_aligned(background, point_s());
     for (int y = 0; y < 12; y++) {

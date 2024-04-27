@@ -97,16 +97,16 @@ void cgcredits_scene_c::will_appear(screen_c &screen, bool obsured) {
     
     switch (_page) {
         case credits:
-            draw_credits(font, assets.font(SMALL_FONT), canvas);
+            draw_credits(font, small_font, canvas);
             break;
         case recognitions:
-            draw_recognitions(font, assets.font(SMALL_FONT), canvas);
+            draw_recognitions(font, small_font, canvas);
             break;
         case dedications:
-            draw_dedications(font, assets.font(SMALL_FONT), canvas);
+            draw_dedications(font, small_font, canvas);
             break;
         case greetings:
-            draw_greetings(font, assets.font(SMALL_FONT), canvas);
+            draw_greetings(font, small_font, canvas);
             break;
     }
 }

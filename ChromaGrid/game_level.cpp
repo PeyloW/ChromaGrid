@@ -147,7 +147,7 @@ void cglevel_scene_c::will_appear(screen_c &screen, bool obsured) {
         }
     }
     str << ends;
-    canvas.draw(assets.font(SMALL_FONT), buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
+    canvas.draw(small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
 
     _menu_buttons.draw_all(canvas);
     _level.draw_all(canvas);
