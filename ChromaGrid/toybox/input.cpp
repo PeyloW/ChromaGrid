@@ -51,7 +51,7 @@ void mouse_c::set_limits(const rect_s &limits) {
     );
 }
 
-mouse_c::mouse_c() {
+mouse_c::mouse_c() : _update_tick(0) {
     set_limits(rect_s(point_s(), machine_c::shared().screen_size()));
 #ifdef __M68000__
 #   if TOYBOX_TARGET_ATARI
