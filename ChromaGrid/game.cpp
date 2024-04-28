@@ -38,9 +38,10 @@ void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
             assets.levels();
             assets.level_results();
             assets.user_levels();
+            printf("Used memory %ldKb.\n\r", assets.memory_cost() / 1024);
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
         default:
-            if (manager.mouse.is_pressed(mouse_c::left)) {
+            if (mouse_c::shared().is_pressed(mouse_c::left)) {
                 manager.push(new cgmenu_scene_c(manager));
             }
             break;
@@ -50,6 +51,7 @@ void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
 
 cggame_scene_c::cggame_scene_c(scene_manager_c &manager) :
     scene_c(manager),
+    mouse(mouse_c::shared()),
     assets(cgasset_manager::shared()),
     background(assets.image(BACKGROUND)),
     font(assets.font(FONT)),
@@ -59,7 +61,7 @@ cggame_scene_c::cggame_scene_c(scene_manager_c &manager) :
 void cgoverlay_scene_c::update_foreground(screen_c &screen, int ticks) {
     auto &canvas = screen.canvas();
     canvas.with_clipping(true, [this, &canvas] {
-        point_s at = manager.mouse.postion();
+        point_s at = mouse.postion();
         at.x -= 2;
         at.y -= 2;
         canvas.draw(assets.image(CURSOR), at);

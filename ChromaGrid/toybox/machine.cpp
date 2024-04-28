@@ -67,7 +67,7 @@ static uint32_t get_cookie(uint32_t cookie, uint32_t def_value = 0) {
 machine_c::type_e machine_c::type() const {
 #if TOYBOX_TARGET_ATARI
 #   ifdef __M68000__
-    return (type_e)(get_cookie(0x5F4D4348) >> 16); // '_MCH'
+    return (type_e)((get_cookie(0x5F4D4348) >> 16) + 1); // '_MCH'
 #   else
     return ste;
 #   endif

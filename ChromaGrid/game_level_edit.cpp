@@ -256,7 +256,6 @@ void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
         draw_counts(canvas);
     }
     
-    auto &mouse = manager.mouse;
     bool lb = mouse.state(mouse_c::left) == mouse_c::clicked;
     bool rb = mouse.state(mouse_c::right) == mouse_c::clicked;
     const auto pos = mouse.postion();

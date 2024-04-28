@@ -42,7 +42,8 @@ namespace toybox {
 
         void preload(uint32_t sets);
         void unload(uint32_t sets);
-
+        size_t memory_cost() const;
+        
         asset_c &asset(int id) const;
         
         image_c &image(int id) const { return (image_c&)(asset(id)); }

@@ -26,8 +26,7 @@ private:
 
 scene_manager_c::scene_manager_c(size_s screen_size) :
     vbl(timer_c::shared(timer_c::vbl)),
-    clock(timer_c::shared(timer_c::clock)),
-    mouse(rect_s(point_s(), TOYBOX_SCREEN_SIZE_DEFAULT))
+    clock(timer_c::shared(timer_c::clock))
 {
     machine_c::shared();
     _overlay_scene = nullptr;
@@ -53,7 +52,6 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
         int32_t ticks = tick - previous_tick;
         previous_tick = tick;
         
-        mouse.update_state();
         screen_c &physical_screen = _screens[_active_physical_screen];
         screen_c &logical_screen = _screens.back();
         

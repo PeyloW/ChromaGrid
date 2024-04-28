@@ -183,7 +183,7 @@ void cglevel_scene_c::update_background(screen_c &screen, int ticks) {
     }
     auto passed = _passed_seconds;
     _passed_seconds = 0;
-    auto state = _level.update_tick(canvas, manager.mouse, passed);
+    auto state = _level.update_tick(canvas, mouse, passed);
     if (state != level_t::normal) {
         level_result_t results;
         _level.results(&results);

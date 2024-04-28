@@ -35,9 +35,10 @@ public:
     cggame_scene_c(scene_manager_c &manager);
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
-        return buttons.update_buttons(screen, manager.mouse.postion(), manager.mouse.state(mouse_c::left));
+        return buttons.update_buttons(screen, mouse.postion(), mouse.state(mouse_c::left));
     }
 protected:
+    mouse_c &mouse;
     cgasset_manager &assets;
     image_c &background;
     font_c &font;

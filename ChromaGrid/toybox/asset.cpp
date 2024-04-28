@@ -53,6 +53,17 @@ void asset_manager_c::unload(uint32_t sets) {
     }
 }
 
+size_t asset_manager_c::memory_cost() const {
+    size_t cost = 0;
+    for (const auto &asset : _assets) {
+        if (asset.get() != nullptr) {
+            cost += asset->memory_cost();
+        }
+    }
+    return cost;
+}
+
+
 asset_c &asset_manager_c::asset(int id) const {
     auto &asset = _assets[id];
     if (asset.get() == nullptr) {

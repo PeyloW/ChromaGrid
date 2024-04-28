@@ -70,7 +70,6 @@ namespace toybox {
         
         timer_c &vbl;
         timer_c &clock;
-        mouse_c mouse;
         
         screen_c &background_screen() { return _screens.back(); }
         
