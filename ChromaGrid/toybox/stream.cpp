@@ -309,7 +309,7 @@ bool fstream_c::write(const uint8_t *buf, size_t count) {
 }
 
 strstream_c::strstream_c(int len) :
-    _owned_buf((char *)malloc(len)), _buf(_owned_buf.get()), _len(len), _pos(0), _max(0)
+    _owned_buf((char *)_malloc(len)), _buf(_owned_buf.get()), _len(len), _pos(0), _max(0)
 {}
 
 strstream_c::strstream_c(char *buf, int len) :

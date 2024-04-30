@@ -17,7 +17,7 @@ image_c::image_c(const size_s size, bool masked, shared_ptr_c<palette_c> palette
     _line_words = ((size.width + 15) / 16);
     uint16_t bitmap_words = (_line_words * size.height) << 2;
     uint16_t mask_bytes = masked ? (_line_words * size.height) : 0;
-    _bitmap.reset(reinterpret_cast<uint16_t*>(calloc(bitmap_words + mask_bytes, 2)));
+    _bitmap.reset(reinterpret_cast<uint16_t*>(_calloc(bitmap_words + mask_bytes, 2)));
     if (masked) {
         _maskmap = _bitmap + bitmap_words;
     } else {
@@ -216,7 +216,7 @@ image_c::image_c(const char *path, int masked_cidx) :
             const uint16_t bitmap_words = (_line_words * _size.height) << 2;
             const bool needs_mask_words = masked || (bmhd.mask_type == mask_type_plane);
             const uint16_t mask_words = needs_mask_words ? (bitmap_words >> 2) : 0;
-            _bitmap.reset((uint16_t*)(malloc((bitmap_words + mask_words) << 1)));
+            _bitmap.reset((uint16_t*)(_malloc((bitmap_words + mask_words) << 1)));
             assert(_bitmap);
             if (needs_mask_words) {
                 _maskmap = _bitmap + bitmap_words;

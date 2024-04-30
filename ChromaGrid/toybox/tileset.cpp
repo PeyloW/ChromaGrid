@@ -16,7 +16,7 @@ tileset_c::tileset_c(const shared_ptr_c<image_c> &image, size_s tile_size) :
     _rects()
 {
     assert(_max_tile.x > 0 && _max_tile.y > 0);
-    _rects.reset((rect_s*)malloc(sizeof(rect_s) * max_index()));
+    _rects.reset((rect_s*)_malloc(sizeof(rect_s) * max_index()));
     int i = 0;
     for (int y = 0; y < _max_tile.y; y++) {
         for (int x = 0; x < _max_tile.x; x++) {

@@ -91,12 +91,12 @@ sound_c::sound_c(const char *path) :
 #ifndef __M68000__
             // For target we hack, and make _sample point to full AIFF file.
             _length = form.size + 8;
-            _sample.reset((int8_t *)malloc(_length));
+            _sample.reset((int8_t *)_malloc(_length));
             file.seek(0, stream_c::beg);
             file.read(_sample.get(), _length);
             return;
 #else
-            _sample.reset((int8_t *)malloc(_length));
+            _sample.reset((int8_t *)_malloc(_length));
             file.read(_sample.get(), _length);
 #endif
         } else {
@@ -129,7 +129,7 @@ music_c::music_c(const char *path) {
     size_t size = file.tell();
     file.seek(0, toystd::fstream_c::beg);
     
-    _sndh.reset((uint8_t *)malloc(size));
+    _sndh.reset((uint8_t *)_malloc(size));
     _length = size;
     size_t read = file.read(_sndh.get(), size);
     assert(read == 1);

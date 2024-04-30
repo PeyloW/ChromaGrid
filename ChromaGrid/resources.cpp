@@ -100,7 +100,7 @@ cgassets_c::cgassets_c() :
     }
     
     printf("Loading user levels.\n\r");
-    uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
+    uint8_t *recipes = (uint8_t *)_calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
         user_levels.push_back((level_recipe_t *)(recipes + i * level_recipe_t::MAX_SIZE));
     }
@@ -168,7 +168,7 @@ void cgasset_manager::load_levels() const {
         iff.set_assert_on_error(true);
         iff_group_s list;
         iff.first(IFF_LIST, IFF_CGLV, list);
-        uint8_t *data = (uint8_t *)calloc(1, list.size);
+        uint8_t *data = (uint8_t *)_calloc(1, list.size);
         iff_group_s level_group;
         while (levels.size() < 45 && iff.next(list, IFF_FORM, level_group)) {
             level_recipe_t *recipe = (level_recipe_t *)(data + iff.tell());
@@ -181,7 +181,7 @@ void cgasset_manager::load_levels() const {
 
 void cgasset_manager::load_user_levels() const {
     auto &user_levels = (user_levels_c&)_user_levels;
-    uint8_t *recipes = (uint8_t *)calloc(10, level_recipe_t::MAX_SIZE);
+    uint8_t *recipes = (uint8_t *)_calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
         user_levels.push_back((level_recipe_t *)(recipes + i * level_recipe_t::MAX_SIZE));
     }

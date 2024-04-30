@@ -51,7 +51,7 @@ private:
 #endif
     static block_t *first_block;
     static void init_blocks() {
-        first_block = (block_t *)malloc(sizeof(block_t) * Count);
+        first_block = (block_t *)_malloc(sizeof(block_t) * Count);
         for (int i = 0; i < Count - 1; i++) {
             first_block[i].next = &first_block[i + 1];
         }

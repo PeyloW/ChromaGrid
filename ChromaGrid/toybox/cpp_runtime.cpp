@@ -8,21 +8,31 @@
 #include "cincludes.hpp"
 #include "memory.hpp"
 
+extern "C" {
+    FILE *log_file() {
+        static FILE *log = nullptr;
+        if (log == nullptr) {
+            log = fopen("log.txt", "w+");
+        }
+        return log;
+    }
+}
+
 template<>
 toystd::detail::shared_count_t::allocator::type toystd::detail::shared_count_t::allocator::first_block = nullptr;
  
 void *operator new (size_t n) {
-    return malloc(n);
+    return _malloc(n);
 }
 void* operator new[] (size_t n) {
-    return malloc(n);
+    return _malloc(n);
 }
 
 void operator delete (void* p) noexcept {
-    free(p);
+    _free(p);
 }
 void operator delete[] (void* p) noexcept {
-    free(p);
+    _free(p);
 }
 
 #ifdef __M68000__

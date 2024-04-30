@@ -284,7 +284,7 @@ public:
 
 
 level_t::level_t(level_recipe_t *recipe) :
-    _grid((grid_c*)calloc(1, sizeof(grid_c)))
+    _grid((grid_c*)_calloc(1, sizeof(grid_c)))
 {
     assert(recipe->header.width <= grid_c::GRID_MAX);
     assert(recipe->header.height <= grid_c::GRID_MAX);
@@ -656,7 +656,7 @@ bool level_recipe_t::load(iffstream_c &iff, iff_chunk_s &start_chunk) {
         iff.read(&header);
         
         if (iff.next(group, IFF_TEXT, chunk)) {
-            text = (const char *)calloc(1, chunk.size);
+            text = (const char *)_calloc(1, chunk.size);
             iff.read((uint8_t *)text, chunk.size);
         }
 

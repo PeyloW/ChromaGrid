@@ -90,7 +90,7 @@ int asset_manager_c::add_asset_def(const asset_def_s &def) {
 }
 
 unique_ptr_c<char> asset_manager_c::data_path(const char *file) const {
-    unique_ptr_c<char> path((char *)malloc(128));
+    unique_ptr_c<char> path((char *)_malloc(128));
     strstream_c str(path.get(), 128);
 #ifdef __M68000__
     str << "data\\";
@@ -100,7 +100,7 @@ unique_ptr_c<char> asset_manager_c::data_path(const char *file) const {
 }
 
 unique_ptr_c<char> asset_manager_c::user_path(const char *file) const {
-    unique_ptr_c<char> path((char *)malloc(128));
+    unique_ptr_c<char> path((char *)_malloc(128));
     strstream_c str(path.get(), 128);
 #ifndef __M68000__
     str << "/tmp/";

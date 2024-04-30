@@ -20,7 +20,7 @@ canvas_c::~canvas_c() {}
 dirtymap_c *canvas_c::create_dirtymap() const {
     auto size = _image.size();
     int bytes = dirtymap_c::instance_size(&size);
-    return new (calloc(1, bytes)) dirtymap_c(size);
+    return new (_calloc(1, bytes)) dirtymap_c(size);
 }
 
 void canvas_c::put_pixel(int ci, point_s at) const {

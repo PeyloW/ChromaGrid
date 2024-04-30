@@ -36,6 +36,7 @@ namespace toybox {
         size_s screen_size() const __pure;
         size_t max_memory() const __pure;
         size_t user_memory() const __pure;
+        void free_system_memory();
         
         const image_c *active_image() const;
         void set_active_image(const image_c *image, point_s offset = point_s());

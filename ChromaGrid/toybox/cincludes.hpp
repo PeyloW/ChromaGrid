@@ -49,6 +49,41 @@ extern "C" {
 #include <time.h>
 }
 
+extern "C" {
+
+    FILE *log_file();
+#if TOYBOX_LOG_MALLOC
+    extern FILE *g_malloc_log;
+    static void *_malloc(size_t n) {
+        auto b = (Malloc(-1));
+        auto p = malloc(n);
+        auto a = (Malloc(-1));
+        fprintf(log_file(), "Malloc %ld [%ld -> %ld].\n", n, b, a);
+        hard_assert(p != nullptr);
+        return p;
+    }
+    
+    static void *_calloc(size_t c, size_t n) {
+        auto b = (Malloc(-1));
+        auto p = calloc(c, n);
+        auto a = (Malloc(-1));
+        fprintf(log_file(), "Calloc %ld [%ld -> %ld].\n", (c * n), b, a);
+        hard_assert(p != nullptr);
+        return p;
+    }
+    static void *_free(void *p) {
+        auto b = (Malloc(-1));
+        free(p);
+        auto a = (Malloc(-1));
+        fprintf(log_file(), "Free [%ld -> %ld].\n", b, a);
+    }
+#else
+#   define _malloc malloc
+#   define _calloc calloc
+#   define _free free
+#endif
+}
+
 // Required for inplace new
 extern void* operator new (size_t count, void *p) noexcept;
 namespace toystd {

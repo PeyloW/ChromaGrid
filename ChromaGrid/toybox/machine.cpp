@@ -104,6 +104,29 @@ size_t machine_c::user_memory() const {
 #endif
 }
 
+
+#if TOYBOX_TARGET_ATARI
+#   ifdef __M68000__
+struct mem_chunk {
+    long valid;
+#define VAL_ALLOC 0xa11c0abcL
+    struct mem_chunk *next;
+    unsigned long size;
+};
+#define BORDER_EXTRA ((sizeof(struct mem_chunk) + sizeof(long) + 7) & ~7)
+void machine_c::free_system_memory() {
+    mem_chunk *p = *(mem_chunk **)(0x44e);
+    p->valid = VAL_ALLOC;
+    p->next = nullptr;
+    p->size = 32000;
+    p++;
+    _free(p);
+}
+#   else
+void machine_c::free_system_memory() {}
+#   endif
+#endif
+
 extern "C" {
     const palette_c *g_active_palette = nullptr;
     const image_c *g_active_image = nullptr;

@@ -88,16 +88,15 @@ static void update_state() {
 }
 
 bool mouse_c::is_pressed(button_e button) const {
+    return (g_mouse_buttons & (1 << button)) != 0;
+}
+
+mouse_c::state_e mouse_c::state(button_e button) const {
     auto tick = timer_c::shared(timer_c::vbl).tick();
     if (tick > _update_tick) {
         update_state();
         _update_tick = tick;
     }
-    return (g_mouse_buttons & (1 << button)) != 0;
-}
-
-mouse_c::state_e mouse_c::state(button_e button) const {
-    update_state();
     return g_mouse_button_states[button];
 }
 

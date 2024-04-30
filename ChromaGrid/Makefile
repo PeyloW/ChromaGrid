@@ -13,12 +13,13 @@ FLAGS+=-g0 -DNDEBUG
 FLAGS+=-s
 #FLAGS+=-DDEBUG_CPU
 FLAGS+=-DALLOW_FULL_LEVEL_SELECT
+#FLAGS+=-DTOYBOX_LOG_MALLOC=1
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
 LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
-LDFLAGS+=-Wl,--traditional-format
+LDFLAGS+=-Wl,--traditional-format,--stack,16384
 
 TOYBOX_OBJECTS=cpp_runtime.o
 TOYBOX_OBJECTS+=machine.o timer.o input.o system_m68k.o
