@@ -19,8 +19,8 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
     _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
 }
 
-void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.canvas();
+void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     
@@ -73,8 +73,8 @@ void cgscores_scene_c::will_appear(screen_c &screen, bool obsured) {
     }
 }
 
-void cgscores_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cgscores_scene_c::update_clear(screen_c &clear_screen, int ticks) {
+    auto &canvas = clear_screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:

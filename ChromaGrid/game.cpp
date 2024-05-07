@@ -20,13 +20,13 @@ extern "C" {
 cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) : scene_c(manager), _update_count(0) {
 }
 
-void cgintro_scene_c::will_appear(screen_c &screen, bool obsured) {
+void cgintro_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     auto &image = cgasset_manager::shared().image(INTRO);
-    screen.canvas().draw_aligned(image, point_s());
+    clear_screen.canvas().draw_aligned(image, point_s());
     machine_c::shared().set_active_palette(image.palette().get());
 }
 
-void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
+void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
     auto &assets = cgasset_manager::shared();
     switch (_update_count++) {
         case 0 ... 1:
@@ -60,8 +60,8 @@ cggame_scene_c::cggame_scene_c(scene_manager_c &manager) :
     small_font(assets.font(SMALL_FONT))
 {};
 
-void cgoverlay_scene_c::update_foreground(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cgoverlay_scene_c::update_back(screen_c &back_screen, int ticks) {
+    auto &canvas = back_screen.canvas();
     canvas.with_clipping(true, [this, &canvas] {
         point_s at = mouse.postion();
         at.x -= 2;

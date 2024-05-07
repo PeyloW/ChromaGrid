@@ -46,8 +46,8 @@ public:
         add_buttons();
     }
 
-    virtual void will_appear(screen_c &screen, bool obsured) {
-        auto &canvas = screen.canvas();
+    virtual void will_appear(screen_c &clear_screen, bool obsured) {
+        auto &canvas = clear_screen.canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
             canvas.draw_aligned(background, rect, rect.origin);
@@ -60,8 +60,8 @@ public:
         _menu_buttons.draw_all(canvas);
     }
     
-    virtual void update_background(screen_c &screen, int ticks) {
-        auto &canvas = screen.canvas();
+    virtual void update_clear(screen_c &clear_screen, int ticks) {
+        auto &canvas = clear_screen.canvas();
         int button = update_button_group(canvas, _menu_buttons);
         auto transition = transition_c::create(canvas_c::random);
         if (button == 0) {
@@ -160,8 +160,8 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
     _tile_templates.push_back((tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::both});
 }
 
-void cglevel_edit_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.canvas();
+void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     _count_buttons.draw_all(canvas);
@@ -206,8 +206,8 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
     return copy;
 }
 
-void cglevel_edit_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
+    auto &canvas = clear_screen.canvas();
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];

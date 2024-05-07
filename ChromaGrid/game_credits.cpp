@@ -90,8 +90,8 @@ static void draw_greetings(font_c &font, font_c &small_font, canvas_c &screen) {
     }
 }
 
-void cgcredits_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.canvas();
+void cgcredits_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     
@@ -112,8 +112,8 @@ void cgcredits_scene_c::will_appear(screen_c &screen, bool obsured) {
 }
 
 
-void cgcredits_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cgcredits_scene_c::update_clear(screen_c &clear_screen, int ticks) {
+    auto &canvas = clear_screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:

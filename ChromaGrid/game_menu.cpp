@@ -20,8 +20,8 @@ cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) :
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
-void cgmenu_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.canvas();
+void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
     auto &tiles = assets.tileset(TILES);
     
     canvas.draw_aligned(background, point_s());
@@ -63,8 +63,8 @@ void cgmenu_scene_c::will_appear(screen_c &screen, bool obsured) {
     canvas.draw(font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
 }
 
-void cgmenu_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
+    auto &canvas = clear_screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
@@ -140,8 +140,8 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     }
 }
 
-void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
-    auto &canvas = screen.canvas();
+void cglevel_select_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
 
@@ -152,8 +152,8 @@ void cglevel_select_scene_c::will_appear(screen_c &screen, bool obsured) {
     }
 }
 
-void cglevel_select_scene_c::update_background(screen_c &screen, int ticks) {
-    auto &canvas = screen.canvas();
+void cglevel_select_scene_c::update_clear(screen_c &clear_screen, int ticks) {
+    auto &canvas = clear_screen.canvas();
     int button = update_button_group(canvas, _menu_buttons);
     if (button == 0) {
         manager.pop();

@@ -30,10 +30,10 @@ namespace toybox {
         scene_c(scene_manager_c &manager) : manager(manager) {};
         virtual ~scene_c() {};
         
-        virtual void will_appear(screen_c &screen, bool obsured) = 0;
+        virtual void will_appear(screen_c &clear_screen, bool obsured) = 0;
         virtual void will_disappear(bool obscured) {};
-        virtual void update_background(screen_c &screen, int ticks) {};
-        virtual void update_foreground(screen_c &screen, int ticks) {};
+        virtual void update_clear(screen_c &clear_screen, int ticks) {};
+        virtual void update_back(screen_c &back_screen, int ticks) {};
         
     protected:
         scene_manager_c &manager;
@@ -53,6 +53,9 @@ namespace toybox {
         
     class scene_manager_c : public nocopy_c {
     public:
+        enum class screen_e : int8_t {
+            clear = -1, front, back
+        };
         scene_manager_c(size_s screen_size = TOYBOX_SCREEN_SIZE_MAX);
         ~scene_manager_c() = default;
         
@@ -71,13 +74,15 @@ namespace toybox {
         timer_c &vbl;
         timer_c &clock;
         
-        screen_c &background_screen() { return _screens.back(); }
+        screen_c &screen(screen_e id) const;
         
     private:
         transition_c *_transition;
         scene_c *_overlay_scene;
         vector_c<scene_c *, 8> _scene_stack;
         vector_c<unique_ptr_c<scene_c>, 8> _deletion_stack;
+        
+        void swap_screens();
         
         inline void enqueue_delete(scene_c *scene) {
             _deletion_stack.emplace_back(scene);
