@@ -9,6 +9,7 @@
 #include "machine.hpp"
 #include "forward_list.hpp"
 #include "algorithm.hpp"
+#include "system_helpers.hpp"
 
 using namespace toybox;
 
@@ -203,6 +204,8 @@ void timer_c::reset_tick() {
 void timer_c::wait(int ticks) {
     const auto wait_tick = tick() + ticks;
     while (wait_tick >= tick()) {
+        debug_cpu_color(0x700);
+        debug_cpu_color(0x000);
 #ifndef __M68000__
         host_bridge_c::shared().yield();
 #endif

@@ -67,7 +67,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
             logical_screen.canvas().with_dirtymap(logical_screen.dirtymap(), [&scene, ticks, &logical_screen] {
                 scene.update_background(logical_screen, ticks);
             });
-            if (scene == top_scene()) {
+            if (_scene_stack.size() > 0 && scene == top_scene()) {
                 // Merge dirty maps here!
                 _screens[0].dirtymap()->merge(*logical_screen.dirtymap());
                 _screens[1].dirtymap()->merge(*logical_screen.dirtymap());

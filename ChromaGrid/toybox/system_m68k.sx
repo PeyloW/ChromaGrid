@@ -78,7 +78,7 @@ _g_system_vbl_interupt:
 .even
 _g_clock_interupt:
     movem.l d0-d2/a0-a2,-(sp)
-#ifdef DEBUG_CPU
+#if TOYBOX_DEBUG_CPU
     move.w  0xffff8240.w,-(sp)
     move.w  #0x011,0xffff8240.w
 #endif
@@ -99,7 +99,7 @@ _g_clock_interupt:
     add.l   #14,a2
     bra.s   .next_func_c
 .no_more_funcs_c:
-#ifdef DEBUG_CPU
+#if TOYBOX_DEBUG_CPU
     move.w  (sp)+,0xffff8240.w
 #endif
     movem.l (sp)+,d0-d2/a0-a2
@@ -110,7 +110,7 @@ _g_system_clock_interupt:
     .even
 _g_mouse_interupt:
     move.w  d0, -(sp)
-#ifdef DEBUG_CPU
+#if TOYBOX_DEBUG_CPU
     move.w  0xffff8240.w,-(sp)
     move.w  #0x101,0xffff8240.w
 #endif
@@ -123,7 +123,7 @@ _g_mouse_interupt:
     move.b  2(a0),d0
     ext.w   d0
     add.w   d0,_g_mouse_position+2
-#ifdef DEBUG_CPU
+#if TOYBOX_DEBUG_CPU
     move.w  (sp)+,0xffff8240.w
 #endif
     move.w  (sp)+,d0

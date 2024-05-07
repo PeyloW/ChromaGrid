@@ -42,7 +42,9 @@ void cgintro_scene_c::update_background(screen_c &screen, int ticks) {
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
         default:
             if (mouse_c::shared().is_pressed(mouse_c::left)) {
-                manager.push(new cgmenu_scene_c(manager));
+                auto color = machine_c::shared().active_palette()->colors[0];
+                auto transition = transition_c::create(color);
+                manager.replace(new cgmenu_scene_c(manager), transition);
             }
             break;
     }

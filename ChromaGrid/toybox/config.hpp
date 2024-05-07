@@ -44,6 +44,10 @@
 #   define TOYBOX_SCREEN_SIZE_DEFAULT size_s(320, 200)
 #endif
 
+#ifndef TOYBOX_DEBUG_CPU
+#   define TOYBOX_DEBUG_CPU 0
+#endif
+
 #ifndef TOYBOX_DEBUG_DIRTYMAP
 #   ifdef __M68000__
 #       define TOYBOX_DEBUG_DIRTYMAP 0

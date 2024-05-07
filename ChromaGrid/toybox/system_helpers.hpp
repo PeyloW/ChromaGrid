@@ -16,7 +16,7 @@ namespace toybox {
        
 #define DEBUG_CPU_CLOCK_INTERUPT 0x011
 #define DEBUG_CPU_MOUSE_INTERUPT 0x101
-#ifdef DEBUG_CPU
+#if TOYBOX_DEBUG_CPU
     __forceinline static void debug_cpu_color(uint16_t c) {
         __asm__ volatile ("move.w %[d],0xffff8240.w" :  : [d] "g" (c) : );
     }

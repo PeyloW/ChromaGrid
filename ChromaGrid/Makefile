@@ -11,7 +11,7 @@ FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
 FLAGS+=-g0 -DNDEBUG
 FLAGS+=-s
-#FLAGS+=-DDEBUG_CPU
+FLAGS+=-DTOYBOX_DEBUG_CPU=0
 FLAGS+=-DALLOW_FULL_LEVEL_SELECT
 #FLAGS+=-DTOYBOX_LOG_MALLOC=1
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
