@@ -20,7 +20,9 @@ public:
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
+    static void update_preload(int loaded, int count);
     int _update_count;
+    cgbutton_group_c<1> _menu_buttons;
 };
 
 class cggame_scene_c : public scene_c {

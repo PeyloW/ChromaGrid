@@ -40,7 +40,8 @@ namespace toybox {
         asset_manager_c(const char *asset_defs_path);
         virtual ~asset_manager_c() {}
 
-        void preload(uint32_t sets);
+        typedef void(*progress_f)(int loaded, int total);
+        void preload(uint32_t sets, progress_f progress = nullptr);
         void unload(uint32_t sets);
         size_t memory_cost() const;
         

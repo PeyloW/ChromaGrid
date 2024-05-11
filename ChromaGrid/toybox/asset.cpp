@@ -33,13 +33,21 @@ asset_manager_c::asset_manager_c() {
     
 }
 
-void asset_manager_c::preload(uint32_t sets) {
+void asset_manager_c::preload(uint32_t sets, progress_f progress) {
+    int ids[_asset_defs.size()];
+    int count = 0;
     int id = 0;
     for (auto &def : _asset_defs) {
-        if (def.sets & sets) {
-            asset(id);
+        if ((def.sets & sets) && (_assets[id].get() == nullptr)) {
+            ids[count++] = id;
         }
         id++;
+    }
+    for (int i = 0; i < count; i++) {
+        asset(ids[i]);
+        if (progress) {
+            progress(i + 1, count);
+        }
     }
 }
 
