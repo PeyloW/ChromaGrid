@@ -27,7 +27,7 @@ public:
             } else {
                 _menu_buttons.add_button("Next Level");
                 if (assets.level_results()[level_num].merge_from(results)) {
-                    assets.save_level_results();
+                    assets.level_results().save();
                 }
             }
         }

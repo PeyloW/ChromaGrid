@@ -70,7 +70,7 @@ public:
             auto &user_levels = assets.user_levels();
             if (_recipe) {
                 memcpy(user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
-                assets.save_user_levels();
+                assets.user_levels().save();
                 manager.pop(transition);
             } else {
                 manager.pop(nullptr);

@@ -53,6 +53,8 @@ namespace toybox {
         sound_c &sound(int id) const { return (sound_c&)(asset(id)); }
         music_c &music(int id) const { return (music_c&)(asset(id)); }
 
+        virtual unique_ptr_c<char> data_path(const char *file) const;
+        virtual unique_ptr_c<char> user_path(const char *file) const;
     protected:
         struct asset_def_s {
             typedef asset_c*(*asset_create_f)(const asset_manager_c &manager, const char *path);
@@ -68,8 +70,6 @@ namespace toybox {
         void add_asset_def(int id, const asset_def_s &def);
         int add_asset_def(const asset_def_s &def);
         
-        virtual unique_ptr_c<char> data_path(const char *file) const;
-        virtual unique_ptr_c<char> user_path(const char *file) const;
         virtual asset_c *create_asset(int id, const asset_def_s &def) const;
     private:
         vector_c<asset_def_s, TOYBOX_ASSET_COUNT> _asset_defs;
