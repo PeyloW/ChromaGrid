@@ -29,11 +29,11 @@
 #endif
 
 #ifndef TOYBOX_IMAGE_SUPPORTS_SAVE
-#   ifdef __M68000__
-#       define TOYBOX_IMAGE_SUPPORTS_SAVE 0
-#   else
-#       define TOYBOX_IMAGE_SUPPORTS_SAVE 1
-#   endif
+#   define TOYBOX_IMAGE_SUPPORTS_SAVE 0
+#endif
+
+#ifndef TOYBOX_ILBM_SUPPORTS_DEFLATE
+#   define TOYBOX_ILBM_SUPPORTS_DEFLATE 1
 #endif
 
 #ifndef TOYBOX_SCREEN_SIZE_MAX

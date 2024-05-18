@@ -8,6 +8,12 @@
 #include "image.hpp"
 #include "canvas.hpp"
 #include "iffstream.hpp"
+#include "decompress.hpp"
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+#   if TOYBOX_IMAGE_SUPPORTS_SAVE
+#       include <zlib.h>
+#   endif
+#endif
 
 using namespace toybox;
 
@@ -61,12 +67,6 @@ typedef enum __packed {
     mask_type_color,
     mask_type_lasso,
 } mask_type_e;
-
-typedef enum __packed {
-    compression_type_none,
-    compression_type_packbits,
-    compression_type_vertical
-} compression_type_e;
 
 struct __packed_struct ilbm_header_s {
     size_s size;
@@ -163,6 +163,41 @@ static void image_read_packbits(iffstream_c &file, uint16_t line_words, int heig
     }
 }
 
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+static void image_read_deflate(iffstream_c &file, uint32_t body_size, uint16_t line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+    const int bp_count = (maskmap ? 5 : 4);
+    const long unpacked_size = sizeof(uint16_t) * bp_count * line_words * height;
+    uint8_t *body_buffer = (uint8_t*)malloc(body_size);
+    file.read(body_buffer, body_size);
+    uint8_t *decomp_body_buffer = (uint8_t *)malloc(unpacked_size);
+    auto size = decompress_deflate(decomp_body_buffer, unpacked_size, body_buffer, body_size);
+    assert(size == unpacked_size);
+    uint16_t *word_buffer = (uint16_t*)decomp_body_buffer;
+    while (--height != -1) {
+        for (int bp = 0; bp < bp_count; bp++) {
+            if (bp < 4) {
+                for (int i = 0; i < line_words; i++) {
+                    bitmap[bp + i * 4] = word_buffer[bp * line_words + i];
+                    hton(bitmap[bp + i * 4]);
+                }
+            } else {
+                for (int i = 0; i < line_words; i++) {
+                    maskmap[i] = word_buffer[bp * line_words + i];
+                    hton(bitmap[i]);
+                }
+            }
+        }
+        bitmap += line_words * 4;
+        if (maskmap) {
+            maskmap += line_words;
+        }
+        word_buffer += line_words * bp_count;
+    }
+    free(body_buffer);
+    free(decomp_body_buffer);
+}
+#endif
+
 size_t image_c::memory_cost() const {
     size_t cost = sizeof(image_c);
     if (_palette.get()) {
@@ -204,7 +239,13 @@ image_c::image_c(const char *path, int masked_cidx) :
             } else {
                 assert(bmhd.mask_type == mask_type_none);
             }
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+            // DeluxePain ST format not supported
+            assert(bmhd.compression_type < compression_type_vertical || bmhd.compression_type == compression_type_deflate);
+#else
+            // DeluxePain ST format and custom deflate not supported
             assert(bmhd.compression_type < compression_type_vertical); // DeluxePain ST format not supported
+#endif
         } else if (iff_id_match(chunk.id, IFF_CMAP)) {
             uint8_t cmpa[48];
             if (!file.read(cmpa, 48)) {
@@ -230,6 +271,11 @@ image_c::image_c(const char *path, int masked_cidx) :
                 case compression_type_packbits:
                     image_read_packbits(file, _line_words, _size.height, _bitmap.get(), bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
                     break;
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+                case compression_type_deflate:
+                    image_read_deflate(file, chunk.size, _line_words, _size.height, _bitmap.get(), bmhd.mask_type == mask_type_plane ? _maskmap : nullptr);
+                    break;
+#endif
                 default:
                     break;
             }
@@ -256,6 +302,29 @@ image_c::image_c(const char *path, int masked_cidx) :
 
 #if TOYBOX_IMAGE_SUPPORTS_SAVE
 
+static void image_write(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+    const int bp_count = (maskmap ? 5 : 4);
+    uint16_t word_buffer[line_words * bp_count];
+    while (--height != -1) {
+        for (int bp = 0; bp < bp_count; bp++) {
+            if (bp < 4) {
+                for (int i = 0; i < line_words; i++) {
+                    word_buffer[bp * line_words + i] = bitmap[bp + i * 4];
+                }
+            } else {
+                for (int i = 0; i < line_words; i++) {
+                    word_buffer[bp * line_words + i] = maskmap[i];
+                }
+            }
+        }
+        file.write(word_buffer, line_words * bp_count);
+        
+        bitmap += next_line_words * 4;
+        if (maskmap) {
+            maskmap += next_line_words;
+        }
+    }
+}
 
 static int image_packbits_into_body(uint8_t *body, const uint8_t *row_buffer, int row_byte_count) {
     assert(row_byte_count >= 2);
@@ -364,32 +433,54 @@ static void image_write_packbits(iffstream_c &file, uint16_t line_words, uint16_
     }
 }
 
-static void image_write(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+static void image_write_deflate(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
-    uint16_t word_buffer[line_words * bp_count];
+    const long body_size = sizeof(uint16_t) * bp_count * line_words * height;
+    uint8_t *body_buffer = (uint8_t*)malloc(body_size);
+
+    uint16_t *word_buffer = (uint16_t*)body_buffer;
     while (--height != -1) {
         for (int bp = 0; bp < bp_count; bp++) {
             if (bp < 4) {
                 for (int i = 0; i < line_words; i++) {
                     word_buffer[bp * line_words + i] = bitmap[bp + i * 4];
+                    hton(word_buffer[bp * line_words + i]);
                 }
             } else {
                 for (int i = 0; i < line_words; i++) {
                     word_buffer[bp * line_words + i] = maskmap[i];
+                    hton(word_buffer[bp * line_words + i]);
                 }
             }
         }
-        file.write(word_buffer, line_words * bp_count);
-        
         bitmap += next_line_words * 4;
         if (maskmap) {
             maskmap += next_line_words;
         }
+        word_buffer += line_words * bp_count;
     }
+    uLongf compressed_body_size = compressBound(body_size);
+    uint8_t *compressed_body_buffer = (uint8_t*)malloc(compressed_body_size);
+    int result = compress2((Bytef *)compressed_body_buffer, &compressed_body_size, (Bytef *)body_buffer, body_size, 9);
+    assert(result == Z_OK);
+    file.write(compressed_body_buffer + 2, compressed_body_size - 6);
+    
+    free(body_buffer);
+    free(compressed_body_buffer);
 }
+#endif
 
 
-bool image_c::save(const char *path, bool compressed, bool masked, int masked_cidx) {
+bool image_c::save(const char *path, compression_type_e compression, bool masked, int masked_cidx) {
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+            // DeluxePain ST format not supported
+            assert(compression < compression_type_vertical || compression == compression_type_deflate);
+#else
+            // DeluxePain ST format and custom deflate not supported
+            assert(compression < compression_type_vertical); // DeluxePain ST format not supported
+#endif
+
     iffstream_c ilbm(path, fstream_c::input | fstream_c::output);
     if (ilbm.tell() >= 0) {
         ilbm.set_assert_on_error(true);
@@ -403,7 +494,7 @@ bool image_c::save(const char *path, bool compressed, bool masked, int masked_ci
                 header.size = _size;
                 header.plane_count = 4;
                 header.mask_type = masked_cidx != MASKED_CIDX ? mask_type_color : (masked && _maskmap) ? mask_type_plane : mask_type_none;
-                header.compression_type = compressed ? compression_type_packbits : compression_type_none;
+                header.compression_type = compression;
                 if (header.mask_type == mask_type_color) {
                     header.mask_color = masked_cidx;
                 }
@@ -430,10 +521,21 @@ bool image_c::save(const char *path, bool compressed, bool masked, int masked_ci
             }
             {
                 ilbm.begin(chunk, IFF_BODY);
-                if (compressed) {
-                    image_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(), header.mask_type == mask_type_plane ? _maskmap : nullptr);
-                } else {
-                    image_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(),  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                switch (compression) {
+                    case compression_type_none:
+                        image_write(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(),  header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                        break;
+                    case compression_type_packbits:
+                        image_write_packbits(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(), header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                        break;
+#if TOYBOX_ILBM_SUPPORTS_DEFLATE
+                    case compression_type_deflate:
+                        image_write_deflate(ilbm, (_size.width + 15) / 16, _line_words, _size.height, _bitmap.get(), header.mask_type == mask_type_plane ? _maskmap : nullptr);
+                        break;
+#endif
+                    default:
+                        assert(0);
+                        break;
                 }
                 ilbm.end(chunk);
             }

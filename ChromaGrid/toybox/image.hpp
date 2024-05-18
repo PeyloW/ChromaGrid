@@ -16,6 +16,15 @@ namespace toybox {
     
     using namespace toystd;
     
+    typedef enum __packed {
+        compression_type_none,
+        compression_type_packbits,
+        compression_type_vertical,
+    #if TOYBOX_ILBM_SUPPORTS_DEFLATE
+        compression_type_deflate
+    #endif
+    } compression_type_e;
+
     class image_c : public asset_c {
         friend class canvas_c;
     public:
@@ -33,7 +42,7 @@ namespace toybox {
         size_t memory_cost() const;
 
 #if TOYBOX_IMAGE_SUPPORTS_SAVE
-        bool save(const char *path, bool compressed, bool masked, int masked_cidx = MASKED_CIDX);
+        bool save(const char *path, compression_type_e compression, bool masked, int masked_cidx = MASKED_CIDX);
 #endif
                 
         __forceinline void ser_palette(const shared_ptr_c<palette_c> &palette) {
