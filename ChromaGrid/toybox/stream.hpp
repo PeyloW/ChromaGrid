@@ -33,25 +33,25 @@ namespace toystd {
         virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way) = 0;
         virtual bool flush();
 
-        virtual bool read(uint8_t *buf, size_t count = 1) = 0;
-        virtual bool read(uint16_t *buf, size_t count = 1);
-        virtual bool read(uint32_t *buf, size_t count = 1);
+        virtual size_t read(uint8_t *buf, size_t count = 1) = 0;
+        virtual size_t read(uint16_t *buf, size_t count = 1);
+        virtual size_t read(uint32_t *buf, size_t count = 1);
         virtual bool read(void *buf, const char *layout);
         template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
         bool read(T *buf) { return read((void *)buf, struct_layout<T>::value); };
-        __forceinline bool read(int8_t *buf, size_t count = 1) { return read((uint8_t*)buf, count); };
-        __forceinline bool read(int16_t *buf, size_t count = 1) { return read((uint16_t*)buf, count); };
-        __forceinline bool read(int32_t *buf, size_t count = 1) { return read((uint32_t*)buf, count); };
+        __forceinline size_t read(int8_t *buf, size_t count = 1) { return read((uint8_t*)buf, count); };
+        __forceinline size_t read(int16_t *buf, size_t count = 1) { return read((uint16_t*)buf, count); };
+        __forceinline size_t read(int32_t *buf, size_t count = 1) { return read((uint32_t*)buf, count); };
 
-        virtual bool write(const uint8_t *buf, size_t count = 1) = 0;
-        virtual bool write(const uint16_t *buf, size_t count = 1);
-        virtual bool write(const uint32_t *buf, size_t count = 1);
+        virtual size_t write(const uint8_t *buf, size_t count = 1) = 0;
+        virtual size_t write(const uint16_t *buf, size_t count = 1);
+        virtual size_t write(const uint32_t *buf, size_t count = 1);
         virtual bool write(const void *buf, const char *layout);
         template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
         bool write(const T *buf) { return write((void *)buf, struct_layout<T>::value); };
-        __forceinline bool write(const int8_t *buf, size_t count = 1) { return write((uint8_t*)buf, count); };
-        __forceinline bool write(const int16_t *buf, size_t count = 1) { return write((uint16_t*)buf, count); };
-        __forceinline bool write(const int32_t *buf, size_t count = 1) { return write((uint32_t*)buf, count); };
+        __forceinline size_t write(const int8_t *buf, size_t count = 1) { return write((uint8_t*)buf, count); };
+        __forceinline size_t write(const int16_t *buf, size_t count = 1) { return write((uint16_t*)buf, count); };
+        __forceinline size_t write(const int32_t *buf, size_t count = 1) { return write((uint32_t*)buf, count); };
         
         int width() const { return _width; }
         int width(int w) { int t = _width; _width = w; return t; }
@@ -105,14 +105,14 @@ namespace toystd {
         virtual bool flush();
 
         using stream_c::read;
-        virtual bool read(uint8_t *buf, size_t count = 1);
-        virtual bool read(uint16_t *buf, size_t count = 1);
-        virtual bool read(uint32_t *buf, size_t count = 1);
+        virtual size_t read(uint8_t *buf, size_t count = 1);
+        virtual size_t read(uint16_t *buf, size_t count = 1);
+        virtual size_t read(uint32_t *buf, size_t count = 1);
 
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, size_t count = 1);
-        virtual bool write(const uint16_t *buf, size_t count = 1);
-        virtual bool write(const uint32_t *buf, size_t count = 1);
+        virtual size_t write(const uint8_t *buf, size_t count = 1);
+        virtual size_t write(const uint16_t *buf, size_t count = 1);
+        virtual size_t write(const uint32_t *buf, size_t count = 1);
     private:
         unique_ptr_c<stream_c> _stream;
     };
@@ -141,9 +141,9 @@ namespace toystd {
         virtual bool flush();
 
         using stream_c::read;
-        virtual bool read(uint8_t *buf, size_t count = 1);
+        virtual size_t read(uint8_t *buf, size_t count = 1);
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, size_t count = 1);
+        virtual size_t write(const uint8_t *buf, size_t count = 1);
         
     private:
         const char *_path;
@@ -157,8 +157,8 @@ namespace toystd {
     
     class strstream_c : public stream_c {
     public:
-        strstream_c(int len);
-        strstream_c(char *buf, int len);
+        strstream_c(size_t len);
+        strstream_c(char *buf, size_t len);
         virtual ~strstream_c() {};
         
         void reset() { _pos = 0; }
@@ -168,18 +168,49 @@ namespace toystd {
         virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
 
         using stream_c::read;
-        virtual bool read(uint8_t *buf, size_t count = 1);
+        virtual size_t read(uint8_t *buf, size_t count = 1);
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, size_t count = 1);
+        virtual size_t write(const uint8_t *buf, size_t count = 1);
         
     private:
         unique_ptr_c<char> _owned_buf;
         char *const _buf;
-        const int _len;
-        int _pos;
-        int _max;
+        const size_t _len;
+        size_t _pos;
+        size_t _max;
     };
     
+    /*
+    class bufstream_c : public stream_c {
+    public:
+        bufstream_c(size_t len, stream_c *stream);
+        virtual ~bufstream_c() {};
+
+        size_t length() const { return _len; }
+        
+        virtual void set_assert_on_error(bool assert);
+
+        virtual bool good() const __pure;
+        virtual ptrdiff_t tell() const __pure;
+        virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
+        virtual bool flush();
+
+        using stream_c::read;
+        virtual bool read(uint8_t *buf, size_t count = 1);
+
+        using stream_c::write;
+        virtual bool write(const uint8_t *buf, size_t count = 1);
+    protected:
+        virtual void underflow();
+        virtual void overflow(uint8_t *buf, int len);
+    private:
+        unique_ptr_c<stream_c> _stream;
+        unique_ptr_c<uint8_t> _buffer;
+        const size_t _len;
+        size_t _pos;
+        size_t _max;
+    };
+    */
 }
 
 #endif /* stream_hpp */

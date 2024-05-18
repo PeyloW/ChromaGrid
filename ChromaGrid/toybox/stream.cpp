@@ -50,10 +50,10 @@ static bool read_or_write_struct(stream_c &stream, void *buf, const char *layout
     return true;
 }
 
-bool stream_c::read(uint16_t *buf, size_t count) {
+size_t stream_c::read(uint16_t *buf, size_t count) {
     return read((uint8_t*)buf, count * 2);
 };
-bool stream_c::read(uint32_t *buf, size_t count) {
+size_t stream_c::read(uint32_t *buf, size_t count) {
     return read((uint8_t*)buf, count * 4);
 };
 bool stream_c::read(void *buf, const char * layout) {
@@ -64,11 +64,11 @@ bool stream_c::read(void *buf, const char * layout) {
     return r;
 }
 
-bool stream_c::write(const uint16_t *buf, size_t count) {
-    return write((uint8_t*)buf, count * 2);
+size_t stream_c::write(const uint16_t *buf, size_t count) {
+    return write((uint8_t*)buf, count * 2) / 2;
 };
-bool stream_c::write(const uint32_t *buf, size_t count) {
-    return write((uint8_t*)buf, count * 4);
+size_t stream_c::write(const uint32_t *buf, size_t count) {
+    return write((uint8_t*)buf, count * 4) / 4;
 };
 bool stream_c::write(const void *buf, const char * layout) {
     bool r = read_or_write_struct(*this, (void *)buf, layout, true);
@@ -188,32 +188,32 @@ __forceinline static void swap_buffer(uint32_t *buf, size_t count) {
     }
 }
 
-bool swap_stream_c::read(uint8_t *buf, size_t count) { return _stream->read(buf, count); }
-bool swap_stream_c::read(uint16_t *buf, size_t count) {
-    bool r = _stream->read(buf, count);
+size_t swap_stream_c::read(uint8_t *buf, size_t count) { return _stream->read(buf, count); }
+size_t swap_stream_c::read(uint16_t *buf, size_t count) {
+    size_t r = _stream->read(buf, count);
     if (r) {
         swap_buffer(buf, count);
     }
     return r;
 }
-bool swap_stream_c::read(uint32_t *buf, size_t count) {
-    bool r = _stream->read(buf, count);
+size_t swap_stream_c::read(uint32_t *buf, size_t count) {
+    size_t r = _stream->read(buf, count);
     if (r) {
         swap_buffer(buf, count);
     }
     return r;
 }
 
-bool swap_stream_c::write(const uint8_t *buf, size_t count) {
+size_t swap_stream_c::write(const uint8_t *buf, size_t count) {
     return _stream->write(buf, count);
 };
-bool swap_stream_c::write(const uint16_t *buf, size_t count) {
+size_t swap_stream_c::write(const uint16_t *buf, size_t count) {
     uint16_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint16_t));
     swap_buffer(tmpbuf, count);
     return _stream->write(tmpbuf, count);
 }
-bool swap_stream_c::write(const uint32_t *buf, size_t count) {
+size_t swap_stream_c::write(const uint32_t *buf, size_t count) {
     uint32_t tmpbuf[count];
     memcpy(tmpbuf, buf, count * sizeof(uint32_t));
     swap_buffer(tmpbuf, count);
@@ -301,18 +301,18 @@ ptrdiff_t fstream_c::seek(ptrdiff_t pos, stream_c::seekdir_e way) {
 }
 bool fstream_c::flush() { return true; }
 
-bool fstream_c::read(uint8_t *buf, size_t count) {
-    return fread(buf, 1, count, _file) == count;
+size_t fstream_c::read(uint8_t *buf, size_t count) {
+    return fread(buf, 1, count, _file);
 }
-bool fstream_c::write(const uint8_t *buf, size_t count) {
-    return fwrite(buf, 1, count, _file) == count;
+size_t fstream_c::write(const uint8_t *buf, size_t count) {
+    return fwrite(buf, 1, count, _file);
 }
 
-strstream_c::strstream_c(int len) :
+strstream_c::strstream_c(size_t len) :
     _owned_buf((char *)_malloc(len)), _buf(_owned_buf.get()), _len(len), _pos(0), _max(0)
 {}
 
-strstream_c::strstream_c(char *buf, int len) :
+strstream_c::strstream_c(char *buf, size_t len) :
     _owned_buf(), _buf(buf), _len(len), _pos(0), _max(0)
 {}
 
@@ -338,22 +338,16 @@ ptrdiff_t strstream_c::seek(ptrdiff_t pos, seekdir_e way) {
     return _pos;
 }
 
-bool strstream_c::read(uint8_t *buf, size_t count) {
-    if (count <= (_max - _pos)) {
-        memcpy(buf, _buf + _pos, count);
-        _pos += count;
-        return true;
-    } else {
-        return false;
-    }
+size_t strstream_c::read(uint8_t *buf, size_t count) {
+    count = MIN(count, _max - _pos);
+    memcpy(buf, _buf + _pos, count);
+    _pos += count;
+    return count;
 }
 
-bool strstream_c::write(const uint8_t *buf, size_t count) {
-    if (count <= (_len - _pos)) {
-        memcpy(_buf + _pos, buf, count);
-        _pos += count;
-        return true;
-    } else {
-        return false;
-    }
+size_t strstream_c::write(const uint8_t *buf, size_t count) {
+    count = MIN(count, _len - _pos);
+    memcpy(_buf + _pos, buf, count);
+    _pos += count;
+    return count;
 }

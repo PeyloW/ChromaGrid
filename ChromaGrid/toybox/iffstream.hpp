@@ -96,14 +96,14 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
         bool end(iff_chunk_s &chunk);
         
         using stream_c::read;
-        virtual bool read(uint8_t *buf, size_t count = 1);
-        virtual bool read(uint16_t *buf, size_t count = 1);
-        virtual bool read(uint32_t *buf, size_t count = 1);
+        virtual size_t read(uint8_t *buf, size_t count = 1);
+        virtual size_t read(uint16_t *buf, size_t count = 1);
+        virtual size_t read(uint32_t *buf, size_t count = 1);
         
         using stream_c::write;
-        virtual bool write(const uint8_t *buf, size_t count = 1);
-        virtual bool write(const uint16_t *buf, size_t count = 1);
-        virtual bool write(const uint32_t *buf, size_t count = 1);
+        virtual size_t write(const uint8_t *buf, size_t count = 1);
+        virtual size_t write(const uint16_t *buf, size_t count = 1);
+        virtual size_t write(const uint32_t *buf, size_t count = 1);
 
     private:
         bool read(iff_group_s &group);

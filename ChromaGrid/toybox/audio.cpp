@@ -132,7 +132,7 @@ music_c::music_c(const char *path) {
     _sndh.reset((uint8_t *)_malloc(size));
     _length = size;
     size_t read = file.read(_sndh.get(), size);
-    assert(read == 1);
+    assert(read == size);
     assert(memcmp(_sndh + 12, "SNDH", 4) == 0);
     _title = nullptr;
     _composer = nullptr;
