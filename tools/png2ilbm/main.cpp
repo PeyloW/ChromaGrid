@@ -22,7 +22,7 @@ static void handle_compressed(arguments_t &args);
 
 static bool save_palette = true;
 static bool save_masked = false;
-static uint8_t masked_idx = image_c::MASKED_CIDX;
+static uint8_t masked_idx = 16;
 static compression_type_e compression = compression_type_none;
 //static point_s grab_point = {0,0};
 
@@ -76,11 +76,14 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
         exit(-1);
     }
     bit_depth  = png_get_bit_depth(png, info);
-    if(bit_depth != 8) {
-        printf("Only 8 bit depth supported");
-        exit(-1);
+    if (bit_depth < 8) {
+        png_set_packing(png);
     }
-    png_set_packing(png);
+    size_t row_bytes = png_get_rowbytes(png,info);
+    if (row_bytes != width) {
+        printf("Unexpected row bytes.\n");
+        row_bytes = width;
+    }
     
     int num_palette;
     png_colorp palette;
@@ -97,7 +100,7 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
     image_c cgimage((size_s){width, height}, save_masked, cgpalette);
     canvas_c cgcanvas(cgimage);
     
-    png_bytep row = (png_byte*)malloc(png_get_rowbytes(png,info));
+    png_bytep row = (png_byte*)malloc(row_bytes);
     point_s at;
     bool has_warned = false;
     for(at.y = 0; at.y < height; at.y++) {

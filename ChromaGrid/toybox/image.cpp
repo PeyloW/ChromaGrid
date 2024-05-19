@@ -152,7 +152,7 @@ static void image_read_packbits(iffstream_c &file, uint16_t line_words, int heig
             } else {
                 for (int i = 0; i < line_words; i++) {
                     maskmap[i] = word_buffer[bp * line_words + i];
-                    hton(bitmap[i]);
+                    hton(maskmap[i]);
                 }
             }
         }
@@ -184,7 +184,7 @@ static void image_read_deflate(iffstream_c &file, uint32_t body_size, uint16_t l
             } else {
                 for (int i = 0; i < line_words; i++) {
                     maskmap[i] = word_buffer[bp * line_words + i];
-                    hton(bitmap[i]);
+                    hton(maskmap[i]);
                 }
             }
         }
@@ -435,6 +435,45 @@ static void image_write_packbits(iffstream_c &file, uint16_t line_words, uint16_
 }
 
 #if TOYBOX_ILBM_SUPPORTS_DEFLATE
+static int _compress3(Bytef *dest, uLongf *destLen, const Bytef *source,
+                      uLong sourceLen, int level = Z_BEST_COMPRESSION, int windowBits = -12) {
+    z_stream stream;
+    int err;
+    const uInt max = (uInt)-1;
+    uLong left;
+    
+    left = *destLen;
+    *destLen = 0;
+    
+    stream.zalloc = (alloc_func)0;
+    stream.zfree = (free_func)0;
+    stream.opaque = (voidpf)0;
+    
+    err = deflateInit2(&stream, level, Z_DEFLATED, windowBits, 8, Z_DEFAULT_STRATEGY);
+    if (err != Z_OK) return err;
+    
+    stream.next_out = dest;
+    stream.avail_out = 0;
+    stream.next_in = (z_const Bytef *)source;
+    stream.avail_in = 0;
+    
+    do {
+        if (stream.avail_out == 0) {
+            stream.avail_out = left > (uLong)max ? max : (uInt)left;
+            left -= stream.avail_out;
+        }
+        if (stream.avail_in == 0) {
+            stream.avail_in = sourceLen > (uLong)max ? max : (uInt)sourceLen;
+            sourceLen -= stream.avail_in;
+        }
+        err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
+    } while (err == Z_OK);
+    
+    *destLen = stream.total_out;
+    deflateEnd(&stream);
+    return err == Z_STREAM_END ? Z_OK : err;
+}
+
 static void image_write_deflate(iffstream_c &file, uint16_t line_words, uint16_t next_line_words, int height, uint16_t *bitmap, uint16_t *maskmap) {
     const int bp_count = (maskmap ? 5 : 4);
     const long body_size = sizeof(uint16_t) * bp_count * line_words * height;
@@ -463,9 +502,10 @@ static void image_write_deflate(iffstream_c &file, uint16_t line_words, uint16_t
     }
     uLongf compressed_body_size = compressBound(body_size);
     uint8_t *compressed_body_buffer = (uint8_t*)malloc(compressed_body_size);
-    int result = compress2((Bytef *)compressed_body_buffer, &compressed_body_size, (Bytef *)body_buffer, body_size, 9);
+    // Max compression, but a 4094 sliding window limit.
+    int result = _compress3((Bytef *)compressed_body_buffer, &compressed_body_size, (Bytef *)body_buffer, body_size);
     assert(result == Z_OK);
-    file.write(compressed_body_buffer + 2, compressed_body_size - 6);
+    file.write(compressed_body_buffer, compressed_body_size);
     
     free(body_buffer);
     free(compressed_body_buffer);

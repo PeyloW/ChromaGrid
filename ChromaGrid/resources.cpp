@@ -12,16 +12,14 @@
 static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx = image_c::MASKED_CIDX) {
     switch (col) {
         case color_e::gold:
-            table[0] = 1;
-            table[2] = 1;
-            table[7] = 9;
-            table[10] = 14;
+            table[2] = 12;
+            table[3] = 13;
+            table[4] = 14;
             break;
         case color_e::silver:
-            table[0] = 2;
-            table[2] = 2;
-            table[7] = 8;
-            table[10] = 13;
+            table[2] = 11;
+            table[3] = 8;
+            table[4] = 9;
             break;
         default:
             break;
@@ -52,13 +50,23 @@ cgasset_manager::cgasset_manager() :
     add_asset_def(SHIMMER, asset_def_s(asset_c::tileset, 2, "shimmer.iff"));
     
     add_asset_def(FONT, asset_def_s(asset_c::font, 2, "font.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
-        return new font_c(new image_c(path), size_s(8, 8), 4, 2, 4);
+        auto image = new image_c(path, 0);
+        canvas_c c(*image);
+        canvas_c::remap_table_c table;
+        table[15] = 1;
+        c.remap_colors(table, rect_s(point_s(), image->size()));
+        return new font_c(image, size_s(8, 8), 4, 2, 4);
     }));
     add_asset_def(MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(FONT).image(), size_s(8, 8));
     }));
     add_asset_def(SMALL_FONT, asset_def_s(asset_c::font, 2, "font6.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
-        return new font_c(new image_c(path), size_s(6, 6), 3, 0, 6);
+        auto image = new image_c(path, 0);
+        canvas_c c(*image);
+        canvas_c::remap_table_c table;
+        table[15] = 1;
+        c.remap_colors(table, rect_s(point_s(), image->size()));
+        return new font_c(image, size_s(6, 6), 3, 0, 6);
     }));
     add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(SMALL_FONT).image(), size_s(6, 6));

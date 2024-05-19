@@ -21,7 +21,7 @@ void cgbutton_t::draw_in(canvas_c &image) const {
         rect.origin.y + (state != pressed ? 3 : 4)
     );
     image.with_dirtymap(nullptr, [&] {
-        image.draw(assets.font(FONT), text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 7);
+        image.draw(assets.font(FONT), text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 2);
     });
 }
 
