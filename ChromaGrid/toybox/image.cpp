@@ -168,7 +168,8 @@ static void image_read_deflate(iffstream_c &file, uint32_t body_size, uint16_t l
     const int bp_count = (maskmap ? 5 : 4);
     const long unpacked_size = sizeof(uint16_t) * bp_count * line_words * height;
     uint8_t *body_buffer = (uint8_t*)malloc(body_size);
-    file.read(body_buffer, body_size);
+    size_t read = file.read(body_buffer, body_size);
+    assert(read == body_size);
     uint8_t *decomp_body_buffer = (uint8_t *)malloc(unpacked_size);
     auto size = decompress_deflate(decomp_body_buffer, unpacked_size, body_buffer, body_size);
     assert(size == unpacked_size);
@@ -248,7 +249,7 @@ image_c::image_c(const char *path, int masked_cidx) :
 #endif
         } else if (iff_id_match(chunk.id, IFF_CMAP)) {
             uint8_t cmpa[48];
-            if (!file.read(cmpa, 48)) {
+            if (file.read(cmpa, 48) != 48) {
                 return; // Could not read palette
             }
             _palette.reset(new palette_c(&cmpa[0]));

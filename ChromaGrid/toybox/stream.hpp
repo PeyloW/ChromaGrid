@@ -24,7 +24,7 @@ namespace toystd {
         typedef stream_c&(*manipulator_f)(stream_c&);
         
         stream_c();
-        virtual ~stream_c() {}
+        virtual ~stream_c() { flush(); }
             
         virtual void set_assert_on_error(bool assert);
 
@@ -91,33 +91,8 @@ namespace toystd {
     
     static const detail::setw_s setw(int w) { return (detail::setw_s){ w }; };
     static const detail::setfill_s setfill(char c) { return (detail::setfill_s){ c }; };
-
-    class swap_stream_c : public stream_c {
-    public:
-        swap_stream_c(stream_c *stream);
-        virtual ~swap_stream_c() {};
-
-        virtual void set_assert_on_error(bool assert);
-
-        virtual bool good() const __pure;
-        virtual ptrdiff_t tell() const __pure;
-        virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
-        virtual bool flush();
-
-        using stream_c::read;
-        virtual size_t read(uint8_t *buf, size_t count = 1);
-        virtual size_t read(uint16_t *buf, size_t count = 1);
-        virtual size_t read(uint32_t *buf, size_t count = 1);
-
-        using stream_c::write;
-        virtual size_t write(const uint8_t *buf, size_t count = 1);
-        virtual size_t write(const uint16_t *buf, size_t count = 1);
-        virtual size_t write(const uint32_t *buf, size_t count = 1);
-    private:
-        unique_ptr_c<stream_c> _stream;
-    };
     
-    
+
     class fstream_c : public stream_c {
     public:
         typedef enum __packed {
@@ -128,6 +103,7 @@ namespace toystd {
 
         fstream_c(FILE *file);
         fstream_c(const char *path, openmode_e mode = input);
+        static stream_c *create(const char *path, size_t buffer = 512, openmode_e mode = input);
         virtual ~fstream_c();
         
         openmode_e mode() const __pure { return _mode; }
@@ -180,37 +156,6 @@ namespace toystd {
         size_t _max;
     };
     
-    /*
-    class bufstream_c : public stream_c {
-    public:
-        bufstream_c(size_t len, stream_c *stream);
-        virtual ~bufstream_c() {};
-
-        size_t length() const { return _len; }
-        
-        virtual void set_assert_on_error(bool assert);
-
-        virtual bool good() const __pure;
-        virtual ptrdiff_t tell() const __pure;
-        virtual ptrdiff_t seek(ptrdiff_t pos, seekdir_e way);
-        virtual bool flush();
-
-        using stream_c::read;
-        virtual bool read(uint8_t *buf, size_t count = 1);
-
-        using stream_c::write;
-        virtual bool write(const uint8_t *buf, size_t count = 1);
-    protected:
-        virtual void underflow();
-        virtual void overflow(uint8_t *buf, int len);
-    private:
-        unique_ptr_c<stream_c> _stream;
-        unique_ptr_c<uint8_t> _buffer;
-        const size_t _len;
-        size_t _pos;
-        size_t _max;
-    };
-    */
 }
 
 #endif /* stream_hpp */

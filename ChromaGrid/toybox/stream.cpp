@@ -6,6 +6,7 @@
 //
 
 #include "stream.hpp"
+#include "util_stream.hpp"
 
 using namespace toystd;
 
@@ -163,66 +164,17 @@ stream_c::manipulator_f toystd::endl = &s_endl;
 stream_c::manipulator_f toystd::ends = &s_ends;
 stream_c::manipulator_f toystd::flush = &s_flush;
 
-swap_stream_c::swap_stream_c(stream_c *stream) : stream_c(), _stream(stream) {}
-
-void swap_stream_c::set_assert_on_error(bool assert) {
-    stream_c::set_assert_on_error(assert);
-    _stream->set_assert_on_error(assert);
-}
-
-bool swap_stream_c::good() const { return _stream->good(); };
-ptrdiff_t swap_stream_c::tell() const { return _stream->tell(); }
-ptrdiff_t swap_stream_c::seek(ptrdiff_t pos, seekdir_e way) { return _stream->seek(pos, way); }
-bool swap_stream_c::flush() { return _stream->flush(); }
-
-__forceinline static void swap_buffer(uint16_t *buf, size_t count) {
-    while (--count != -1) {
-        hton(*buf);
-        buf++;
-    }
-}
-__forceinline static void swap_buffer(uint32_t *buf, size_t count) {
-    while (--count != -1) {
-        hton(*buf);
-        buf++;
-    }
-}
-
-size_t swap_stream_c::read(uint8_t *buf, size_t count) { return _stream->read(buf, count); }
-size_t swap_stream_c::read(uint16_t *buf, size_t count) {
-    size_t r = _stream->read(buf, count);
-    if (r) {
-        swap_buffer(buf, count);
-    }
-    return r;
-}
-size_t swap_stream_c::read(uint32_t *buf, size_t count) {
-    size_t r = _stream->read(buf, count);
-    if (r) {
-        swap_buffer(buf, count);
-    }
-    return r;
-}
-
-size_t swap_stream_c::write(const uint8_t *buf, size_t count) {
-    return _stream->write(buf, count);
-};
-size_t swap_stream_c::write(const uint16_t *buf, size_t count) {
-    uint16_t tmpbuf[count];
-    memcpy(tmpbuf, buf, count * sizeof(uint16_t));
-    swap_buffer(tmpbuf, count);
-    return _stream->write(tmpbuf, count);
-}
-size_t swap_stream_c::write(const uint32_t *buf, size_t count) {
-    uint32_t tmpbuf[count];
-    memcpy(tmpbuf, buf, count * sizeof(uint32_t));
-    swap_buffer(tmpbuf, count);
-    return _stream->write(tmpbuf, count);
-}
-
 fstream_c::fstream_c(FILE *file) :
     stream_c(), _path(nullptr), _mode(input), _file(file)
 {}
+
+stream_c *fstream_c::create(const char *path, size_t buffer, openmode_e mode) {
+    stream_c *s = new fstream_c(path, mode);
+    if (buffer > 0) {
+        s = new bufstream_c(s, buffer);
+    }
+    return s;
+}
 
 fstream_c::fstream_c(const char *path, openmode_e mode) :
     stream_c(), _path(path), _mode(mode), _file(nullptr)
@@ -349,5 +301,6 @@ size_t strstream_c::write(const uint8_t *buf, size_t count) {
     count = MIN(count, _len - _pos);
     memcpy(_buf + _pos, buf, count);
     _pos += count;
+    _max = MAX(_max, _pos);
     return count;
 }

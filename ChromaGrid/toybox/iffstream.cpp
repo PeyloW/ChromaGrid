@@ -6,16 +6,21 @@
 //
 
 #include "iffstream.hpp"
+#include "util_stream.hpp"
 
 using namespace toystd;
 
-iffstream_c::iffstream_c(stream_c *stream) : stream_c(), _stream(stream) {}
+iffstream_c::iffstream_c(stream_c *stream) : 
+    stream_c(), _stream(stream)
+{
+    assert(stream);
+}
 
 iffstream_c::iffstream_c(const char *path, fstream_c::openmode_e mode) :
 #ifdef __M68000__
-    stream_c(), _stream(new fstream_c(path, mode))
+    stream_c(), _stream(fstream_c::create(path, 512, mode))
 #else
-stream_c(), _stream(new swap_stream_c(new fstream_c(path, mode)))
+stream_c(), _stream(new swapstream_c(fstream_c::create(path, 512, mode)))
 #endif
 {}
 
@@ -90,17 +95,18 @@ bool iffstream_c::skip(const iff_chunk_s &chunk) {
     bool result = false;
     long end = chunk.offset + sizeof(uint32_t) * 2 + chunk.size;
     if ((result = seek(end, beg) >= 0)) {
-        result = align();
+        result = align(false);
     }
     return result;
 }
 
-bool iffstream_c::align() {
+bool iffstream_c::align(bool for_write) {
     long pos = tell();
     bool result = pos >= 0;
     if (result) {
         if ((pos & 1) != 0) {
-            result = seek(1, cur) >= 0;
+            uint8_t tmp = 0;
+            result = (for_write ? write(&tmp) : read(&tmp)) == 1;
             goto done;
         }
     }
@@ -110,7 +116,7 @@ done:
 
 bool iffstream_c::begin(iff_chunk_s &chunk, const char *const id) {
     bool result = false;
-    if (align()) {
+    if (align(true)) {
         chunk.offset = tell();
         if (chunk.offset >= 0) {
             chunk.id = iff_id_make(id);
@@ -145,7 +151,7 @@ bool iffstream_c::read(iff_group_s &group) {
 }
 
 bool iffstream_c::read(iff_chunk_s &chunk) {
-    bool result = align();
+    bool result = align(false);
     if (result) {
         chunk.offset = tell();
         if (chunk.offset >= 0) {

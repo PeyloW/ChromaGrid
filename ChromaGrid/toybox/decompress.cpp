@@ -1,5 +1,5 @@
 //
-//  deflate.hpp
+//  decompress.hpp
 //  toybox
 //
 //  Created by Fredrik on 2024-05-17.

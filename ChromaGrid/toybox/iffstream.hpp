@@ -90,7 +90,7 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
         
         bool reset(const iff_chunk_s &chunk);
         bool skip(const iff_chunk_s &chunk);
-        bool align();
+        bool align(bool for_write);
         
         bool begin(iff_chunk_s &chunk, const char *const id);
         bool end(iff_chunk_s &chunk);
