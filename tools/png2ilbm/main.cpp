@@ -23,7 +23,7 @@ static void handle_compressed(arguments_t &args);
 static bool save_palette = true;
 static bool save_masked = false;
 static uint8_t masked_idx = image_c::MASKED_CIDX;
-static bool save_compressed = false;
+static compression_type_e compression = compression_type_none;
 //static point_s grab_point = {0,0};
 
 const arg_handlers_t arg_handlers {
@@ -34,7 +34,10 @@ const arg_handlers_t arg_handlers {
         masked_idx = atoi(args.front());
         args.pop_front();
     }}},
-    {"-c",          {"Save compressed.", [] (arguments_t &) { save_compressed = true; }}},
+    {"-c type",          {"Save compressed.", [] (arguments_t &args) {
+        compression = (compression_type_e)atoi(args.front());
+        args.pop_front();
+    }}},
 /*    {"-g x,y",      {"Add grab point.", [] (arguments_t &args) {
         auto split = split_string(args.front(), ',');
         grab_point = {(int16_t)atoi(split[0].c_str()), (int16_t)atoi(split[1].c_str())};
@@ -42,7 +45,7 @@ const arg_handlers_t arg_handlers {
 };
 
 static void handle_help(arguments_t &args) {
-    do_print_help("iffutil - A utility for managing EA IFF 85 files.\nusage: iffutil [options] commands...", arg_handlers);
+    do_print_help("png2ilbm - A utility for converting png images to iff ilbm.\nusage: png2ilbm [options] image.png image.iff", arg_handlers);
     exit(0);
 }
 
@@ -116,7 +119,7 @@ static int convert_png_to_ilbm(const std::string &png_file, const std::string &i
     
     // cgimage.set_offset(grab_point);
     
-    cgimage.save(ilbm_file.c_str(), save_compressed, save_masked);
+    cgimage.save(ilbm_file.c_str(), compression, save_masked);
     
     return 0;
 }
