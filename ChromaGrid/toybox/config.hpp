@@ -32,10 +32,6 @@
 #   define TOYBOX_IMAGE_SUPPORTS_SAVE 0
 #endif
 
-#ifndef TOYBOX_ILBM_SUPPORTS_DEFLATE
-#   define TOYBOX_ILBM_SUPPORTS_DEFLATE 1
-#endif
-
 #ifndef TOYBOX_SCREEN_SIZE_MAX
 #   define TOYBOX_SCREEN_SIZE_MAX size_s(320, 200)
 #endif

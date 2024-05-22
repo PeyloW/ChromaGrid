@@ -168,14 +168,6 @@ fstream_c::fstream_c(FILE *file) :
     stream_c(), _path(nullptr), _mode(input), _file(file)
 {}
 
-stream_c *fstream_c::create(const char *path, size_t buffer, openmode_e mode) {
-    stream_c *s = new fstream_c(path, mode);
-    if (buffer > 0) {
-        s = new bufstream_c(s, buffer);
-    }
-    return s;
-}
-
 fstream_c::fstream_c(const char *path, openmode_e mode) :
     stream_c(), _path(path), _mode(mode), _file(nullptr)
 {

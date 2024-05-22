@@ -103,7 +103,6 @@ namespace toystd {
 
         fstream_c(FILE *file);
         fstream_c(const char *path, openmode_e mode = input);
-        static stream_c *create(const char *path, size_t buffer = 512, openmode_e mode = input);
         virtual ~fstream_c();
         
         openmode_e mode() const __pure { return _mode; }

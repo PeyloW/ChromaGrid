@@ -19,10 +19,8 @@ namespace toybox {
     typedef enum __packed {
         compression_type_none,
         compression_type_packbits,
-        compression_type_vertical,
-    #if TOYBOX_ILBM_SUPPORTS_DEFLATE
-        compression_type_deflate
-    #endif
+        compression_type_vertical,  // Not supported
+        compression_type_deflate    // Non-standard, not supported as of now
     } compression_type_e;
 
     class image_c : public asset_c {

@@ -50,22 +50,14 @@ cgasset_manager::cgasset_manager() :
     add_asset_def(SHIMMER, asset_def_s(asset_c::tileset, 2, "shimmer.iff"));
     
     add_asset_def(FONT, asset_def_s(asset_c::font, 2, "font.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
-        auto image = new image_c(path, 0);
-        canvas_c c(*image);
-        canvas_c::remap_table_c table;
-        table[15] = 1;
-        c.remap_colors(table, rect_s(point_s(), image->size()));
+        auto image = new image_c(path);
         return new font_c(image, size_s(8, 8), 4, 2, 4);
     }));
     add_asset_def(MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(FONT).image(), size_s(8, 8));
     }));
     add_asset_def(SMALL_FONT, asset_def_s(asset_c::font, 2, "font6.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
-        auto image = new image_c(path, 0);
-        canvas_c c(*image);
-        canvas_c::remap_table_c table;
-        table[15] = 1;
-        c.remap_colors(table, rect_s(point_s(), image->size()));
+        auto image = new image_c(path);
         return new font_c(image, size_s(6, 6), 3, 0, 6);
     }));
     add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {

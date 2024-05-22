@@ -10,8 +10,6 @@
 		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
 		A682A3EA2B92613F00FF2E57 /* game_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_menu.cpp */; };
 		A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612D82BB26B86008ACD05 /* game_help.cpp */; };
-		A69816B22BF8426F00E4560B /* decompress.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69816B12BF8426F00E4560B /* decompress.hpp */; };
-		A69816B42BF8427900E4560B /* decompress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69816B32BF8427900E4560B /* decompress.cpp */; };
 		A69816B62BF84DF800E4560B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A69816B52BF84DF800E4560B /* libz.tbd */; };
 		A69816C12BFA453D00E4560B /* util_stream.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69816BF2BFA453D00E4560B /* util_stream.hpp */; };
 		A69816C22BFA453D00E4560B /* util_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69816C02BFA453D00E4560B /* util_stream.cpp */; };
@@ -164,8 +162,6 @@
 		A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = static_allocator.hpp; sourceTree = "<group>"; };
 		A69612D72BB1BE9F008ACD05 /* forward_list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = forward_list.hpp; sourceTree = "<group>"; };
 		A69612D82BB26B86008ACD05 /* game_help.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_help.cpp; sourceTree = "<group>"; };
-		A69816B12BF8426F00E4560B /* decompress.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = decompress.hpp; sourceTree = "<group>"; };
-		A69816B32BF8427900E4560B /* decompress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompress.cpp; sourceTree = "<group>"; };
 		A69816B52BF84DF800E4560B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		A69816BF2BFA453D00E4560B /* util_stream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = util_stream.hpp; sourceTree = "<group>"; };
 		A69816C02BFA453D00E4560B /* util_stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util_stream.cpp; sourceTree = "<group>"; };
@@ -525,8 +521,6 @@
 				A69816C02BFA453D00E4560B /* util_stream.cpp */,
 				A6A0EE9E2BCDC3DA005B6ED3 /* iffstream.hpp */,
 				A6A0EE9D2BCDC3DA005B6ED3 /* iffstream.cpp */,
-				A69816B12BF8426F00E4560B /* decompress.hpp */,
-				A69816B32BF8427900E4560B /* decompress.cpp */,
 				A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */,
 			);
 			name = toystd;
@@ -555,7 +549,6 @@
 				A6B6E18B2BD0381F00703630 /* tileset.hpp in Headers */,
 				A6A0EEA62BCF4D5B005B6ED3 /* memory.hpp in Headers */,
 				A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */,
-				A69816B22BF8426F00E4560B /* decompress.hpp in Headers */,
 				A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */,
 				A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */,
 				A6A0EE572BC05A39005B6ED3 /* audio.hpp in Headers */,
@@ -783,7 +776,6 @@
 				A6B6E1A32BDB2C2600703630 /* host_bridge.cpp in Sources */,
 				A6B6E1982BD94C9200703630 /* machine.cpp in Sources */,
 				A6A0EE562BC05A31005B6ED3 /* blitter.cpp in Sources */,
-				A69816B42BF8427900E4560B /* decompress.cpp in Sources */,
 				A6A0EE3E2BC059A6005B6ED3 /* cpp_runtime.cpp in Sources */,
 				A6A0EE882BC78FE8005B6ED3 /* canvas.cpp in Sources */,
 			);

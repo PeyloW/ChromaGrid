@@ -92,6 +92,7 @@ size_t swapstream_c::write(const uint32_t *buf, size_t count) {
 }
 
 
+/*
 bufstream_c::bufstream_c(stream_c *stream, size_t len) :
     stream_c(), _stream(stream), _len(len), _max(0), _pos(0), _buffer((uint8_t*)malloc(len)), _mutated(false)
 {
@@ -190,3 +191,4 @@ size_t bufstream_c::underflow(uint8_t *buf, size_t len) {
 size_t bufstream_c::overflow(const uint8_t *buf, size_t len) {
     return _stream->write(buf, len);
 }
+*/

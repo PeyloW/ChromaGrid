@@ -53,6 +53,8 @@ namespace toystd {
     };
    
     /// A buffered wrapper for a stream
+    /// NOT RECOMENDED FOR USE YET
+    /*
     class bufstream_c : public stream_c {
     public:
         bufstream_c(stream_c *stream, size_t len);
@@ -83,6 +85,7 @@ namespace toystd {
         size_t _max;
         bool _mutated;
     };
+     */
     
 }
 
