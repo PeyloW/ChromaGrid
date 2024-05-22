@@ -100,6 +100,7 @@ asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
             }
             tiles_cnv.remap_colors(table, rect);
         }
+        //tiles.image()->save("/tmp/tiles.iff", compression_type_e::compression_type_none, false);
     }
     return asset;
 }

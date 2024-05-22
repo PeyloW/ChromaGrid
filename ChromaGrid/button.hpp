@@ -14,18 +14,23 @@
 
 struct cgbutton_t : public nocopy_c {
     typedef enum __packed {
+        regular,
+        destructive
+    } style_e;
+    typedef enum __packed {
         normal,
         pressed,
         disabled,
         hidden
     } state_t;
     inline cgbutton_t() : text("") {}
-    inline cgbutton_t(const char *text, rect_s rect) : text(text), rect(rect), state(normal) {}
+    inline cgbutton_t(const char *text, rect_s rect) : text(text), rect(rect), style(regular), state(normal) {}
 
     void draw_in(canvas_c &image) const;
     
     const char *text;
     rect_s rect;
+    style_e style;
     state_t state;
 };
 

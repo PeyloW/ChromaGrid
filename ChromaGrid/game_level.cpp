@@ -111,6 +111,7 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, int level) :
 {
     _menu_buttons.add_button("Main Menu");
     _menu_buttons.add_button("Restart");
+    _menu_buttons.buttons[1].style = cgbutton_t::destructive;
 }
 
 cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe) :
@@ -122,6 +123,7 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recip
 {
     _menu_buttons.add_button("Back");
     _menu_buttons.add_button("Restart");
+    _menu_buttons.buttons[1].style = cgbutton_t::destructive;
 }
 
 void tick_second(cglevel_scene_c *that) {

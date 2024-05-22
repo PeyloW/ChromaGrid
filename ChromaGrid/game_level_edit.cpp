@@ -100,6 +100,9 @@ private:
             str << level_idx + 1 << ends;
             if (pair_idx == 1) {
                 _menu_buttons.add_button_pair(prev_start, start);
+                if (save && !empty) {
+                    _menu_buttons.buttons[button_idx].style = cgbutton_t::destructive;
+                }
                 if (!save) {
                     if (user_levels[level_idx - 1]->empty()) {
                         _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;

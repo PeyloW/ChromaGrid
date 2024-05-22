@@ -11,11 +11,11 @@ void cgbutton_t::draw_in(canvas_c &image) const {
     if (state == hidden) {
         return;
     }
-    static const rect_s button_rect_normal(8, 0, 32, 14);
-    static const rect_s button_rect_disabled(8, 14, 32, 14);
+    int row = state == disabled ? 2 : style == destructive ? 1 : 0;
+    const rect_s button_rect(8, row * 14, 32, 14);
 
     const auto &assets = cgasset_manager::shared();
-    image.draw_3_patch(assets.image(BUTTON), state != disabled ? button_rect_normal : button_rect_disabled, 8, rect);
+    image.draw_3_patch(assets.image(BUTTON), button_rect, 8, rect);
     point_s at(
         rect.origin.x + rect.size.width / 2,
         rect.origin.y + (state != pressed ? 3 : 4)
