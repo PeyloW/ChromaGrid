@@ -45,7 +45,7 @@ void cgintro_scene_c::update_preload(int loaded, int count) {
     rect.size.width = rect.size.width * loaded / count;
     front_canvas.draw(clear_image, rect, LOADING_BUTTON_ORIGIN);
 #ifndef __M68000__
-    sleep(1);
+    usleep(50000);
 #endif
 }
 

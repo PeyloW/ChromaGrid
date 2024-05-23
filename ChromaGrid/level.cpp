@@ -359,6 +359,14 @@ inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
     return idx;
 }
 
+static inline int tileset_at(int x, int y) {
+    int i = x + y * 12;
+    i ^= i >> 3;
+    i ^= i << 5;
+    i ^= i >> 2;
+    return i % 3;
+}
+
 inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &assets, const tilestate_t &state, int x, int y) {
     const point_s at(x * 16, y * 16);
     if (state.type == empty) {
@@ -367,7 +375,8 @@ inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &asset
         }
         return;
     }
-    screen.draw_aligned(assets.tileset(TILES), tilestate_tile_index(state), at);
+    int id = TILES + tileset_at(x, y);
+    screen.draw_aligned(assets.tileset(id), tilestate_tile_index(state), at);
 }
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {

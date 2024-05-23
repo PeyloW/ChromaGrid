@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A62520392BFEE21200B3635F /* tiles2.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520372BFEE21200B3635F /* tiles2.iff */; };
+		A625203A2BFEE21200B3635F /* tiles3.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520382BFEE21200B3635F /* tiles3.iff */; };
+		A625203C2BFEE23700B3635F /* menu.txt in Resources */ = {isa = PBXBuildFile; fileRef = A625203B2BFEE23700B3635F /* menu.txt */; };
 		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
 		A682A3EA2B92613F00FF2E57 /* game_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_menu.cpp */; };
 		A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612D82BB26B86008ACD05 /* game_help.cpp */; };
@@ -151,6 +154,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A62520372BFEE21200B3635F /* tiles2.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles2.iff; sourceTree = "<group>"; };
+		A62520382BFEE21200B3635F /* tiles3.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles3.iff; sourceTree = "<group>"; };
+		A625203B2BFEE23700B3635F /* menu.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = menu.txt; sourceTree = "<group>"; };
 		A66B7CF52BB3BC7F00374307 /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
 		A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_stencil.cpp; sourceTree = "<group>"; };
 		A682A3E12B9227AC00FF2E57 /* resources.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
@@ -390,6 +396,8 @@
 				A69AE50F2B85031400EBA43D /* orbs.iff */,
 				A6F766B02B98BC2600325754 /* select.iff */,
 				A69AE5102B85031400EBA43D /* tiles.iff */,
+				A62520372BFEE21200B3635F /* tiles2.iff */,
+				A62520382BFEE21200B3635F /* tiles3.iff */,
 				A6D012F02BBCE71800D260C2 /* emptyt.iff */,
 				A6D012CF2BBA317D00D260C2 /* shimmer.iff */,
 				A6E484CA2BA1ED02004CCA7D /* break.aif */,
@@ -399,6 +407,7 @@
 				A6E484DA2BA5F48B004CCA7D /* fusebrk.aif */,
 				A6E484CB2BA1ED02004CCA7D /* tock.aif */,
 				A69AE5052B82B1E300EBA43D /* music.snd */,
+				A625203B2BFEE23700B3635F /* menu.txt */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -692,10 +701,13 @@
 				A69AE5112B85031400EBA43D /* orbs.iff in Resources */,
 				A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */,
 				A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */,
+				A625203A2BFEE21200B3635F /* tiles3.iff in Resources */,
 				A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */,
 				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
+				A625203C2BFEE23700B3635F /* menu.txt in Resources */,
 				A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */,
 				A6E484CE2BA1ED02004CCA7D /* break.aif in Resources */,
+				A62520392BFEE21200B3635F /* tiles2.iff in Resources */,
 				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
 				A69AE50C2B82CDB500EBA43D /* README.md in Resources */,
 				A6D012CE2BB9D02800D260C2 /* levels1.dat in Resources */,

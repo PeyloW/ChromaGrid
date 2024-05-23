@@ -40,6 +40,8 @@ cgasset_manager::cgasset_manager() :
     add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "backgrnd.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
     add_asset_def(TILES, asset_def_s(asset_c::tileset, 2, "tiles.iff"));
+    add_asset_def(TILES_B, asset_def_s(asset_c::tileset, 2, "tiles2.iff"));
+    add_asset_def(TILES_C, asset_def_s(asset_c::tileset, 2, "tiles3.iff"));
     add_asset_def(EMPTY_TILE, asset_def_s(asset_c::tileset, 2, "emptyt.iff"));
     add_asset_def(ORBS, asset_def_s(asset_c::tileset, 2, "orbs.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new tileset_c(new image_c(path), size_s(16, 10));
@@ -82,11 +84,15 @@ cgasset_manager::cgasset_manager() :
     add_asset_def(USER_LEVELS, asset_def_s(asset_c::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new user_levels_c();
     }));
+    
+    add_asset_def(MENU_SCROLL, asset_def_s(asset_c::custom, 2, "menu.txt", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+        return new scroll_text_c(path);
+    }));
 }
 
 asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
     auto asset = asset_manager_c::create_asset(id, def);
-    if (id == TILES) {
+    if (id >= TILES && id <= TILES_C) {
         tileset_c &tiles = *(tileset_c*)asset;
         for (int x = 1; x < 3; x++) {
             canvas_c tiles_cnv(*tiles.image());
@@ -226,4 +232,20 @@ bool level_results_c::save() const {
         return iff.end(list);
     }
     return false;
+}
+
+
+scroll_text_c::scroll_text_c(const char *path) {
+    fstream_c file(path);
+    file.seek(0, toystd::stream_c::end);
+    auto size = file.tell();
+    file.seek(0, toystd::stream_c::beg);
+    char *text = (char*)malloc(size + 1);
+    file.read((uint8_t *)text, size);
+    text[size] = 0;
+    _text.reset(text);
+}
+
+size_t scroll_text_c::memory_cost() const {
+    return strlen(text());
 }
