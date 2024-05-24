@@ -17,6 +17,7 @@
 class cgintro_scene_c : public scene_c {
 public:
     cgintro_scene_c(scene_manager_c &manager);
+    virtual configuration_s &configuration() const;
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
@@ -35,6 +36,7 @@ public:
 #define MAIN_MENU_BUTTONS_SIZE (size_s(MAIN_MENU_SIZE_WIDTH - MAIN_MENU_MARGINS * 2, 14))
 #define MAIN_MENU_BUTTONS_SPACING ((int16_t)-6)
     cggame_scene_c(scene_manager_c &manager);
+    virtual configuration_s &configuration() const;
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
         return buttons.update_buttons(screen, mouse.postion(), mouse.state(mouse_c::left));
@@ -52,6 +54,7 @@ public:
     cgoverlay_scene_c(scene_manager_c &manager) : 
         cggame_scene_c(manager)
     {}
+    virtual configuration_s &configuration() const;
     virtual void will_appear(screen_c &clear_screen, bool obsured) {};
     virtual void update_back(screen_c &back_screen, int ticks);
 };

@@ -37,7 +37,7 @@ cgasset_manager::cgasset_manager() :
      LEVELS, LEVEL_RESULTS, USER_LEVELS,
      */
     
-    add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "backgrnd.iff"));
+    add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
     add_asset_def(TILES, asset_def_s(asset_c::tileset, 2, "tiles.iff"));
     add_asset_def(TILES_B, asset_def_s(asset_c::tileset, 2, "tiles2.iff"));

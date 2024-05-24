@@ -16,7 +16,8 @@ public:
     no_transition_c() : transition_c() {
         _full_restores_left = 2;
     }
-    bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) {
+    virtual void will_begin(const scene_c *from, const scene_c *to) {};
+    virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) {
         phys_screen.canvas().draw_aligned(log_screen.image(), point_s());
         return --_full_restores_left <= 0;
     }
@@ -59,7 +60,7 @@ void scene_manager_c::run(scene_c *rootscene, scene_c *overlayscene, transition_
             debug_cpu_color(DEBUG_CPU_RUN_TRANSITION);
             bool done = _transition->tick(back, clear, ticks);
             if (done) {
-                set_transition(nullptr, true);
+                end_transition();
             }
         } else {
             debug_cpu_color(DEBUG_CPU_TOP_SCENE_TICK);
@@ -115,42 +116,48 @@ void scene_manager_c::set_overlay_scene(scene_c *overlay_scene) {
 }
 
 void scene_manager_c::push(scene_c *scene, transition_c *transition) {
+    scene_c *from = nullptr;
     if (_scene_stack.size() > 0) {
-        top_scene().will_disappear(true);
+        from = &top_scene();
+        from->will_disappear(true);
     }
     _scene_stack.push_back(scene);
     auto &clear = screen(screen_e::clear);
     clear.canvas().with_dirtymap(nullptr, [this, &clear] {
         top_scene().will_appear(clear, false);
     });
-    set_transition(transition);
+    begin_transition(transition, from, scene);
 }
 
 void scene_manager_c::pop(transition_c *transition, int count) {
+    scene_c *from = nullptr;
     while (count-- > 0) {
-        auto &top = top_scene();
-        top.will_disappear(false);
-        enqueue_delete(&top);
+        from = &top_scene();
+        from->will_disappear(false);
+        enqueue_delete(from);
         _scene_stack.pop_back();
     }
+    scene_c *to = nullptr;
     if (_scene_stack.size() > 0) {
         auto &clear = screen(screen_e::clear);
-        clear.canvas().with_dirtymap(nullptr, [this, &clear, count] {
-            top_scene().will_appear(clear, true);
+        to = &top_scene();
+        clear.canvas().with_dirtymap(nullptr, [this, to, &clear, count] {
+            to->will_appear(clear, true);
         });
     }
-    set_transition(transition);
+    begin_transition(transition, from, to);
 }
 
 void scene_manager_c::replace(scene_c *scene, transition_c *transition) {
-    top_scene().will_disappear(false);
-    enqueue_delete(&top_scene());
+    scene_c *from = &top_scene();
+    from->will_disappear(false);
+    enqueue_delete(from);
     _scene_stack.back() = scene;
     auto &clear = screen(screen_e::clear);
     clear.canvas().with_dirtymap(nullptr, [this, &clear] {
         top_scene().will_appear(clear, false);
     });
-    set_transition(transition);
+    begin_transition(transition, from, scene);
 }
 
 screen_c &scene_manager_c::screen(screen_e id) const {
@@ -168,13 +175,17 @@ void scene_manager_c::swap_screens() {
     _active_physical_screen = (_active_physical_screen + 1) & 0x1;
 }
 
-void scene_manager_c::set_transition(transition_c *transition, bool done) {
+void scene_manager_c::begin_transition(transition_c *transition, const scene_c *from, const scene_c *to) {
     if (_transition) delete _transition;
     if (transition) {
         _transition = transition;
-    } else if (done) {
-        _transition = nullptr;
     } else {
         _transition = new no_transition_c();
     }
+    _transition->will_begin(from, to);
+}
+
+void scene_manager_c::end_transition() {
+    if (_transition) delete _transition;
+    _transition = nullptr;
 }

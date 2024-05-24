@@ -27,8 +27,17 @@ namespace toybox {
         
     class scene_c : public nocopy_c {
     public:
+        struct configuration_s : public nocopy_c {
+            configuration_s(const palette_c &palette, int buffer_count = 2, bool use_clear = true) :
+                palette(palette), buffer_count(buffer_count), use_clear(use_clear) {}
+            const palette_c &palette;
+            const int buffer_count;
+            const bool use_clear;
+        };
         scene_c(scene_manager_c &manager) : manager(manager) {};
         virtual ~scene_c() {};
+        
+        virtual configuration_s &configuration() const = 0;
         
         virtual void will_appear(screen_c &clear_screen, bool obsured) = 0;
         virtual void will_disappear(bool obscured) {};
@@ -44,6 +53,7 @@ namespace toybox {
         transition_c() {};
         virtual ~transition_c() {}
         
+        virtual void will_begin(const scene_c *from, const scene_c *to) = 0;
         virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) = 0;
         
         static transition_c *create(canvas_c::stencil_type_e dither);
@@ -87,8 +97,9 @@ namespace toybox {
         inline void enqueue_delete(scene_c *scene) {
             _deletion_stack.emplace_back(scene);
         }
-        inline void set_transition(transition_c *transition, bool done = false);
-        
+        inline void begin_transition(transition_c *transition, const scene_c *from, const scene_c *to);
+        inline void end_transition();
+
         vector_c<screen_c, 3> _screens;
         int _active_physical_screen;
     };

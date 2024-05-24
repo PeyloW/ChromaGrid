@@ -30,10 +30,14 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) : scene_c(manager),
     _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
+cggame_scene_c::configuration_s &cgintro_scene_c::configuration() const {
+    static cggame_scene_c::configuration_s config(*cgasset_manager::shared().image(INTRO).palette());
+    return config;
+}
+
 void cgintro_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     auto &image = cgasset_manager::shared().image(INTRO);
     clear_screen.canvas().draw_aligned(image, point_s());
-    machine_c::shared().set_active_palette(image.palette().get());
     _menu_buttons.draw_all(clear_screen.canvas());
 }
 
@@ -91,6 +95,16 @@ cggame_scene_c::cggame_scene_c(scene_manager_c &manager) :
     font(assets.font(FONT)),
     small_font(assets.font(SMALL_FONT))
 {};
+
+cggame_scene_c::configuration_s &cggame_scene_c::configuration() const {
+    static cggame_scene_c::configuration_s config(*cgasset_manager::shared().image(BACKGROUND).palette());
+    return config;
+}
+
+cggame_scene_c::configuration_s &cgoverlay_scene_c::configuration() const {
+    static cggame_scene_c::configuration_s config(*cgasset_manager::shared().image(BACKGROUND).palette(), 2, false);
+    return config;
+}
 
 void cgoverlay_scene_c::update_back(screen_c &back_screen, int ticks) {
     auto &canvas = back_screen.canvas();

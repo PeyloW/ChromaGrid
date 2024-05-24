@@ -14,13 +14,26 @@ namespace toybox {
     
     class dither_transition_c : public transition_c {
     public:
-        dither_transition_c(canvas_c::stencil_type_e dither) : transition_c() {
+        dither_transition_c(canvas_c::stencil_type_e dither) : transition_c(), _palette(nullptr) {
             _transition_state.full_restores_left = 2;
             _transition_state.type = canvas_c::effective_type(dither);
             _transition_state.shade = 0;
         }
-        
+
+        virtual void will_begin(const scene_c *from, const scene_c *to) {
+            if (to) {
+                _palette = &to->configuration().palette;
+                if (from) {
+                    assert(_palette == &from->configuration().palette);
+                }
+            }
+        }
+
         virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) {
+            if (_transition_state.shade == 0 && _palette) {
+                machine_c::shared().set_active_palette(_palette);
+                _palette = nullptr;
+            }
             auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
             phys_screen.canvas().with_stencil(canvas_c::stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
                 phys_screen.canvas().draw_aligned(log_screen.image(), point_s());
@@ -32,6 +45,7 @@ namespace toybox {
             return _transition_state.full_restores_left <= 0;
         }
     protected:
+        const palette_c *_palette;
         struct {
             int full_restores_left;
             canvas_c::stencil_type_e type;
@@ -43,7 +57,7 @@ namespace toybox {
 class dither_through_transition_c : public dither_transition_c {
 public:
     dither_through_transition_c(canvas_c::stencil_type_e dither, uint8_t through) :
-        dither_transition_c(dither), _through(through) {
+        dither_transition_c(dither), _palette(nullptr), _through(through) {
             _transition_state.full_restores_left = 4;
         }
     
@@ -54,6 +68,10 @@ public:
                 phys_screen.canvas().fill(_through, rect_s(point_s(), phys_screen.size()));
             });
             if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
+                if (_palette) {
+                    machine_c::shared().set_active_palette(_palette);
+                    _palette = nullptr;
+                }
                 _transition_state.full_restores_left--;
             }
             if (_transition_state.full_restores_left > 2) {
@@ -67,28 +85,43 @@ public:
         }
     }
 protected:
+    const palette_c *_palette;
     const uint8_t _through;
 };
 
 class fade_through_transition_c : public transition_c {
 public:
-    fade_through_transition_c(color_c through) : transition_c() {
-        _count = 0;
+    fade_through_transition_c(color_c through) :
+        transition_c(), _to_palette(nullptr), _through(through), _count(0)
+    {}
+    virtual ~fade_through_transition_c() {
+        if (_to_palette) {
+            machine_c::shared().set_active_palette(_to_palette);
+        }
+    }
+    virtual void will_begin(const scene_c *from, const scene_c *to) {
+        assert(from && to);
         uint8_t r, g, b;
-        through.get(&r, &g, &b);
-        _old_palette = machine_c::shared().active_palette();
-        assert(_old_palette);
+        _through.get(&r, &g, &b);
+        const palette_c &from_palette = from->configuration().palette;
+        const palette_c &to_palette = to->configuration().palette;
+        _to_palette = &to_palette;
         for (int i = 0; i <= 16; i++) {
             _palettes.emplace_back();
             auto &palette = _palettes.back();
             int shade = i * color_c::MIX_FULLY_OTHER / 16;
             for (int j = 0; j < 16; j++) {
-                palette.colors[j] = _old_palette->colors[j].mix(through, shade);
+                palette.colors[j] = from_palette.colors[j].mix(_through, shade);
             }
         }
-    }
-    virtual ~fade_through_transition_c() {
-        machine_c::shared().set_active_palette(_old_palette);
+        for (int i = 15; i >= 0; i--) {
+            _palettes.emplace_back();
+            auto &palette = _palettes.back();
+            int shade = i * color_c::MIX_FULLY_OTHER / 16;
+            for (int j = 0; j < 16; j++) {
+                palette.colors[j] = to_palette.colors[j].mix(_through, shade);
+            }
+        }
     }
     virtual bool tick(screen_c &phys_screen, screen_c &log_screen, int ticks) {
         const int count = _count / 2;
@@ -97,8 +130,8 @@ public:
             m.set_active_palette(&_palettes[count]);
         } else if (count < 18) {
             phys_screen.canvas().draw_aligned(log_screen.image(), point_s());
-        } else if (count < 35) {
-            m.set_active_palette(&_palettes[34 - count]);
+        } else if (count < 34) {
+            m.set_active_palette(&_palettes[count - 1]);
         } else {
             return true;
         }
@@ -106,9 +139,10 @@ public:
         return false;
     }
 private:
-    const palette_c *_old_palette;
+    const palette_c *_to_palette;
+    const color_c _through;
     int _count;
-    vector_c<palette_c, 17> _palettes;
+    vector_c<palette_c, 33> _palettes;
 };
 
 transition_c *transition_c::create(canvas_c::stencil_type_e dither) {
