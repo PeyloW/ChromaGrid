@@ -1,5 +1,25 @@
-This is a scroll text.
+Welcome to Chroma Grid by T.O.Y.S.    -    A Sommarhack 2024 release of a game 30 years in the making.
 
-With a second paraghraf that should have a pause before it.
+This scroll text contains the musings of the demo-scene, and how it has shapes our lives. We dedicate this game to the friends we made on the journey.
 
-Lets wrap.
+
+
+PeyloW of T.O.Y.S. on the keyboard here. After over three decades, my teenage dream to be a proper game developer for the Atari ST has been realized. Where did this journey start?
+
+On my 12th birthday, after much nagging, I received an Atari ST fm with the Power Pack. Little did I know how this would shape a lifelong journey. Between my birthday and Christmas, I had already played all 20 games to death (Except you Super Huey!), booting FirST Basic and running the sample code, I was mesmerized by the patterns appearing on the screen. I needed to know how this magic works!
+
+Luckily, I found like-minded enthusiasts at my school and got introduced to the demo-scene. After watching BIG- and Cuddly demos playing games became secondary; I needed to be a part of this! I got started with STOS-Basic and dabbled with embedding some assembly routines here and there. Slowly growing my knowledge of the hardware and skill set, with way too much confidence ;).
+
+After a few years, my contact network on the Swedish demo-scene had grown quite a bit, visiting parties, and helping to organize local ones that drew over a dozen visitors! I even made a few releases of my own, many made after allnighters with Daniel 'tam' Pettersson, in the basement of Fredrik 'Me' Andersson of Friendchip, or on Joakim 'AiO' Ekblad's sofa. Some of the closer contacts would go on to form UDS and release the under-appreciated classic Obsession. As high school graduation drew nearer, I thought I knew what I would do next.
+
+To the credit of people like Oskar 'OB' Burman of TRR and Anders 'Evil' Eriksson of DHS, the true mark of an Elite scener is shipping a finished product. Unfinished releases do not count. At the time, I was too young, and the tendency to get bored and look for the next thing as soon as "I know how" made the majority of my releases die as unreleased proof of concepts, along with my dream of becoming a game developer.
+
+Instead I became a Windows development consultant, and instructor. A good fit for the younger me. With age comes wisdom and maturity. I learned to underpromise and overdeliver.
+
+My love for the scene, and its mindset never vaned. Luckily the demo-scene mindset works great for embedded and mobile devices. The goal may be battery life instead of a 16x16 sprite record, but the path to get there is eerily similar. This was a skillset and mindset I first got the opportunity to bring to Sony Ericsson working on a highly optimized ahead of time Java ME compiler for flip phones, and then as an early app developer when the iPhone was introduced to the world.
+
+Yet again, a choice that I, at the time, did not know the trajectory of. Little did I know I would end up at the Apple mothership itself in Cupertino. But here I am, a performance engineer employing a demo-scene mindset to ship butter-smooth software to millions of users. The phone in my pocket is thousands of times more powerful than the Atari ST fm I started my journey on. Yet many of the challenges are the same, and my child-like joy of seeing hardware do the seemingly impossible remains.
+
+From Atari to Apple with love.
+
+
