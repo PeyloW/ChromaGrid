@@ -11,7 +11,8 @@
 
 cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) : 
     cggame_scene_c(manager),
-    _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING)
+    _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
+    _scroller()
 {
     const char *button_titles[] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY", nullptr };
     for (auto title = &button_titles[0]; *title; title++) {
@@ -61,8 +62,7 @@ void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     
     canvas.draw(font, "Welcome to Chroma Grid.", point_s(96, 150));
     canvas.draw(font, "\x7f 2024 T.O.Y.S.", point_s(96, 170));
-    
-    canvas.draw(small_font, cgasset_manager::shared().menu_scroll().text(), point_s(0, 194), canvas_c::align_left);
+    _scroller.restore();
 }
 
 void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
@@ -100,9 +100,7 @@ void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         default:
             break;
     }
-    
-    canvas.draw(canvas.image(), rect_s(0, 192, 320, 8), point_s(-1, 200));
-    canvas.draw_aligned(canvas.image(), rect_s(0, 200, 320, 8), point_s(0, 192));
+    _scroller.update(clear_screen);
 }
 
 cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :

@@ -12,7 +12,7 @@
 #include "scene.hpp"
 #include "resources.hpp"
 #include "button.hpp"
-
+#include "scroller.hpp"
 
 class cgintro_scene_c : public scene_c {
 public:
@@ -63,6 +63,7 @@ public:
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
     cgbutton_group_c<6> _menu_buttons;
+    scroller_c _scroller;
 };
 
 class cgcredits_scene_c : public cggame_scene_c {
@@ -142,6 +143,8 @@ public:
     
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void update_back(screen_c &back_screen, int ticks);
+
 private:
     tilestate_t next_state(const tilestate_t &current, mouse_c::button_e button) const;
     void draw_counts(canvas_c &screen) const;
@@ -157,6 +160,8 @@ private:
     int _selected_template;
     level_recipe_t::header_t _header;
     tilestate_t _level_grid[12][12];
+    scroller_c _scroller;
+    int _shimmer_ticks;
 };
 
 #endif /* game_hpp */

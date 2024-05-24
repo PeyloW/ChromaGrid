@@ -31,7 +31,7 @@ TOYBOX_OBJECTS+=audio.o audio_mixer.o
 TOYBOX_OBJECTS+=screen.o scene.o scene_transition.o
 
 CG_OBJECTS=main.o
-CG_OBJECTS+=resources.o level.o button.o
+CG_OBJECTS+=resources.o level.o button.o scroller.o
 CG_OBJECTS+=game.o game_menu.o game_scores.o game_credits.o game_help.o game_level.o game_level_edit.o
 
 all: toybox cgrid

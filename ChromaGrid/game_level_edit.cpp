@@ -161,7 +161,19 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
     _tile_templates.push_back((tilestate_t){ tiletype_e::broken, color_e::none, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::blocked, color_e::none, color_e::none, color_e::none});
     _tile_templates.push_back((tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::both});
+    
+    _shimmer_ticks = 0;
 }
+
+static const char *_template_help_texts[7] = {
+    "Place gold or silver targets with left or right button. Select again to remove.",
+    "Place regular tiles with left button, remove with right. Select again to rotate target color.",
+    "Place magnetic tiles with left button, remove with right. Select again to rotate target color.",
+    "Place glass tiles with left button, remove with right. Select again to rotate target color.",
+    "Place broken glass tiles with left button, remove with right. Select again to rotate target color.",
+    "Place blocked tiles with left button, remove with right.",
+    "Place gold or silver orbs with left or right button. Select again to remove.",
+};
 
 void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     auto &canvas = clear_screen.canvas();
@@ -176,6 +188,7 @@ void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
             draw_level_grid(canvas, x, y);
         }
     }
+    _scroller.restore();
 }
 
 tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c::button_e button) const {
@@ -294,6 +307,22 @@ void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             }
         }
     }
+    _scroller.update(clear_screen);
+}
+
+static int next_shimmer_ticks() {
+    return 25 + (uint16_t)rand() % 50;
+}
+
+void cglevel_edit_scene_c::update_back(screen_c &back_screen, int ticks) {
+    _shimmer_ticks -= ticks;
+    if (_shimmer_ticks < -7) {
+        _shimmer_ticks = next_shimmer_ticks();
+    } else if (_shimmer_ticks <= 0) {
+        int16_t idx = ABS(_shimmer_ticks);
+        point_s at(LEVEL_EDIT_TEMPLATE_ORIGIN_X + _selected_template * 16, LEVEL_EDIT_TEMPLATE_ORIGIN_Y);
+        back_screen.canvas().draw(assets.tileset(SHIMMER), idx, at);
+    }
 }
 
 void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
@@ -337,6 +366,8 @@ void cglevel_edit_scene_c::draw_tile_templates(canvas_c &screen) const {
     for (int i = 0; i < _tile_templates.size(); i++) {
         draw_tile_template_at(screen, _tile_templates[i], i);
     }
+    ((cglevel_edit_scene_c*)this)->_scroller.reset(_template_help_texts[_selected_template]);
+    screen.fill(0, rect_s(0, 192, 320, 16));
 }
 
 void cglevel_edit_scene_c::draw_level_grid(canvas_c &screen, int x, int y) const {
