@@ -65,6 +65,7 @@ cgasset_manager::cgasset_manager() :
     add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(SMALL_FONT).image(), size_s(6, 6));
     }));
+    add_asset_def(DISK, asset_def_s(asset_c::image, 2, "disk.iff"));
     
     add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 2, "drop.aif"));
     add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 2, "take.aif"));

@@ -8,6 +8,14 @@
 #include "game.hpp"
 #include "machine.hpp"
 
+extern "C" {
+#ifdef __M68000__
+#include <ext.h>
+#else
+#include <unistd.h>
+#endif
+}
+
 #define MAX_ORBS 50
 #define MAX_TIME (5*60)
 
@@ -69,8 +77,14 @@ public:
         } else if (button > 0) {
             auto &user_levels = assets.user_levels();
             if (_recipe) {
+                auto &disk = cgasset_manager::shared().image(DISK);
+                manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
                 memcpy(user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
+                // TODO: Handle error and ask user to retry
                 assets.user_levels().save();
+                #ifndef __M68000__
+                sleep(2);
+                #endif
                 manager.pop(transition);
             } else {
                 manager.pop(nullptr);
@@ -94,16 +108,17 @@ private:
             int pair_idx = level_idx & 0x1;
             
             start = str.str() + str.tell();
-            if (save && !empty) {
-                str << '#';
-            }
             str << level_idx + 1 << ends;
             if (pair_idx == 1) {
                 _menu_buttons.add_button_pair(prev_start, start);
-                if (save && !empty) {
-                    _menu_buttons.buttons[button_idx].style = cgbutton_t::destructive;
-                }
-                if (!save) {
+                if (save) {
+                    if (!user_levels[level_idx - 1]->empty()) {
+                        _menu_buttons.buttons[button_idx - 1].style = cgbutton_t::destructive;
+                    }
+                    if (!empty) {
+                        _menu_buttons.buttons[button_idx].style = cgbutton_t::destructive;
+                    }
+                } else {
                     if (user_levels[level_idx - 1]->empty()) {
                         _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;
                     }
@@ -166,13 +181,13 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
 }
 
 static const char *_template_help_texts[7] = {
-    "Place gold or silver targets with left or right button. Select again to remove.",
-    "Place regular tiles with left button, remove with right. Select again to rotate target color.",
-    "Place magnetic tiles with left button, remove with right. Select again to rotate target color.",
-    "Place glass tiles with left button, remove with right. Select again to rotate target color.",
-    "Place broken glass tiles with left button, remove with right. Select again to rotate target color.",
-    "Place blocked tiles with left button, remove with right.",
-    "Place gold or silver orbs with left or right button. Select again to remove.",
+    "Place gold or silver targets with left or right mouse button. Select again to remove target.",
+    "Place regular tiles with left mouse button, remove with right mouse button. Select again to rotate target color.",
+    "Place magnetic tiles with left mouse button, remove with right mouse button. Select again to rotate the tile's current color.",
+    "Place glass tiles with left mouse button, remove with right mouse button. Select again to rotate the tile's current color.",
+    "Place broken glass tiles with left mnouse button, remove with right mouse button. Select again to rotate the tile's current color.",
+    "Place blocked tiles with left mouse button, remove with right mouse button.",
+    "Place gold or silver orbs with left or right mouse button. Select again to remove orb.",
 };
 
 void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {

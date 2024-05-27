@@ -12,6 +12,7 @@
 		A625203C2BFEE23700B3635F /* menu.txt in Resources */ = {isa = PBXBuildFile; fileRef = A625203B2BFEE23700B3635F /* menu.txt */; };
 		A625203F2C00307B00B3635F /* scroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A625203D2C00307B00B3635F /* scroller.cpp */; };
 		A62520412C01540500B3635F /* intro.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520402C01540500B3635F /* intro.iff */; };
+		A62520432C04F53D00B3635F /* disk.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520422C04F53D00B3635F /* disk.iff */; };
 		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
 		A682A3EA2B92613F00FF2E57 /* game_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_menu.cpp */; };
 		A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612D82BB26B86008ACD05 /* game_help.cpp */; };
@@ -162,6 +163,7 @@
 		A625203D2C00307B00B3635F /* scroller.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = scroller.cpp; sourceTree = "<group>"; };
 		A625203E2C00307B00B3635F /* scroller.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = scroller.hpp; sourceTree = "<group>"; };
 		A62520402C01540500B3635F /* intro.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = intro.iff; sourceTree = "<group>"; };
+		A62520422C04F53D00B3635F /* disk.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = disk.iff; sourceTree = "<group>"; };
 		A66B7CF52BB3BC7F00374307 /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
 		A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_stencil.cpp; sourceTree = "<group>"; };
 		A682A3E12B9227AC00FF2E57 /* resources.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 				A62520382BFEE21200B3635F /* tiles3.iff */,
 				A6D012F02BBCE71800D260C2 /* emptyt.iff */,
 				A6D012CF2BBA317D00D260C2 /* shimmer.iff */,
+				A62520422C04F53D00B3635F /* disk.iff */,
 				A6E484CA2BA1ED02004CCA7D /* break.aif */,
 				A6E484CD2BA1ED02004CCA7D /* drop.aif */,
 				A6E484D22BA293EE004CCA7D /* take.aif */,
@@ -731,6 +734,7 @@
 				A6E484D32BA293EE004CCA7D /* take.aif in Resources */,
 				A6E484DB2BA5F48B004CCA7D /* fusebrk.aif in Resources */,
 				A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */,
+				A62520432C04F53D00B3635F /* disk.iff in Resources */,
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 				A6F766B12B98BC2600325754 /* select.iff in Resources */,
 				A69AE5122B85031400EBA43D /* tiles.iff in Resources */,

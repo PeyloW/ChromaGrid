@@ -7,13 +7,20 @@
 
 #include "game.hpp"
 #include "machine.hpp"
-
+extern "C" {
+#ifdef __M68000__
+#include <ext.h>
+#else
+#include <unistd.h>
+#endif
+}
 
 class cglevel_ended_scene_c : public cggame_scene_c {
 public:
     
     cglevel_ended_scene_c(scene_manager_c &manager, int level_num, level_result_t &results) :
         cggame_scene_c(manager),
+        _save_results(false),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _level_num(level_num),
         _results(results)
@@ -27,7 +34,7 @@ public:
             } else {
                 _menu_buttons.add_button("Next Level");
                 if (assets.level_results()[level_num].merge_from(results)) {
-                    assets.level_results().save();
+                    _save_results = true;
                 }
             }
         }
@@ -95,7 +102,20 @@ public:
                 break;
         }
     }
+    virtual void update_back(screen_c &back_screen, int ticks) {
+        if (_save_results) {
+            auto &disk = cgasset_manager::shared().image(DISK);
+            manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
+            // TODO: Handle error and ask user to retry
+            assets.level_results().save();
+#ifndef __M68000__
+            sleep(2);
+#endif
+            _save_results = false;
+        }
+    }
 private:
+    bool _save_results;
     cgbutton_group_c<2> _menu_buttons;
     int _level_num;
     level_result_t _results;
