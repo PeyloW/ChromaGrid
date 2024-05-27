@@ -101,7 +101,7 @@ Legend: __Required__, Expected , _Optional_
         * [x] __Count down timer__
         * [x] Count moves
     * [x] _Per level scroll text_
-    * [ ] In game music, _one or more tracks_
+    * [x] In game music, _one or more tracks_
 * [ ] Game over scene
     * [x] Scoring summary
     * [ ] Large success logo
