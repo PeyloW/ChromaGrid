@@ -7,7 +7,7 @@
 
 #include "util_stream.hpp"
 
-using namespace toystd;
+using namespace toybox;
 
 
 nullstream_c::nullstream_c() : stream_c() {}

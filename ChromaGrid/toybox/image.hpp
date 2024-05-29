@@ -14,7 +14,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
     
     typedef enum __packed {
         compression_type_none,

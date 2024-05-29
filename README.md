@@ -128,7 +128,7 @@ Code is split up into three main parts:
 * MacOSHost - A macOS harness capable of running and debugging a simulated version pof the game
 * ChromaGrid - The game!
 * toybox - The reusable parts that could become many games
-    * toystd - Minimal replacements for C++ standard library functionality, optimized for speed and space.
+    * toybox - Minimal replacements for C++ standard library functionality, optimized for speed and space.
 
 All code must compile with GCC 4.6.4 with c++0x _(Experimental C++11)_ enabled, no standard libraries linked.
 

@@ -19,7 +19,7 @@ extern "C" {
 }
 
 template<>
-toystd::detail::shared_count_t::allocator::type toystd::detail::shared_count_t::allocator::first_block = nullptr;
+toybox::detail::shared_count_t::allocator::type toybox::detail::shared_count_t::allocator::first_block = nullptr;
  
 void *operator new (size_t n) {
     return _malloc(n);

@@ -12,7 +12,7 @@
 #include "utility.hpp"
 #include "memory.hpp"
 
-namespace toystd {
+namespace toybox {
     
     class stream_c : public nocopy_c {
     public:

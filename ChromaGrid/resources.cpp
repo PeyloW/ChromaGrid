@@ -238,9 +238,9 @@ bool level_results_c::save() const {
 
 scroll_text_c::scroll_text_c(const char *path) {
     fstream_c file(path);
-    file.seek(0, toystd::stream_c::end);
+    file.seek(0, toybox::stream_c::end);
     auto size = file.tell();
-    file.seek(0, toystd::stream_c::beg);
+    file.seek(0, toybox::stream_c::beg);
     char *text = (char*)malloc(size + 1);
     file.read((uint8_t *)text, size);
     text[size] = 0;

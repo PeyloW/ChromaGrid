@@ -10,7 +10,7 @@
 
 #include "algorithm.hpp"
 
-namespace toystd {
+namespace toybox {
     
     // Minimal std::vector replacement with static size
     template<class Type, int Count>

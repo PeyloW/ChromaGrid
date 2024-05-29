@@ -8,7 +8,7 @@
 #include "stream.hpp"
 #include "util_stream.hpp"
 
-using namespace toystd;
+using namespace toybox;
 
 stream_c::stream_c() : _assert_on_error(false), _width(0), _fill(' ') {};
 
@@ -140,9 +140,9 @@ static fstream_c s_tbin(stdin);
 static fstream_c s_tbout(stdout);
 static fstream_c s_tberr(stderr);
 
-stream_c& toystd::tbin = s_tbin;
-stream_c& toystd::tbout = s_tbout;
-stream_c& toystd::tberr = s_tberr;
+stream_c& toybox::tbin = s_tbin;
+stream_c& toybox::tbout = s_tbout;
+stream_c& toybox::tberr = s_tberr;
 
 static stream_c &s_endl(stream_c &s) {
 #ifdef __M68000__
@@ -160,9 +160,9 @@ static stream_c &s_flush(stream_c &s) {
     return s;
 }
 
-stream_c::manipulator_f toystd::endl = &s_endl;
-stream_c::manipulator_f toystd::ends = &s_ends;
-stream_c::manipulator_f toystd::flush = &s_flush;
+stream_c::manipulator_f toybox::endl = &s_endl;
+stream_c::manipulator_f toybox::ends = &s_ends;
+stream_c::manipulator_f toybox::flush = &s_flush;
 
 fstream_c::fstream_c(FILE *file) :
     stream_c(), _path(nullptr), _mode(input), _file(file)

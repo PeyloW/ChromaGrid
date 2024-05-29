@@ -15,7 +15,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
     
     class sound_c : public asset_c {
         friend class audio_mixer_c;

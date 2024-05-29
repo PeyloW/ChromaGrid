@@ -15,7 +15,7 @@
 
 namespace toybox {
 
-    using namespace toystd;
+    using namespace toybox;
     
     class asset_c : nocopy_c {
     public:

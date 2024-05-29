@@ -10,7 +10,7 @@
 
 extern void* operator new (size_t count, void *p) noexcept;
 
-namespace toystd {
+namespace toybox {
     
     template<bool B, typename T = void> struct enable_if {};
     template<typename T> struct enable_if<true, T> { typedef T type; };

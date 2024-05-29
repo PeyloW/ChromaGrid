@@ -8,7 +8,7 @@
 #import "Document.h"
 #include "iffstream.hpp"
 
-using namespace toystd;
+using namespace toybox;
 
 @interface ContentFormatter : NSFormatter
 @end

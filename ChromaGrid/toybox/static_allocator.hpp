@@ -10,7 +10,7 @@
 
 #include "algorithm.hpp"
 
-namespace toystd {
+namespace toybox {
 
 template <class T, size_t Count>
 class static_allocator_c {

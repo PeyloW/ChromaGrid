@@ -12,7 +12,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
  
     class tileset_c : public asset_c {
     public:

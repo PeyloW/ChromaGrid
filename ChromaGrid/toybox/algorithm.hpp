@@ -10,7 +10,7 @@
 
 #include "utility.hpp"
 
-namespace toystd {
+namespace toybox {
     
     template<typename I, typename J>
     __forceinline J copy(I first, I last, J d_first) {

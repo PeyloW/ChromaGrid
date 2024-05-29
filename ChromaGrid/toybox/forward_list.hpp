@@ -11,7 +11,7 @@
 #include "static_allocator.hpp"
 #include "utility.hpp"
 
-namespace toystd {
+namespace toybox {
 
 template<class Type, size_t Count = 16>
 class forward_list_c {

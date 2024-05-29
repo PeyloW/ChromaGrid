@@ -38,7 +38,7 @@ struct __packed_struct aiff_common_s {
     extended80_s sample_rate;
 };
 static_assert(sizeof(aiff_common_s) == 18, "aiff_common_t size mismatch");
-namespace toystd {
+namespace toybox {
     template<>
     struct struct_layout<aiff_common_s> {
         static constexpr char *value = "1w1l6w";
@@ -51,7 +51,7 @@ struct __packed_struct aiff_ssnd_data_s {
     uint8_t data[];
 };
 static_assert(sizeof(aiff_ssnd_data_s) == 8, "ssnd_data_t size mismatch");
-namespace toystd {
+namespace toybox {
     template<>
     struct struct_layout<aiff_ssnd_data_s> {
         static constexpr char *value = "2l";
@@ -127,7 +127,7 @@ music_c::music_c(const char *path) {
     hard_assert(file.good());
     file.seek(0, stream_c::end);
     size_t size = file.tell();
-    file.seek(0, toystd::fstream_c::beg);
+    file.seek(0, toybox::fstream_c::beg);
     
     _sndh.reset((uint8_t *)_malloc(size));
     _length = size;

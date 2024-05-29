@@ -10,7 +10,7 @@
 
 #include "stream.hpp"
 
-namespace toystd {
+namespace toybox {
 
     typedef uint32_t iff_id_t;
 

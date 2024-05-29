@@ -13,7 +13,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
     
     
     class font_c : public asset_c {

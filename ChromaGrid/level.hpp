@@ -15,7 +15,7 @@
 #include "iffstream.hpp"
 #include "memory.hpp"
 
-using namespace toystd;
+using namespace toybox;
 using namespace toybox;
 
 DEFINE_IFF_ID (CGLV); // ChromaGrid LeVel
@@ -52,7 +52,7 @@ struct __packed_struct tilestate_t  {
     }
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
-namespace toystd {
+namespace toybox {
     template<>
     struct struct_layout<tilestate_t> {
         static constexpr char *value = "4b";
@@ -77,7 +77,7 @@ static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size 
 #ifndef __M68000__
 static_assert(__offsetof(level_recipe_t, tiles) == 16, "offset of level_recipe_t::tiles mismatch");
 #endif
-namespace toystd {
+namespace toybox {
     template<>
     struct struct_layout<level_recipe_t::header_t> {
         static constexpr char *value = "4b1w";
@@ -99,7 +99,7 @@ struct __packed_struct level_result_t {
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
 static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
-namespace toystd {
+namespace toybox {
     template<>
     struct struct_layout<level_result_t> {
         static constexpr char *value = "1w2b2w";

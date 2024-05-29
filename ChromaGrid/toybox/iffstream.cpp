@@ -8,7 +8,7 @@
 #include "iffstream.hpp"
 #include "util_stream.hpp"
 
-using namespace toystd;
+using namespace toybox;
 
 iffstream_c::iffstream_c(stream_c *stream) : 
     stream_c(), _stream(stream)

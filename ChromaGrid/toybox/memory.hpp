@@ -10,7 +10,7 @@
 
 #include "static_allocator.hpp"
 
-namespace toystd {
+namespace toybox {
 
     template<typename T>
     class __packed_struct basic_ptr_c {

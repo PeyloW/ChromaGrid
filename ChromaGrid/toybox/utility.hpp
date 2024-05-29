@@ -10,7 +10,7 @@
 
 #include "type_traits.hpp"
 
-namespace toystd {
+namespace toybox {
     
 #ifdef __M68000__
 #   define hton(v)
@@ -89,15 +89,15 @@ namespace toystd {
     };
 
     template<class T1, class T2>
-    class pair_t : nocopy_c {
+    class pair_c : nocopy_c {
     public:
-        pair_t(const T1 &f, const T2 &s) : first(f), second(s) {}
+        pair_c(const T1 &f, const T2 &s) : first(f), second(s) {}
         T1 first;
         T2 second;
     };
 
     template< class T1, class T2 >
-    pair_t<T1, T1> make_pair( T1&& f, T2&& s) { return pair_t<T1, T2>(forward<T1>(f), forward<T2>(s)); }
+    pair_c<T1, T1> make_pair( T1&& f, T2&& s) { return pair_c<T1, T2>(forward<T1>(f), forward<T2>(s)); }
 
 }
 

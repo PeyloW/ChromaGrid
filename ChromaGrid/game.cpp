@@ -11,6 +11,10 @@
 #include "blitter.hpp"
 #include "audio_mixer.hpp"
 
+#ifndef __M68000__
+#include <unistd.h>
+#endif
+
 #define LOADING_BUTTON_ORIGIN point_s((320-128)/2, 200-28)
 #define LOADING_BUTTON_SIZE size_s(128, 14)
 

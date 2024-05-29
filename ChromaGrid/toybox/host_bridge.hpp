@@ -16,7 +16,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
     
     class sound_c;
     

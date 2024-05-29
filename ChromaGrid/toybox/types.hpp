@@ -13,7 +13,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
     
     struct point_s {
         constexpr point_s() : x(0), y(0) {}

@@ -21,7 +21,7 @@ namespace toybox {
 #define DEBUG_CPU_OVERLAY_SCENE_TICK 0x010
 #define DEBUG_CPU_DONE 0x000
     
-    using namespace toystd;
+    using namespace toybox;
     
     class scene_manager_c;
         

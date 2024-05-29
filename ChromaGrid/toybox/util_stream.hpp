@@ -10,7 +10,7 @@
 
 #include "stream.hpp"
 
-namespace toystd {
+namespace toybox {
         
     /// The dev/null of streams
     class nullstream_c : public stream_c {

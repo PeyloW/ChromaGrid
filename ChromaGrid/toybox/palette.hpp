@@ -13,7 +13,7 @@
 
 namespace toybox {
     
-    using namespace toystd;
+    using namespace toybox;
 
     class color_c {
     public:
