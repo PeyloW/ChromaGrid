@@ -40,6 +40,7 @@ class cglevel_edit_persistence_scene_c : public cggame_scene_c {
 public:
     cglevel_edit_persistence_scene_c(scene_manager_c &manager) :
         cggame_scene_c(manager),
+        _save(false),
         _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
         _recipe(nullptr)
     {
@@ -69,6 +70,23 @@ public:
     }
     
     virtual void update_clear(screen_c &clear_screen, int ticks) {
+        if (_save) {
+            _save = false;
+            auto &disk = cgasset_manager::shared().image(DISK);
+            manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
+            // TODO: Handle error and ask user to retry
+            #ifndef __M68000__
+            sleep(2);
+            #endif
+            if (!assets.user_levels().save()) {
+                static const char *title = "Error Saving Levels";
+                static const char *text = "Could not save user levels. Check that disk is not write protected and try again.";
+                auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_edit_persistence_scene_c::did_choose, *this);
+                manager.push(scene, transition_c::create(canvas_c::orderred));
+                return;
+            }
+            manager.pop(transition_c::create(canvas_c::random));
+        }
         auto &canvas = clear_screen.canvas();
         int button = update_button_group(canvas, _menu_buttons);
         auto transition = transition_c::create(canvas_c::random);
@@ -77,22 +95,21 @@ public:
         } else if (button > 0) {
             auto &user_levels = assets.user_levels();
             if (_recipe) {
-                auto &disk = cgasset_manager::shared().image(DISK);
-                manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
                 memcpy(user_levels[button_to_level_idx(button)], _recipe, level_recipe_t::MAX_SIZE);
-                // TODO: Handle error and ask user to retry
-                assets.user_levels().save();
-                #ifndef __M68000__
-                sleep(2);
-                #endif
-                manager.pop(transition);
+                _save = true;
             } else {
                 manager.pop(nullptr);
                 manager.replace(new cglevel_edit_scene_c(manager, user_levels[button_to_level_idx(button)]), transition);
             }
         }
     }
-    
+    void did_choose(cgerror_scene_c::choice_e choice) {
+        if (choice == cgerror_scene_c::choice_e::retry) {
+            _save = true;
+        }
+        manager.pop(transition_c::create(canvas_c::orderred));
+    }
+
 private:
     void add_buttons() {
         auto &user_levels = assets.user_levels();
@@ -130,6 +147,7 @@ private:
             prev_start = start;
         }
     }
+    bool _save;
     cgbutton_group_c<11> _menu_buttons;
     level_recipe_t *_recipe;
 };

@@ -106,13 +106,23 @@ public:
         if (_save_results) {
             auto &disk = cgasset_manager::shared().image(DISK);
             manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
-            // TODO: Handle error and ask user to retry
-            assets.level_results().save();
-#ifndef __M68000__
+            #ifndef __M68000__
             sleep(2);
-#endif
+            #endif
+            if (!assets.level_results().save()) {
+                static const char *title = "Error Saving Results";
+                static const char *text = "Could not save level results. Check that disk is not write protected and try again.";
+                auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_ended_scene_c::did_choose, *this);
+                manager.push(scene, transition_c::create(canvas_c::orderred));
+            }
             _save_results = false;
         }
+    }
+    void did_choose(cgerror_scene_c::choice_e choice) {
+        if (choice == cgerror_scene_c::choice_e::retry) {
+            _save_results = true;
+        }
+        manager.pop(transition_c::create(canvas_c::orderred));
     }
 private:
     bool _save_results;

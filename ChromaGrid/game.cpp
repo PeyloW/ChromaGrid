@@ -111,3 +111,32 @@ void cgoverlay_scene_c::update_back(screen_c &back_screen, int ticks) {
         canvas.draw(assets.image(CURSOR), at);
     });
 }
+
+cgerror_scene_c::cgerror_scene_c(scene_manager_c &manager, const char *title, const char *text, choice_f callback, scene_c &target) :
+    cggame_scene_c(manager),
+    _title(title), _text(text),
+    _callback(callback), _target(target),
+    _buttons(point_s(96, 146), size_s(128, 14), 0)
+{
+    _buttons.add_button_pair("Retry", "Cancel");
+}
+
+void cgerror_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
+    auto &canvas = clear_screen.canvas();
+    auto &assets = cgasset_manager::shared();
+    canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 48), [this, &canvas] {
+        canvas.fill(7, rect_s(0, 0, 320, 200));
+    });
+    canvas.fill(14, rect_s(64, 32, 192, 136));
+    canvas.fill(7, rect_s(65, 33, 190, 134));
+    _buttons.draw_all(canvas);
+    canvas.draw(assets.font(FONT), _title, point_s(160, 40));
+    canvas.draw(assets.font(SMALL_FONT), _text, rect_s(80, 56, 160, 82), 2);
+}
+
+void cgerror_scene_c::update_back(screen_c &back_screen, int ticks) {
+    int button = update_button_group(back_screen.canvas(), _buttons);
+    if (button >= 0) {
+        (_target.*_callback)((choice_e)button);
+    }
+}

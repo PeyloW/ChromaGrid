@@ -59,6 +59,24 @@ public:
     virtual void update_back(screen_c &back_screen, int ticks);
 };
 
+class cgerror_scene_c : public cggame_scene_c {
+public:
+    enum class choice_e : uint8_t {
+        retry, cancel
+    };
+    typedef void (scene_c::*choice_f)(choice_e choice);
+    cgerror_scene_c(scene_manager_c &manager, const char *title, const char *text, choice_f callback, scene_c &target);
+
+    virtual void will_appear(screen_c &clear_screen, bool obsured);
+    virtual void update_back(screen_c &back_screen, int ticks);
+private:
+    const char *_title;
+    const char *_text;
+    cgbutton_group_c<2> _buttons;
+    const choice_f _callback;
+    scene_c &_target;
+};
+
 class cgmenu_scene_c : public cggame_scene_c {
 public:
     cgmenu_scene_c(scene_manager_c &manager);
