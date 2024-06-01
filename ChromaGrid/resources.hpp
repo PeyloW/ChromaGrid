@@ -59,6 +59,8 @@ public:
 
     static cgasset_manager &shared() { return (cgasset_manager &)asset_manager_c::shared(); }
     
+    bool support_audio() const __pure;
+    
     levels_c &levels() const { return (levels_c&)(asset(LEVELS)); }
     level_results_c &level_results() const { return (level_results_c&)(asset(LEVEL_RESULTS)); }
     user_levels_c &user_levels() const { return (user_levels_c&)(asset(USER_LEVELS)); }

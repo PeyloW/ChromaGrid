@@ -61,7 +61,8 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             state = this;
             audio_mixer_c::shared().play(assets.music(MUSIC));
             assets.unload(1);
-            assets.preload(2, &update_preload);
+            const int sets = assets.support_audio() ? 4 + 2 : 2;
+            assets.preload(sets, &update_preload);
             state = nullptr;
             printf("Used memory %ldKb.\n\r", assets.memory_cost() / 1024);
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));

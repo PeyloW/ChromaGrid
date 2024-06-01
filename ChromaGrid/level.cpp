@@ -580,24 +580,26 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
                 draw_orb_counts(screen);
                 draw_move_count(screen);
             }
-            int sound_index = -1;
-            if (cgp_tile_changes >= (broke_glass + fused_orb)) {
-                sound_index = FUSE_BREAK_TILE;
-            } else if (cgp_tile_changes >= broke_glass) {
-                sound_index = BREAK_TILE;
-            } else if (cgp_tile_changes >= fused_orb) {
-                sound_index = FUSE_ORB;
-            } else if (cgp_tile_changes >= added_orb) {
-                sound_index = DROP_ORB;
-            } else if (cgp_tile_changes >= removed_orb) {
-                sound_index = TAKE_ORB;
-            } else {
-                sound_index = NO_DROP_ORB;
-            }
-            if (sound_index >= 0) {
-                auto &assets = cgasset_manager::shared();
-                auto &mixer = audio_mixer_c::shared();
-                mixer.play(assets.sound(sound_index));
+            auto &assets = cgasset_manager::shared();
+            if (assets.support_audio()) {
+                int sound_index = -1;
+                if (cgp_tile_changes >= (broke_glass + fused_orb)) {
+                    sound_index = FUSE_BREAK_TILE;
+                } else if (cgp_tile_changes >= broke_glass) {
+                    sound_index = BREAK_TILE;
+                } else if (cgp_tile_changes >= fused_orb) {
+                    sound_index = FUSE_ORB;
+                } else if (cgp_tile_changes >= added_orb) {
+                    sound_index = DROP_ORB;
+                } else if (cgp_tile_changes >= removed_orb) {
+                    sound_index = TAKE_ORB;
+                } else {
+                    sound_index = NO_DROP_ORB;
+                }
+                if (sound_index >= 0) {
+                    auto &mixer = audio_mixer_c::shared();
+                    mixer.play(assets.sound(sound_index));
+                }
             }
         }
         debug_cpu_color(DEBUG_CPU_LEVEL_GRID_TICK);

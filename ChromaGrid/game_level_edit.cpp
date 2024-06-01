@@ -74,7 +74,7 @@ public:
             _save = false;
             auto &disk = cgasset_manager::shared().image(DISK);
             manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
-            // TODO: Handle error and ask user to retry
+            clear_screen.dirtymap()->mark(rect_s(288, 8, 24, 24));
             #ifndef __M68000__
             sleep(2);
             #endif

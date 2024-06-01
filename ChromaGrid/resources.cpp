@@ -5,6 +5,7 @@
 //  Created by Fredrik on 2024-03-01.
 //
 
+#include "machine.hpp"
 #include "resources.hpp"
 #include "game.hpp"
 #include "iffstream.hpp"
@@ -67,12 +68,12 @@ cgasset_manager::cgasset_manager() :
     }));
     add_asset_def(DISK, asset_def_s(asset_c::image, 2, "disk.iff"));
     
-    add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 2, "drop.aif"));
-    add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 2, "take.aif"));
-    add_asset_def(FUSE_ORB, asset_def_s(asset_c::sound, 2, "fuse.aif"));
-    add_asset_def(NO_DROP_ORB, asset_def_s(asset_c::sound, 2, "tock.aif"));
-    add_asset_def(BREAK_TILE, asset_def_s(asset_c::sound, 2, "break.aif"));
-    add_asset_def(FUSE_BREAK_TILE, asset_def_s(asset_c::sound, 2, "fusebrk.aif"));
+    add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 4, "drop.aif"));
+    add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 4, "take.aif"));
+    add_asset_def(FUSE_ORB, asset_def_s(asset_c::sound, 4, "fuse.aif"));
+    add_asset_def(NO_DROP_ORB, asset_def_s(asset_c::sound, 4, "tock.aif"));
+    add_asset_def(BREAK_TILE, asset_def_s(asset_c::sound, 4, "break.aif"));
+    add_asset_def(FUSE_BREAK_TILE, asset_def_s(asset_c::sound, 4, "fusebrk.aif"));
     
     add_asset_def(MUSIC, asset_def_s(asset_c::music, 2, "music.snd"));
     
@@ -90,6 +91,18 @@ cgasset_manager::cgasset_manager() :
         return new scroll_text_c(path);
     }));
 }
+
+static inline bool _support_audio() {
+    auto &machine = machine_c::shared();
+    // Support audio if on a STe or newer machine with more than 500k RAM.
+    return machine.type() >= machine_c::ste && machine.max_memory() > 512 * 1024;
+}
+
+bool cgasset_manager::support_audio() const {
+    static bool s_support_audio = _support_audio();
+    return s_support_audio;
+}
+
 
 asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
     auto asset = asset_manager_c::create_asset(id, def);
