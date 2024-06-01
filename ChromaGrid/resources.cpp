@@ -95,7 +95,7 @@ cgasset_manager::cgasset_manager() :
 static inline bool _support_audio() {
     auto &machine = machine_c::shared();
     // Support audio if on a STe or newer machine with more than 500k RAM.
-    return machine.type() >= machine_c::ste && machine.max_memory() > 512 * 1024;
+    return (machine.type() >= machine_c::ste); // && (machine.max_memory() > 512 * 1024);
 }
 
 bool cgasset_manager::support_audio() const {

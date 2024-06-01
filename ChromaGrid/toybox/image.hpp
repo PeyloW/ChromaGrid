@@ -25,6 +25,7 @@ namespace toybox {
 
     class image_c : public asset_c {
         friend class canvas_c;
+        friend class machine_c;
     public:
         static const int MASKED_CIDX = -1;
         static constexpr bool is_masked(int i) __pure { return i < 0; }

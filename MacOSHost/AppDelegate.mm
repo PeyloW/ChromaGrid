@@ -48,6 +48,7 @@ private:
     bool _right;
     NSTrackingRectTag _trackingRect;
     cg_host_bridge_c _bridge;
+    bool _saveScreenshot;
 }
 
 static NSConditionLock *_gameLock;
@@ -78,6 +79,10 @@ static void _yieldFunction() {
             [NSApp terminate:nil];
         });
     });
+}
+
+- (void)print:(id)sender {
+    _saveScreenshot = true;
 }
 
 - (void)viewDidMoveToWindow {
@@ -144,6 +149,21 @@ static void _yieldFunction() {
     [self _updateMouse];
 }
 
+static BOOL _savePNGImage(CGImageRef image, NSString *path) {
+    CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:path];
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
+    if (!destination) {
+        return NO;
+    }
+    CGImageDestinationAddImage(destination, image, nil);
+    if (!CGImageDestinationFinalize(destination)) {
+        CFRelease(destination);
+        return NO;
+    }
+    CFRelease(destination);
+    return YES;
+}
+
 - (void)drawRect:(NSRect)dirtyRect {
     auto active_image = machine_c::shared().active_image();
     auto active_palette = machine_c::shared().active_palette();
@@ -186,6 +206,12 @@ static void _yieldFunction() {
     
     ctx = NSGraphicsContext.currentContext.CGContext;
     CGContextDrawImage(ctx, self.bounds, image);
+    
+    if (_saveScreenshot) {
+        static NSUInteger number = 0;
+        _saveScreenshot = false;
+        _savePNGImage(image, [NSString stringWithFormat:@"/tmp/screenshot-%02lu.png", (unsigned long)++number]);
+    }
     
     CGImageRelease(image);
 

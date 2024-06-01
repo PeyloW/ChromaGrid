@@ -8,6 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface CGGameView : NSView
+- (void)print:(id)sender;
 @end
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
