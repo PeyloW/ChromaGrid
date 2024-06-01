@@ -32,7 +32,7 @@ public:
 #define MAIN_MENU_SIZE_WIDTH (128)
 #define MAIN_MENU_SIZE_HEIGHT (192)
 #define MAIN_MENU_MARGINS (8)
-#define MAIN_MENU_BUTTONS_ORIGIN (point_s(MAIN_MENU_ORIGIN_X + MAIN_MENU_MARGINS, MAIN_MENU_SIZE_HEIGHT - MAIN_MENU_MARGINS))
+#define MAIN_MENU_BUTTONS_ORIGIN (point_s(MAIN_MENU_ORIGIN_X + MAIN_MENU_MARGINS, MAIN_MENU_SIZE_HEIGHT - 4))
 #define MAIN_MENU_BUTTONS_SIZE (size_s(MAIN_MENU_SIZE_WIDTH - MAIN_MENU_MARGINS * 2, 14))
 #define MAIN_MENU_BUTTONS_SPACING ((int16_t)-6)
     cggame_scene_c(scene_manager_c &manager);
@@ -83,7 +83,7 @@ public:
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
-    cgbutton_group_c<6> _menu_buttons;
+    cgbutton_group_c<5> _menu_buttons;
     scroller_c _scroller;
 };
 

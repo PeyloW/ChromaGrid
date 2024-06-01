@@ -14,11 +14,10 @@ cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) :
     _menu_buttons(MAIN_MENU_BUTTONS_ORIGIN, MAIN_MENU_BUTTONS_SIZE, MAIN_MENU_BUTTONS_SPACING),
     _scroller()
 {
-    const char *button_titles[] = { "Exit", "Credits", "Help", "Editor", "Hi-Scores", "PLAY", nullptr };
+    const char *button_titles[] = { "Credits", "Help", "Editor", "Hi-Scores", "PLAY", nullptr };
     for (auto title = &button_titles[0]; *title; title++) {
         _menu_buttons.add_button(*title);
     }
-    _menu_buttons.buttons[0].state = cgbutton_t::disabled;
 }
 
 void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
@@ -70,21 +69,18 @@ void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
-            manager.pop();
-            break;
-        case 1:
             manager.push(new cgcredits_scene_c(manager));
             break;
-        case 2:
+        case 1:
             manager.push(new cghelp_scene_c(manager));
             break;
-        case 3:
+        case 2:
             manager.push(new cglevel_edit_scene_c(manager, nullptr));
             break;
-        case 4:
+        case 3:
             manager.push(new cgscores_scene_c(manager));
             break;
-        case 5: {
+        case 4: {
 #ifndef ALLOW_FULL_LEVEL_SELECT
             if (assets.level_results().front().score == 0) {
                 auto color = machine_c::shared().active_palette()->colors[0];

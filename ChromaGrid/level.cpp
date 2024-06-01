@@ -313,14 +313,15 @@ level_t::level_t(level_recipe_t *recipe) :
 }
 
 #define LABEL_X_INSET 200
-#define TIME_Y_INSET 65
+#define TIME_Y_INSET 72
+#define LINE_OFFSET (20)
 #define TIME_X_TRAIL (320 - 8)
 #define ORB_X_INSET 248
 #define ORB_X_LEAD 16
 #define ORB_X_SPACING 32
-#define ORB_Y_INSET 85
-#define MOVES_Y_INSET 105
-#define REMAINING_Y_INSET 125
+#define ORB_Y_INSET (TIME_Y_INSET + LINE_OFFSET * 1)
+#define MOVES_Y_INSET (TIME_Y_INSET + LINE_OFFSET * 2)
+#define REMAINING_Y_INSET (TIME_Y_INSET + LINE_OFFSET * 3)
 
 void level_t::draw_all(canvas_c &screen) const {
     auto &font = cgasset_manager::shared().font(FONT);
