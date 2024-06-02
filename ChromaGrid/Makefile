@@ -19,7 +19,7 @@ CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti
 CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
 LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
-LDFLAGS+=-Wl,--traditional-format,--stack,16384
+LDFLAGS+=-Wl,--traditional-format,--stack,16384,--mno-fastalloc
 
 TOYBOX_OBJECTS=cpp_runtime.o
 TOYBOX_OBJECTS+=machine.o timer.o input.o system_m68k.o
