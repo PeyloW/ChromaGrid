@@ -34,6 +34,15 @@ CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o scroller.o
 CG_OBJECTS+=game.o game_menu.o game_scores.o game_credits.o game_help.o game_level.o game_level_edit.o
 
+install: all
+	mkdir install
+	mkdir install/auto
+	cp cgrid.tos install/cgrid.tos
+	cp cgrid.tos install/auto/cgrid.prg
+	cp -r data install/data
+	cp other/readme.txt install/readme.txt
+	cp -r other/bonus install/bonus
+
 all: toybox cgrid
 
 toybox: libtoybox.a
