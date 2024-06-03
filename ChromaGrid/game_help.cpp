@@ -22,7 +22,7 @@ cghelp_scene_c::cghelp_scene_c(scene_manager_c &manager, page_e page) :
 
 static const char *basics_texts[] = {
     "The goal of each level is to color all the marked tiles on the board according to their target color within the time limit with the available orbs.",
-    "Orbs are placed on tiles using the left button for gold, and right button for silver. Clicking an orb on the board picks it up again. Placing or pickup up an orb counts as one move.",
+    "Orbs are placed on tiles using the left button for gold, and right button for silver. Clicking an orb on the board picks it up again. Placing or picking up an orb counts as one move.",
     "Placing an orb on a tile next to an empty space on the board creates a new tile in the empty space of the same type. Diagonal placement does not count.",
     "Any orb adjacent to three or more orbs of the same color is fused. A fused orb is destroyed from play and the tile it occupies takes its color. Many orbs can be fused in a single move.",
     nullptr

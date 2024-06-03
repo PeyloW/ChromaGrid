@@ -28,6 +28,7 @@ static void draw_credits(font_c &font, font_c &small_font, canvas_c &screen) {
         {"Music:", "Joakim 'AiO' Ekblad"},
         {"Fonts:", "Damien Guard"},
         {"Concept:", "Peter 'Eagle' Nyman"},
+        {"Cover art:", "Silvana Massa"},
         {nullptr}
     };
     
