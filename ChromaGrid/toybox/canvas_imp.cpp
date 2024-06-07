@@ -38,8 +38,8 @@ void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
     uint16_t dummy_src = 0;
     auto blitter = pBlitter;
 
-    const uint16_t dst_max_x    = (uint16_t)rect.max_x();
-    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (rect.origin.x / 16));
+    const int16_t dst_max_x = rect.max_x();
+    const int16_t dst_words_dec_1  = ((dst_max_x / 16) - (rect.origin.x / 16));
     
     // Source
     blitter->srcIncX = 0;
@@ -48,9 +48,9 @@ void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
 
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (rect.origin.y * _image._line_words) + (rect.origin.x / 16);
-    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const int16_t dst_word_offset = (rect.origin.y * _image._line_words) + (rect.origin.x / 16);
+    uint16_t *dts_bitmap = _image._bitmap + dst_word_offset * 4l;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[rect.origin.x & 15];
@@ -64,7 +64,7 @@ void canvas_c::imp_fill(uint8_t color, rect_s rect) const {
     blitter->endMask[2] = end_mask_2;
 
     // Counts
-    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    blitter->countX  = (dst_words_dec_1 + 1);
     
     // Operation flags
     if (_stencil) {
@@ -104,19 +104,19 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     assert(rect.contained_by(srcImage.size()));
         
     auto blitter = pBlitter;
-    const uint16_t copy_words = (rect.size.width / 16);
+    const int16_t copy_words = (rect.size.width / 16);
 
     // Source
     blitter->srcIncX  = 2;
-    blitter->srcIncY = (uint16_t)(srcImage._line_words - copy_words) * 8 + 2;
-    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
-    blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
+    blitter->srcIncY = (srcImage._line_words - copy_words) * 8 + 2;
+    const int16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    blitter->pSrc = srcImage._bitmap + src_word_offset * 4l;
 
     // Dest
     blitter->dstIncX  = 2;
-    blitter->dstIncY = (uint16_t)(_image._line_words - copy_words) * 8 + 2;
-    const uint16_t dst_word_offset = at.y * (_image._line_words * 4) + (at.x / 16) * 4;
-    blitter->pDst = _image._bitmap + dst_word_offset;
+    blitter->dstIncY = (_image._line_words - copy_words) * 8 + 2;
+    const int16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    blitter->pDst = _image._bitmap + dst_word_offset * 4l;
 
     // Mask
     blitter->endMask[0] =  0xFFFF;
@@ -124,7 +124,7 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     blitter->endMask[2] =  0xFFFF;
 
     // Counts
-    blitter->countX  = (uint16_t)(copy_words) * 4;
+    blitter->countX  = (copy_words) * 4;
     blitter->countY = rect.size.height;
     blitter->skew = 0;
     
@@ -136,9 +136,9 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
         blitter->mode = at.y & 0xf;
         blitter->start();
 
-        blitter->pSrc = srcImage._bitmap + src_word_offset * 4;
-        blitter->pDst = _image._bitmap + dst_word_offset;
-        blitter->countX  = (uint16_t)(copy_words) * 4;
+        blitter->pSrc = srcImage._bitmap + src_word_offset * 4l;
+        blitter->pDst = _image._bitmap + dst_word_offset * 4l;
+        blitter->countX  = (copy_words) * 4;
         blitter->countY = rect.size.height;
 
         blitter->HOP = blitter_s::hop_e::src_and_halftone;
@@ -157,22 +157,22 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
     assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)rect.max_x();
-    const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
-    const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
-    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
+    const int16_t src_max_x       = rect.max_x();
+    const int16_t dst_max_x       = (at.x + rect.size.width - 1);
+    const int16_t src_words_dec_1 = ((src_max_x / 16) - (rect.origin.x / 16));
+    const int16_t dst_words_dec_1 = ((dst_max_x / 16) - (at.x / 16));
     
     // Source
     blitter->srcIncX = 8;
-    blitter->srcIncY = (uint16_t)((srcImage._line_words - src_words_dec_1) * 8);
-    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
-    uint16_t *src_bitmap  = srcImage._bitmap + src_word_offset * 4;
+    blitter->srcIncY = ((srcImage._line_words - src_words_dec_1) * 8);
+    const int16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    uint16_t *src_bitmap  = srcImage._bitmap + src_word_offset * 4l;
     
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)((_image._line_words - dst_words_dec_1) * 8);
+    blitter->dstIncY = ((_image._line_words - dst_words_dec_1) * 8);
     const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4l;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -202,7 +202,7 @@ void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at)
     blitter->endMask[2] = end_mask_2;
 
     // Counts
-    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    blitter->countX  = (dst_words_dec_1 + 1);
     
     // Operation flags
     blitter->HOP = blitter_s::hop_e::src;
@@ -228,22 +228,22 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
     assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)rect.max_x();
-    const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
-    const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
-    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
+    const int16_t src_max_x       = rect.max_x();
+    const int16_t dst_max_x       = (at.x + rect.size.width - 1);
+    const int16_t src_words_dec_1 = ((src_max_x / 16) - (rect.origin.x / 16));
+    const int16_t dst_words_dec_1 = ((dst_max_x / 16) - (at.x / 16));
     
     // Source
     blitter->srcIncX = 2;
-    blitter->srcIncY = (uint16_t)((srcImage._line_words - src_words_dec_1) * 2);
-    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    blitter->srcIncY = ((srcImage._line_words - src_words_dec_1) * 2);
+    const int16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
     uint16_t *src_maskmap  = srcImage._maskmap + src_word_offset;
-    
+
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const int16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4l;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -273,7 +273,7 @@ void canvas_c::imp_draw_masked(const image_c &srcImage, const rect_s &rect, poin
     blitter->endMask[2] = end_mask_2;
 
     // Counts
-    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    blitter->countX  = (dst_words_dec_1 + 1);
     
     // Operation flags
     blitter->HOP = blitter_s::hop_e::src;
@@ -321,22 +321,22 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
     assert(rect.contained_by(srcImage.size()));
     auto blitter = pBlitter;
 
-    const uint16_t src_max_x    = (uint16_t)rect.max_x();
-    const uint16_t dst_max_x    = (uint16_t)(at.x + rect.size.width - 1);
-    const uint16_t src_words_dec_1  = (uint16_t)((src_max_x / 16) - (rect.origin.x / 16));
-    const uint16_t dst_words_dec_1  = (uint16_t)((dst_max_x / 16) - (at.x / 16));
+    const int16_t src_max_x       = rect.max_x();
+    const int16_t dst_max_x       = (at.x + rect.size.width - 1);
+    const int16_t src_words_dec_1 = ((src_max_x / 16) - (rect.origin.x / 16));
+    const int16_t dst_words_dec_1 = ((dst_max_x / 16) - (at.x / 16));
     
     // Source
     blitter->srcIncX = 2;
-    blitter->srcIncY = (uint16_t)((srcImage._line_words - src_words_dec_1) * 2);
-    const uint16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
+    blitter->srcIncY = ((srcImage._line_words - src_words_dec_1) * 2);
+    const int16_t src_word_offset = (rect.origin.y * srcImage._line_words) + (rect.origin.x / 16);
     uint16_t *src_maskmap  = srcImage._maskmap + src_word_offset;
     
     // Dest
     blitter->dstIncX  = 8;
-    blitter->dstIncY = (uint16_t)(_image._line_words * 8 - (dst_words_dec_1 * 8));
-    const uint16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
-    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4;
+    blitter->dstIncY = (_image._line_words * 8 - (dst_words_dec_1 * 8));
+    const int16_t dst_word_offset = (at.y * _image._line_words) + (at.x / 16);
+    uint16_t *dts_bitmap  = _image._bitmap + dst_word_offset * 4l;
 
     // Mask
     uint16_t end_mask_0 = pBlitter_mask[at.x & 15];
@@ -366,7 +366,7 @@ void canvas_c::imp_draw_color(const image_c &srcImage, const rect_s &rect, point
     blitter->endMask[2] = end_mask_2;
 
     // Counts
-    blitter->countX  = (uint16_t)(dst_words_dec_1 + 1);
+    blitter->countX  = (dst_words_dec_1 + 1);
     
     // Operation flags
     blitter->HOP = blitter_s::hop_e::src;

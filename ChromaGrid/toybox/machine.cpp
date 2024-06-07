@@ -139,12 +139,14 @@ const image_c *machine_c::active_image() const {
 
 void machine_c::set_active_image(const image_c *image, point_s offset) {
     assert(offset.x == 0 && offset.y == 0);
-    timer_c::with_paused_timers([image] {
+    timer_c::with_paused_timers([this, image] {
         g_active_image = image;
+        if (type() > ste) {
 #ifdef __M68000__
-        *((uint16_t*)0x452) = 1;
-        *((uint16_t **)0x45E) = image->_bitmap.get();
+            *((uint16_t*)0x452) = 1;
+            *((uint16_t **)0x45E) = image->_bitmap.get();
 #endif
+        }
     });
 }
 
