@@ -64,7 +64,6 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             const int sets = assets.support_audio() ? 4 + 2 : 2;
             assets.preload(sets, &update_preload);
             state = nullptr;
-            printf("Used memory %ldKb.\n\r", assets.memory_cost() / 1024);
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
             _menu_buttons.buttons[0].text = "CONTINUE";
             _menu_buttons.draw_all(clear_screen.canvas());

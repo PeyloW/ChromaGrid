@@ -46,25 +46,6 @@ machine_c::~machine_c() {
 #endif
 }
 
-#if TOYBOX_TARGET_ATARI
-static uint32_t get_cookie(uint32_t cookie, uint32_t def_value = 0) {
-#ifdef __M68000__
-    uint32_t *cookie_jar = *((uint32_t**)0x5A0);
-    if (cookie_jar) {
-        while ((cookie_jar[0] != 0)) {
-            if (cookie_jar[0] == cookie) {
-                return cookie_jar[1];
-            }
-            cookie_jar += 2;
-        }
-    }
-    return def_value;
-#else
-    return def_value;
-#endif
-}
-#endif
-
 machine_c::type_e machine_c::type() const {
 #if TOYBOX_TARGET_ATARI
 #   ifdef __M68000__
@@ -127,6 +108,23 @@ void machine_c::free_system_memory() {
 void machine_c::free_system_memory() {}
 #   endif
 #endif
+
+uint32_t machine_c::get_cookie(uint32_t cookie, uint32_t def_value) const {
+#ifdef __M68000__
+    uint32_t *cookie_jar = *((uint32_t**)0x5A0);
+    if (cookie_jar) {
+        while ((cookie_jar[0] != 0)) {
+            if (cookie_jar[0] == cookie) {
+                return cookie_jar[1];
+            }
+            cookie_jar += 2;
+        }
+    }
+    return def_value;
+#else
+    return def_value;
+#endif
+}
 
 extern "C" {
     const palette_c *g_active_palette = nullptr;

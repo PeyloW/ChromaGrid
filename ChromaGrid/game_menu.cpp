@@ -80,19 +80,9 @@ void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         case 3:
             manager.push(new cgscores_scene_c(manager));
             break;
-        case 4: {
-#ifndef ALLOW_FULL_LEVEL_SELECT
-            if (assets.level_results().front().score == 0) {
-                auto color = machine_c::shared().active_palette()->colors[0];
-                auto transition = transition_c::create(color);
-                manager.push(new cglevel_scene_c(manager, 0), transition);
-            } else 
-#endif
-            {
-                manager.push(new cglevel_select_scene_c(manager));
-            }
+        case 4:
+            manager.push(new cglevel_select_scene_c(manager));
             break;
-        }
         default:
             break;
     }
@@ -129,11 +119,6 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
         title += strlen(title) + 1;
 
         button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
-#ifndef ALLOW_FULL_LEVEL_SELECT
-        if (result.score == 0) {
-            disable = true;
-        }
-#endif
         
         index++;
     }

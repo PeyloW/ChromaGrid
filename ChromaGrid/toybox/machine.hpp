@@ -37,7 +37,9 @@ namespace toybox {
         size_t max_memory() const __pure;
         size_t user_memory() const __pure;
         void free_system_memory();
-        
+
+        uint32_t get_cookie(uint32_t cookie, uint32_t def_value = 0) const __pure;
+
         const image_c *active_image() const;
         void set_active_image(const image_c *image, point_s offset = point_s());
         const palette_c *active_palette() const;

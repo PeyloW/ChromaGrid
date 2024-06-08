@@ -9,6 +9,7 @@
 #include "resources.hpp"
 #include "audio_mixer.hpp"
 #include "system_helpers.hpp"
+#include "machine.hpp"
 
 typedef enum __packed {
     no_changes = 0,
@@ -290,9 +291,19 @@ level_t::level_t(level_recipe_t *recipe) :
     assert(recipe->header.height <= grid_c::GRID_MAX);
 
     _results.score = 0;
-    _results.orbs[0] = recipe->header.orbs[0];
-    _results.orbs[1] = recipe->header.orbs[1];
-    _results.time = recipe->header.time;
+    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743); // '_CGC'
+    if ((cheat & 0xff) == 0) {
+        _results.orbs[0] = recipe->header.orbs[0];
+        _results.orbs[1] = recipe->header.orbs[1];
+    } else {
+        _results.orbs[0] = 99;
+        _results.orbs[1] = 99;
+    }
+    if (((cheat >> 8) & 0xff) == 0) {
+        _results.time = recipe->header.time;
+    } else {
+        _results.time = 3600;
+    }
     _results.moves = 0;
     _remaining = 0;
     
@@ -473,15 +484,16 @@ void level_t::draw_time(canvas_c &screen) const {
     auto &assets = cgasset_manager::shared();
     int min = _results.time / 60;
     int sec = _results.time % 60;
-    char buf[5];
-    buf[0] = '0' + min;
-    buf[1] = ':';
-    buf[2] = '0' + (sec / 10);
-    buf[3] = '0' + (sec % 10);
-    buf[4] = 0;
+    char buf[6];
+    buf[0] = '0' + (min / 10); if (buf[0] == '0') buf[0] = ' ';
+    buf[1] = '0' + (min % 10);
+    buf[2] = ':';
+    buf[3] = '0' + (sec / 10);
+    buf[4] = '0' + (sec % 10);
+    buf[5] = 0;
     
-    const point_s at = point_s(TIME_X_TRAIL - 32, TIME_Y_INSET);
-    const rect_s rect = rect_s(at, size_s(32, 8));
+    const point_s at = point_s(TIME_X_TRAIL - 40, TIME_Y_INSET);
+    const rect_s rect = rect_s(at, size_s(40, 8));
 
     screen.draw(assets.image(BACKGROUND), rect, at);
     screen.draw(assets.font(MONO_FONT), buf, at, canvas_c::align_left);

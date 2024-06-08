@@ -12,7 +12,6 @@ FLAGS=-m68000 -mshort -mfastcall
 FLAGS+=-g0 -DNDEBUG
 FLAGS+=-s
 FLAGS+=-DTOYBOX_DEBUG_CPU=0
-FLAGS+=-DALLOW_FULL_LEVEL_SELECT
 #FLAGS+=-DTOYBOX_LOG_MALLOC=1
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
 #CFLAGS+=-S
@@ -67,3 +66,4 @@ clean:
 	rm -rf *.o
 	rm -rf *.a
 	rm -rf *.tos
+	rm -rf install
