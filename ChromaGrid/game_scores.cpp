@@ -66,7 +66,7 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
             }
         }
         str << ends;
-        point_s at(16 + col * 55, 16 + 20 + 10 * row);
+        point_s at(16 + col * 55, 16 + 20 + 14 * row);
         canvas.draw(assets.font(SMALL_MONO_FONT), str.str(), at, canvas_c::align_left);
         
         index++;

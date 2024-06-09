@@ -106,19 +106,18 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     int index = 0;
     point_s origin = point_s(16, 40);
     const size_s size = size_s(26, 14);
-    bool disable = false;
     char *title = title_buf;
     for (const auto &result : level_results) {
         int col = index % 5;
         if (col == 0) {
             _select_button_groups.emplace_back(origin, size, 8);
-            origin.y += 14 + 2;
+            origin.y += 14 + 8;
         }
         auto &button_group = _select_button_groups.back();
         button_group.add_button(title, true);
         title += strlen(title) + 1;
 
-        button_group.buttons.back().state = disable ? cgbutton_t::disabled : cgbutton_t::normal;
+        button_group.buttons.back().style = result.score == 0 ? cgbutton_t::style_e::regular : cgbutton_t::style_e::destructive;
         
         index++;
     }
