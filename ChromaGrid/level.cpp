@@ -37,10 +37,19 @@ void level_result_t::calculate_score(bool succes) {
 }
 
 void level_result_t::subscores(uint16_t &orbs_score, uint16_t &time_score) const {
-    assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
-    assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
-    orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
-    time_score = time * PER_SECOND_SCORE;
+    const auto &assets = cgasset_manager::shared();
+    if (assets.max_orbs()) {
+        orbs_score = 1;
+    } else {
+        assert(((long)orbs[0] + (long)orbs[1]) * (long)PER_ORB_SCORE <= INT16_MAX);
+        orbs_score = (orbs[0] + orbs[1]) * PER_ORB_SCORE;
+    }
+    if (assets.max_time()) {
+        time_score = 1;
+    } else {
+        assert((long)time * (long)PER_SECOND_SCORE <= INT16_MAX);
+        time_score = time * PER_SECOND_SCORE;
+    }
 }
 
 bool level_result_t::merge_from(const level_result_t &new_result) {
@@ -289,20 +298,20 @@ level_t::level_t(level_recipe_t *recipe) :
 {
     assert(recipe->header.width <= grid_c::GRID_MAX);
     assert(recipe->header.height <= grid_c::GRID_MAX);
-
+    const auto &assets = cgasset_manager::shared();
+    
     _results.score = 0;
-    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743); // '_CGC'
-    if ((cheat & 0xff) == 0) {
-        _results.orbs[0] = recipe->header.orbs[0];
-        _results.orbs[1] = recipe->header.orbs[1];
-    } else {
+    if (assets.max_time()) {
         _results.orbs[0] = 99;
         _results.orbs[1] = 99;
-    }
-    if (((cheat >> 8) & 0xff) == 0) {
-        _results.time = recipe->header.time;
     } else {
+        _results.orbs[0] = recipe->header.orbs[0];
+        _results.orbs[1] = recipe->header.orbs[1];
+    }
+    if (assets.max_time()) {
         _results.time = 3600;
+    } else {
+        _results.time = recipe->header.time;
     }
     _results.moves = 0;
     _remaining = 0;

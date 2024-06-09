@@ -65,8 +65,14 @@ public:
     level_results_c &level_results() const { return (level_results_c&)(asset(LEVEL_RESULTS)); }
     user_levels_c &user_levels() const { return (user_levels_c&)(asset(USER_LEVELS)); }
     scroll_text_c &menu_scroll() const { return (scroll_text_c&)(asset(MENU_SCROLL)); }
+    
+    bool max_time() const __pure { return _max_time; }
+    bool max_orbs() const __pure { return _max_orbs; }
 protected:
     virtual asset_c *create_asset(int id, const asset_def_s &def) const;
+private:
+    const bool _max_time;
+    const bool _max_orbs;
 };
 
 #endif /* resources_hpp */

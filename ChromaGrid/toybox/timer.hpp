@@ -10,6 +10,9 @@
 
 #include "cincludes.hpp"
 #include "types.hpp"
+#ifndef __M68000__
+#include "host_bridge.hpp"
+#endif
 
 namespace toybox {
     
@@ -32,11 +35,9 @@ namespace toybox {
             commands();
             __asm__ volatile ("move.w #0x2300,sr" : : : );
 #else
-            static bool is_paused = false;
-            assert(is_paused == false);
-            is_paused = true;
+            host_bridge_c::shared().pause_timers();
             commands();
-            is_paused = false;
+            host_bridge_c::shared().resume_timers();
 #endif
         }
         

@@ -29,7 +29,7 @@ static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx
 }
 
 cgasset_manager::cgasset_manager() : 
-    asset_manager_c()
+    asset_manager_c(), _max_time(false), _max_orbs(false)
 {
     /*
      FONT, MONO_FONT, SMALL_FONT, SMALL_MONO_FONT,
@@ -38,6 +38,14 @@ cgasset_manager::cgasset_manager() :
      LEVELS, LEVEL_RESULTS, USER_LEVELS,
      */
     
+    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743); // '_CGC'
+    if ((cheat & 0xff) != 0) {
+        *(bool *)&_max_time = true;
+    }
+    if (((cheat >> 8) & 0xff) != 0) {
+        *(bool *)&_max_orbs = true;
+    }
+
     add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
     add_asset_def(TILES, asset_def_s(asset_c::tileset, 2, "tiles.iff"));

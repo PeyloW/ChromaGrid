@@ -159,7 +159,11 @@ void machine_c::set_active_palette(const palette_c *palette) {
 #   else
 #       error "Unsupported target"
 #   endif
-#endif
     g_active_palette = palette;
+#else
+    timer_c::with_paused_timers([palette]{
+        g_active_palette = palette;
+    });
+#endif
 }
 

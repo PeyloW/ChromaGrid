@@ -15,14 +15,29 @@
 
 class cg_host_bridge_c : public host_bridge_c {
 public:
-    cg_host_bridge_c() : _lock([[NSConditionLock alloc] initWithCondition:0]) {}
+    cg_host_bridge_c() : _yield_lock([[NSConditionLock alloc] initWithCondition:0]), _timer_lock([[NSRecursiveLock alloc] init]) {}
     
     void yield() override {
-        [_lock lockWhenCondition:0];
-        [_lock unlockWithCondition:1];
+        [_yield_lock lockWhenCondition:0];
+        [_yield_lock unlockWithCondition:1];
         usleep(100);
-        [_lock lockWhenCondition:1];
-        [_lock unlockWithCondition:0];
+        [_yield_lock lockWhenCondition:1];
+        [_yield_lock unlockWithCondition:0];
+    }
+    
+    void pause_timers() override {
+        [_timer_lock lock];
+    }
+    
+    void resume_timers() override {
+        [_timer_lock unlock];
+    }
+    
+    template<class Commands>
+    void with_paused_timers(Commands commands) {
+        pause_timers();
+        commands();
+        resume_timers();
     }
     
     void play(const sound_c &sound) override {
@@ -32,7 +47,8 @@ public:
     }
     
 private:
-    NSConditionLock *_lock;
+    NSConditionLock *_yield_lock;
+    NSRecursiveLock *_timer_lock;
 };
 
 @interface AppDelegate ()
@@ -94,12 +110,16 @@ static void _yieldFunction() {
 }
 
 - (void)fireVBLTimer:(NSTimer *)timer {
-    _bridge.vbl_interupt();
+    _bridge.with_paused_timers([self]{
+        _bridge.vbl_interupt();
+    });
     [self setNeedsDisplay:YES];
 }
 
 - (void)fireTimerCTimer:(NSTimer *)timer {
-    _bridge.clock_interupt();
+    _bridge.with_paused_timers([self]{
+        _bridge.clock_interupt();
+    });
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
@@ -119,7 +139,9 @@ static void _yieldFunction() {
 }
 
 - (void)_updateMouse {
-    _bridge.update_mouse(_mouse, _left, _right);
+    _bridge.with_paused_timers([self]{
+        _bridge.update_mouse(_mouse, _left, _right);
+    });
 }
 
 - (void)mouseMoved:(NSEvent *)event {
@@ -165,57 +187,59 @@ static BOOL _savePNGImage(CGImageRef image, NSString *path) {
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
-    auto active_image = machine_c::shared().active_image();
-    auto active_palette = machine_c::shared().active_palette();
-
-    if (active_image == NULL) {
-        NSRect bounds = [self bounds];
-        [[NSColor blackColor] set];
-        [NSBezierPath fillRect:bounds];
-        return;
-    }
-    [_gameLock lockWhenCondition:1];
-    const auto size = active_image->size();
-    typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
-    color_s palette[16] = { 0 };
-    color_s buffer[320 * 200];
-    memset(buffer, 0, sizeof(color_s) * 320 * 200);
-
-    if (active_palette) {
-        for (int i = 0; i < 16; i++) {
-            active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
-            buffer[i]._ = 0;
+    _bridge.with_paused_timers([self]{
+        auto active_image = machine_c::shared().active_image();
+        auto active_palette = machine_c::shared().active_palette();
+        
+        if (active_image == NULL) {
+            NSRect bounds = [self bounds];
+            [[NSColor blackColor] set];
+            [NSBezierPath fillRect:bounds];
+            return;
         }
-    }
-    point_s at;
-    for (at.y = 0; at.y < 200; at.y++) {
-        for (at.x = 0; at.x < 320; at.x++) {
-            const auto c = active_image->get_pixel(at);
-            if (c != image_c::MASKED_CIDX) {
-                auto offset = (at.y * size.width + at.x);
-                buffer[offset] = palette[c];
+        [_gameLock lockWhenCondition:1];
+        const auto size = active_image->size();
+        typedef struct { uint8_t rgb[3]; uint8_t _; } color_s;
+        color_s palette[16] = { 0 };
+        color_s buffer[320 * 200];
+        memset(buffer, 0, sizeof(color_s) * 320 * 200);
+        
+        if (active_palette) {
+            for (int i = 0; i < 16; i++) {
+                active_palette->colors[i].get(&palette[i].rgb[0], &palette[i].rgb[1], &palette[i].rgb[2]);
+                buffer[i]._ = 0;
             }
         }
-    }
-
-    CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-    CGContextRef ctx = CGBitmapContextCreate((void *)buffer, 320, 200, 8, size.width * 4, space, kCGImageAlphaNoneSkipLast);
-    CGColorSpaceRelease(space);
-    CGImageRef image = CGBitmapContextCreateImage(ctx);
-    CGContextRelease(ctx);
-    
-    ctx = NSGraphicsContext.currentContext.CGContext;
-    CGContextDrawImage(ctx, self.bounds, image);
-    
-    if (_saveScreenshot) {
-        static NSUInteger number = 0;
-        _saveScreenshot = false;
-        _savePNGImage(image, [NSString stringWithFormat:@"/tmp/screenshot-%02lu.png", (unsigned long)++number]);
-    }
-    
-    CGImageRelease(image);
-
-    [_gameLock unlockWithCondition:1];
+        point_s at;
+        for (at.y = 0; at.y < 200; at.y++) {
+            for (at.x = 0; at.x < 320; at.x++) {
+                const auto c = active_image->get_pixel(at);
+                if (c != image_c::MASKED_CIDX) {
+                    auto offset = (at.y * size.width + at.x);
+                    buffer[offset] = palette[c];
+                }
+            }
+        }
+        
+        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+        CGContextRef ctx = CGBitmapContextCreate((void *)buffer, 320, 200, 8, size.width * 4, space, kCGImageAlphaNoneSkipLast);
+        CGColorSpaceRelease(space);
+        CGImageRef image = CGBitmapContextCreateImage(ctx);
+        CGContextRelease(ctx);
+        
+        ctx = NSGraphicsContext.currentContext.CGContext;
+        CGContextDrawImage(ctx, self.bounds, image);
+        
+        if (_saveScreenshot) {
+            static NSUInteger number = 0;
+            _saveScreenshot = false;
+            _savePNGImage(image, [NSString stringWithFormat:@"/tmp/screenshot-%02lu.png", (unsigned long)++number]);
+        }
+        
+        CGImageRelease(image);
+        
+        [_gameLock unlockWithCondition:1];
+    });
 }
 
 @end

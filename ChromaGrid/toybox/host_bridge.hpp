@@ -37,6 +37,9 @@ namespace toybox {
         // Host must provide a yield function
         virtual void yield() = 0;
 
+        virtual void pause_timers() = 0;
+        virtual void resume_timers() = 0;
+
         // Host should provide a play function
         virtual void play(const sound_c &sound) {};
         
