@@ -67,7 +67,7 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
             _menu_buttons.buttons[0].text = "CONTINUE";
             _menu_buttons.draw_all(clear_screen.canvas());
-            clear_screen.canvas().draw(assets.font(SMALL_FONT), "v1.06.8" , point_s(318, 193), canvas_c::align_right);
+            clear_screen.canvas().draw(assets.font(SMALL_FONT), "v1.06.11" , point_s(318, 193), canvas_c::align_right);
             break;
         }
         default: {

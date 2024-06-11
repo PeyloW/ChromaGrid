@@ -212,6 +212,7 @@ size_t user_levels_c::memory_cost() const {
 }
 
 level_results_c::level_results_c(int level_count) {
+    auto &levels = cgasset_manager::shared().levels();
     bool success = false;
     iffstream_c iff(asset_manager_c::shared().user_path("scores.dat").get());
     if (!iff.good()) goto done;
@@ -219,9 +220,15 @@ level_results_c::level_results_c(int level_count) {
     if (iff.first(IFF_LIST, IFF_CGLR, list)) {
         iff_chunk_s level_chunk;
         while (iff.next(list, IFF_CGLR, level_chunk)) {
+            const uint16_t check = levels[size()]->f16check();
             emplace_back();
             auto &level_result = back();
-            if (!level_result.load(iff, level_chunk)) {
+            if (level_result.load(iff, level_chunk)) {
+                if (level_result.f16check != check) {
+                    memset(&level_result, 0, sizeof(level_result));
+                    level_result.f16check = check;
+                }
+            } else {
                 goto done;
             }
         }
@@ -232,7 +239,9 @@ done:
         clear();
     }
     while (size() < level_count) {
+        const uint16_t check = levels[size()]->f16check();
         emplace_back();
+        back().f16check = check;
     }
 }
 

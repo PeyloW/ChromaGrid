@@ -194,7 +194,8 @@ LIST # { CGLV
 #### `scores.dat` - An EA IFF 85 format
 If the number of scores chunks are less than available built in levels the 
 remainders are all zero. Having more score chunks than evailable built in levels
-is an error :/.
+is an error :/. `f16check` is a Fletcher16 checksum of the level recipies 
+header+tiles, not text.
 
 ```
 // List of ChromaGrid Level Scores
@@ -205,6 +206,7 @@ LIST # { CGLR
         ubyte[2] orbs
         uword time
         uword moves
+        uword f16check
     } *
 }
 ```

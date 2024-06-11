@@ -72,6 +72,7 @@ struct level_recipe_t {
     int size() const;
     bool save(iffstream_c &iff);
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
+    uint16_t f16check() const;
 };
 static_assert(sizeof(level_recipe_t::header) == 6, "level_recipe_t::header size mismatch");
 #ifndef __M68000__
@@ -92,17 +93,18 @@ struct __packed_struct level_result_t {
     uint8_t orbs[2];
     uint16_t time;
     uint16_t moves;
+    uint16_t f16check;
     void calculate_score(bool succes);
     void subscores(uint16_t &orbs_score, uint16_t &time_score) const;
     bool merge_from(const level_result_t &new_result);
     bool save(iffstream_c &iff) const;
     bool load(iffstream_c &iff, iff_chunk_s &start_chunk);
 };
-static_assert(sizeof(level_result_t) == 8, "level_result_t size mismatch");
+static_assert(sizeof(level_result_t) == 10, "level_result_t size mismatch");
 namespace toybox {
     template<>
     struct struct_layout<level_result_t> {
-        static constexpr char *value = "1w2b2w";
+        static constexpr char *value = "1w2b3w";
     };
 }
 

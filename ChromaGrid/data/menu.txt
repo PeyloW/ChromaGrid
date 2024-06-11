@@ -23,6 +23,7 @@ Yet again, a choice that I, at the time, did not know the trajectory of. Little 
 From Atari to Apple with love.
 
 
+
 AiO of T.O.Y.S. thumping them little keys now! My journey started with 8-bit machines. MSX to be exact. With the help of my parents i managed to buy an MSX computer at the age of seven - I played around with the cartridges and games for a while. But I got bored very quickly and started thinking about 'How are these games made in the first place?'. Since most other kids had Commodore 64 machines and very few of my friends were at all interested in programming I had to learn coding by myself. As many I fiddled around in BASIC and made my own paint programs, my own music programs and coded games. At some point I experienced 'demos' or 'intros' for the Commodore 64 and I was captivated. I struggled around on my MSX trying to make similar things. As time passed I was able to buy my first Amiga 500 computer around the age of 10. This was a whole different ball-game! The history repeated itself tho. I got bored of the games and dove right into watching demos, and intros. Maybe HEX-editing a few scroll texts and re-branding already existing intros - stealing, simply put.
 
 This was a learning experience! I started developing my own things in various Basic languages, then started learning Assembly language and assembling little libraries of optimized code that could be used from e.g. AMOS Pro Basic and other things. I teamed up with Patrik 'Purre' Hakansson, Daniel 'Xeryos' Eklund, Tobias 'Maqua' Calrsson and Stefan 'Arg Hamster' Harnstrom and we did various games and demos together and great fun!
@@ -34,7 +35,8 @@ When it was time to start working I too did start out as a Windows coder - But f
 And I love you all for it! Thank you! <3
 
 
-Exocet on the keyboard now. Like many people of my generation, I also got introduced to the wonders of the digital world through one of the many affordable 8-bit computers from the 1980s, a Thomson TO8 in my case. I played games a lot, did a bit of BASIC programming and after a few years moved onto a MS-DOS PC and discovered about the demoscene. I was hooked right away and it felt like the perfect environment to hone my art skills. I joined a group, met some good friends, created plenty of graphics, and visited demoparties in France and beyond. 
+
+Exocet on the keyboard now. Like many people of my generation, I also got introduced to the wonders of the digital world through one of the many affordable 8-bit computers from the 1980s, a Thomson TO8 in my case. I played games a lot, did a bit of BASIC programming and after a few years moved onto a MS-DOS PC and discovered about the demoscene. I was hooked right away and it felt like the perfect environment to hone my art skills. I joined a group, met some good friends, created plenty of graphics, and visited demoparties in France and beyond.
 
 I always had a soft spot for the less mainstream platforms so around 1998 I got myself an Atari ST, mostly because I had great memories of playing games on it at a friend's place when in primary school, but also because I was curious to see the demos still made for the platform. I liked what I saw and the friendly, tight-knit community.
 
@@ -44,3 +46,6 @@ The demoscene has been instrumental in my career. I applied to my first job as a
 
 I'm grateful I was given amazing opportunities both professionally and on the demoscene. I also feel privileged to have experienced first-hand the boom of personal computing, the birth of the digital culture, and the incredible progress of video games and technology in general. It has been an incredible adventure. To the next 25 years! 
 
+
+
+Lets wrap!

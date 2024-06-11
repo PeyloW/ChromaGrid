@@ -44,7 +44,17 @@ namespace toybox {
             return i - 1;
         }
     }
-        
+
+    static inline uint16_t fletcher16(uint8_t *data, size_t count, uint16_t start = 0) {
+        uint16_t sum1 = start & 0xff;
+        uint16_t sum2 = (start >> 8) & 0xff;
+        while (count--) {
+           sum1 = (sum1 + *data++) % 255;
+           sum2 = (sum2 + sum1) % 255;
+        }
+        return (sum2 << 8) | sum1;
+    }
+    
     template<class C> inline auto begin(C& c) -> decltype(c.begin()) { return c.begin(); };
     template<class C> inline auto begin(const C& c) -> decltype(c.begin()) { return c.begin(); };
     template<class T, size_t N> inline T* begin(T (&array)[N]) { return &array[0]; };

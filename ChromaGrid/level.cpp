@@ -702,6 +702,11 @@ bool level_recipe_t::load(iffstream_c &iff, iff_chunk_s &start_chunk) {
     return false;
 }
 
+uint16_t level_recipe_t::f16check() const {
+    uint16_t check = fletcher16((uint8_t *)&header, sizeof(header_t));
+    return fletcher16((uint8_t*)tiles, sizeof(tilestate_t) * header.width * header.height, check);
+}
+
 bool level_result_t::save(iffstream_c &iff) const {
     iff_chunk_s chunk;
     if (iff.begin(chunk, IFF_CGLR)) {
