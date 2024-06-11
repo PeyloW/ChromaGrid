@@ -80,8 +80,8 @@ static void draw_greetings(font_c &font, font_c &small_font, canvas_c &screen) {
     screen.draw(font, "Greetings", point_s(96, 16));
     const char *texts[] = {
         "To the people we shared with; Baggio, Deez, Eagle, Evil, Fritz, Jag, OB, Tam.",
-        "To the groups that keep the Atari scene alive; Cerebral Vortex, Daeghnao, Dekadence, DHS, Effect, Extream, Mystic Bytes, Oxygene, Sector One, Sector One, SMFX.",
-        "To the legends that inspired us; ACF, Aggression, Avena, Delta Force, Equinox, Inner Circle, Overlanders, Reservoir Gods, TCB, TEX, TLB, ULM.",
+        "To the groups that keep the Atari scene alive; Aggression, Cerebral Vortex, Daeghnao, Dekadence, Desire, DHS, Effect, Ephidrena, Escape, Evolution, Extream, Ghost, IMPonance, Istari, KUA, Mystic Bytes, Nature, New Beat, Newline, Oxygene, PHF, Reservoir Gods, Sector One, Sector One, SMFX, Sultans Of Sodom.",
+        "To the legends that inspired us; 2-Life Crew, ACF, Aggression, Avena, Delta Force, Equinox, Inner Circle, Omega, Overlanders, Reservoir Gods, TCB, TEX, TLB, ULM.",
         "You.",
         nullptr
     };
