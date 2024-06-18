@@ -75,6 +75,7 @@ namespace toybox {
                 __asm__ volatile (
                                   "move.b #0x80,0xffff8A3C.w \n\t"
                                   "nop \n"
+                                  "nop \n"
                                   ".Lrestart: bset.b #7,0xffff8A3C.w \n\t"
                                   "nop \n\t"
                                   "bne.s .Lrestart \n\t" : : : );
