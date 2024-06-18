@@ -72,7 +72,7 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         }
         default: {
             auto &mouse = mouse_c::shared();
-            int button = _menu_buttons.update_buttons(canvas, mouse.postion(), mouse.state(mouse_c::left));
+            int button = _menu_buttons.update_buttons(canvas, mouse);
             if (button == 0) {
                 auto color = machine_c::shared().active_palette()->colors[0];
                 auto transition = transition_c::create(color);

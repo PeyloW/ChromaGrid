@@ -64,9 +64,8 @@ static void draw_dedications(font_c &font, font_c &small_font, canvas_c &screen)
     screen.draw(font, "Dedications", point_s(96, 16));
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
-        "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe it all.",
+        "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who gave me my nick and my life.",
         "Joakim would like to thank... people",
-        "Herve would also like to thank... people",
         nullptr
     };
     rect_s rect(16, 40, 160, 48);

@@ -46,7 +46,7 @@ class cgbutton_group_base_c : public nocopy_c {
 
     rect_s next_button_rect(bool first, bool horizontal = false);
     void next_button_pair_rects(bool first, rect_s &left_rect, rect_s &right_rect, int16_t spacing);
-    int update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, canvas_c &screen, mouse_c::state_e state);
+    int update_button_range(cgbutton_t *begin, cgbutton_t *end, canvas_c &screen, mouse_c &mouse);
     
     int _tracked_button;
     size_s _size;
@@ -78,8 +78,8 @@ public:
         }
     }
         
-    int update_buttons(canvas_c &screen, point_s pos, mouse_c::state_e state) {
-        return update_button_range(buttons.begin(), buttons.end(), pos, screen, state);
+    int update_buttons(canvas_c &screen, mouse_c &mouse) {
+        return update_button_range(buttons.begin(), buttons.end(), screen, mouse);
     }
 
     vector_c<cgbutton_t, BUTTON_COUNT> buttons;

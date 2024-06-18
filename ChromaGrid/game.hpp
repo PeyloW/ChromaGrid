@@ -39,7 +39,7 @@ public:
     virtual configuration_s &configuration() const;
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
-        return buttons.update_buttons(screen, mouse.postion(), mouse.state(mouse_c::left));
+        return buttons.update_buttons(screen, mouse);
     }
 protected:
     mouse_c &mouse;

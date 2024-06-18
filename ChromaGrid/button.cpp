@@ -69,7 +69,9 @@ void cgbutton_group_base_c::next_button_pair_rects(bool first, rect_s &left_rect
     right_rect.origin.x += left_rect.size.width + spacing;
 }
 
-int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *end, const point_s &pos, canvas_c &screen, mouse_c::state_e state) {
+int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *end, canvas_c &screen, mouse_c &mouse) {
+    const auto pos = mouse.postion();
+    const auto state = MAX(mouse.state(mouse_c::left), mouse.state(mouse_c::right));
     if (_tracked_button >= 0) {
         auto &button = begin[_tracked_button];
         //assert(button.state == cgbutton_t::pressed);
