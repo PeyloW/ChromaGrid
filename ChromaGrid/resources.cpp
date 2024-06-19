@@ -38,13 +38,42 @@ cgasset_manager::cgasset_manager() :
      LEVELS, LEVEL_RESULTS, USER_LEVELS,
      */
     
-    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743); // '_CGC'
-    if ((cheat & 0xff) != 0) {
-        *(bool *)&_max_time = true;
+    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743, -1); // '_CGC'
+    if (cheat != -1) {
+        switch (cheat) {
+            case 0x0001:
+                *(bool *)&_max_time = true;
+                break;
+            case 0x0100:
+                *(bool *)&_max_orbs = true;
+                break;
+            case 0x0101:
+                *(bool *)&_max_time = true;
+                *(bool *)&_max_orbs = true;
+                break;
+            default:
+                break;
+        }
     }
-    if (((cheat >> 8) & 0xff) != 0) {
-        *(bool *)&_max_orbs = true;
+#ifdef __M68000__
+    uint16_t val = *(uint16_t*)0x382;
+    if (!val == *(uint16_t*)0x382) {
+        switch (val) {
+            case 0x0001:
+                *(bool *)&_max_time = true;
+                break;
+            case 0x0100:
+                *(bool *)&_max_orbs = true;
+                break;
+            case 0x0101:
+                *(bool *)&_max_time = true;
+                *(bool *)&_max_orbs = true;
+                break;
+            default:
+                break;
+        }
     }
+#endif
 
     add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
