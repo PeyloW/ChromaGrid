@@ -64,7 +64,7 @@ static void draw_dedications(font_c &font, font_c &small_font, canvas_c &screen)
     screen.draw(font, "Dedications", point_s(96, 16));
     const char *texts[] = {
         "Released at Sommarhack 2024.\n""Special thanks to Anders 'evl' Erikson and the friends who stayed Atari.",
-        "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who gave me my nick and my life.",
+        "Fredrik would like to thank Mia, Mondi, and Sturdy who endured the develpment.\nSpecial dedication to Marianne and Jan-Erik Peylow who I owe my nick and eveything.",
         "Joakim would like to thank everyone in the scene and Spot (the cat).",
         nullptr
     };
@@ -73,6 +73,7 @@ static void draw_dedications(font_c &font, font_c &small_font, canvas_c &screen)
         auto size = screen.draw(small_font, *text, rect, 2);
         rect.origin.y += size.height + 8;
     }
+    screen.draw(cgasset_manager::shared().image(SPOT), point_s(120 - 4, 136 - 4));
 }
 
 static void draw_greetings(font_c &font, font_c &small_font, canvas_c &screen) {

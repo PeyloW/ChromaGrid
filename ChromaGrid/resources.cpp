@@ -104,7 +104,8 @@ cgasset_manager::cgasset_manager() :
         return new font_c(manager.font(SMALL_FONT).image(), size_s(6, 6));
     }));
     add_asset_def(DISK, asset_def_s(asset_c::image, 2, "disk.iff"));
-    
+    add_asset_def(SPOT, asset_def_s(asset_c::image, 2, "spot.iff"));
+
     add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 4, "drop.aif"));
     add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 4, "take.aif"));
     add_asset_def(FUSE_ORB, asset_def_s(asset_c::sound, 4, "fuse.aif"));
