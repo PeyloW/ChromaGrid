@@ -301,7 +301,7 @@ level_t::level_t(level_recipe_t *recipe) :
     const auto &assets = cgasset_manager::shared();
     
     _results.score = 0;
-    if (assets.max_time()) {
+    if (assets.max_orbs()) {
         _results.orbs[0] = 99;
         _results.orbs[1] = 99;
     } else {

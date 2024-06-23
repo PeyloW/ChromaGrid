@@ -33,6 +33,12 @@ CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o scroller.o
 CG_OBJECTS+=game.o game_menu.o game_scores.o game_credits.o game_help.o game_level.o game_level_edit.o
 
+cracked: install
+	rm install/auto/cgrid.prg
+	mv install/cgrid.tos install/game
+	cp other/d-bug install/d-bug
+	cp other/loader.prg install/auto/loader.prg
+
 install: all
 	mkdir install
 	mkdir install/auto

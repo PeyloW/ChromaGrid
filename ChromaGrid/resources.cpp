@@ -28,7 +28,46 @@ static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx
     table[masked_idx] = image_c::MASKED_CIDX;
 }
 
-cgasset_manager::cgasset_manager() : 
+extern "C" __neverinline void read_cheats(bool &max_time, bool &max_orbs) {
+    uint16_t cheat = (uint16_t)machine_c::shared().get_cookie(0x5F434743, -1); // '_CGC'
+    if (cheat != 0xffff) {
+        switch (cheat) {
+            case 0x0001:
+                max_time = true;
+                break;
+            case 0x0100:
+                max_orbs = true;
+                break;
+            case 0x0101:
+                max_time = true;
+                max_orbs = true;
+                break;
+            default:
+                break;
+        }
+    }
+#ifdef __M68000__
+    uint16_t val = *(uint16_t*)0x382;
+    if (~val == *(uint16_t*)0x380) {
+        switch (val) {
+            case 0x0001:
+                max_time = true;
+                break;
+            case 0x0100:
+                max_orbs = true;
+                break;
+            case 0x0101:
+                max_time = true;
+                max_orbs = true;
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+}
+
+cgasset_manager::cgasset_manager() :
     asset_manager_c(), _max_time(false), _max_orbs(false)
 {
     /*
@@ -37,43 +76,7 @@ cgasset_manager::cgasset_manager() :
      MUSIC,
      LEVELS, LEVEL_RESULTS, USER_LEVELS,
      */
-    
-    uint32_t cheat = machine_c::shared().get_cookie(0x5F434743, -1); // '_CGC'
-    if (cheat != -1) {
-        switch (cheat) {
-            case 0x0001:
-                *(bool *)&_max_time = true;
-                break;
-            case 0x0100:
-                *(bool *)&_max_orbs = true;
-                break;
-            case 0x0101:
-                *(bool *)&_max_time = true;
-                *(bool *)&_max_orbs = true;
-                break;
-            default:
-                break;
-        }
-    }
-#ifdef __M68000__
-    uint16_t val = *(uint16_t*)0x382;
-    if (!val == *(uint16_t*)0x382) {
-        switch (val) {
-            case 0x0001:
-                *(bool *)&_max_time = true;
-                break;
-            case 0x0100:
-                *(bool *)&_max_orbs = true;
-                break;
-            case 0x0101:
-                *(bool *)&_max_time = true;
-                *(bool *)&_max_orbs = true;
-                break;
-            default:
-                break;
-        }
-    }
-#endif
+    read_cheats(*(bool*)&_max_time, *(bool*)&_max_orbs);
 
     add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
