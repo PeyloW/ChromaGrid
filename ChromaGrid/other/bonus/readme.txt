@@ -37,8 +37,9 @@ interrupts from the keyboard controller
 was much more predicable if set to
 absolute mode instead of the default
 relative mode. My initial ambition was
-to make a mouse driven board game in
-full screen, with all borders removed, 
+to make something never seen before; 
+a mouse driven board game in 
+fullscreen, with all borders removed, 
 but in the end I never got the 
 fullscreen code stable enough with the 
 mouse active, and I had to settle with 
