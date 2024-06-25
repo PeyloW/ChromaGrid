@@ -14,6 +14,7 @@ game has quite different gameplay:
  * Orbs cannot be picked up once played
  * Empty space is filled when next to 
    two orbs
+ * Player can exit by pressing F10.
 
 Despite these changes 14 of the levels
 could be converted and are included 
@@ -27,3 +28,20 @@ it requires an Atari 1040 STe.
 
 Hope you enjoy this small time capsule.
 
+Notes by the original author:
+I made this game, Logic Square, after
+some programming experiments with the
+Atari ST/STE keyboard controller. I had
+realized that the timing of the
+interrupts from the keyboard controller
+was much more predicable if set to
+absolute mode instead of the default
+relative mode. My initial ambition was
+to make a mouse driven board game in
+full screen, with all borders removed, 
+but in the end I never got the 
+fullscreen code stable enough with the 
+mouse active, and I had to settle with 
+removing the upper and lower borders 
+only. The highscore list is still in 
+fullscreen.
