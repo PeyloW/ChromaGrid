@@ -157,16 +157,6 @@ static void image_read_packbits(iffstream_c &file, uint16_t line_words, int heig
     }
 }
 
-size_t image_c::memory_cost() const {
-    size_t cost = sizeof(image_c);
-    if (_palette.get()) {
-        cost += sizeof(palette_c);
-    }
-    int bp = _maskmap ? 5 : 4;
-    cost += _line_words * bp * 2 * _size.height;
-    return cost;
-}
-
 image_c::image_c(const char *path, int masked_cidx) :
     _palette(nullptr), _bitmap(nullptr), _maskmap(nullptr), _size(), _line_words(0)
 {

@@ -9,7 +9,7 @@ AR=/opt/cross-mint-OLD/bin/m68k-atari-mint-ar
 
 FLAGS=-m68000 -mshort -mfastcall
 #FLAGS+=-g1 -DNDEBUG
-FLAGS+=-g0 -DNDEBUG
+FLAGS+=-g0 -DNDEBUG -DTOYBOX_TARGET_ATARI=2
 FLAGS+=-s
 FLAGS+=-DTOYBOX_DEBUG_CPU=0
 #FLAGS+=-DTOYBOX_LOG_MALLOC=1
@@ -21,13 +21,17 @@ LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format,--stack,16384,--mno-fastalloc
 
 TOYBOX_OBJECTS=cpp_runtime.o
-TOYBOX_OBJECTS+=machine.o timer.o input.o system_m68k.o
+TOYBOX_OBJECTS+=timer.o input.o
 TOYBOX_OBJECTS+=stream.o util_stream.o iffstream.o
 TOYBOX_OBJECTS+=asset.o
 TOYBOX_OBJECTS+=palette.o image.o tileset.o font.o
-TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o canvas_imp.o
-TOYBOX_OBJECTS+=audio.o audio_mixer.o
+TOYBOX_OBJECTS+=canvas.o canvas_stencil.o dirtymap.o
+TOYBOX_OBJECTS+=audio.o audio_atari.o audio_mixer_atari.o
 TOYBOX_OBJECTS+=screen.o scene.o scene_transition.o
+TOYBOX_OBJECTS_ATARI=machine_atari.o
+TOYBOX_OBJECTS_ATARI+=timer_atari.o input_atari.o system_helpers_atari.o
+TOYBOX_OBJECTS_ATARI+=canvas_atari.o
+TOYBOX_OBJECTS_ATARI+=canvas_atari.o
 
 CG_OBJECTS=main.o
 CG_OBJECTS+=resources.o level.o button.o scroller.o
@@ -35,7 +39,6 @@ CG_OBJECTS+=game.o game_menu.o game_scores.o game_credits.o game_help.o game_lev
 
 cracked: install
 	rm install/auto/cgrid.prg
-	mv install/cgrid.tos install/game
 	cp other/d-bug install/d-bug
 	cp other/loader.prg install/auto/loader.prg
 
@@ -52,8 +55,8 @@ all: toybox cgrid
 
 toybox: libtoybox.a
 
-libtoybox.a: $(TOYBOX_OBJECTS)
-	$(AR) rcs libtoybox.a $(TOYBOX_OBJECTS)
+libtoybox.a: $(TOYBOX_OBJECTS) $(TOYBOX_OBJECTS_ATARI)
+	$(AR) rcs libtoybox.a $(TOYBOX_OBJECTS) $(TOYBOX_OBJECTS_ATARI)
 
 %.o: $(TOYBOX)/%.cpp
 	$(CC) $(CFLAGS) $<

@@ -1,5 +1,5 @@
 //
-//  blitter.hpp
+//  blitter_atari.hpp
 //  ChromaGrid
 //
 //  Created by Fredrik on 2024-02-25.
@@ -10,6 +10,10 @@
 
 #include "cincludes.hpp"
 #include "types.hpp"
+
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
 
 namespace toybox {
     

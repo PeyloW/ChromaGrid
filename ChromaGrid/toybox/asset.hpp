@@ -23,7 +23,6 @@ namespace toybox {
             custom, image, tileset, font, sound, music
         };
         virtual type_e asset_type() const __pure { return custom; }
-        virtual size_t memory_cost() const = 0;
     };
     
     class image_c;
@@ -43,7 +42,6 @@ namespace toybox {
         typedef void(*progress_f)(int loaded, int total);
         void preload(uint32_t sets, progress_f progress = nullptr);
         void unload(uint32_t sets);
-        size_t memory_cost() const;
         
         asset_c &asset(int id) const;
         

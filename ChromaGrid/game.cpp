@@ -8,7 +8,6 @@
 #include "game.hpp"
 #include "machine.hpp"
 #include "resources.hpp"
-#include "blitter.hpp"
 #include "audio_mixer.hpp"
 
 #ifndef __M68000__
@@ -49,6 +48,20 @@ void cgintro_scene_c::update_preload(int loaded, int count) {
 #endif
 }
 
+#define CG_MONTH (\
+  __DATE__ [2] == 'n' ? (__DATE__ [1] == 'a' ? 1 : 6) \
+: __DATE__ [2] == 'b' ? 2 \
+: __DATE__ [2] == 'r' ? (__DATE__ [0] == 'M' ? 3 : 4) \
+: __DATE__ [2] == 'y' ? 5 \
+: __DATE__ [2] == 'l' ? 7 \
+: __DATE__ [2] == 'g' ? 8 \
+: __DATE__ [2] == 'p' ? 9 \
+: __DATE__ [2] == 't' ? 10 \
+: __DATE__ [2] == 'v' ? 11 \
+: 12)
+
+#define CG_DAY ( (__DATE__[4] - '0') * 10 + __DATE__[5] - '0' )
+
 void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
     auto &canvas = clear_screen.canvas();
     auto &assets = cgasset_manager::shared();
@@ -67,7 +80,10 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
             _menu_buttons.buttons[0].text = "CONTINUE";
             _menu_buttons.draw_all(clear_screen.canvas());
-            clear_screen.canvas().draw(assets.font(SMALL_FONT), "v1.06.22" , point_s(318, 193), canvas_c::align_right, 9);
+            strstream_c version(10);
+            version.width(2); version.fill('0');
+            version << "v1." << CG_MONTH << '.' << CG_DAY << ends;
+            clear_screen.canvas().draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::align_right, 9);
             break;
         }
         default: {

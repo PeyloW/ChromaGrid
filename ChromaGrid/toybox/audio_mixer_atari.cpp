@@ -11,6 +11,10 @@
 #include "host_bridge.hpp"
 #endif
 
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
+
 using namespace toybox;
 
 audio_mixer_c& audio_mixer_c::shared() {
@@ -20,7 +24,6 @@ audio_mixer_c& audio_mixer_c::shared() {
 
 void audio_mixer_c::play(const sound_c &sound, uint8_t priority) {
 #ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
     uint8_t * ste_dma_control  = (uint8_t*)0xffff8901;
     uint8_t * ste_dma_mode  = (uint8_t*)0xffff8921;
     uint8_t * ste_dma_start = (uint8_t*)0xffff8903;
@@ -40,9 +43,6 @@ void audio_mixer_c::play(const sound_c &sound, uint8_t priority) {
     // Set mode, and start
     *ste_dma_mode = 0x81; // 8 bit mono @ 12.5kHz
     *ste_dma_control = 1; // Play once
-#   else
-#       error "Unsupported target"
-#   endif
 #else
     host_bridge_c::shared().play(sound);
 #endif
@@ -52,9 +52,8 @@ void audio_mixer_c::stop(const sound_c &sound) {
     // No-op for now.
 }
 
-#if TOYBOX_TARGET_ATARI
-
-void audio_mixer_c::play(const music_c &music, int track) {
+void audio_mixer_c::play(const music_c &_music, int track) {
+    ymmusic_c &music = (ymmusic_c&)_music;
     if (_active_music) {
         stop(*_active_music);
     }
@@ -72,7 +71,8 @@ void audio_mixer_c::play(const music_c &music, int track) {
     _active_track = track;
 }
 
-void audio_mixer_c::stop(const music_c &music) {
+void audio_mixer_c::stop(const music_c &_music) {
+    ymmusic_c &music = (ymmusic_c&)_music;
     assert(_active_music == &music);
 #ifdef __M68000__
     timer_c::with_paused_timers([this, &music] {
@@ -87,25 +87,19 @@ void audio_mixer_c::stop(const music_c &music) {
     _active_track = 0;
 }
 
-#endif
-
 void audio_mixer_c::stop_all() {
     if (_active_music) {
         stop(*_active_music);
     }
 }
 
-#   if TOYBOX_TARGET_ATARI
-    extern "C" void g_microwire_write(uint16_t value);
-#   endif
+extern "C" void g_microwire_write(uint16_t value);
 
 audio_mixer_c::audio_mixer_c() : _active_music(nullptr), _active_track(0) {
 #ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
     g_microwire_write(0x4c | 40); // Max master volume (0 to 40)
     g_microwire_write(0x50 | 20); // Right volume (0 to 20)
     g_microwire_write(0x54 | 20); // Left volume (0 to 20)
-#   endif
 #endif
 }
 

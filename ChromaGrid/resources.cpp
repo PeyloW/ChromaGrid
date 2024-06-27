@@ -191,15 +191,6 @@ levels_c::levels_c() {
     assert(size() > 0);
 }
 
-size_t levels_c::memory_cost() const {
-    size_t size = sizeof(*this);
-    for (auto &recipie : *this) {
-        size += sizeof(level_recipe_t);
-        size += sizeof(tilestate_t) * recipie->header.width * recipie->header.height;
-    }
-    return size;
-}
-
 user_levels_c::user_levels_c() {
     uint8_t *recipes = (uint8_t *)_calloc(10, level_recipe_t::MAX_SIZE);
     for (int i = 0; i < 10; i++) {
@@ -238,12 +229,6 @@ bool user_levels_c::save() const {
     return true;
 }
 
-size_t user_levels_c::memory_cost() const {
-    size_t size = sizeof(user_levels_c);
-    size += 10 * level_recipe_t::MAX_SIZE;
-    return size;
-}
-
 level_results_c::level_results_c(int level_count) {
     auto &levels = cgasset_manager::shared().levels();
     bool success = false;
@@ -278,10 +263,6 @@ done:
     }
 }
 
-size_t level_results_c::memory_cost() const {
-    return sizeof(level_results_c);
-}
-
 bool level_results_c::save() const {
     iffstream_c iff(asset_manager_c::shared().user_path("scores.dat").get(), fstream_c::input | fstream_c::output);
     if (!iff.good()) {
@@ -308,8 +289,4 @@ scroll_text_c::scroll_text_c(const char *path) {
     file.read((uint8_t *)text, size);
     text[size] = 0;
     _text.reset(text);
-}
-
-size_t scroll_text_c::memory_cost() const {
-    return strlen(text());
 }

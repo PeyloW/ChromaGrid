@@ -26,27 +26,23 @@ typedef enum __packed {
 class levels_c : public asset_c, public vector_c<level_recipe_t*, 45> {
 public:
     levels_c();
-    virtual size_t memory_cost() const;
 };
 
 class level_results_c : public asset_c, public vector_c<level_result_t, 45> {
 public:
     level_results_c(int level_count);
-    virtual size_t memory_cost() const;
     bool save() const;
 };
 
 class user_levels_c : public asset_c, public vector_c<level_recipe_t*, 10> {
 public:
     user_levels_c();
-    virtual size_t memory_cost() const;
     bool save() const;
 };
 
 class scroll_text_c : public asset_c {
 public:
     scroll_text_c(const char *path);
-    virtual size_t memory_cost() const;
     const char *text() const { return _text.get(); };
 private:
     unique_ptr_c<const char> _text;

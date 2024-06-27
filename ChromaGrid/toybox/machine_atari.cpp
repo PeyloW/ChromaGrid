@@ -9,6 +9,10 @@
 #include "timer.hpp"
 #include "image.hpp"
 
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
+
 using namespace toybox;
 
 
@@ -18,8 +22,7 @@ machine_c &machine_c::shared() {
 }
 
 machine_c::machine_c() {
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
     _old_super = Super(0);
     _old_modes[0] = Blitmode(-1);
     Blitmode(0);
@@ -27,34 +30,23 @@ machine_c::machine_c() {
     Setscreen((void *)-1, (void *)-1, 0);
     _old_modes[2] = *((uint8_t*)0x484);
     *((uint8_t*)0x484) = 0;
-#   endif
-#else
-#   error "Unsupported target"
 #endif
 }
 
 machine_c::~machine_c() {
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
     *((uint8_t*)0x484) = (uint8_t)_old_modes[2];
     Setscreen((void *)-1, (void *)-1, _old_modes[1]);
     Blitmode(_old_modes[0]);
     Super(_old_super);
-#   endif
-#else
-#   error "Unsupported target"
 #endif
 }
 
 machine_c::type_e machine_c::type() const {
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
     return (type_e)((get_cookie(0x5F4D4348) >> 16) + 1); // '_MCH'
-#   else
-    return ste;
-#   endif
 #else
-#   error "Unsupported target"
+    return ste;
 #endif
 }
 
@@ -63,32 +55,23 @@ size_s machine_c::screen_size() const {
 }
 
 size_t machine_c::max_memory() const {
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
     return *((uint32_t*)0x436);
-#   else
-    return 0x100000;
-#   endif
 #else
-#   error "Unsupported target"
+    return 0x100000;
 #endif
 }
 
 size_t machine_c::user_memory() const {
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
     return max_memory() - *((uint32_t*)0x432);
-#   else
-    return max_memory() - 0x10000;
-#   endif
 #else
-#   error "Unsupported target"
+    return max_memory() - 0x10000;
 #endif
 }
 
 
-#if TOYBOX_TARGET_ATARI
-#   ifdef __M68000__
+#ifdef __M68000__
 struct mem_chunk {
     long valid;
 #define VAL_ALLOC 0xa11c0abcL
@@ -104,9 +87,8 @@ void machine_c::free_system_memory() {
     p++;
     _free(p);
 }
-#   else
+#else
 void machine_c::free_system_memory() {}
-#   endif
 #endif
 
 uint32_t machine_c::get_cookie(uint32_t cookie, uint32_t def_value) const {

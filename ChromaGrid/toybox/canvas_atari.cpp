@@ -6,7 +6,11 @@
 //
 
 #include "canvas.hpp"
-#include "blitter.hpp"
+#include "blitter_atari.hpp"
+
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
 
 using namespace toybox;
 

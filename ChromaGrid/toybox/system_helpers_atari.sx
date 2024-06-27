@@ -1,3 +1,6 @@
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
 |
 | Primitive Interupt handlers.
 |

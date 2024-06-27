@@ -11,7 +11,7 @@
 // 3 = TT
 // 4 = Falcon030
 #ifndef TOYBOX_TARGET_ATARI
-#   define TOYBOX_TARGET_ATARI 2
+#   define TOYBOX_TARGET_ATARI 0
 #endif
 
 // 0 = Not Amiga target

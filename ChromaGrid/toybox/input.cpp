@@ -6,7 +6,6 @@
 //
 
 #include "input.hpp"
-#include "machine.hpp"
 #include "timer.hpp"
 
 using namespace toybox;
@@ -17,15 +16,7 @@ static mouse_c::state_e g_mouse_button_states[2];
 point_s g_mouse_position;
 
 extern "C" {
-#ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
-    extern timer_c::func_a_t g_system_mouse_interupt;
-    extern void g_mouse_interupt(void *);
-    static _KBDVECS *g_keyboard_vectors = nullptr;
-#   else
-#       error "Usupported target"
-#   endif
-#else
+#ifndef __M68000__
     // Host must call when mouse state changes
     void g_update_mouse(point_s position, bool left, bool right) {
         g_mouse_position = position;
@@ -49,29 +40,6 @@ void mouse_c::set_limits(const rect_s &limits) {
         limits.origin.x + _limits.size.width / 2,
         limits.origin.y + _limits.size.height / 2
     );
-}
-
-mouse_c::mouse_c() : _update_tick(0) {
-    set_limits(rect_s(point_s(), machine_c::shared().screen_size()));
-#ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
-    g_keyboard_vectors = Kbdvbase();
-    g_system_mouse_interupt = g_keyboard_vectors->mousevec;
-    g_keyboard_vectors->mousevec = &g_mouse_interupt;
-#   else
-#       error "Unsupported target"
-#   endif
-#endif
-}
-
-mouse_c::~mouse_c() {
-#ifdef __M68000__
-#   if TOYBOX_TARGET_ATARI
-    g_keyboard_vectors->mousevec = g_system_mouse_interupt;
-#   else
-#       error "Unsupported target"
-#   endif
-#endif
 }
 
 static void update_state() {

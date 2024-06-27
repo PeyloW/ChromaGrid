@@ -5,11 +5,14 @@
 //  Created by Fredrik on 2024-02-25.
 //
 
-#include "blitter.hpp"
+#include "blitter_atari.hpp"
+
+#if !TOYBOX_TARGET_ATARI
+#   error "For Atari target only"
+#endif
 
 using namespace toybox;
 
-#if TOYBOX_TARGET_ATARI
 #ifndef __M68000__
 
 #define DEBUG_BLITTER 0
@@ -109,7 +112,4 @@ void blitter_s::start(bool hog) {
     } while (--countY > 0);
 }
 
-#else
-#   error "For host machine only"
-#endif
 #endif

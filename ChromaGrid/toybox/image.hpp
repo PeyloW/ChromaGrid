@@ -38,7 +38,6 @@ namespace toybox {
         virtual ~image_c() {};
         
         type_e asset_type() const { return image; }
-        size_t memory_cost() const;
 
 #if TOYBOX_IMAGE_SUPPORTS_SAVE
         bool save(const char *path, compression_type_e compression, bool masked, int masked_cidx = MASKED_CIDX);

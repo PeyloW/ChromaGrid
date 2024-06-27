@@ -23,7 +23,6 @@ namespace toybox {
         virtual ~font_c() {};
         
         type_e asset_type() const { return font; }
-        size_t memory_cost() const { return _image->memory_cost(); }
         
         inline const shared_ptr_c<image_c> &image() const {
             return _image;

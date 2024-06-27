@@ -61,17 +61,6 @@ void asset_manager_c::unload(uint32_t sets) {
     }
 }
 
-size_t asset_manager_c::memory_cost() const {
-    size_t cost = 0;
-    for (const auto &asset : _assets) {
-        if (asset.get() != nullptr) {
-            cost += asset->memory_cost();
-        }
-    }
-    return cost;
-}
-
-
 asset_c &asset_manager_c::asset(int id) const {
     auto &asset = _assets[id];
     if (asset.get() == nullptr) {
@@ -132,7 +121,9 @@ asset_c *asset_manager_c::create_asset(int id, const asset_def_s &def) const {
             case asset_c::sound:
                 return new sound_c(path.get());
             case asset_c::music:
-                return new music_c(path.get());
+#if TOYBOX_TARGET_ATARI
+                return new ymmusic_c(path.get());
+#endif
             default:
                 hard_assert(0);
                 break;

@@ -14,6 +14,9 @@
 		A62520412C01540500B3635F /* intro.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520402C01540500B3635F /* intro.iff */; };
 		A62520432C04F53D00B3635F /* disk.iff in Resources */ = {isa = PBXBuildFile; fileRef = A62520422C04F53D00B3635F /* disk.iff */; };
 		A6711FCB2C23C4F900C599C5 /* spot.iff in Resources */ = {isa = PBXBuildFile; fileRef = A6711FCA2C23C4F900C599C5 /* spot.iff */; };
+		A6711FCD2C2CFCF400C599C5 /* timer_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6711FCC2C2CFCF400C599C5 /* timer_atari.cpp */; };
+		A6711FCF2C2CFEB900C599C5 /* input_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6711FCE2C2CFEB900C599C5 /* input_atari.cpp */; };
+		A6711FD12C2D041200C599C5 /* audio_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6711FD02C2D041200C599C5 /* audio_atari.cpp */; };
 		A682A3E32B9227AC00FF2E57 /* resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E12B9227AC00FF2E57 /* resources.cpp */; };
 		A682A3EA2B92613F00FF2E57 /* game_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E82B92613F00FF2E57 /* game_menu.cpp */; };
 		A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612D82BB26B86008ACD05 /* game_help.cpp */; };
@@ -52,15 +55,15 @@
 		A6A0EE462BC059DC005B6ED3 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E52B92459500FF2E57 /* scene.cpp */; };
 		A6A0EE482BC059DC005B6ED3 /* dirtymap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484DC2BA92889004CCA7D /* dirtymap.cpp */; };
 		A6A0EE4B2BC059DC005B6ED3 /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C92B6FEFE500EBA43D /* palette.cpp */; };
-		A6A0EE4D2BC059DC005B6ED3 /* canvas_imp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51C2B8AC25300EBA43D /* canvas_imp.cpp */; };
+		A6A0EE4D2BC059DC005B6ED3 /* canvas_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51C2B8AC25300EBA43D /* canvas_atari.cpp */; };
 		A6A0EE4E2BC059DC005B6ED3 /* scene_transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69612C12BAF9C06008ACD05 /* scene_transition.cpp */; };
 		A6A0EE4F2BC059DC005B6ED3 /* canvas_stencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */; };
 		A6A0EE502BC059DC005B6ED3 /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE5002B82983A00EBA43D /* audio.cpp */; };
 		A6A0EE512BC059F2005B6ED3 /* types.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4F42B79253A00EBA43D /* types.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE522BC059F4005B6ED3 /* system_helpers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE532BC059F9005B6ED3 /* host_bridge.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4FA2B793CEF00EBA43D /* host_bridge.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE5202B8BB71E00EBA43D /* blitter.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6A0EE562BC05A31005B6ED3 /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter.cpp */; };
+		A6A0EE552BC05A2A005B6ED3 /* blitter_atari.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE5202B8BB71E00EBA43D /* blitter_atari.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6A0EE562BC05A31005B6ED3 /* blitter_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE51F2B8BB71E00EBA43D /* blitter_atari.cpp */; };
 		A6A0EE572BC05A39005B6ED3 /* audio.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE5012B82983A00EBA43D /* audio.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE582BC05A3E005B6ED3 /* scene.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A682A3E62B92459500FF2E57 /* scene.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE5B2BC05A69005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
@@ -90,10 +93,10 @@
 		A6B6E18B2BD0381F00703630 /* tileset.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1892BD0381F00703630 /* tileset.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B6E18E2BD04B6100703630 /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E18C2BD04B6100703630 /* screen.cpp */; };
 		A6B6E18F2BD04B6100703630 /* screen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E18D2BD04B6100703630 /* screen.hpp */; };
-		A6B6E1922BD4308C00703630 /* audio_mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1902BD4308C00703630 /* audio_mixer.cpp */; };
+		A6B6E1922BD4308C00703630 /* audio_mixer_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1902BD4308C00703630 /* audio_mixer_atari.cpp */; };
 		A6B6E1932BD4308C00703630 /* audio_mixer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1912BD4308C00703630 /* audio_mixer.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B6E1952BD44B2B00703630 /* config.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1942BD44B2B00703630 /* config.hpp */; };
-		A6B6E1982BD94C9200703630 /* machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1962BD94C9200703630 /* machine.cpp */; };
+		A6B6E1982BD94C9200703630 /* machine_atari.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E1962BD94C9200703630 /* machine_atari.cpp */; };
 		A6B6E1992BD94C9200703630 /* machine.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E1972BD94C9200703630 /* machine.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B6E19C2BD94D3C00703630 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6B6E19A2BD94D3C00703630 /* timer.cpp */; };
 		A6B6E19D2BD94D3C00703630 /* timer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6B6E19B2BD94D3C00703630 /* timer.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -167,6 +170,9 @@
 		A62520422C04F53D00B3635F /* disk.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = disk.iff; sourceTree = "<group>"; };
 		A66B7CF52BB3BC7F00374307 /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
 		A6711FCA2C23C4F900C599C5 /* spot.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = spot.iff; sourceTree = "<group>"; };
+		A6711FCC2C2CFCF400C599C5 /* timer_atari.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer_atari.cpp; sourceTree = "<group>"; };
+		A6711FCE2C2CFEB900C599C5 /* input_atari.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = input_atari.cpp; sourceTree = "<group>"; };
+		A6711FD02C2D041200C599C5 /* audio_atari.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_atari.cpp; sourceTree = "<group>"; };
 		A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_stencil.cpp; sourceTree = "<group>"; };
 		A682A3E12B9227AC00FF2E57 /* resources.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = resources.cpp; sourceTree = "<group>"; };
 		A682A3E22B9227AC00FF2E57 /* resources.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = resources.hpp; sourceTree = "<group>"; };
@@ -200,7 +206,7 @@
 		A69AE4E42B72851700EBA43D /* test.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.iff; sourceTree = "<group>"; };
 		A69AE4E82B77FED300EBA43D /* cursor.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = cursor.iff; sourceTree = "<group>"; };
 		A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_helpers.hpp; sourceTree = "<group>"; };
-		A69AE4EF2B79202A00EBA43D /* system_m68k.sx */ = {isa = PBXFileReference; lastKnownFileType = text; path = system_m68k.sx; sourceTree = "<group>"; };
+		A69AE4EF2B79202A00EBA43D /* system_helpers_atari.sx */ = {isa = PBXFileReference; lastKnownFileType = text; path = system_helpers_atari.sx; sourceTree = "<group>"; };
 		A69AE4F42B79253A00EBA43D /* types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
 		A69AE4FA2B793CEF00EBA43D /* host_bridge.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = host_bridge.hpp; sourceTree = "<group>"; };
 		A69AE5002B82983A00EBA43D /* audio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio.cpp; sourceTree = "<group>"; };
@@ -210,9 +216,9 @@
 		A69AE50F2B85031400EBA43D /* orbs.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = orbs.iff; sourceTree = "<group>"; };
 		A69AE5102B85031400EBA43D /* tiles.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles.iff; sourceTree = "<group>"; };
 		A69AE5192B8AA0EE00EBA43D /* font.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font.iff; sourceTree = "<group>"; };
-		A69AE51C2B8AC25300EBA43D /* canvas_imp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_imp.cpp; sourceTree = "<group>"; };
-		A69AE51F2B8BB71E00EBA43D /* blitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blitter.cpp; sourceTree = "<group>"; };
-		A69AE5202B8BB71E00EBA43D /* blitter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter.hpp; sourceTree = "<group>"; };
+		A69AE51C2B8AC25300EBA43D /* canvas_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_atari.cpp; sourceTree = "<group>"; };
+		A69AE51F2B8BB71E00EBA43D /* blitter_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blitter_atari.cpp; sourceTree = "<group>"; };
+		A69AE5202B8BB71E00EBA43D /* blitter_atari.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blitter_atari.hpp; sourceTree = "<group>"; };
 		A69AE52D2B8D76FA00EBA43D /* button.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = button.iff; sourceTree = "<group>"; };
 		A69AE5302B8D9A2400EBA43D /* font6.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font6.iff; sourceTree = "<group>"; };
 		A6A0EE2F2BBE3AEC005B6ED3 /* levels2.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = levels2.dat; sourceTree = "<group>"; };
@@ -247,10 +253,10 @@
 		A6B6E1892BD0381F00703630 /* tileset.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tileset.hpp; sourceTree = "<group>"; };
 		A6B6E18C2BD04B6100703630 /* screen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = screen.cpp; sourceTree = "<group>"; };
 		A6B6E18D2BD04B6100703630 /* screen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = screen.hpp; sourceTree = "<group>"; };
-		A6B6E1902BD4308C00703630 /* audio_mixer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio_mixer.cpp; sourceTree = "<group>"; };
+		A6B6E1902BD4308C00703630 /* audio_mixer_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio_mixer_atari.cpp; sourceTree = "<group>"; };
 		A6B6E1912BD4308C00703630 /* audio_mixer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = audio_mixer.hpp; sourceTree = "<group>"; };
 		A6B6E1942BD44B2B00703630 /* config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
-		A6B6E1962BD94C9200703630 /* machine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = machine.cpp; sourceTree = "<group>"; };
+		A6B6E1962BD94C9200703630 /* machine_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = machine_atari.cpp; sourceTree = "<group>"; };
 		A6B6E1972BD94C9200703630 /* machine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = machine.hpp; sourceTree = "<group>"; };
 		A6B6E19A2BD94D3C00703630 /* timer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
 		A6B6E19B2BD94D3C00703630 /* timer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = timer.hpp; sourceTree = "<group>"; };
@@ -486,15 +492,17 @@
 				A6E484DF2BAE6C80004CCA7D /* toystd */,
 				A69AE4F42B79253A00EBA43D /* types.hpp */,
 				A6B6E1972BD94C9200703630 /* machine.hpp */,
-				A6B6E1962BD94C9200703630 /* machine.cpp */,
+				A6B6E1962BD94C9200703630 /* machine_atari.cpp */,
 				A6B6E19B2BD94D3C00703630 /* timer.hpp */,
 				A6B6E19A2BD94D3C00703630 /* timer.cpp */,
+				A6711FCC2C2CFCF400C599C5 /* timer_atari.cpp */,
 				A6B6E19F2BD94F3700703630 /* input.hpp */,
 				A6B6E19E2BD94F3700703630 /* input.cpp */,
+				A6711FCE2C2CFEB900C599C5 /* input_atari.cpp */,
 				A69AE4FA2B793CEF00EBA43D /* host_bridge.hpp */,
 				A6B6E1A22BDB2C2600703630 /* host_bridge.cpp */,
 				A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */,
-				A69AE4EF2B79202A00EBA43D /* system_m68k.sx */,
+				A69AE4EF2B79202A00EBA43D /* system_helpers_atari.sx */,
 				A6B6E1A52BDC150500703630 /* asset.hpp */,
 				A6B6E1A42BDC150500703630 /* asset.cpp */,
 				A69AE4CA2B6FEFE500EBA43D /* palette.hpp */,
@@ -510,13 +518,14 @@
 				A682A3DF2B90CEE700FF2E57 /* canvas_stencil.cpp */,
 				A6A0EE892BC8D725005B6ED3 /* dirtymap.hpp */,
 				A6E484DC2BA92889004CCA7D /* dirtymap.cpp */,
-				A69AE5202B8BB71E00EBA43D /* blitter.hpp */,
-				A69AE51F2B8BB71E00EBA43D /* blitter.cpp */,
-				A69AE51C2B8AC25300EBA43D /* canvas_imp.cpp */,
+				A69AE5202B8BB71E00EBA43D /* blitter_atari.hpp */,
+				A69AE51F2B8BB71E00EBA43D /* blitter_atari.cpp */,
+				A69AE51C2B8AC25300EBA43D /* canvas_atari.cpp */,
 				A69AE5012B82983A00EBA43D /* audio.hpp */,
 				A69AE5002B82983A00EBA43D /* audio.cpp */,
+				A6711FD02C2D041200C599C5 /* audio_atari.cpp */,
 				A6B6E1912BD4308C00703630 /* audio_mixer.hpp */,
-				A6B6E1902BD4308C00703630 /* audio_mixer.cpp */,
+				A6B6E1902BD4308C00703630 /* audio_mixer_atari.cpp */,
 				A6B6E18D2BD04B6100703630 /* screen.hpp */,
 				A6B6E18C2BD04B6100703630 /* screen.cpp */,
 				A682A3E62B92459500FF2E57 /* scene.hpp */,
@@ -572,7 +581,7 @@
 				A6B6E18B2BD0381F00703630 /* tileset.hpp in Headers */,
 				A6A0EEA62BCF4D5B005B6ED3 /* memory.hpp in Headers */,
 				A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */,
-				A6A0EE552BC05A2A005B6ED3 /* blitter.hpp in Headers */,
+				A6A0EE552BC05A2A005B6ED3 /* blitter_atari.hpp in Headers */,
 				A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */,
 				A6A0EE572BC05A39005B6ED3 /* audio.hpp in Headers */,
 				A69816C12BFA453D00E4560B /* util_stream.hpp in Headers */,
@@ -766,11 +775,14 @@
 				A6F766AD2B96A80000325754 /* level.cpp in Sources */,
 				A69612D92BB26B86008ACD05 /* game_help.cpp in Sources */,
 				A625203F2C00307B00B3635F /* scroller.cpp in Sources */,
+				A6711FD12C2D041200C599C5 /* audio_atari.cpp in Sources */,
 				A6E484D92BA3EDB6004CCA7D /* game_scores.cpp in Sources */,
 				A6E484D52BA3381D004CCA7D /* button.cpp in Sources */,
 				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
 				A682A3EA2B92613F00FF2E57 /* game_menu.cpp in Sources */,
+				A6711FCF2C2CFEB900C599C5 /* input_atari.cpp in Sources */,
 				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
+				A6711FCD2C2CFCF400C599C5 /* timer_atari.cpp in Sources */,
 				A6A0EE3B2BC05988005B6ED3 /* cpp_runtime.cpp in Sources */,
 				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
 				A6F766AB2B9509EB00325754 /* game_credits.cpp in Sources */,
@@ -792,20 +804,20 @@
 				A6A0EE482BC059DC005B6ED3 /* dirtymap.cpp in Sources */,
 				A6A0EE4B2BC059DC005B6ED3 /* palette.cpp in Sources */,
 				A6B6E18A2BD0381F00703630 /* tileset.cpp in Sources */,
-				A6A0EE4D2BC059DC005B6ED3 /* canvas_imp.cpp in Sources */,
+				A6A0EE4D2BC059DC005B6ED3 /* canvas_atari.cpp in Sources */,
 				A6A0EE982BCDAE0A005B6ED3 /* stream.cpp in Sources */,
 				A69816C32BFA453D00E4560B /* util_stream.cpp in Sources */,
 				A6A0EE4E2BC059DC005B6ED3 /* scene_transition.cpp in Sources */,
 				A6B6E19C2BD94D3C00703630 /* timer.cpp in Sources */,
 				A6A0EEA02BCDC3DA005B6ED3 /* iffstream.cpp in Sources */,
-				A6B6E1922BD4308C00703630 /* audio_mixer.cpp in Sources */,
+				A6B6E1922BD4308C00703630 /* audio_mixer_atari.cpp in Sources */,
 				A6B6E1A02BD94F3700703630 /* input.cpp in Sources */,
 				A6A0EE4F2BC059DC005B6ED3 /* canvas_stencil.cpp in Sources */,
 				A6A0EE502BC059DC005B6ED3 /* audio.cpp in Sources */,
 				A6B6E1A62BDC150500703630 /* asset.cpp in Sources */,
 				A6B6E1A32BDB2C2600703630 /* host_bridge.cpp in Sources */,
-				A6B6E1982BD94C9200703630 /* machine.cpp in Sources */,
-				A6A0EE562BC05A31005B6ED3 /* blitter.cpp in Sources */,
+				A6B6E1982BD94C9200703630 /* machine_atari.cpp in Sources */,
+				A6A0EE562BC05A31005B6ED3 /* blitter_atari.cpp in Sources */,
 				A6A0EE3E2BC059A6005B6ED3 /* cpp_runtime.cpp in Sources */,
 				A6A0EE882BC78FE8005B6ED3 /* canvas.cpp in Sources */,
 			);
@@ -998,6 +1010,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 					TOYBOX_IMAGE_SUPPORTS_SAVE,
+					"TOYBOX_TARGET_ATARI=2",
 				);
 				INFOPLIST_FILE = MacOSHost/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1037,6 +1050,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					TOYBOX_IMAGE_SUPPORTS_SAVE,
+					"TOYBOX_TARGET_ATARI=2",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;

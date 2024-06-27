@@ -24,7 +24,6 @@ namespace toybox {
         virtual ~sound_c() {};
         
         type_e asset_type() const { return sound; }
-        size_t memory_cost() const { return _length; }
         
         const int8_t *sample() const { return _sample.get(); }
         uint32_t length() const { return _length; }
@@ -36,15 +35,28 @@ namespace toybox {
         uint16_t _rate;
     };
     
-#if TOYBOX_TARGET_ATARI
     class music_c : public asset_c {
         friend class audio_mixer_c;
     public:
-        music_c(const char *path);
+        music_c() {};
         virtual ~music_c() {};
+        
+        type_e asset_type() const { return music; }
+        
+        virtual const char *title() const = 0;
+        virtual const char *composer() const = 0;
+        virtual int track_count() const = 0;
+        virtual uint8_t replay_freq() const = 0;
+    };
+    
+#if TOYBOX_TARGET_ATARI
+    class ymmusic_c : public music_c {
+        friend class audio_mixer_c;
+    public:
+        ymmusic_c(const char *path);
+        virtual ~ymmusic_c() {};
 
         type_e asset_type() const { return music; }
-        size_t memory_cost() const { return _length; }
         
         const char *title() const { return _title; }
         const char *composer() const { return _composer; }
@@ -64,8 +76,6 @@ namespace toybox {
         uint16_t _music_play_code[8];
 #endif
     };
-#else
-#   error "Unsupported target"
 #endif
 
 }
