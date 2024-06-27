@@ -15,7 +15,11 @@ namespace toybox {
     
     using namespace toybox;
     
-    
+    /**
+     A `font_c` is a convenience wrapper of an `image_c` for managing a bitmap
+     font.
+     A font can be monospaced or have variable width characters.
+     */
     class font_c : public asset_c {
     public:
         font_c(const shared_ptr_c<image_c> &image, size_s character_size);

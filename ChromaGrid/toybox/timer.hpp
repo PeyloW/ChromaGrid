@@ -17,6 +17,11 @@
 namespace toybox {
     
     
+    /**
+     A `timer_c` abstracts a system timer.
+     Timer are lazy initialized singletons.
+     VBL (50/60Hz) and system timer at 200Hz are required.
+     */
     class timer_c : public nocopy_c {
     public:
         typedef enum __packed {

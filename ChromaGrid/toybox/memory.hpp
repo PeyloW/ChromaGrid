@@ -12,6 +12,10 @@
 
 namespace toybox {
 
+    /*
+     This file containes a minimal set of cuntionality from C++ stdlib.
+     */
+
     template<typename T>
     class __packed_struct basic_ptr_c {
     public:

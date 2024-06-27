@@ -12,6 +12,11 @@
 
 namespace toybox {
     
+    /**
+     A `screen_c` is an abstracyion for displaying a screen of content.
+     Contains an `image_c` for the bitmap data, a `canvas_c` to draw graphics,
+     amd a `dirtymap_c` to restore dirty areas.
+     */
     class screen_c {
     public:
         screen_c(size_s screen_size = TOYBOX_SCREEN_SIZE_DEFAULT);

@@ -25,8 +25,16 @@ namespace toybox {
     
     class scene_manager_c;
         
+    /**
+     A `scene_c` is an abstraction for managing one screen of content.
+     A scene is forexample the menu, one level, or the hi-score table.
+     */
     class scene_c : public nocopy_c {
     public:
+        /**
+         The `configuration_s` defines how to display and manage a `scene_c.`
+         TODO: Only `palette` is used.
+         */
         struct configuration_s : public nocopy_c {
             configuration_s(const palette_c &palette, int buffer_count = 2, bool use_clear = true) :
                 palette(palette), buffer_count(buffer_count), use_clear(use_clear) {}
@@ -48,6 +56,9 @@ namespace toybox {
         scene_manager_c &manager;
     };
     
+    /**
+     A `transition_c` manages the visual transition from one scene to another.
+     */
     class transition_c : public nocopy_c {
     public:
         transition_c() {};
@@ -61,6 +72,17 @@ namespace toybox {
         static transition_c *create(color_c through);
     };
         
+    /**
+     The `scene_manager_c` handles a stack of scenes, and a set of screens.
+     The top-most scene is the active scene curebtly displayed.
+     The optional overlay scene is always handled ontop of the top-most scene,
+     and can be used for handling a persistent mouse cursor, or status bar.
+     The screens are the front screen being displayed, the back screen being
+     drawn, and optionally the clear screen used for fast restoration of the
+     other screens.
+     As the top-most scene changes the manager creates a transition to handle
+     the visual transition.
+     */
     class scene_manager_c : public nocopy_c {
     public:
         enum class screen_e : int8_t {

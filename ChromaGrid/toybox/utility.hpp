@@ -12,6 +12,10 @@
 
 namespace toybox {
     
+    /*
+     This file containes a minimal set of cuntionality from C++ stdlib.
+     */
+
 #ifdef __M68000__
 #   define hton(v)
 #else

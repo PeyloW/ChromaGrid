@@ -71,6 +71,10 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
         iff_id_t subtype;
     };
     
+    /**
+     An `iffstream_c` handles reading and writing to an EA IFF file.
+     TODO: This was a bad idea, IFF file access should not be exposed as a stream!
+     */
     class iffstream_c : public stream_c {
     public:
         iffstream_c(stream_c *stream);

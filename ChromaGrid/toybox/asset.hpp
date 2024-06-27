@@ -31,6 +31,12 @@ namespace toybox {
     class sound_c;
     class music_c;
 
+    /**
+     `asset_manager_c` handles loading and unloading of assets from disk.
+     The asset manager is a singleton, intended for subclassing for each client
+     of toybox.
+     The client is expected to set the singleton.
+     */
     class asset_manager_c : nocopy_c {
     public:
         static asset_manager_c &shared();

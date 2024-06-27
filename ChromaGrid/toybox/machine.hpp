@@ -17,6 +17,10 @@ namespace toybox {
     class palette_c;
     class image_c;
     
+    /**
+     A `machine_c` is an abstraction for the target machine and OS.
+     An emulation host such as macOS is **not** a machine of its own.
+     */
     class machine_c : public nocopy_c {
     public:
         typedef enum _packed {

@@ -15,6 +15,13 @@
 
 namespace toybox {
     
+    /**
+     A `canvas_c` is a wrapper for an `image_c` to provide drawing operations.
+     Only the private functions prefixed with `imp_` needs to be reimplemented
+     for each target, all other functions should be abstractions ontop.
+     TODO: Only Atari STe with blitter and interweaved bitplanes supported.
+     TODO: Remove stencil, too ChromaGrid/STe specific?
+     */
     class canvas_c : public nocopy_c {
     public:
         class remap_table_c : nocopy_c {

@@ -12,7 +12,11 @@
 
 namespace toybox {
     
-    // Minimal std::vector replacement with static size
+    /**
+     `vector_c` is a minimal implementation of `std::vector` with a statically
+     allocated backiong store, for performance reasons.
+     TODO: Treat Count of 0 as a dynamic vector.
+     */
     template<class Type, int Count>
     class vector_c : public nocopy_c {
     public:

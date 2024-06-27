@@ -15,6 +15,10 @@ namespace toybox {
     
     using namespace toybox;
 
+    /**
+     A 12 bit color in a 16 bit word.
+     TODO: Make STe hacks for Atari target only.
+     */
     class color_c {
     public:
         uint16_t color;
@@ -50,6 +54,9 @@ namespace toybox {
         }
     };
         
+    /**
+     A `basic_palette_c` is an arbitaruy list of colors.
+     */
     template<int Count>
     class basic_palette_c : public nocopy_c {
     public:
@@ -65,6 +72,10 @@ namespace toybox {
         }
     };
         
+    /**
+     A `palette_c` is a specialized list of colors with exactly 16 colors.
+     TODO: Should Amiga target allow for 32?
+     */
     class palette_c : public basic_palette_c<16> {
     public:
         palette_c() : basic_palette_c<16>() {}

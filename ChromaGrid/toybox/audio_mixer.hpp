@@ -12,6 +12,10 @@
 
 namespace toybox {
     
+    /**
+     A `audio_mixer_c` is an abstraction for mixing audio.
+     TODO: Support multiple sound effects.
+     */
     class audio_mixer_c : public nocopy_c {
     public:
         static audio_mixer_c& shared();

@@ -23,6 +23,13 @@ namespace toybox {
         compression_type_deflate    // Non-standard, not supported as of now
     } compression_type_e;
 
+    /**
+     An `image_c` is a read only representation of any graphics.
+     An image with a mask is a sprite.
+     Images can be loaded from EA 85 ILBM files, or created at runtime.
+     On emulated host machines only, images can also be saved.
+     TODO: Support bitplane layout other than interweaved.
+     */
     class image_c : public asset_c {
         friend class canvas_c;
         friend class machine_c;
@@ -43,7 +50,7 @@ namespace toybox {
         bool save(const char *path, compression_type_e compression, bool masked, int masked_cidx = MASKED_CIDX);
 #endif
                 
-        __forceinline void ser_palette(const shared_ptr_c<palette_c> &palette) {
+        __forceinline void set_palette(const shared_ptr_c<palette_c> &palette) {
             _palette = palette;
         }
         __forceinline shared_ptr_c<palette_c> &palette() const {

@@ -17,6 +17,11 @@ namespace toybox {
 
     static_assert(TOYBOX_DIRTYMAP_TILE_SIZE.width % 16 == 0, "Tile width must be a multiple of 16");
     
+    /**
+     A `dirtymap_c` represents dirty areas of a `canvas_c` that is in need of
+     redrawing.
+     TODO: Support dirty gris other than 16x16 pixels.
+     */
     class dirtymap_c : public nocopy_c {
         friend class canvas_c;
     public:

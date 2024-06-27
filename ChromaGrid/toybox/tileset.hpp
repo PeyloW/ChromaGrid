@@ -14,6 +14,12 @@ namespace toybox {
     
     using namespace toybox;
  
+    /**
+     A `tileset_c` is a convenience wrapper ontop of `image_c` for handling a
+     a set of equally sized tiles.
+     Tiles can be indexed as column/row using a `point_t`, or by a continious
+     index.
+     */
     class tileset_c : public asset_c {
     public:
         tileset_c(const shared_ptr_c<image_c> &image, size_s tile_size);

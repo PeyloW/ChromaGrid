@@ -12,6 +12,10 @@
 
 namespace toybox {
     
+    /*
+     This file containes a minimal set of cuntionality from C++ stdlib.
+     */
+
     template<typename I, typename J>
     __forceinline J copy(I first, I last, J d_first) {
         while (first != last) {

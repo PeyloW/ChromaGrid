@@ -17,6 +17,10 @@ namespace toybox {
     
     using namespace toybox;
     
+    /**
+     A `cound_c` is an 8 bit PCM sound sample.
+     Sounds can be loaded for EA 85 AIFF files.
+     */
     class sound_c : public asset_c {
         friend class audio_mixer_c;
     public:
@@ -35,6 +39,10 @@ namespace toybox {
         uint16_t _rate;
     };
     
+    /**
+     A `music_c` is an abstract collection of music, containing one or more songs.
+     TODO: Support mods.
+     */
     class music_c : public asset_c {
         friend class audio_mixer_c;
     public:
@@ -50,6 +58,10 @@ namespace toybox {
     };
     
 #if TOYBOX_TARGET_ATARI
+    /**
+     `ymmusic_c` is a concrete `music_c` representing YM-Music for Atari target.
+     YB-music can be loaded from SNDH files.
+     */
     class ymmusic_c : public music_c {
         friend class audio_mixer_c;
     public:

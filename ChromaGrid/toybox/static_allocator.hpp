@@ -12,6 +12,11 @@
 
 namespace toybox {
 
+/**
+ A `static_alloctor_c` is a vaguelly related to `std::allocator`, but always
+ allocates single blocks of a static size.
+ This exists for performance, as `malloc` can be expensive.
+ */
 template <class T, size_t Count>
 class static_allocator_c {
     struct block_t;

@@ -21,6 +21,10 @@ namespace toybox {
 
 #if TOYBOX_TARGET_ATARI
     
+    /**
+     A `blitter_s` is an abstraction of the Atari blitter.
+     Emulated on emulation host.
+     */
     struct blitter_s {
         enum class hop_e : uint8_t {
             one = 0,

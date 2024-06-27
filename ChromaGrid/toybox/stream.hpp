@@ -14,6 +14,10 @@
 
 namespace toybox {
     
+    /**
+     `stream_c` is vaguelly related to `std::iostream`.
+     TODO: Rewrite from scratch, instead copy boost concepts of streams, source, sink, and filters.
+     */
     class stream_c : public nocopy_c {
     public:
         typedef enum __packed {
