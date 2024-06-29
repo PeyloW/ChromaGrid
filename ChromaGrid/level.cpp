@@ -381,10 +381,7 @@ inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
 }
 
 static inline int tileset_at(int x, int y) {
-    int i = x + y * 12;
-    i ^= i >> 3;
-    i ^= i << 5;
-    i ^= i >> 2;
+    int i = x * 593 ^ y * 1249;
     return i % 3;
 }
 
