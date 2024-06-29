@@ -393,7 +393,7 @@ inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &asset
         }
         return;
     }
-    int id = TILES + tileset_at(x, y);
+    int id = TILES_A + tileset_at(x, y);
     screen.draw_aligned(assets.tileset(id), tilestate_tile_index(state), at);
 }
 
@@ -422,7 +422,7 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
             }
         }
     } else {
-        screen.draw(assets.tileset(TILES), tilestate_tile_index(state), at);
+        screen.draw(assets.tileset(TILES_A), tilestate_tile_index(state), at);
     }
     point_s o_at = at;
     switch (state.orb) {

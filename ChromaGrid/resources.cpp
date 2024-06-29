@@ -80,7 +80,7 @@ cgasset_manager::cgasset_manager() :
 
     add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
     add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
-    add_asset_def(TILES, asset_def_s(asset_c::tileset, 2, "tiles.iff"));
+    add_asset_def(TILES_A, asset_def_s(asset_c::tileset, 2, "tiles1.iff"));
     add_asset_def(TILES_B, asset_def_s(asset_c::tileset, 2, "tiles2.iff"));
     add_asset_def(TILES_C, asset_def_s(asset_c::tileset, 2, "tiles3.iff"));
     add_asset_def(EMPTY_TILE, asset_def_s(asset_c::tileset, 2, "emptyt.iff"));
@@ -147,7 +147,7 @@ bool cgasset_manager::support_audio() const {
 
 asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
     auto asset = asset_manager_c::create_asset(id, def);
-    if (id >= TILES && id <= TILES_C) {
+    if (id >= TILES_A && id <= TILES_C) {
         tileset_c &tiles = *(tileset_c*)asset;
         for (int x = 1; x < 3; x++) {
             canvas_c tiles_cnv(*tiles.image());

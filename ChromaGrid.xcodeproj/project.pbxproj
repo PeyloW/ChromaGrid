@@ -36,7 +36,7 @@
 		A69AE5062B82B1E300EBA43D /* music.snd in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5052B82B1E300EBA43D /* music.snd */; };
 		A69AE50C2B82CDB500EBA43D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50B2B82CDB500EBA43D /* README.md */; };
 		A69AE5112B85031400EBA43D /* orbs.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50F2B85031400EBA43D /* orbs.iff */; };
-		A69AE5122B85031400EBA43D /* tiles.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5102B85031400EBA43D /* tiles.iff */; };
+		A69AE5122B85031400EBA43D /* tiles1.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5102B85031400EBA43D /* tiles1.iff */; };
 		A69AE51A2B8AA0EE00EBA43D /* font.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5192B8AA0EE00EBA43D /* font.iff */; };
 		A69AE52E2B8D76FA00EBA43D /* button.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE52D2B8D76FA00EBA43D /* button.iff */; };
 		A69AE5312B8D9A2400EBA43D /* font6.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5302B8D9A2400EBA43D /* font6.iff */; };
@@ -214,7 +214,7 @@
 		A69AE5052B82B1E300EBA43D /* music.snd */ = {isa = PBXFileReference; lastKnownFileType = file; path = music.snd; sourceTree = "<group>"; };
 		A69AE50B2B82CDB500EBA43D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; lineEnding = 2; path = README.md; sourceTree = "<group>"; };
 		A69AE50F2B85031400EBA43D /* orbs.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = orbs.iff; sourceTree = "<group>"; };
-		A69AE5102B85031400EBA43D /* tiles.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles.iff; sourceTree = "<group>"; };
+		A69AE5102B85031400EBA43D /* tiles1.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = tiles1.iff; sourceTree = "<group>"; };
 		A69AE5192B8AA0EE00EBA43D /* font.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font.iff; sourceTree = "<group>"; };
 		A69AE51C2B8AC25300EBA43D /* canvas_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = canvas_atari.cpp; sourceTree = "<group>"; };
 		A69AE51F2B8BB71E00EBA43D /* blitter_atari.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blitter_atari.cpp; sourceTree = "<group>"; };
@@ -413,7 +413,7 @@
 				A69AE5302B8D9A2400EBA43D /* font6.iff */,
 				A69AE50F2B85031400EBA43D /* orbs.iff */,
 				A6F766B02B98BC2600325754 /* select.iff */,
-				A69AE5102B85031400EBA43D /* tiles.iff */,
+				A69AE5102B85031400EBA43D /* tiles1.iff */,
 				A62520372BFEE21200B3635F /* tiles2.iff */,
 				A62520382BFEE21200B3635F /* tiles3.iff */,
 				A6D012F02BBCE71800D260C2 /* emptyt.iff */,
@@ -750,7 +750,7 @@
 				A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */,
 				A6711FCB2C23C4F900C599C5 /* spot.iff in Resources */,
 				A6F766B12B98BC2600325754 /* select.iff in Resources */,
-				A69AE5122B85031400EBA43D /* tiles.iff in Resources */,
+				A69AE5122B85031400EBA43D /* tiles1.iff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
