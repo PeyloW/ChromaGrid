@@ -381,8 +381,7 @@ inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
 }
 
 static inline int tileset_at(int x, int y) {
-    int i = x * 593 ^ y * 1249;
-    return i % 3;
+    return brand(x + y * 12) % 3;
 }
 
 inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &assets, const tilestate_t &state, int x, int y) {
