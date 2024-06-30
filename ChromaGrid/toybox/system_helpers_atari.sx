@@ -43,17 +43,25 @@ image_line_words:       ds.w    1
     .even
 _g_vbl_interupt:
     movem.l d0-d2/a0-a2,-(sp)
+    ori.w    #0x0700,sr
     move.l  _g_active_image,d0
     beq.s   .no_active_image
     move.l  d0,a0
     move.l  image_bitmap(a0),d0   ||| MUST MATCH image_c::_bitmap offset!!!
-    move.l  d0,0x044e.w           ||| Do not let TOS overrwite.
-    move.b  d0,d1
-    lsr.w #8,d0
-    move.l  d0,0xffff8204.w
-    move.b  d1,0xffff8209.w
+|   move.l  d0,0x044e.w           ||| Do not let TOS overrwite.
+    move.l  d0,d2
+    move.w  d0,d1
+    lsr.l   #8,d1
+    swap    d2
+    move.b  d2,0xffff8201.w
+    move.b  d1,0xffff8203.w
+    move.b  d0,0xffff820d.w
+    move.b  d2,0xffff8205.w
+    move.b  d1,0xffff8207.w
+    move.b  d0,0xffff8209.w
 .no_active_image:
     add.l   #1,_g_vbl_tick
+    move.w    #0x2400,sr
     lea     _g_vbl_functions, a2
 .next_func_v:
     move.l  timer_func_next(a2),d0
@@ -74,6 +82,7 @@ _g_system_vbl_freq:
     bra.s   .next_func_v
 .no_more_funcs_v:
     movem.l (sp)+,d0-d2/a0-a2
+    rte
     .dc.w    0x4ef9         | jmp $xxxxxxxx.l
 _g_system_vbl_interupt:
     .dc.l    0x0

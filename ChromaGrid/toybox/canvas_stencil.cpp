@@ -67,37 +67,38 @@ static uint8_t circle_16x16[16][16] = {
 
 static void make_dither_mask(canvas_c::stencil_t stencil, const uint8_t mask_8x8[8][8], int shade) {
     for (int y = 8; --y != -1; ) {
-        stencil[y] = 0;
+        uint16_t row = 0;
         for (int x = 8; --x != -1; ) {
             if (mask_8x8[x][y] < shade) {
-                stencil[y] |= (0x101 << x);
+                row |= (0x101 << x);
             }
         }
-    }
-    for (int y = 8; --y != -1; ) {
-        stencil[y + 8] = stencil[y];
+        stencil[y] = row;
+        stencil[y + 8] = row;
     }
 }
 
 void make_dither_mask(canvas_c::stencil_t stencil, const uint8_t mask_16x16[16][16], int shade) {
     for (int y = 16; --y != -1; ) {
-        stencil[y] = 0;
+        uint16_t row = 0;
         for (int x = 16; --x != -1; ) {
             if (mask_16x16[x][y] < shade) {
-                stencil[y] |= (0x1 << x);
+                row |= (0x1 << x);
             }
         }
+        stencil[y] = row;
     }
 }
 
 void make_dither_mask(canvas_c::stencil_t stencil, int (*func)(int), int shade) {
     for (int y = 16; --y != -1; ) {
-        stencil[y] = 0;
+        uint16_t row = 0;
         for (int x = 16; --x != -1; ) {
             if (func(x + y * 16) < shade) {
-                stencil[y] |= (0x1 << x);
+                row |= (0x1 << x);
             }
         }
+        stencil[y] = row;
     }
 }
 
