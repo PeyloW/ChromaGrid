@@ -15,6 +15,10 @@
 
 using namespace toybox;
 
+extern "C" {
+    const palette_c *g_active_palette = nullptr;
+    const image_c *g_active_image = nullptr;
+}
 
 machine_c &machine_c::shared() {
     static machine_c s_machine;
@@ -30,6 +34,9 @@ machine_c::machine_c() {
     Setscreen((void *)-1, (void *)-1, 0);
     _old_modes[2] = *((uint8_t*)0x484);
     *((uint8_t*)0x484) = 0;
+    g_active_palette = new palette_c((uint16_t*)0xffff8240);
+#else
+    g_active_palette = new palette_c();
 #endif
 }
 
@@ -106,11 +113,6 @@ uint32_t machine_c::get_cookie(uint32_t cookie, uint32_t def_value) const {
 #else
     return def_value;
 #endif
-}
-
-extern "C" {
-    const palette_c *g_active_palette = nullptr;
-    const image_c *g_active_image = nullptr;
 }
 
 const image_c *machine_c::active_image() const {

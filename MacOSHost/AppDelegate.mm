@@ -89,8 +89,10 @@ static void _yieldFunction() {
             asset_manager_c::set_shared(new cgasset_manager());
             scene_manager_c manager(size_s(320, 208));
             auto intro_scene = new cgintro_scene_c(manager);
-            manager.run(intro_scene, nullptr, transition_c::create(canvas_c::noise));
-        }
+            auto color = machine_c::shared().active_palette()->colors[0];
+            auto transition = transition_c::create(color);
+            manager.run(intro_scene, nullptr, transition);
+        }        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSApp terminate:nil];
         });

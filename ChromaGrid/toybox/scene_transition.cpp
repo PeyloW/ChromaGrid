@@ -36,7 +36,14 @@ namespace toybox {
             }
             auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
             phys_screen.canvas().with_stencil(canvas_c::stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
-                phys_screen.canvas().draw_aligned(log_screen.image(), point_s());
+                const size_s ts(128, 112);
+                for (int y = 0; y < 208; y += ts.height) {
+                    for (int x = 0; x < 320; x += ts.width) {
+                        point_s at(x, y);
+                        rect_s rect(at, ts);
+                        phys_screen.canvas().draw_aligned(log_screen.image(), rect, at);
+                    }
+                }
             });
             if (shade == canvas_c::STENCIL_FULLY_OPAQUE) {
                 _transition_state.full_restores_left--;
@@ -100,10 +107,10 @@ public:
         }
     }
     virtual void will_begin(const scene_c *from, const scene_c *to) {
-        assert(from && to);
+        assert(to);
         uint8_t r, g, b;
         _through.get(&r, &g, &b);
-        const palette_c &from_palette = from->configuration().palette;
+        const palette_c &from_palette = from ? from->configuration().palette : *machine_c::shared().active_palette();
         const palette_c &to_palette = to->configuration().palette;
         _to_palette = &to_palette;
         for (int i = 0; i <= 16; i++) {

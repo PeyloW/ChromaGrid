@@ -60,7 +60,7 @@ void cgintro_scene_c::update_preload(int loaded, int count) {
 : __DATE__ [2] == 'v' ? 11 \
 : 12)
 
-#define CG_DAY ( (__DATE__[4] - '0') * 10 + __DATE__[5] - '0' )
+#define CG_DAY ( (__DATE__[4] == ' ' ? 0 : (__DATE__[4] - '0') * 10) + __DATE__[5] - '0' )
 
 void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
     auto &canvas = clear_screen.canvas();
