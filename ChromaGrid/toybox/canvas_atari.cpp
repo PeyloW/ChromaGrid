@@ -134,25 +134,20 @@ void canvas_c::imp_draw_aligned(const image_c &srcImage, const rect_s &rect, poi
     
     // Operation flags
     if (_stencil) {
-        set_active_stencil(blitter, _stencil);
-        blitter->HOP = blitter_s::hop_e::halftone;
-        blitter->LOP = blitter_s::lop_e::notsrc_and_dst;
-        blitter->mode = at.y & 0xf;
-        blitter->start();
-
-        blitter->pSrc = srcImage._bitmap + src_word_offset * 4l;
-        blitter->pDst = _image._bitmap + dst_word_offset * 4l;
-        blitter->countX  = (copy_words) * 4;
-        blitter->countY = rect.size.height;
-
-        blitter->HOP = blitter_s::hop_e::src_and_halftone;
-        blitter->LOP = blitter_s::lop_e::src_or_dst;
+        const bool hog = blitter->countX <= 8;
+        const auto countY = blitter->countY;
+        blitter->HOP = blitter_s::hop_e::src;
+        blitter->LOP = blitter_s::lop_e::src;
+        for (int y = 0; y < countY; y++) {
+            blitter->countY = 1;
+            blitter->endMask[0] = blitter->endMask[1] = blitter->endMask[2] = ((uint16_t *)_stencil)[y & 0xf];
+            blitter->start(hog);
+        }
     } else {
         blitter->HOP = blitter_s::hop_e::src;
         blitter->LOP = blitter_s::lop_e::src;
+        blitter->start();
     }
-    
-    blitter->start();
 }
 
 void canvas_c::imp_draw(const image_c &srcImage, const rect_s &rect, point_s at) const {

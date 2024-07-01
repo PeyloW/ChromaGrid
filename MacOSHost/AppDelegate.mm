@@ -92,7 +92,7 @@ static void _yieldFunction() {
             auto color = machine_c::shared().active_palette()->colors[0];
             auto transition = transition_c::create(color);
             manager.run(intro_scene, nullptr, transition);
-        }        }
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSApp terminate:nil];
         });

@@ -36,7 +36,7 @@ namespace toybox {
             }
             auto shade = MIN(canvas_c::STENCIL_FULLY_OPAQUE, _transition_state.shade);
             phys_screen.canvas().with_stencil(canvas_c::stencil(_transition_state.type, shade), [this, &phys_screen, &log_screen] {
-                const size_s ts(128, 112);
+                const size_s ts(320, 208);
                 for (int y = 0; y < 208; y += ts.height) {
                     for (int x = 0; x < 320; x += ts.width) {
                         point_s at(x, y);
