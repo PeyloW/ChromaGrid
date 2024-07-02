@@ -1,6 +1,6 @@
 # Chroma Grid
 
-An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
+An Atari ST<sup>E</sup> game by T.O.Y.S. released at Sommarhack 2024.
 
 Chroma Grid is a historical preservation project dedicated to preserving a significant piece of digital heritage. By bringing an unfinished game from 1994 to life, this project serves as both a study and an educational resource on development for the Atari ST. 
 
