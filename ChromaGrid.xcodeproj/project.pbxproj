@@ -31,7 +31,6 @@
 		A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4BB2B6EBC4E00EBA43D /* Makefile */; };
 		A69AE4C22B6EBFCA00EBA43D /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4C02B6EBFCA00EBA43D /* game.cpp */; };
 		A69AE4DD2B70693500EBA43D /* backgrnd.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4DC2B70693500EBA43D /* backgrnd.iff */; };
-		A69AE4E62B72857F00EBA43D /* test.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E42B72851700EBA43D /* test.iff */; };
 		A69AE4E92B77FED300EBA43D /* cursor.iff in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4E82B77FED300EBA43D /* cursor.iff */; };
 		A69AE5062B82B1E300EBA43D /* music.snd in Resources */ = {isa = PBXBuildFile; fileRef = A69AE5052B82B1E300EBA43D /* music.snd */; };
 		A69AE50C2B82CDB500EBA43D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50B2B82CDB500EBA43D /* README.md */; };
@@ -203,7 +202,6 @@
 		A69AE4CA2B6FEFE500EBA43D /* palette.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = palette.hpp; sourceTree = "<group>"; };
 		A69AE4D82B7062AC00EBA43D /* cpp_runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpp_runtime.cpp; sourceTree = "<group>"; };
 		A69AE4DC2B70693500EBA43D /* backgrnd.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = backgrnd.iff; sourceTree = "<group>"; };
-		A69AE4E42B72851700EBA43D /* test.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.iff; sourceTree = "<group>"; };
 		A69AE4E82B77FED300EBA43D /* cursor.iff */ = {isa = PBXFileReference; lastKnownFileType = file; path = cursor.iff; sourceTree = "<group>"; };
 		A69AE4EC2B791FF100EBA43D /* system_helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = system_helpers.hpp; sourceTree = "<group>"; };
 		A69AE4EF2B79202A00EBA43D /* system_helpers_atari.sx */ = {isa = PBXFileReference; lastKnownFileType = text; path = system_helpers_atari.sx; sourceTree = "<group>"; };
@@ -406,7 +404,6 @@
 				A6A0EEA32BCF339B005B6ED3 /* levels4.dat */,
 				A62520402C01540500B3635F /* intro.iff */,
 				A69AE4DC2B70693500EBA43D /* backgrnd.iff */,
-				A69AE4E42B72851700EBA43D /* test.iff */,
 				A69AE52D2B8D76FA00EBA43D /* button.iff */,
 				A69AE4E82B77FED300EBA43D /* cursor.iff */,
 				A69AE5192B8AA0EE00EBA43D /* font.iff */,
@@ -727,7 +724,6 @@
 				A6D012F12BBCE71800D260C2 /* emptyt.iff in Resources */,
 				A625203A2BFEE21200B3635F /* tiles3.iff in Resources */,
 				A6E484D12BA1ED02004CCA7D /* drop.aif in Resources */,
-				A69AE4E62B72857F00EBA43D /* test.iff in Resources */,
 				A625203C2BFEE23700B3635F /* menu.txt in Resources */,
 				A6E484CF2BA1ED02004CCA7D /* tock.aif in Resources */,
 				A6E484CE2BA1ED02004CCA7D /* break.aif in Resources */,
