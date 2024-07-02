@@ -2,13 +2,19 @@
 
 An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 
+Chroma Grid is a historical preservation project dedicated to preserving a significant piece of digital heritage. By bringing an unfinished game from 1994 to life, this project serves as both a study and an educational resource on development for the Atari ST. 
+
+The Atari ST family of computers was a pioneer in the 16-bit era and played a crucial role in the advent of home computing. Preserving and understanding the capabilities and workings of this technology is essential for comprehending the evolution of computer technology up to the present day, and where it may take us in the future.
+
+
 ## Credits
 
-* Main Code: _Fredrik 'PeyloW' Olsson_
+* Code: _Fredrik 'PeyloW' Olsson_
 * Music: _Joakim 'AiO' Ekblad_
 * Graphics: Hervé 'Exocet' Piton
 * Font: _Damien Guard_
 * Concept: Peter 'Eagle' Nyman
+
 
 ### Project Requirement
 
@@ -21,6 +27,7 @@ An Atari STe game by T.O.Y.S. to be release at Sommarhack 2024.
 * Hatari 1.0 as reference for host blitter emulation (https://github.com/hatari/hatari)
 * Royalty free sound effects from ZapSplat (https://www.zapsplat.com/)
 * Blitter and audio setup code inspired by GODLib (https://github.com/ReservoirGods/GODLIB).
+
 
 ### The Code
 
@@ -50,6 +57,7 @@ Types uses suffix, variables does not:
     * Classes **must** support move semantics.
     * **Never** assume copy semantics are available.
         * Most classes explicitly forbig copy semntions by use of `nocopy_c` subclassing.
+
 
 #### Known libcmini limitations
 
