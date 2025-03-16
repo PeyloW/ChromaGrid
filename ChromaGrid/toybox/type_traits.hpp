@@ -105,6 +105,23 @@ namespace toybox {
     template<typename T>
     struct struct_layout;
     
+    template<>
+    struct struct_layout<int16_t> {
+        static constexpr const char * value = "1w";
+    };
+    template<>
+    struct struct_layout<uint16_t> {
+        static constexpr const char * value = "1w";
+    };
+    template<>
+    struct struct_layout<int32_t> {
+        static constexpr const char * value = "1l";
+    };
+    template<>
+    struct struct_layout<uint32_t> {
+        static constexpr const char * value = "1l";
+    };
+
 }
 
 #endif /* type_traits_h */

@@ -70,6 +70,16 @@ namespace toybox {
         return (!(found == last) && !(value < *found));
     }
 
+    template<typename FI, typename P>
+    FI find_if(FI first, FI last, P pred) {
+        for (; first != last; ++first) {
+            if (p(*first)) {
+                return first;
+            }
+        }
+        return last;
+    }
+    
     template<typename I>
     void sort(I first, I last) {
         for (auto i = first; i != last; i++) {

@@ -79,7 +79,7 @@ static_assert(sizeof(ilbm_header_s) == 20, "Heade size mismatch");
 namespace toybox {
     template<>
     struct struct_layout<ilbm_header_s> {
-        static constexpr char * value = "4w4b1w2b2w";
+        static constexpr const char * value = "4w4b1w2b2w";
     };
 }
 

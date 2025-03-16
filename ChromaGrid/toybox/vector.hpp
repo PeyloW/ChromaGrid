@@ -67,23 +67,25 @@ namespace toybox {
             assert(_size < Count);
             *_data[_size++].ptr() = value;
         }
-        inline void insert(const_iterator pos, const_reference value) {
+        inline iterator insert(const_iterator pos, const_reference value) {
             assert(_size < Count && pos >= begin() && pos <= end());
             move_backward(pos, end(), end() + 1);
             *pos = value;
             _size++;
+            return ++pos;
         }
         template<class... Args>
-        inline void emplace_back(Args&&... args) {
+        inline reference emplace_back(Args&&... args) {
             assert(_size < Count);
-            new (_data[_size++].addr()) Type(forward<Args>(args)...);
+            return *new (_data[_size++].addr()) Type(forward<Args>(args)...);
         }
         template<class... Args>
-        inline void emplace(Type *pos, Args&&... args) {
+        inline iterator emplace(Type *pos, Args&&... args) {
             assert(_size < Count && pos >= begin() && pos <= end());
             move_backward(pos, end(), end() + 1);
             new ((void *)pos) Type(forward<Args>(args)...);
             _size++;
+            return ++pos;
         }
         
         inline void erase(const_iterator pos) {
@@ -91,6 +93,7 @@ namespace toybox {
             destroy_at(pos);
             move(pos + 1, this->end(), pos);
             _size--;
+            return iterator(pos);
         }
         inline void clear() {
             while (_size) {

@@ -86,15 +86,15 @@ timer_c &timer_c::shared(timer_e timer) {
 
 
 
-void timer_c::add_func(func_t func, uint8_t freq) {
+void timer_c::add_func(const func_t func, uint8_t freq) {
     add_func((func_a_t)func, nullptr, freq);
 }
 
-void timer_c::remove_func(func_t func) {
+void timer_c::remove_func(const func_t func) {
     remove_func((func_a_t)func, nullptr);
 }
 
-void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
+void timer_c::add_func(const func_a_t func, void *context, uint8_t freq) {
     if (freq == 0) {
         freq = base_freq();
     }
@@ -104,16 +104,21 @@ void timer_c::add_func(func_a_t func, void *context, uint8_t freq) {
     });
 }
 
-void timer_c::remove_func(func_a_t func, void *context) {
+void timer_c::remove_func(const func_a_t func, const void *context) {
     with_paused_timers([this, func, context] {
         auto &functions = _timer == vbl ? g_vbl_functions : g_clock_functions;
-        auto it = functions.before_begin();
-        while (it._node->next) {
-            if (it._node->next->value.func == func && it._node->next->value.context == context) {
-                functions.erase_after(it);
+        auto prev = functions.before_begin();
+        auto curr = functions.begin();
+        auto pred = [&func, &context](const timer_func_s &f) __forceinline {
+            return f.func == func && f.context == context;
+        };
+        while (curr != functions.end()) {
+            if (pred(*curr)) {
+                functions.erase_after(prev);
                 return;
             }
-            it++;
+            prev = curr;
+            ++curr;
         }
         assert(0);
     });

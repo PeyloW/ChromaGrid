@@ -41,7 +41,7 @@ static_assert(sizeof(aiff_common_s) == 18, "aiff_common_t size mismatch");
 namespace toybox {
     template<>
     struct struct_layout<aiff_common_s> {
-        static constexpr char *value = "1w1l6w";
+        static constexpr const char *value = "1w1l6w";
     };
 }
 
@@ -54,7 +54,7 @@ static_assert(sizeof(aiff_ssnd_data_s) == 8, "ssnd_data_t size mismatch");
 namespace toybox {
     template<>
     struct struct_layout<aiff_ssnd_data_s> {
-        static constexpr char *value = "2l";
+        static constexpr const char *value = "2l";
     };
 }
 

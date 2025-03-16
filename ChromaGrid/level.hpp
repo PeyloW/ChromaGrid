@@ -55,7 +55,7 @@ static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
 namespace toybox {
     template<>
     struct struct_layout<tilestate_t> {
-        static constexpr char *value = "4b";
+        static constexpr const char *value = "4b";
     };
 }
 
@@ -81,7 +81,7 @@ static_assert(__offsetof(level_recipe_t, tiles) == 16, "offset of level_recipe_t
 namespace toybox {
     template<>
     struct struct_layout<level_recipe_t::header_t> {
-        static constexpr char *value = "4b1w";
+        static constexpr const char *value = "4b1w";
     };
 }
     
@@ -104,7 +104,7 @@ static_assert(sizeof(level_result_t) == 10, "level_result_t size mismatch");
 namespace toybox {
     template<>
     struct struct_layout<level_result_t> {
-        static constexpr char *value = "1w2b3w";
+        static constexpr const char *value = "1w2b3w";
     };
 }
 

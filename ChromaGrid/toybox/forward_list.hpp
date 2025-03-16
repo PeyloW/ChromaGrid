@@ -15,7 +15,7 @@ namespace toybox {
     
     /**
      `forward_list_c` is a minimal implementation of `std::forward_list` with a
-     statically allocated backiong store, for performance reasons.
+     statically allocated backing store, for performance reasons.
      TODO: Treat Count of 0 as a dynamic list.
      */
     template<class Type, size_t Count = 16>
@@ -47,15 +47,15 @@ namespace toybox {
             typedef value_type* pointer;
             typedef value_type& reference;
             
-            reference operator*() const { return _node->value; }
-            pointer operator->() const { return &_node->value; }
-            _iterator_s operator++() { _node = _node->next; return *this; }
-            _iterator_s operator++(int) { auto &tmp = *this; _node = _node->next; return tmp; }
-            bool operator==(const _iterator_s& o) const { return _node == o._node; }
-            bool operator!=(const _iterator_s& o) const { return _node != o._node; }
-            _iterator_s(_node_s *node) : _node(node) {}
+            __forceinline reference operator*() const { return _node->value; }
+            __forceinline pointer operator->() const { return &_node->value; }
+            __forceinline _iterator_s operator++() { _node = _node->next; return *this; }
+            __forceinline _iterator_s operator++(int) { auto &tmp = *this; _node = _node->next; return tmp; }
+            __forceinline bool operator==(const _iterator_s& o) const { return _node == o._node; }
+            __forceinline bool operator!=(const _iterator_s& o) const { return _node != o._node; }
+            __forceinline _iterator_s(_node_s *node) : _node(node) {}
             template<typename = enable_if<!is_same<Type, TypeI>::value>>
-            _iterator_s(const _iterator_s<Type> &other) : _node(other._node) {}
+            __forceinline _iterator_s(const _iterator_s<Type> &other) : _node(other._node) {}
             _node_s *_node;
         };
         typedef _iterator_s<Type> iterator;
@@ -64,7 +64,7 @@ namespace toybox {
         forward_list_c() { _head = nullptr; }
         ~forward_list_c() { clear(); }
         
-        bool empty() const __pure { return _head == nullptr; }
+        inline bool empty() const __pure { return _head == nullptr; }
         void clear() {
             auto it = before_begin();
             while (it._node->next) {
@@ -72,46 +72,49 @@ namespace toybox {
             }
         }
         
-        reference front() __pure { return _head->value; }
-        const_reference front() const __pure { return _head->value; }
+        inline reference front() __pure { return _head->value; }
+        inline const_reference front() const __pure { return _head->value; }
         
-        iterator before_begin() __pure {
+        inline iterator before_begin() __pure {
             auto before_head = const_cast<_node_s**>(&_head);
             return iterator(reinterpret_cast<_node_s*>(before_head));
         }
-        const_iterator before_begin() const __pure {
+        inline const_iterator before_begin() const __pure {
             auto before_head = const_cast<_node_s**>(&_head);
             return const_iterator(reinterpret_cast<_node_s*>(before_head));
         }
-        iterator begin() __pure { return iterator(_head); }
-        const_iterator begin() const __pure { return const_iterator(_head); }
-        iterator end() __pure { return iterator(nullptr); }
-        const_iterator end() const __pure { return const_iterator(nullptr); }
-        
-        void push_front(const_reference value) {
+        inline iterator begin() __pure { return iterator(_head); }
+        inline const_iterator begin() const __pure { return const_iterator(_head); }
+        inline iterator end() __pure { return iterator(nullptr); }
+        inline const_iterator end() const __pure { return const_iterator(nullptr); }
+    
+        inline void push_front(const_reference value) {
             insert_after(before_begin(), value);
         }
         template<class ...Args>
-        void emplace_front(Args&& ...args) {
-            emplace_after(before_begin(), forward<Args>(args)...);
+        inline reference emplace_front(Args&& ...args) {
+            return *emplace_after(before_begin(), forward<Args>(args)...);
         }
-        void insert_after(const_iterator pos, const_reference value) {
+        inline iterator insert_after(const_iterator pos, const_reference value) {
             assert(owns_node(pos._node));
             pos._node->next = new _node_s{pos._node->next, value};
+            return iterator(pos._node->next);
         }
         template<class ...Args>
-        void emplace_after(const_iterator pos, Args&& ...args) {
+        inline iterator emplace_after(iterator pos, Args&& ...args) {
             assert(owns_node(pos._node));
             pos._node->next = new _node_s(pos._node->next, forward<Args>(args)...);
+            return iterator(pos._node->next);
         }
-        void pop_front() {
+        inline void pop_front() {
             erase_after(before_begin());
         }
-        void erase_after(const_iterator pos) {
+        inline iterator erase_after(const_iterator pos) {
             assert(owns_node(pos._node));
             auto tmp = pos._node->next;
             pos._node->next = tmp->next;
             delete tmp;
+            return iterator(pos._node->next);
         }
         void splice_after(const_iterator pos, forward_list_c &other, const_iterator it) {
             assert(owns_node(pos._node));
