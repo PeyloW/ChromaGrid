@@ -256,7 +256,7 @@ static void image_write(iffstream_c &file, uint16_t line_words, uint16_t next_li
                 }
             }
         }
-        file.write(word_buffer, line_words * bp_count);
+        file.write(word_buffer);
         
         bitmap += next_line_words * 4;
         if (maskmap) {

@@ -9,6 +9,7 @@
 #define iffstream_hpp
 
 #include "stream.hpp"
+#include "utility.hpp"
 
 namespace toybox {
 
@@ -101,13 +102,29 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
         
         using stream_c::read;
         virtual size_t read(uint8_t *buf, size_t count = 1);
-        virtual size_t read(uint16_t *buf, size_t count = 1);
-        virtual size_t read(uint32_t *buf, size_t count = 1);
         
         using stream_c::write;
         virtual size_t write(const uint8_t *buf, size_t count = 1);
-        virtual size_t write(const uint16_t *buf, size_t count = 1);
-        virtual size_t write(const uint32_t *buf, size_t count = 1);
+
+        
+#ifndef __M68000__
+        template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
+        size_t read(T *buf, size_t count = 1) {
+            auto result = read((uint8_t*)buf, count * sizeof(T));
+            if (result) {
+                hton(buf, count);
+            }
+            return  result;
+        }
+ 
+        template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
+        size_t write(const T *buf, size_t count = 1) {
+            T tmp[count];
+            memcpy(tmp, buf, count * sizeof(T));
+            hton(&tmp[0], count);
+            return write((const uint8_t*)&tmp, count * sizeof(T));
+        }
+#endif
 
     private:
         bool read(iff_group_s &group);

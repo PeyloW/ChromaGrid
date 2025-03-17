@@ -28,11 +28,22 @@ namespace toybox {
     template<class Type, typename enable_if<sizeof(Type) == 4 && is_arithmetic<Type>::value, bool>::type = true>
     static void inline hton(Type &value) { value = htonl(value); }
     
+    void hton_struct(void *ptr, const char *layout);
+    template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
+    static void inline hton(T &value) {
+        hton_struct(&value, struct_layout<T>::value);
+    }
+
+    template<class Type>
+    static void inline hton(Type *buf, size_t count) {
+        while (count--) {
+            hton(*buf);
+            buf++;
+        }
+    }
     template<class Type, size_t Count>
     static void inline hton(Type (&array)[Count]) {
-        for (auto &value : array) {
-            hton(&value);
-        }
+        hton(&array[0], Count);
     }
 #endif
     

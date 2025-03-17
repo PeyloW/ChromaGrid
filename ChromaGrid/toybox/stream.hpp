@@ -38,24 +38,12 @@ namespace toybox {
         virtual bool flush();
 
         virtual size_t read(uint8_t *buf, size_t count = 1) = 0;
-        virtual size_t read(uint16_t *buf, size_t count = 1);
-        virtual size_t read(uint32_t *buf, size_t count = 1);
-        virtual bool read(void *buf, const char *layout);
-        template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
-        bool read(T *buf) { return read((void *)buf, struct_layout<T>::value); };
-        __forceinline size_t read(int8_t *buf, size_t count = 1) { return read((uint8_t*)buf, count); };
-        __forceinline size_t read(int16_t *buf, size_t count = 1) { return read((uint16_t*)buf, count); };
-        __forceinline size_t read(int32_t *buf, size_t count = 1) { return read((uint32_t*)buf, count); };
-
         virtual size_t write(const uint8_t *buf, size_t count = 1) = 0;
-        virtual size_t write(const uint16_t *buf, size_t count = 1);
-        virtual size_t write(const uint32_t *buf, size_t count = 1);
-        virtual bool write(const void *buf, const char *layout);
-        template<typename T, typename enable_if<is_class<T>::value, bool>::type = true>
-        bool write(const T *buf) { return write((void *)buf, struct_layout<T>::value); };
-        __forceinline size_t write(const int8_t *buf, size_t count = 1) { return write((uint8_t*)buf, count); };
-        __forceinline size_t write(const int16_t *buf, size_t count = 1) { return write((uint16_t*)buf, count); };
-        __forceinline size_t write(const int32_t *buf, size_t count = 1) { return write((uint32_t*)buf, count); };
+
+        template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
+        inline size_t read(T *buf, size_t count = 1) { return read((uint8_t*)buf, count * sizeof(T)); }
+        template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
+        inline size_t write(const T *buf, size_t count = 1) { return write((const uint8_t*)buf, count * sizeof(T)); }
         
         int width() const { return _width; }
         int width(int w) { int t = _width; _width = w; return t; }

@@ -17,11 +17,7 @@ iffstream_c::iffstream_c(stream_c *stream) :
 }
 
 iffstream_c::iffstream_c(const char *path, fstream_c::openmode_e mode) :
-#ifdef __M68000__
     stream_c(), _stream(new fstream_c(path, mode))
-#else
-stream_c(), _stream(new swapstream_c(new fstream_c(path, mode)))
-#endif
 {}
 
 void iffstream_c::set_assert_on_error(bool assert) {
@@ -162,9 +158,5 @@ bool iffstream_c::read(iff_chunk_s &chunk) {
 }
 
 size_t iffstream_c::read(uint8_t *buf, size_t count) { return _stream->read(buf, count); }
-size_t iffstream_c::read(uint16_t *buf, size_t count) { return _stream->read(buf, count); }
-size_t iffstream_c::read(uint32_t *buf, size_t count) { return _stream->read(buf, count); }
 
 size_t iffstream_c::write(const uint8_t *buf, size_t count) { return _stream->write(buf, count); };
-size_t iffstream_c::write(const uint16_t *buf, size_t count) { return _stream->write(buf, count); };
-size_t iffstream_c::write(const uint32_t *buf, size_t count) { return _stream->write(buf, count); };

@@ -8,6 +8,8 @@
 #ifndef type_traits_h
 #define type_traits_h
 
+#include "cincludes.hpp"
+
 extern void* operator new (size_t count, void *p) noexcept;
 
 namespace toybox {
@@ -80,6 +82,9 @@ namespace toybox {
     
     template<class T, class U> struct is_same : false_type {};
     template<class T> struct is_same<T, T> : true_type {};
+    
+    template<class T>
+    struct is_void : is_same<void, typename remove_const<T>::type> {};
     
     template<class T>
     struct is_class : bool_constant<__is_class(T)> {};

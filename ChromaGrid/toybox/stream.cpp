@@ -19,73 +19,13 @@ void stream_c::set_assert_on_error(bool assert) {
 bool stream_c::good() const { return true; };
 bool stream_c::flush() { return true; }
 
-static bool read_or_write_struct(stream_c &stream, void *buf, const char *layout, const bool write) {
-    while (*layout) {
-        char *end = nullptr;
-        int cnt = (int)strtol(layout, &end, 0);
-        if (end == layout) cnt = 1;
-        layout = end;
-        switch (*layout++) {
-            case 'b':
-                if (!(write ? stream.write((uint8_t*)buf, cnt) : stream.read((uint8_t*)buf, cnt))) {
-                    return false;
-                }
-                buf = ((uint8_t*)buf + cnt);
-                break;
-            case 'w':
-                if (!(write ? stream.write((uint16_t*)buf, cnt) : stream.read((uint16_t*)buf, cnt))) {
-                    return false;
-                }
-                buf = ((uint16_t*)buf + cnt);
-                break;
-            case 'l':
-                if (!(write ? stream.write((uint32_t*)buf, cnt) : stream.read((uint32_t*)buf, cnt))) {
-                    return false;
-                }
-                buf = ((uint32_t*)buf + cnt);
-                break;
-            default:
-                return false;
-        }
-    }
-    return true;
-}
-
-size_t stream_c::read(uint16_t *buf, size_t count) {
-    return read((uint8_t*)buf, count * 2);
-};
-size_t stream_c::read(uint32_t *buf, size_t count) {
-    return read((uint8_t*)buf, count * 4);
-};
-bool stream_c::read(void *buf, const char * layout) {
-    bool r = read_or_write_struct(*this, buf, layout, false);
-    if (_assert_on_error) {
-        hard_assert(r);
-    }
-    return r;
-}
-
-size_t stream_c::write(const uint16_t *buf, size_t count) {
-    return write((uint8_t*)buf, count * 2) / 2;
-};
-size_t stream_c::write(const uint32_t *buf, size_t count) {
-    return write((uint8_t*)buf, count * 4) / 4;
-};
-bool stream_c::write(const void *buf, const char * layout) {
-    bool r = read_or_write_struct(*this, (void *)buf, layout, true);
-    if (_assert_on_error) {
-        hard_assert(r);
-    }
-    return r;
-}
-
 stream_c &stream_c::operator<<(manipulator_f m) {
     return m(*this);
 }
 
 stream_c &stream_c::operator<<(const char *str) {
     auto len = strlen(str);
-    write((const int8_t *)str, len);
+    write((const uint8_t *)str, len);
     return *this;
 }
 
