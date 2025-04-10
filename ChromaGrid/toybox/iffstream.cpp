@@ -127,7 +127,7 @@ bool iffstream_c::end(iff_chunk_s &chunk) {
     bool result = false;
     long pos = tell();
     if (pos >= 0) {
-        uint32_t size = (uint32_t)(pos - (chunk.offset + 8));
+        uint32_t size = static_cast<uint32_t>(pos - (chunk.offset + 8));
         chunk.size = size;
         if (seek(chunk.offset + 4, beg) >= 0) {
             if (write(&size)) {

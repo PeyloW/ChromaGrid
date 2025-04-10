@@ -19,16 +19,16 @@ void toybox::hton_struct(void *ptr, const char *layout) {
         layout = end;
         switch (*layout++) {
             case 'b':
-                ptr = ((uint8_t*)ptr + cnt);
+                ptr = static_cast<uint8_t*>(ptr) + cnt;
                 break;
             case 'w': {
-                auto *buf = (uint16_t *)ptr;
+                auto *buf = static_cast<uint16_t *>(ptr);
                 hton(buf, cnt);
                 ptr = buf + cnt;
                 break;
             }
             case 'l': {
-                auto *buf = (uint32_t *)ptr;
+                auto *buf = static_cast<uint32_t *>(ptr);
                 hton(buf, cnt);
                 ptr = buf + cnt;
                 break;

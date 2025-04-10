@@ -25,23 +25,23 @@ stream_c &stream_c::operator<<(manipulator_f m) {
 
 stream_c &stream_c::operator<<(const char *str) {
     auto len = strlen(str);
-    write((const uint8_t *)str, len);
+    write(reinterpret_cast<const uint8_t *>(str), len);
     return *this;
 }
 
 stream_c &stream_c::operator<<(const char c) {
-    write((uint8_t*)&c, 1);
+    write(reinterpret_cast<const uint8_t*>(&c), 1);
     return *this;
 }
 stream_c &stream_c::operator<<(const unsigned char c) {
-    write((uint8_t*)&c, 1);
+    write(reinterpret_cast<const uint8_t*>(&c), 1);
     return *this;
 }
 stream_c &stream_c::operator<<(const int16_t i) {
-    return *this << (int32_t)i;
+    return *this << static_cast<int32_t>(i);
 }
 stream_c &stream_c::operator<<(const uint16_t i) {
-    return *this << (uint32_t)i;
+    return *this << static_cast<uint32_t>(i);
 }
 stream_c &stream_c::operator<<(const int32_t i) {
     char buf[12];
@@ -52,10 +52,10 @@ stream_c &stream_c::operator<<(const int32_t i) {
         if (fillc > 0) {
             char buf[fillc];
             for (int i = fillc; --i != -1; ) buf[i] = _fill;
-            write((uint8_t*)buf, fillc);
+            write(reinterpret_cast<uint8_t*>(buf), fillc);
         }
     }
-    return *this << (const char *)buf;
+    return *this << static_cast<const char *>(buf);
 }
 stream_c &stream_c::operator<<(const uint32_t i) {
     if (i > 0x7fffffff) {
@@ -72,7 +72,7 @@ stream_c &stream_c::operator<<(const uint32_t i) {
         }
         return *this;
     } else {
-        return *this << (int32_t)i;
+        return *this << static_cast<int32_t>(i);
     }
 }
 
@@ -92,7 +92,7 @@ static stream_c &s_endl(stream_c &s) {
 #endif
 }
 static stream_c &s_ends(stream_c &s) {
-    s.write((uint8_t *)"", 1);
+    s.write(reinterpret_cast<const uint8_t *>(""), 1);
     return s;
 }
 static stream_c &s_flush(stream_c &s) {
@@ -193,7 +193,7 @@ size_t fstream_c::write(const uint8_t *buf, size_t count) {
 }
 
 strstream_c::strstream_c(size_t len) :
-    _owned_buf((char *)_malloc(len)), _buf(_owned_buf.get()), _len(len), _pos(0), _max(0)
+    _owned_buf(static_cast<char *>(_malloc(len))), _buf(_owned_buf.get()), _len(len), _pos(0), _max(0)
 {}
 
 strstream_c::strstream_c(char *buf, size_t len) :
@@ -207,13 +207,13 @@ ptrdiff_t strstream_c::seek(ptrdiff_t pos, seekdir_e way) {
     assert(ABS(pos <= _len));
     switch (way) {
         case seekdir_e::beg:
-            _pos = (int)pos;
+            _pos = static_cast<int>(pos);
             break;
         case seekdir_e::cur:
             _pos += pos;
             break;
         case seekdir_e::end:
-            _pos = _max - (int)pos;
+            _pos = _max - static_cast<int>(pos);
             break;
     }
     if (_pos < 0 || _pos >= _len) {

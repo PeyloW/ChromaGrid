@@ -110,7 +110,7 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
 #ifndef __M68000__
         template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
         size_t read(T *buf, size_t count = 1) {
-            auto result = read((uint8_t*)buf, count * sizeof(T));
+            auto result = read(reinterpret_cast<uint8_t*>(buf), count * sizeof(T));
             if (result) {
                 hton(buf, count);
             }
@@ -122,7 +122,7 @@ static const iff_id_t IFF_ ## ID ## _ID = iff_id_make(IFF_ ## ID)
             T tmp[count];
             memcpy(tmp, buf, count * sizeof(T));
             hton(&tmp[0], count);
-            return write((const uint8_t*)&tmp, count * sizeof(T));
+            return write(reinterpret_cast<const uint8_t*>(&tmp), count * sizeof(T));
         }
 #endif
 

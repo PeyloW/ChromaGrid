@@ -101,10 +101,10 @@ namespace toybox {
     template<typename T>
     struct __attribute__((aligned(alignof(T)))) aligned_membuf {
         uint8_t data[sizeof(T)];
-        void *addr() __pure { return (void *)&data; }
-        const void *addr() const __pure { return (void *)&data; }
-        T *ptr() __pure { return (T *)&data; }
-        const T *ptr() const __pure { return (T *)&data; }
+        void *addr() __pure { return &data; }
+        const void *addr() const __pure { return &data; }
+        T *ptr() __pure { return reinterpret_cast<T *>(&data); }
+        const T *ptr() const __pure { return reinterpret_cast<const T *>(&data); }
     };
     
     template<typename T>

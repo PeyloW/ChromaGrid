@@ -41,9 +41,9 @@ namespace toybox {
         virtual size_t write(const uint8_t *buf, size_t count = 1) = 0;
 
         template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
-        inline size_t read(T *buf, size_t count = 1) { return read((uint8_t*)buf, count * sizeof(T)); }
+        inline size_t read(T *buf, size_t count = 1) { return read(reinterpret_cast<uint8_t*>(buf), count * sizeof(T)); }
         template<typename T, typename = typename enable_if<!is_same<T, uint8_t>::value>::type>
-        inline size_t write(const T *buf, size_t count = 1) { return write((const uint8_t*)buf, count * sizeof(T)); }
+        inline size_t write(const T *buf, size_t count = 1) { return write(reinterpret_cast<const uint8_t*>(buf), count * sizeof(T)); }
         
         int width() const { return _width; }
         int width(int w) { int t = _width; _width = w; return t; }

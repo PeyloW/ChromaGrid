@@ -30,7 +30,7 @@ public:
         _alloc_count++;
         _max_alloc_count = MAX(_max_alloc_count, _alloc_count);
 #endif
-        auto ptr = (T*)&first_block->data[0];
+        auto ptr = reinterpret_cast<T*>(&first_block->data[0]);
         first_block = first_block->next;
         return ptr;
     };
@@ -38,7 +38,7 @@ public:
 #ifndef __M68000__
         _alloc_count--;
 #endif
-        block_t *block = (block_t *)((void **)ptr - 1);
+        block_t *block = reinterpret_cast<block_t *>((void **)ptr - 1);
         block->next = first_block;
         first_block = block;
     }
@@ -56,7 +56,7 @@ private:
 #endif
     static block_t *first_block;
     static void init_blocks() {
-        first_block = (block_t *)_malloc(sizeof(block_t) * Count);
+        first_block = reinterpret_cast<block_t *>(_malloc(sizeof(block_t) * Count));
         for (int i = 0; i < Count - 1; i++) {
             first_block[i].next = &first_block[i + 1];
         }
