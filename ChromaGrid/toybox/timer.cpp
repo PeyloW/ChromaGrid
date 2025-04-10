@@ -6,7 +6,7 @@
 //
 
 #include "timer.hpp"
-#include "forward_list.hpp"
+#include "list.hpp"
 #include "system_helpers.hpp"
 
 using namespace toybox;
@@ -25,7 +25,7 @@ void *context;
 } timer_func_s;
 
 #define TIMER_FUNC_MAX_CNT 16
-typedef forward_list_c<timer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
+typedef list_c<timer_func_s, TIMER_FUNC_MAX_CNT> timer_func_list_c;
 #ifdef __M68000__
 static_assert(sizeof(timer_func_list_c::_node_s) == 14, "timer_func_list_c::_node_s) size mismatch");
 #endif

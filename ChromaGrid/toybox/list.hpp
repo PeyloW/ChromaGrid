@@ -1,12 +1,12 @@
 //
-//  forward_list.hpp
+//  list.hpp
 //  ChromaGrid
 //
 //  Created by Fredrik Olsson on 2024-03-24.
 //
 
-#ifndef forward_list_h
-#define forward_list_h
+#ifndef list_h
+#define list_h
 
 #include "static_allocator.hpp"
 #include "utility.hpp"
@@ -14,12 +14,12 @@
 namespace toybox {
     
     /**
-     `forward_list_c` is a minimal implementation of `std::forward_list` with a
+     `list_c` is a minimal implementation of `std::forward_list` with a
      statically allocated backing store, for performance reasons.
      TODO: Treat Count of 0 as a dynamic list.
      */
     template<class Type, size_t Count = 16>
-    class forward_list_c {
+    class list_c {
     public:
         typedef Type value_type;
         typedef value_type* pointer;
@@ -61,8 +61,8 @@ namespace toybox {
         typedef _iterator_s<Type> iterator;
         typedef _iterator_s<const Type> const_iterator;
         
-        forward_list_c() { _head = nullptr; }
-        ~forward_list_c() { clear(); }
+        list_c() { _head = nullptr; }
+        ~list_c() { clear(); }
         
         inline bool empty() const __pure { return _head == nullptr; }
         void clear() {
@@ -116,7 +116,7 @@ namespace toybox {
             delete tmp;
             return iterator(pos._node->next);
         }
-        void splice_after(const_iterator pos, forward_list_c &other, const_iterator it) {
+        void splice_after(const_iterator pos, list_c &other, const_iterator it) {
             assert(owns_node(pos._node));
             assert(other.owns_node(it._node));
             auto tmp = it._node->next;
@@ -139,4 +139,4 @@ namespace toybox {
     
 }
 
-#endif /* forward_list_h */
+#endif /* list_h */

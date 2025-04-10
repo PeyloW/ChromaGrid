@@ -50,7 +50,7 @@
 		A6A0EE402BC059A6005B6ED3 /* algorithm.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A66B7CF52BB3BC7F00374307 /* algorithm.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE412BC059A6005B6ED3 /* static_allocator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE422BC059A6005B6ED3 /* utility.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A6E484E02BAE6D49004CCA7D /* utility.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69612D72BB1BE9F008ACD05 /* forward_list.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6A0EE432BC059A6005B6ED3 /* list.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69612D72BB1BE9F008ACD05 /* list.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE442BC059DC005B6ED3 /* palette.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A69AE4CA2B6FEFE500EBA43D /* palette.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6A0EE462BC059DC005B6ED3 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A682A3E52B92459500FF2E57 /* scene.cpp */; };
 		A6A0EE482BC059DC005B6ED3 /* dirtymap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6E484DC2BA92889004CCA7D /* dirtymap.cpp */; };
@@ -182,7 +182,7 @@
 		A682A3E82B92613F00FF2E57 /* game_menu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_menu.cpp; sourceTree = "<group>"; };
 		A69612C12BAF9C06008ACD05 /* scene_transition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene_transition.cpp; sourceTree = "<group>"; };
 		A69612D62BB1BDFF008ACD05 /* static_allocator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = static_allocator.hpp; sourceTree = "<group>"; };
-		A69612D72BB1BE9F008ACD05 /* forward_list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = forward_list.hpp; sourceTree = "<group>"; };
+		A69612D72BB1BE9F008ACD05 /* list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = list.hpp; sourceTree = "<group>"; };
 		A69612D82BB26B86008ACD05 /* game_help.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game_help.cpp; sourceTree = "<group>"; };
 		A69816B52BF84DF800E4560B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		A69816BF2BFA453D00E4560B /* util_stream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = util_stream.hpp; sourceTree = "<group>"; };
@@ -546,7 +546,7 @@
 				A65E2DDD2D87826A00E118DB /* utility.cpp */,
 				A66B7CF52BB3BC7F00374307 /* algorithm.hpp */,
 				A6E484E12BAE6DB3004CCA7D /* vector.hpp */,
-				A69612D72BB1BE9F008ACD05 /* forward_list.hpp */,
+				A69612D72BB1BE9F008ACD05 /* list.hpp */,
 				A6A0EE962BCDAE0A005B6ED3 /* stream.hpp */,
 				A6A0EE952BCDAE0A005B6ED3 /* stream.cpp */,
 				A69816BF2BFA453D00E4560B /* util_stream.hpp */,
@@ -582,7 +582,7 @@
 				A6A0EEA62BCF4D5B005B6ED3 /* memory.hpp in Headers */,
 				A6A0EE9F2BCDC3DA005B6ED3 /* iffstream.hpp in Headers */,
 				A6A0EE552BC05A2A005B6ED3 /* blitter_atari.hpp in Headers */,
-				A6A0EE432BC059A6005B6ED3 /* forward_list.hpp in Headers */,
+				A6A0EE432BC059A6005B6ED3 /* list.hpp in Headers */,
 				A6A0EE572BC05A39005B6ED3 /* audio.hpp in Headers */,
 				A69816C12BFA453D00E4560B /* util_stream.hpp in Headers */,
 				A6B6E1A72BDC150500703630 /* asset.hpp in Headers */,
