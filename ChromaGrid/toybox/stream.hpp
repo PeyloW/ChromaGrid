@@ -119,7 +119,7 @@ namespace toybox {
     };
     
     __forceinline __pure static fstream_c::openmode_e operator|(fstream_c::openmode_e a, fstream_c::openmode_e b) {
-        return (fstream_c::openmode_e)((uint8_t)a | (uint8_t)b);
+        return static_cast<fstream_c::openmode_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
     }
     
     class strstream_c : public stream_c {

@@ -47,7 +47,7 @@ stream_c &stream_c::operator<<(const int32_t i) {
     char buf[12];
     sprintf(buf, "%ld", i);
     if (_width > 0) {
-        int len = (int)strlen(buf);
+        int len = static_cast<int>(strlen(buf));
         int fillc = _width - len;
         if (fillc > 0) {
             char buf[fillc];

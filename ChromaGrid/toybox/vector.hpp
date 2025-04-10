@@ -83,7 +83,7 @@ namespace toybox {
         inline iterator emplace(Type *pos, Args&&... args) {
             assert(_size < Count && pos >= begin() && pos <= end());
             move_backward(pos, end(), end() + 1);
-            new ((void *)pos) Type(forward<Args>(args)...);
+            new (static_cast<void *>(pos)) Type(forward<Args>(args)...);
             _size++;
             return ++pos;
         }

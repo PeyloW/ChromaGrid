@@ -38,7 +38,7 @@ public:
 #ifndef __M68000__
         _alloc_count--;
 #endif
-        block_t *block = reinterpret_cast<block_t *>((void **)ptr - 1);
+        block_t *block = reinterpret_cast<block_t *>(static_cast<void **>(ptr) - 1);
         block->next = first_block;
         first_block = block;
     }

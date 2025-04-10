@@ -122,7 +122,7 @@ namespace toybox {
 
     template< class T, class... Args >
     constexpr T* construct_at(T* p, Args&&... args) {
-        return new ((void *)p) T(forward<Args>(args)...);
+        return new (static_cast<void *>(p)) T(forward<Args>(args)...);
     }
     template<class T> inline  void destroy_at(T* p) { p->~T(); }
 

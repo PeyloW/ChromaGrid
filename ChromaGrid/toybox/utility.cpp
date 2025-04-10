@@ -14,7 +14,7 @@ using namespace toybox;
 void toybox::hton_struct(void *ptr, const char *layout) {
     while (*layout) {
         char *end = nullptr;
-        size_t cnt = (size_t)strtol(layout, &end, 0);
+        size_t cnt = static_cast<size_t>(strtol(layout, &end, 0));
         if (end == layout) cnt = 1;
         layout = end;
         switch (*layout++) {

@@ -22,7 +22,7 @@ namespace toybox {
 #else
     __forceinline static const iff_id_t iff_id_make(const char *const str) {
         assert(strlen(str) == 4);
-        return (uint32_t)str[0]<<24 | (uint32_t)str[1]<<16 | (uint32_t)str[2]<<8 | str[3];
+        return static_cast<uint32_t>(str[0])<<24 | static_cast<uint32_t>(str[1])<<16 | static_cast<uint32_t>(str[2])<<8 | str[3];
     }
 #endif
     __forceinline static void iff_id_str(iff_id_t id, char buf[5]) {
