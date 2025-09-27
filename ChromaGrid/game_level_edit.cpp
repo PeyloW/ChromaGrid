@@ -344,7 +344,7 @@ void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
 }
 
 static int next_shimmer_ticks() {
-    return 25 + (uint16_t)rand() % 50;
+    return 25 + fast_rand() % 50;
 }
 
 void cglevel_edit_scene_c::update_back(screen_c &back_screen, int ticks) {

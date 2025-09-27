@@ -6,12 +6,13 @@
 //
 
 #include "canvas.hpp"
+#include "utility.hpp"
 
 using namespace toybox;
 
 canvas_c::stencil_type_e  canvas_c::effective_type(stencil_type_e type) {
     if (type == random) {
-        type = (stencil_type_e)(((uint16_t)rand() % 4) + 1);
+        type = (stencil_type_e)((fast_rand() % 4) + 1);
     }
     return type;
 }

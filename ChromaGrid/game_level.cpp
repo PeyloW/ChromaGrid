@@ -160,7 +160,7 @@ void tick_second(cglevel_scene_c *that) {
 }
 
 static int next_shimmer_ticks() {
-    return 100 + (uint16_t)rand() % 200;
+    return 100 + fast_rand() % 200;
 }
 
 void cglevel_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
@@ -237,7 +237,7 @@ void cglevel_scene_c::update_back(screen_c &back_screen, int ticks) {
         }
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;
-        int tile = ((uint16_t)rand()) % (12 * 12);
+        int tile = fast_rand() % (12 * 12);
         if (_level.tilestate_at(tile % 12, tile / 12).type != empty) {
             _shimmer_tile = tile;
         }

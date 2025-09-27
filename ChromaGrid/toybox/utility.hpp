@@ -60,6 +60,32 @@ namespace toybox {
         }
     }
 
+    static uint16_t fast_rand_seed = 0xace1u;
+    
+    static inline uint16_t fast_rand(uint16_t seed) {
+        assert(seed != 0);
+    #ifdef __m68k__
+        asm volatile (
+            "lsr.w   #1,%0       \n\t"
+            "bcc.s   0f          \n\t"
+            "eori.w  #0xB400,%0  \n\t"
+            "0:                  \n\t"
+            : "+d"(seed)             // in/out in same register
+            :                        // no extra inputs
+            : "cc"                   // condition codes clobbered
+        );
+    #else
+        uint16_t lsb = seed & 1u;
+        seed >>= 1;
+        if (lsb) seed ^= 0xB400u;
+    #endif
+        return seed;
+    }
+
+    static inline uint16_t fast_rand() {
+        return (fast_rand_seed = fast_rand(fast_rand_seed));
+    }
+    
     /**
      Blue noise random number series with 256 index repeat. 
      Number are in range 0..63 inclusive.

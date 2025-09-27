@@ -30,7 +30,7 @@ void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
             int dx = ABS(x * 2 - 11);
             int dy = ABS(y * 2 - 11);
             int dist = sqrt((dx * dx + dy * dy) * 8);
-            auto r = (uint16_t)rand();
+            auto r = fast_rand();
             if ((r % 32) > dist) {
                 int shade = 44 - dist;
                 int row;
