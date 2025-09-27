@@ -1,7 +1,8 @@
-LIBCMINIINC=${LIBCMINI_INCLUDE_PATH}
-MINTLIBINC=${MINTLIB_INCLUDE_PATH}
-LIBCMINI=${LIBCMINI_LIBRARY_PATH}/mshort/mfastcall
-TOYBOX=./toybox
+LIBCMINI=../../libcmini
+LIBCMINIINC=$(LIBCMINI)/include
+LIBCMINILIB=$(LIBCMINI)/mshort/mfastcall
+TOYBOX=../../toybox
+TOYBOXINC=../../toybox/include
 
 #CC=m68k-atari-mint-g++
 CC=/opt/cross-mint-OLD/bin/m68k-atari-mint-c++
@@ -16,8 +17,8 @@ FLAGS+=-DTOYBOX_DEBUG_CPU=0
 CFLAGS=-c -std=c++0x -Os -fomit-frame-pointer -fno-threadsafe-statics
 #CFLAGS+=-S
 CFLAGS+=-fno-exceptions -Wno-write-strings -Wno-pointer-arith -fno-rtti
-CFLAGS+=-I $(LIBCMINIINC) -I $(MINTLIBINC) -I $(TOYBOX) $(FLAGS)
-LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINI)/ -lcmini -lgcc $(FLAGS)
+CFLAGS+=-I $(LIBCMINIINC) -I $(TOYBOXINC) $(FLAGS)
+LDFLAGS=-nostdlib -L. -ltoybox -L$(LIBCMINILIB)/ -lcmini -lgcc $(FLAGS)
 LDFLAGS+=-Wl,--traditional-format,--stack,16384,--mno-fastalloc
 
 TOYBOX_OBJECTS=cpp_runtime.o
@@ -58,13 +59,13 @@ toybox: libtoybox.a
 libtoybox.a: $(TOYBOX_OBJECTS) $(TOYBOX_OBJECTS_ATARI)
 	$(AR) rcs libtoybox.a $(TOYBOX_OBJECTS) $(TOYBOX_OBJECTS_ATARI)
 
-%.o: $(TOYBOX)/%.cpp
+%.o: $(TOYBOX)/src/%.cpp
 	$(CC) $(CFLAGS) $<
-%.o: $(TOYBOX)/%.sx
+%.o: $(TOYBOX)/src/%.sx
 	$(CC) $(CFLAGS) $<
 
 cgrid: toybox $(CG_OBJECTS)
-	$(CC) $(LIBCMINI)/startup.o $(CG_OBJECTS) $(LDFLAGS) -o cgrid.tos
+	$(CC) $(LIBCMINILIB)/startup.o $(CG_OBJECTS) $(LDFLAGS) -o cgrid.tos
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $<

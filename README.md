@@ -119,21 +119,3 @@ LIST # { CGLR
     } *
 }
 ```
-
-
-## Future Direction
-
-No promises, just ideas for what could be done.
-
-* Update to modern GCC for full C++20 support
-    * Remove workarounds for c++0x
-    * More aggressive use of constexpr for perf
-* Update to a modern libcmini
-    * Remove hacks for bugs and non clib-compliance
-    * Need to fix that more expensive rand() though :/
-* Split toybox into its own git repo
-    * Witg nicer Makefiles
-* Add graphics primitives to support plain ST
-    * Can host emulation for host be repurposed?
-* Port to Amiga
-    * Never coded for Amiga, but how hard can it be?
