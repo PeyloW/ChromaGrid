@@ -7,17 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A69816B62BF84DF800E4560B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A69816B52BF84DF800E4560B /* libz.tbd */; };
-		A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */; };
-		A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */; };
-		A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */; };
-		A69AE4A72B6EB9B000EBA43D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4A62B6EB9B000EBA43D /* main.m */; };
-		A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = A69AE4BB2B6EBC4E00EBA43D /* Makefile */; };
 		A69AE50C2B82CDB500EBA43D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A69AE50B2B82CDB500EBA43D /* README.md */; };
-		A6A0EE5B2BC05A69005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
-		A6A0EE612BC05A82005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
-		A6A0EE802BC06030005B6ED3 /* libtoybox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6A0EE372BC05959005B6ED3 /* libtoybox.a */; };
-		A6E484C72B9FFCE2004CCA7D /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,23 +47,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A69816B52BF84DF800E4560B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChromaGrid.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
-		A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A69AE4A32B6EB9B000EBA43D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		A69AE4A52B6EB9B000EBA43D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A69AE4A62B6EB9B000EBA43D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = ChromaGrid.app; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/build/Debug/ChromaGrid.app; sourceTree = "<absolute>"; };
 		A69AE4BB2B6EBC4E00EBA43D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		A69AE50B2B82CDB500EBA43D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; lineEnding = 2; path = README.md; sourceTree = "<group>"; };
-		A6A0EE372BC05959005B6ED3 /* libtoybox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtoybox.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IFFEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6A0EE372BC05959005B6ED3 /* libtoybox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libtoybox.a; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/build/Debug/libtoybox.a; sourceTree = "<absolute>"; };
+		A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = IFFEdit.app; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/build/Debug/IFFEdit.app; sourceTree = "<absolute>"; };
 		A6B6E1A82BDDE86A00703630 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		A6E484AA2B9D0172004CCA7D /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
-		A6E484AF2B9FE5D7004CCA7D /* png2ilbm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = png2ilbm; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6E484C42B9FFCC5004CCA7D /* 1.6.43 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = 1.6.43; path = ../../../../../opt/homebrew/Cellar/libpng/1.6.43; sourceTree = "<group>"; };
-		A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = ../../../../../opt/homebrew/Cellar/libpng/1.6.43/lib/libpng16.16.dylib; sourceTree = "<group>"; };
+		A6E484AF2B9FE5D7004CCA7D /* png2ilbm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = png2ilbm; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/build/Debug/png2ilbm; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -98,7 +79,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6A0EE612BC05A82005B6ED3 /* libtoybox.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +93,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6A0EE802BC06030005B6ED3 /* libtoybox.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,9 +100,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69816B62BF84DF800E4560B /* libz.tbd in Frameworks */,
-				A6A0EE5B2BC05A69005B6ED3 /* libtoybox.a in Frameworks */,
-				A6E484C72B9FFCE2004CCA7D /* libpng16.16.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,44 +117,7 @@
 				A69AE50B2B82CDB500EBA43D /* README.md */,
 				A6B6E1A82BDDE86A00703630 /* LICENSE.txt */,
 				A6E484AA2B9D0172004CCA7D /* Assets */,
-				A69AE4B62B6EBBE600EBA43D /* MacOSHost */,
-				A69AE49B2B6EB9A900EBA43D /* Products */,
-				A6E484C32B9FFCC5004CCA7D /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		A69AE49B2B6EB9A900EBA43D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A69AE49A2B6EB9A900EBA43D /* ChromaGrid.app */,
-				A6E484AF2B9FE5D7004CCA7D /* png2ilbm */,
-				A6A0EE372BC05959005B6ED3 /* libtoybox.a */,
-				A6A0EE672BC05B0D005B6ED3 /* IFFEdit.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A69AE4B62B6EBBE600EBA43D /* MacOSHost */ = {
-			isa = PBXGroup;
-			children = (
-				A69AE49D2B6EB9A900EBA43D /* AppDelegate.h */,
-				A69AE49E2B6EB9A900EBA43D /* AppDelegate.mm */,
-				A69AE4A02B6EB9B000EBA43D /* Assets.xcassets */,
-				A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */,
-				A69AE4A52B6EB9B000EBA43D /* Info.plist */,
-				A69AE4A62B6EB9B000EBA43D /* main.m */,
-			);
-			path = MacOSHost;
-			sourceTree = "<group>";
-		};
-		A6E484C32B9FFCC5004CCA7D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A69816B52BF84DF800E4560B /* libz.tbd */,
-				A6E484C62B9FFCE2004CCA7D /* libpng16.16.dylib */,
-				A6E484C42B9FFCC5004CCA7D /* 1.6.43 */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,6 +131,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
+
+/* Begin PBXLegacyTarget section */
+		A67057042E899547008E6C91 /* cgrid */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "HOST=sdl2 install";
+			buildConfigurationList = A67057052E899547008E6C91 /* Build configuration list for PBXLegacyTarget "cgrid" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/peylow/Projects/atari_hobby/ChromaGrid;
+			dependencies = (
+			);
+			name = cgrid;
+			packageProductDependencies = (
+			);
+			passBuildSettingsInEnvironment = 0;
+			productName = cgrid;
+		};
+/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		A69AE4992B6EB9A900EBA43D /* ChromaGrid */ = {
@@ -281,6 +239,9 @@
 			attributes = {
 				LastUpgradeCheck = 1230;
 				TargetAttributes = {
+					A67057042E899547008E6C91 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 					A69AE4992B6EB9A900EBA43D = {
 						CreatedOnToolsVersion = 12.3;
 					};
@@ -304,7 +265,7 @@
 				Base,
 			);
 			mainGroup = A69AE4912B6EB9A900EBA43D;
-			productRefGroup = A69AE49B2B6EB9A900EBA43D /* Products */;
+			productRefGroup = A69AE4912B6EB9A900EBA43D;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -312,6 +273,7 @@
 				A6E484AE2B9FE5D7004CCA7D /* png2ilbm */,
 				A6A0EE362BC05959005B6ED3 /* toybox */,
 				A6A0EE662BC05B0D005B6ED3 /* IFFEdit */,
+				A67057042E899547008E6C91 /* cgrid */,
 			);
 		};
 /* End PBXProject section */
@@ -321,8 +283,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69AE4A12B6EB9B000EBA43D /* Assets.xcassets in Resources */,
-				A69AE4A42B6EB9B000EBA43D /* MainMenu.xib in Resources */,
 				A69AE50C2B82CDB500EBA43D /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,9 +301,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69AE4A72B6EB9B000EBA43D /* main.m in Sources */,
-				A69AE49F2B6EB9A900EBA43D /* AppDelegate.mm in Sources */,
-				A69AE4BC2B6EBC4E00EBA43D /* Makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,18 +345,19 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		A69AE4A22B6EB9B000EBA43D /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A69AE4A32B6EB9B000EBA43D /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
+		A67057062E899547008E6C91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A67057072E899547008E6C91 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		A69AE4A92B6EB9B000EBA43D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -455,7 +413,9 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DTOYBOX_HOST";
 				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = "-Wold-style-cast";
 			};
 			name = Debug;
@@ -508,6 +468,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DTOYBOX_HOST";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wold-style-cast";
 			};
@@ -534,6 +495,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/src",
 				);
+				OTHER_LDFLAGS = (
+					"-L/opt/homebrew/lib",
+					"-lSDL2",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.toys.ChromaGrid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -553,6 +518,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/src",
+				);
+				OTHER_LDFLAGS = (
+					"-L/opt/homebrew/lib",
+					"-lSDL2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.toys.ChromaGrid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -575,6 +544,11 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-I/opt/homebrew/include/SDL2",
+					"-D_THREAD_SAFE",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -592,6 +566,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-I/opt/homebrew/include/SDL2",
+					"-D_THREAD_SAFE",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -707,6 +686,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A67057052E899547008E6C91 /* Build configuration list for PBXLegacyTarget "cgrid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A67057062E899547008E6C91 /* Debug */,
+				A67057072E899547008E6C91 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A69AE4952B6EB9A900EBA43D /* Build configuration list for PBXProject "ChromaGrid" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

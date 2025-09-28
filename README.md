@@ -33,40 +33,12 @@ The Atari ST family of computers was a pioneer in the 16-bit era and played a cr
 
 Code is split up into three main parts:
 
-* MacOSHost - A macOS host harness capable of running and debugging a simulated version pof the game
-* ChromaGrid - The game!
+* ChromaGrid - The game! This repository
 * toybox - The reusable parts that could become many games
     * Minimal replacements for C++ standard library functionality, optimized for speed and space.
     * Primitives for machine, graphics and audio.
     * A scene based game system for managing game creation.
-
-All code must compile with GCC 4.6.4 with c++0x _(Experimental C++11)_ enabled, no standard libraries linked!
-
- Make no assumption of integer/pointer size. macOS host uses 32 bit integers, target uses 16 bit integers. Whenever possible use explicitly sized types, `int16_t` not `short`.
-
-Use `static_assert` to ensure expected sizes for structs are correct. Asserts are enabled on macOS host, but not Atari target. Asserts are used liberly to ensure correctness.
     
-Types uses suffix, variables does not:
-
-* `_t` - POD, plain old type.
-* `_e` - Enumeration.
-* `_s` - Simple structs
-    * Must never implement constructors or destructors.
-    * For direct access to all members.
-* `_c` - Classes
-    * Classes **must** support move semantics.
-    * **Never** assume copy semantics are available.
-        * Most classes explicitly forbig copy semntions by use of `nocopy_c` subclassing.
-
-
-#### Known libcmini limitations
-
-libcmini-0.47 used is an older version from 2017, and has a few known issues. It is not being updated as to avoid disruptions before Sommarhack 2024.
-
-* `fread` and `fwrite` does not return number of items, but total bytes on success.
-* `rand()` does not respect `RAND_MAX` with `-mshort`, and can return negative values.
-* `strncmp()` is just very buggy.
-
 
 ### File Format
 

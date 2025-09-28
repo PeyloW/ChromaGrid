@@ -12,6 +12,11 @@
 		<key>IFFEdit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>cgrid.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
 		<key>iffutil.xcscheme_^#shared#^_</key>
@@ -37,6 +42,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>A67057042E899547008E6C91</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>A69AE4992B6EB9A900EBA43D</key>
 		<dict>
 			<key>primary</key>
