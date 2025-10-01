@@ -314,6 +314,13 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-O0",
+					"-DTOYBOX_TARGET_ATARI=2",
+					"-DTOYBOX_HOST=sdl2",
+					"-g",
+					"-std=c++11",
+				);
 			};
 			name = Debug;
 		};
@@ -367,6 +374,13 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-O0",
+					"-DTOYBOX_TARGET_ATARI=2",
+					"-DTOYBOX_HOST=sdl2",
+					"-g",
+					"-std=c++11",
+				);
 			};
 			name = Release;
 		};
@@ -382,14 +396,6 @@
 					"$(PROJECT_DIR)/../../include",
 					"$(PROJECT_DIR)/../../../toybox/include",
 				);
-				OTHER_CFLAGS = (
-					"-DTOYBOX_TARGET_ATARI=2",
-					"-O0",
-					"-g",
-					"-DTOYBOX_HOST=sdl2",
-					"-std=c++11",
-				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -403,14 +409,6 @@
 					"$(PROJECT_DIR)/../../include",
 					"$(PROJECT_DIR)/../../../toybox/include",
 				);
-				OTHER_CFLAGS = (
-					"-DTOYBOX_TARGET_ATARI=2",
-					"-O0",
-					"-g",
-					"-DTOYBOX_HOST=sdl2",
-					"-std=c++11",
-				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
