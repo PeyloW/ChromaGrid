@@ -82,7 +82,7 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             _menu_buttons.draw_all(clear_screen.canvas());
             strstream_c version(10);
             version.width(2); version.fill('0');
-            version << "v1." << CG_MONTH << '.' << CG_DAY << ends;
+            version << "v1." << (int16_t)CG_MONTH << '.' << (int16_t)CG_DAY << ends;
             clear_screen.canvas().draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::align_right, 9);
             break;
         }

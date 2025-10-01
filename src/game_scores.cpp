@@ -45,7 +45,7 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
         str.reset();
         str.fill(' ');
         str.width(2);
-        str << index + 1 << ':';
+        str << (int16_t)(index + 1) << ':';
         if (result.score == 0) {
             if (_scoring == time) {
                 str << " -:--" << ends;
@@ -58,7 +58,7 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
                     str << setw(5) << result.score;
                     break;
                 case time:
-                    str << result.time / 60 << ':' << setfill('0') << result.time % 60;
+                    str << (int16_t)(result.time / 60) << ':' << setfill('0') << (int16_t)(result.time % 60);
                     break;
                 case moves:
                     str << setw(5) << result.moves;

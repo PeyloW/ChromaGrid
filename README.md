@@ -18,8 +18,7 @@ The Atari ST family of computers was a pioneer in the 16-bit era and played a cr
 
 ### Project Requirement
 
-* GCC-4.6.4 with fastcall support (https://github.com/PeyloW/gcc-4.6.4)
-* libcmini-0.47 (https://github.com/freemint/libcmini)
+* toybox 1.1
 
 
 ### Project aknowledgements

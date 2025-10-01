@@ -125,7 +125,7 @@ private:
             int pair_idx = level_idx & 0x1;
             
             start = str.str() + str.tell();
-            str << level_idx + 1 << ends;
+            str << (int16_t)(level_idx + 1) << ends;
             if (pair_idx == 1) {
                 _menu_buttons.add_button_pair(prev_start, start);
                 if (save) {

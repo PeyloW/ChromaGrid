@@ -58,7 +58,7 @@ public:
             char buf[20];
             strstream_c str(buf, 20);
             const bool failed = _results.score == level_result_t::FAILED_SCORE;
-            str << "Level " << _level_num + 1 << (failed ? " Failed" : " Completed") << ends;
+            str << "Level " << (int16_t)(_level_num + 1) << (failed ? " Failed" : " Completed") << ends;
             canvas.draw(font, buf, point_s(96, 32));
         } else {
             const char *title = _results.score == level_result_t::FAILED_SCORE ? "Level Failed" : "Level Completed";
@@ -73,7 +73,7 @@ public:
             str << "Time: " << _results.time << " x 10 = " << time_score << ends;
             canvas.draw(font, buf, point_s(96, 64));
             str.reset();
-            str << "Orbs: " << _results.orbs[0] + _results.orbs[1] << " x 100 = " << orbs_score << ends;
+            str << "Orbs: " << (int16_t)(_results.orbs[0] + _results.orbs[1]) << " x 100 = " << orbs_score << ends;
             canvas.draw(font, buf, point_s(96, 84));
             str.reset();
             str << "Total: " << _results.score << " pts" << ends;
@@ -171,7 +171,7 @@ void cglevel_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     if (_level_num == TEST_LEVEL) {
         str << "Testing level";
     } else {
-        str << "Level " << _level_num + 1;
+        str << "Level " << (int16_t)(_level_num + 1);
         auto text = assets.levels()[_level_num]->text;
         if (text) {
             str << ": " << text;

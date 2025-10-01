@@ -172,7 +172,7 @@ levels_c::levels_c() {
     strstream_c str(buf, 14);
     while (size() < 45) {
         str.reset();
-        str << "levels" << i++ << ".dat" << ends;
+        str << "levels" << (int16_t)(i++) << ".dat" << ends;
         iffstream_c iff(asset_manager_c::shared().data_path(str.str()).get(), fstream_c::input);
         if (!iff.good()) {
             break;

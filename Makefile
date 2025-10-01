@@ -17,7 +17,7 @@ cgrid: toybox $(OBJECTS)
 ifeq ($(HOST),sdl2)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o build/cgrid
 else
-	$(CC) $(LIBCMINILIB)/startup.o $(OBJECTS) $(LDFLAGS) -o build/cgrid.tos
+	$(CC) $(LIBCMINIOBJ)/crt0.o $(OBJECTS) $(LDFLAGS) -o build/cgrid.tos
 endif
 
 build/%.o: src/%.cpp

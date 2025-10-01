@@ -99,7 +99,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
     static char title_buf[3 * 45] = { 0 };
     if (!title_buf[0]) {
         strstream_c str(title_buf, 3 * 45);
-        for (int i = 1; i <= level_results.size(); i++) {
+        for (int16_t i = 1; i <= level_results.size(); i++) {
             str << i << ends;
         }
     }
