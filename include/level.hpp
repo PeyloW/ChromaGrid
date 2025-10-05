@@ -122,7 +122,7 @@ public:
     } state_e;
     
     level_t(level_recipe_t *recipe);
-    ~level_t() = default;
+    ~level_t();
 
     state_e update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds);
 

@@ -12,15 +12,16 @@ int main(int argc, const char * argv[]) {
     return  machine_c::with_machine(argc, argv, [] (machine_c &m) {
         switch (m.type()) {
             case machine_c::st:
-                printf("Type ST.\n\r", m.type());
+                printf("Type ST.\n\r");
                 break;
             case machine_c::ste:
-                printf("Type STe.\n\r", m.type());
+                printf("Type STe.\n\r");
                 break;
             case machine_c::falcon:
-                printf("Type Falcon.\n\r", m.type());
+                printf("Type Falcon.\n\r");
                 break;
             default:
+                printf("Type Unknown.\n\r");
                 break;
         }
         printf("Max %dKb.\n\r", (uint16_t)(m.max_memory() / 1024));
@@ -31,7 +32,6 @@ int main(int argc, const char * argv[]) {
         if ((m.user_memory() / 1024) < 512) {
             m.free_system_memory();
         }
-        
         asset_manager_c::set_shared(new cgasset_manager());
         scene_manager_c manager(size_s(320, 208));
         auto intro_scene = new cgintro_scene_c(manager);

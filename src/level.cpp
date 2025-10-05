@@ -8,7 +8,6 @@
 #include "level.hpp"
 #include "resources.hpp"
 #include "audio_mixer.hpp"
-#include "system_helpers.hpp"
 #include "machine.hpp"
 
 typedef enum __packed {
@@ -275,8 +274,10 @@ public:
     bool tick(uint16_t &remaining, CB callback) {
         bool completed = true;
         remaining = 0;
-        for (int y = GRID_MAX; --y != -1; ) {
-            for (int x = GRID_MAX; --x != -1; ) {
+        int y;
+        do_dbra(y, GRID_MAX - 1) {
+            int x;
+            do_dbra(x, GRID_MAX - 1) {
                 auto &tile = tiles[x][y];
                 tile.tick();
                 if (tile.check_dirty()) {
@@ -286,8 +287,8 @@ public:
                 if (tile.is_remaining()) {
                     remaining++;
                 }
-            }
-        }
+            } while_dbra(x);
+        } while_dbra(y);
         return completed;
     }
 };
@@ -331,6 +332,11 @@ level_t::level_t(level_recipe_t *recipe) :
     }
     
 }
+
+level_t::~level_t() {
+    _grid.reset();
+}
+
 
 #define LABEL_X_INSET 200
 #define TIME_Y_INSET 72
@@ -529,11 +535,12 @@ void level_t::draw_move_count(canvas_c &screen) const {
     int moves = _results.moves;
     char buf[4];
     buf[3] = 0;
-    for (int i = 3; --i != -1; ) {
+    int i;
+    do_dbra(i, 2) {
         uint8_t r = moves % 10;
         moves /= 10;
         buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
-    }
+    } while_dbra(i);
     const point_s at = point_s(TIME_X_TRAIL - 24, MOVES_Y_INSET);
     const rect_s rect = rect_s(at, size_s(24, 8));
 
@@ -548,11 +555,12 @@ void level_t::draw_remaining_count(canvas_c &screen) const {
     int moves = _remaining;
     char buf[4];
     buf[3] = 0;
-    for (int i = 3; --i != -1; ) {
+    int i;
+    do_dbra(i, 2) {
         uint8_t r = moves % 10;
         moves /= 10;
         buf[i] = (r == 0 && moves == 0 && i != 2) ? ' ' : '0' + r;
-    }
+    } while_dbra(i);
     const point_s at = point_s(TIME_X_TRAIL - 24, REMAINING_Y_INSET);
     const rect_s rect = rect_s(at, size_s(24, 8));
 
