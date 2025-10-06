@@ -22,7 +22,7 @@ cgintro_scene_c::cgintro_scene_c(scene_manager_c &manager) : scene_c(manager),
     _menu_buttons(LOADING_BUTTON_ORIGIN, LOADING_BUTTON_SIZE, 0)
 {
     _menu_buttons.add_button("LOADING");
-    _menu_buttons.buttons[0].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[0].state = cgbutton_t::state_e::disabled;
 }
 
 cggame_scene_c::configuration_s &cgintro_scene_c::configuration() const {
@@ -69,7 +69,7 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         case 0 ... 1:
             break;
         case 2: {
-            _menu_buttons.buttons[0].state = cgbutton_t::normal;
+            _menu_buttons.buttons[0].state = cgbutton_t::state_e::normal;
             _menu_buttons.draw_all(canvas);
             state = this;
             audio_mixer_c::shared().play(assets.music(MUSIC));
@@ -83,7 +83,7 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             strstream_c version(10);
             version.width(2); version.fill('0');
             version << "v1." << (int16_t)CG_MONTH << '.' << (int16_t)CG_DAY << ends;
-            clear_screen.canvas().draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::align_right, 9);
+            clear_screen.canvas().draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::alignment_e::right, 9);
             break;
         }
         default: {
@@ -141,7 +141,7 @@ cgerror_scene_c::cgerror_scene_c(scene_manager_c &manager, const char *title, co
 void cgerror_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     auto &canvas = clear_screen.canvas();
     auto &assets = cgasset_manager::shared();
-    canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 48), [this, &canvas] {
+    canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 48), [this, &canvas] {
         canvas.fill(7, rect_s(0, 0, 320, 200));
     });
     canvas.fill(14, rect_s(64, 32, 192, 136));

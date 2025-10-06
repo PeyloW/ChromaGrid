@@ -16,7 +16,7 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
     for (auto title = &button_titles[0]; *title; title++) {
         _menu_buttons.add_button(*title);
     }
-    _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[3 - (int)scoring].state = cgbutton_t::state_e::disabled;
 }
 
 void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
@@ -25,13 +25,13 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     _menu_buttons.draw_all(canvas);
     
     switch (_scoring) {
-        case score:
+        case scoring_e::score:
             canvas.draw(font, "Hi-Scores", point_s(96, 16));
             break;
-        case time:
+        case scoring_e::time:
             canvas.draw(font, "Best Times", point_s(96, 16));
             break;
-        case moves:
+        case scoring_e::moves:
             canvas.draw(font, "Least Moves", point_s(96, 16));
             break;
     }
@@ -47,27 +47,27 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
         str.width(2);
         str << (int16_t)(index + 1) << ':';
         if (result.score == 0) {
-            if (_scoring == time) {
+            if (_scoring == scoring_e::time) {
                 str << " -:--" << ends;
             } else {
                 str << "    -" << ends;
             }
         } else {
             switch (_scoring) {
-                case score:
+                case scoring_e::score:
                     str << setw(5) << result.score;
                     break;
-                case time:
+                case scoring_e::time:
                     str << (int16_t)(result.time / 60) << ':' << setfill('0') << (int16_t)(result.time % 60);
                     break;
-                case moves:
+                case scoring_e::moves:
                     str << setw(5) << result.moves;
                     break;
             }
         }
         str << ends;
         point_s at(16 + col * 55, 16 + 20 + 14 * row);
-        canvas.draw(assets.font(SMALL_MONO_FONT), str.str(), at, canvas_c::align_left);
+        canvas.draw(assets.font(SMALL_MONO_FONT), str.str(), at, canvas_c::alignment_e::left);
         
         index++;
     }

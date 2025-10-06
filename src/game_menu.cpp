@@ -50,7 +50,7 @@ void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
                 }
                 int16_t idx = col + row * 9;
                 point_s at(x * 16, y * 16);
-                canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, shade), [&] {
+                canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, shade), [&] {
                     canvas.draw_aligned(tiles, idx, at);
                 });
             }

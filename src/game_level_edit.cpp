@@ -58,7 +58,7 @@ public:
     virtual void will_appear(screen_c &clear_screen, bool obsured) {
         auto &canvas = clear_screen.canvas();
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 32), [this, &canvas, &rect] {
+        canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 32), [this, &canvas, &rect] {
             canvas.draw_aligned(background, rect, rect.origin);
         });
         rect = rect_s(
@@ -82,14 +82,14 @@ public:
                 static const char *title = "Error Saving Levels";
                 static const char *text = "Could not save user levels. Check that disk is not write protected and try again.";
                 auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_edit_persistence_scene_c::did_choose, *this);
-                manager.push(scene, transition_c::create(canvas_c::orderred));
+                manager.push(scene, transition_c::create(canvas_c::stencil_e::orderred));
                 return;
             }
-            manager.pop(transition_c::create(canvas_c::random));
+            manager.pop(transition_c::create(canvas_c::stencil_e::random));
         }
         auto &canvas = clear_screen.canvas();
         int button = update_button_group(canvas, _menu_buttons);
-        auto transition = transition_c::create(canvas_c::random);
+        auto transition = transition_c::create(canvas_c::stencil_e::random);
         if (button == 0) {
             manager.pop(transition);
         } else if (button > 0) {
@@ -107,7 +107,7 @@ public:
         if (choice == cgerror_scene_c::choice_e::retry) {
             _save = true;
         }
-        manager.pop(transition_c::create(canvas_c::orderred));
+        manager.pop(transition_c::create(canvas_c::stencil_e::orderred));
     }
 
 private:
@@ -130,17 +130,17 @@ private:
                 _menu_buttons.add_button_pair(prev_start, start);
                 if (save) {
                     if (!user_levels[level_idx - 1]->empty()) {
-                        _menu_buttons.buttons[button_idx - 1].style = cgbutton_t::destructive;
+                        _menu_buttons.buttons[button_idx - 1].style = cgbutton_t::style_e::destructive;
                     }
                     if (!empty) {
-                        _menu_buttons.buttons[button_idx].style = cgbutton_t::destructive;
+                        _menu_buttons.buttons[button_idx].style = cgbutton_t::style_e::destructive;
                     }
                 } else {
                     if (user_levels[level_idx - 1]->empty()) {
-                        _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::disabled;
+                        _menu_buttons.buttons[button_idx - 1].state = cgbutton_t::state_e::disabled;
                     }
                     if (empty) {
-                        _menu_buttons.buttons[button_idx].state = cgbutton_t::disabled;
+                        _menu_buttons.buttons[button_idx].state = cgbutton_t::state_e::disabled;
                     }
                 }
             }
@@ -228,29 +228,29 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
     static const tilestate_t empty = (tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::none };
     auto copy = current;
     auto &selected = _tile_templates[_selected_template];
-    if (selected.orb != none) {
-        if (current.orb != none) {
-            copy.orb = none;
+    if (selected.orb != color_e::none) {
+        if (current.orb != color_e::none) {
+            copy.orb = color_e::none;
         } else {
-            copy.orb = (color_e)(2 - button);
+            copy.orb = (color_e)(2 - (int)button);
         }
-    } else if (selected.target != none) {
-        if (current.target != none) {
-            copy.target = none;
+    } else if (selected.target != color_e::none) {
+        if (current.target != color_e::none) {
+            copy.target = color_e::none;
         } else {
-            copy.target = (color_e)(2 - button);
+            copy.target = (color_e)(2 - (int)button);
         }
-    } else if (button == mouse_c::right) {
+    } else if (button == mouse_c::button_e::right) {
         copy = empty;
         copy.target = current.target;
-    } else if (selected.type == blocked) {
+    } else if (selected.type == tiletype_e::blocked) {
         copy = selected;
-    } else if (selected.type == current.type && current.target != none) {
-        copy.current = current.current == none ? current.target : none;
+    } else if (selected.type == current.type && current.target != color_e::none) {
+        copy.current = current.current == color_e::none ? current.target : color_e::none;
     } else {
         copy.type = selected.type;
-        copy.current = none;
-        copy.orb = none;
+        copy.current = color_e::none;
+        copy.orb = color_e::none;
     }
     return copy;
 }
@@ -268,7 +268,7 @@ void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             break;
         case 1: // Load level
         case 2: {// Save level
-            auto transition = transition_c::create(canvas_c::random);
+            auto transition = transition_c::create(canvas_c::stencil_e::random);
             if (button == 1) {
                 manager.push(new cglevel_edit_persistence_scene_c(manager), transition);
             } else {
@@ -305,16 +305,16 @@ void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         draw_counts(canvas);
     }
     
-    bool lb = mouse.state(mouse_c::left) == mouse_c::clicked;
-    bool rb = mouse.state(mouse_c::right) == mouse_c::clicked;
+    bool lb = mouse.state(mouse_c::button_e::left) == mouse_c::state_e::clicked;
+    bool rb = mouse.state(mouse_c::button_e::right) == mouse_c::state_e::clicked;
     const auto pos = mouse.postion();
     
     if (pos.x < MAIN_MENU_ORIGIN_X && pos.y < MAIN_MENU_SIZE_HEIGHT) {
         int tx = pos.x / 16;
         int ty = pos.y / 16;
         auto &current = _level_grid[tx][ty];
-        auto l_next = next_state(current, mouse_c::left);
-        auto r_next = next_state(current, mouse_c::right);
+        auto l_next = next_state(current, mouse_c::button_e::left);
+        auto r_next = next_state(current, mouse_c::button_e::right);
         if (lb || rb) {
             _level_grid[tx][ty] = lb ? l_next : r_next;
             draw_level_grid(canvas, tx, ty);
@@ -371,7 +371,7 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
     const point_s at = point_s( 320 - 32 - MAIN_MENU_MARGINS * 2, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3);
     const rect_s rect = rect_s(at, size_s(32, 8));
     screen.draw(background, rect, at);
-    screen.draw(mono_font, buf, at, canvas_c::align_left);
+    screen.draw(mono_font, buf, at, canvas_c::alignment_e::left);
     for (int i = 1; i < 3; i++) {
         point_s at(320 - 32 - 8 - MAIN_MENU_MARGINS * 2 + 3, LEVEL_EDIT_BUTTON_ORIGIN_Y + 3 + 16 * i);
         draw_orb(screen, (color_e)i, at);
@@ -384,7 +384,7 @@ void cglevel_edit_scene_c::draw_counts(canvas_c &screen) const {
         at.x = 320 - 16 - MAIN_MENU_MARGINS * 2;
         rect_s rect(at, size_s(16, 8));
         screen.draw(background, rect, at);
-        screen.draw(mono_font, buf, at, canvas_c::align_left);
+        screen.draw(mono_font, buf, at, canvas_c::alignment_e::left);
     }
 }
 
@@ -413,7 +413,7 @@ void cglevel_edit_scene_c::make_recipe(level_recipe_t &recipe) const {
     int y1 = 12, y2 = -1;
     for (int y = 0; y < 12; y++) {
         for (int x = 0; x < 12; x++) {
-            if (_level_grid[x][y].type != empty || _level_grid[x][y].target != none) {
+            if (_level_grid[x][y].type != tiletype_e::empty || _level_grid[x][y].target != color_e::none) {
                 x1 = MIN(x1, x);
                 x2 = MAX(x2, x);
                 y1 = MIN(y1, y);

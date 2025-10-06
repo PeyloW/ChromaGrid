@@ -12,25 +12,25 @@
 #include "resources.hpp"
 
 struct cgbutton_t : public nocopy_c {
-    typedef enum __packed {
+    enum class style_e : uint8_t {
         regular,
         destructive
-    } style_e;
-    typedef enum __packed {
+    };
+    enum class state_e : uint8_t {
         normal,
         pressed,
         disabled,
         hidden
-    } state_t;
+    };
     inline cgbutton_t() : text("") {}
-    inline cgbutton_t(const char *text, rect_s rect) : text(text), rect(rect), style(regular), state(normal) {}
+    inline cgbutton_t(const char *text, rect_s rect) : text(text), rect(rect), style(style_e::regular), state(state_e::normal) {}
 
     void draw_in(canvas_c &image) const;
     
     const char *text;
     rect_s rect;
     style_e style;
-    state_t state;
+    state_e state;
 };
 
 class cgbutton_group_base_c : public nocopy_c {

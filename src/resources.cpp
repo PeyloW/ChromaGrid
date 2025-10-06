@@ -78,57 +78,57 @@ cgasset_manager::cgasset_manager() :
      */
     read_cheats(*(bool*)&_max_time, *(bool*)&_max_orbs);
 
-    add_asset_def(INTRO, asset_def_s(asset_c::image, 1, "intro.iff"));
-    add_asset_def(BACKGROUND, asset_def_s(asset_c::image, 2, "backgrnd.iff"));
-    add_asset_def(TILES_A, asset_def_s(asset_c::tileset, 2, "tiles1.iff"));
-    add_asset_def(TILES_B, asset_def_s(asset_c::tileset, 2, "tiles2.iff"));
-    add_asset_def(TILES_C, asset_def_s(asset_c::tileset, 2, "tiles3.iff"));
-    add_asset_def(EMPTY_TILE, asset_def_s(asset_c::tileset, 2, "emptyt.iff"));
-    add_asset_def(ORBS, asset_def_s(asset_c::tileset, 2, "orbs.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(INTRO, asset_def_s(asset_c::type_e::image, 1, "intro.iff"));
+    add_asset_def(BACKGROUND, asset_def_s(asset_c::type_e::image, 2, "backgrnd.iff"));
+    add_asset_def(TILES_A, asset_def_s(asset_c::type_e::tileset, 2, "tiles1.iff"));
+    add_asset_def(TILES_B, asset_def_s(asset_c::type_e::tileset, 2, "tiles2.iff"));
+    add_asset_def(TILES_C, asset_def_s(asset_c::type_e::tileset, 2, "tiles3.iff"));
+    add_asset_def(EMPTY_TILE, asset_def_s(asset_c::type_e::tileset, 2, "emptyt.iff"));
+    add_asset_def(ORBS, asset_def_s(asset_c::type_e::tileset, 2, "orbs.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new tileset_c(new image_c(path), size_s(16, 10));
     }));
-    add_asset_def(CURSOR, asset_def_s(asset_c::image, 2, "cursor.iff"));
-    add_asset_def(BUTTON, asset_def_s(asset_c::image, 2, "button.iff"));
-    add_asset_def(SELECTION, asset_def_s(asset_c::image, 2, "select.iff"));
-    add_asset_def(SHIMMER, asset_def_s(asset_c::tileset, 2, "shimmer.iff"));
+    add_asset_def(CURSOR, asset_def_s(asset_c::type_e::image, 2, "cursor.iff"));
+    add_asset_def(BUTTON, asset_def_s(asset_c::type_e::image, 2, "button.iff"));
+    add_asset_def(SELECTION, asset_def_s(asset_c::type_e::image, 2, "select.iff"));
+    add_asset_def(SHIMMER, asset_def_s(asset_c::type_e::tileset, 2, "shimmer.iff"));
     
-    add_asset_def(FONT, asset_def_s(asset_c::font, 2, "font.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(FONT, asset_def_s(asset_c::type_e::font, 2, "font.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
         auto image = new image_c(path);
         return new font_c(image, size_s(8, 8), 4, 2, 4);
     }));
-    add_asset_def(MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(MONO_FONT, asset_def_s(asset_c::type_e::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(FONT).image(), size_s(8, 8));
     }));
-    add_asset_def(SMALL_FONT, asset_def_s(asset_c::font, 2, "font6.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(SMALL_FONT, asset_def_s(asset_c::type_e::font, 2, "font6.iff", [](const asset_manager_c &manager, const char *path) -> asset_c* {
         auto image = new image_c(path);
         return new font_c(image, size_s(6, 6), 3, 0, 6);
     }));
-    add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(SMALL_MONO_FONT, asset_def_s(asset_c::type_e::font, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new font_c(manager.font(SMALL_FONT).image(), size_s(6, 6));
     }));
-    add_asset_def(DISK, asset_def_s(asset_c::image, 2, "disk.iff"));
-    add_asset_def(SPOT, asset_def_s(asset_c::image, 2, "spot.iff"));
+    add_asset_def(DISK, asset_def_s(asset_c::type_e::image, 2, "disk.iff"));
+    add_asset_def(SPOT, asset_def_s(asset_c::type_e::image, 2, "spot.iff"));
 
-    add_asset_def(DROP_ORB, asset_def_s(asset_c::sound, 4, "drop.aif"));
-    add_asset_def(TAKE_ORB, asset_def_s(asset_c::sound, 4, "take.aif"));
-    add_asset_def(FUSE_ORB, asset_def_s(asset_c::sound, 4, "fuse.aif"));
-    add_asset_def(NO_DROP_ORB, asset_def_s(asset_c::sound, 4, "tock.aif"));
-    add_asset_def(BREAK_TILE, asset_def_s(asset_c::sound, 4, "break.aif"));
-    add_asset_def(FUSE_BREAK_TILE, asset_def_s(asset_c::sound, 4, "fusebrk.aif"));
+    add_asset_def(DROP_ORB, asset_def_s(asset_c::type_e::sound, 4, "drop.aif"));
+    add_asset_def(TAKE_ORB, asset_def_s(asset_c::type_e::sound, 4, "take.aif"));
+    add_asset_def(FUSE_ORB, asset_def_s(asset_c::type_e::sound, 4, "fuse.aif"));
+    add_asset_def(NO_DROP_ORB, asset_def_s(asset_c::type_e::sound, 4, "tock.aif"));
+    add_asset_def(BREAK_TILE, asset_def_s(asset_c::type_e::sound, 4, "break.aif"));
+    add_asset_def(FUSE_BREAK_TILE, asset_def_s(asset_c::type_e::sound, 4, "fusebrk.aif"));
     
-    add_asset_def(MUSIC, asset_def_s(asset_c::music, 2, "music.snd"));
+    add_asset_def(MUSIC, asset_def_s(asset_c::type_e::music, 2, "music.snd"));
     
-    add_asset_def(LEVELS, asset_def_s(asset_c::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(LEVELS, asset_def_s(asset_c::type_e::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new levels_c();
     }));
-    add_asset_def(LEVEL_RESULTS, asset_def_s(asset_c::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(LEVEL_RESULTS, asset_def_s(asset_c::type_e::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new level_results_c(((cgasset_manager&)manager).levels().size());
     }));
-    add_asset_def(USER_LEVELS, asset_def_s(asset_c::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(USER_LEVELS, asset_def_s(asset_c::type_e::custom, 2, nullptr, [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new user_levels_c();
     }));
     
-    add_asset_def(MENU_SCROLL, asset_def_s(asset_c::custom, 2, "menu.txt", [](const asset_manager_c &manager, const char *path) -> asset_c* {
+    add_asset_def(MENU_SCROLL, asset_def_s(asset_c::type_e::custom, 2, "menu.txt", [](const asset_manager_c &manager, const char *path) -> asset_c* {
         return new scroll_text_c(path);
     }));
 }
@@ -136,7 +136,7 @@ cgasset_manager::cgasset_manager() :
 static inline bool _support_audio() {
     auto &machine = machine_c::shared();
     // Support audio if on a STe or newer machine with more than 500k RAM.
-    return (machine.type() >= machine_c::ste); // && (machine.max_memory() > 512 * 1024);
+    return (machine.type() >= machine_c::type_e::ste); // && (machine.max_memory() > 512 * 1024);
 }
 
 bool cgasset_manager::support_audio() const {
@@ -173,7 +173,7 @@ levels_c::levels_c() {
     while (size() < 45) {
         str.reset();
         str << "levels" << (int16_t)(i++) << ".dat" << ends;
-        iffstream_c iff(asset_manager_c::shared().data_path(str.str()).get(), fstream_c::input);
+        iffstream_c iff(asset_manager_c::shared().data_path(str.str()).get(), fstream_c::openmode_e::input);
         if (!iff.good()) {
             break;
         }
@@ -196,7 +196,7 @@ user_levels_c::user_levels_c() {
     for (int i = 0; i < 10; i++) {
         push_back((level_recipe_t *)(recipes + i * level_recipe_t::MAX_SIZE));
     }
-    iffstream_c iff(asset_manager_c::shared().user_path("levels.dat").get(), fstream_c::input);
+    iffstream_c iff(asset_manager_c::shared().user_path("levels.dat").get(), fstream_c::openmode_e::input);
     if (iff.good()) {
         iff.set_assert_on_error(true);
         iff_group_s list;
@@ -211,7 +211,7 @@ user_levels_c::user_levels_c() {
 }
 
 bool user_levels_c::save() const {
-    iffstream_c iff(asset_manager_c::shared().user_path("levels.dat").get(), fstream_c::input | fstream_c::output);
+    iffstream_c iff(asset_manager_c::shared().user_path("levels.dat").get(), fstream_c::openmode_e::input | fstream_c::openmode_e::output);
     if (!iff.good()) {
         return false;
     }
@@ -264,7 +264,7 @@ done:
 }
 
 bool level_results_c::save() const {
-    iffstream_c iff(asset_manager_c::shared().user_path("scores.dat").get(), fstream_c::input | fstream_c::output);
+    iffstream_c iff(asset_manager_c::shared().user_path("scores.dat").get(), fstream_c::openmode_e::input | fstream_c::openmode_e::output);
     if (!iff.good()) {
         return false;
     }
@@ -282,9 +282,9 @@ bool level_results_c::save() const {
 
 scroll_text_c::scroll_text_c(const char *path) {
     fstream_c file(path);
-    file.seek(0, toybox::stream_c::end);
+    file.seek(0, stream_c::seekdir_e::end);
     auto size = file.tell();
-    file.seek(0, toybox::stream_c::beg);
+    file.seek(0, stream_c::seekdir_e::beg);
     char *text = (char*)malloc(size + 1);
     file.read((uint8_t *)text, size);
     text[size] = 0;

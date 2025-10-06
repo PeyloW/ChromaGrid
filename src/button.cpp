@@ -8,20 +8,20 @@
 #include "button.hpp"
 
 void cgbutton_t::draw_in(canvas_c &image) const {
-    if (state == hidden) {
+    if (state == state_e::hidden) {
         return;
     }
-    int row = state == disabled ? 2 : style == destructive ? 1 : 0;
+    int row = state == state_e::disabled ? 2 : style == style_e::destructive ? 1 : 0;
     const rect_s button_rect(8, row * 14, 32, 14);
 
     const auto &assets = cgasset_manager::shared();
     image.draw_3_patch(assets.image(BUTTON), button_rect, 8, rect);
     point_s at(
         rect.origin.x + rect.size.width / 2,
-        rect.origin.y + (state != pressed ? 3 : 4)
+        rect.origin.y + (state != state_e::pressed ? 3 : 4)
     );
     image.with_dirtymap(nullptr, [&] {
-        image.draw(assets.font(FONT), text, at, canvas_c::align_center, state != disabled ? image_c::MASKED_CIDX : 2);
+        image.draw(assets.font(FONT), text, at, canvas_c::alignment_e::center, state != state_e::disabled ? image_c::MASKED_CIDX : 2);
     });
 }
 
@@ -71,34 +71,34 @@ void cgbutton_group_base_c::next_button_pair_rects(bool first, rect_s &left_rect
 
 int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *end, canvas_c &screen, mouse_c &mouse) {
     const auto pos = mouse.postion();
-    const auto state = MAX(mouse.state(mouse_c::left), mouse.state(mouse_c::right));
+    const auto state = MAX(mouse.state(mouse_c::button_e::left), mouse.state(mouse_c::button_e::right));
     if (_tracked_button >= 0) {
         auto &button = begin[_tracked_button];
         //assert(button.state == cgbutton_t::pressed);
-        if (state == mouse_c::released || !button.rect.contains(pos)) {
-            button.state = cgbutton_t::normal;
+        if (state == mouse_c::state_e::released || !button.rect.contains(pos)) {
+            button.state = cgbutton_t::state_e::normal;
             button.draw_in(screen);
             _tracked_button = -1;
         }
     }
     if (_group_rect.contains(pos)) {
-        if (state != mouse_c::released) {
+        if (state != mouse_c::state_e::released) {
             int idx = 0;
             for (cgbutton_t *button = begin; button != end; button++, idx++) {
-                if (button->state >= cgbutton_t::disabled) {
+                if (button->state >= cgbutton_t::state_e::disabled) {
                     continue;
                 }
                 if (button->rect.contains(pos)) {
-                    if (state == mouse_c::pressed) {
-                        if (button->state == cgbutton_t::normal) {
-                            button->state = cgbutton_t::pressed;
+                    if (state == mouse_c::state_e::pressed) {
+                        if (button->state == cgbutton_t::state_e::normal) {
+                            button->state = cgbutton_t::state_e::pressed;
                             button->draw_in(screen);
                             _tracked_button = idx;
                         }
                         break;
                     } else {
-                        assert(button->state == cgbutton_t::pressed);
-                        button->state = cgbutton_t::normal;
+                        assert(button->state == cgbutton_t::state_e::pressed);
+                        button->state = cgbutton_t::state_e::normal;
                         button->draw_in(screen);
                         return idx;
                     }

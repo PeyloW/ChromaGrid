@@ -16,7 +16,7 @@ cghelp_scene_c::cghelp_scene_c(scene_manager_c &manager, page_e page) :
     for (auto title = &button_titles[0]; *title; title++) {
         _menu_buttons.add_button(*title);
     }
-    _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::state_e::disabled;
 }
 
 
@@ -58,7 +58,7 @@ static void draw_help(const cgasset_manager &rsc, canvas_c &screen, const char *
     screen.draw(font, title, point_s(96, 12));
     rect_s rect(7, 28, 176, 48);
     for (auto text = &texts[0]; *text; text++) {
-        auto size = screen.draw(small_font, *text, rect, 2, canvas_c::align_left);
+        auto size = screen.draw(small_font, *text, rect, 2, canvas_c::alignment_e::left);
         rect.origin.y += size.height + 4;
     }
 }
@@ -70,16 +70,16 @@ void cghelp_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     _menu_buttons.draw_all(canvas);
     
     switch (_page) {
-        case basics:
+        case page_e::basics:
             draw_help(assets, canvas, "Basics", basics_texts);
             break;
-        case special_tiles:
+        case page_e::special_tiles:
             draw_help(assets, canvas, "Special Tiles", special_tiles_texts);
             break;
-        case scoring:
+        case page_e::scoring:
             draw_help(assets, canvas, "Scoring", scoring_texts);
             break;
-        case level_editor:
+        case page_e::level_editor:
             draw_help(assets, canvas, "Level Editor", level_editor_texts);
             break;
     }

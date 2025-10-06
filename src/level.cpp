@@ -10,20 +10,30 @@
 #include "audio_mixer.hpp"
 #include "machine.hpp"
 
-typedef enum __packed {
+enum class tile_changes_e : uint8_t {
     no_changes = 0,
     added_tile = 1 << 0,
     removed_orb = 1 << 1,
     added_orb = 1 << 2,
     fused_orb = 1 << 3,
     broke_glass = 1 << 4
-} tile_changes_e;
+};
 __forceinline tile_changes_e &operator|=(tile_changes_e &a, const tile_changes_e &b) {
     a = static_cast<tile_changes_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
     return a;
 }
+__forceinline tile_changes_e operator|(tile_changes_e a, const tile_changes_e &b) {
+    return static_cast<tile_changes_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+}
+__forceinline tile_changes_e &operator&=(tile_changes_e &a, const tile_changes_e &b) {
+    a = static_cast<tile_changes_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+    return a;
+}
+__forceinline tile_changes_e operator&(tile_changes_e a, const tile_changes_e &b) {
+    return static_cast<tile_changes_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+}
 
-static tile_changes_e cgp_tile_changes = no_changes;
+static tile_changes_e cgp_tile_changes = tile_changes_e::no_changes;
 
 void level_result_t::calculate_score(bool succes) {
     if (succes) {
@@ -101,7 +111,7 @@ public:
     }
     
     __forceinline bool is_remaining() const {
-        if (state.target != none) {
+        if (state.target !=  color_e::none) {
             return state.target != state.current;
         } else {
             return false;
@@ -113,9 +123,9 @@ public:
     }
     
     bool try_add_orb(color_e c) {
-        if (transition.step == 0 && state.orb == none && state.can_have_orb()) {
+        if (transition.step == 0 && state.orb == color_e::none && state.can_have_orb()) {
             state.orb = c;
-            cgp_tile_changes |= added_orb;
+            cgp_tile_changes |= tile_changes_e::added_orb;
             _dirty = true;
             return true;
         } else {
@@ -124,42 +134,42 @@ public:
     }
     
     color_e try_remove_orb() {
-        if (transition.step == 0 && state.orb != none && state.type != magnetic) {
+        if (transition.step == 0 && state.orb != color_e::none && state.type != tiletype_e::magnetic) {
             const auto c = state.orb;
-            state.orb = none;
-            cgp_tile_changes |= removed_orb;
-            if (state.type == glass) {
-                state.type = broken;
-                cgp_tile_changes |= broke_glass;
+            state.orb = color_e::none;
+            cgp_tile_changes |= tile_changes_e::removed_orb;
+            if (state.type == tiletype_e::glass) {
+                state.type = tiletype_e::broken;
+                cgp_tile_changes |= tile_changes_e::broke_glass;
             }
             _dirty = true;
             return c;
         } else {
-            return none;
+            return color_e::none;
         }
     }
     
     void try_make_tile(tiletype_e type) {
-        if (state.type == empty) {
+        if (state.type == tiletype_e::empty) {
             transition.from_state = state;
             transition.step = STEP_MAX;
             state.type = type;
-            cgp_tile_changes |= added_tile;
+            cgp_tile_changes |= tile_changes_e::added_tile;
         }
     }
     
     void solve_remove_orb() {
-        assert(state.orb != none && state.orb != both);
+        assert(state.orb != color_e::none && state.orb != color_e::both);
         transition.from_state = state;
         transition.step = STEP_MAX;
-        state.orb = none;
-        cgp_tile_changes |= fused_orb;
-        if (state.type == glass) {
-            state.type = broken;
-            cgp_tile_changes |= broke_glass;
+        state.orb = color_e::none;
+        cgp_tile_changes |= tile_changes_e::fused_orb;
+        if (state.type == tiletype_e::glass) {
+            state.type = tiletype_e::broken;
+            cgp_tile_changes |= tile_changes_e::broke_glass;
         }
         if (state.current != state.target) {
-            state.current = none;
+            state.current = color_e::none;
         }
         _dirty = true;
     }
@@ -220,7 +230,7 @@ private:
     inline bool is_orb_solved_at(int x, int y) const {
         const color_e c = tiles[x][y].orb_color();
         int cnt = 0;
-        if (c != none) {
+        if (c != color_e::none) {
             visit_adjecent_at(x, y, [&cnt, c] (const tile_c &tile, int x, int y) {
                 if (tile.is_orb_color(c)) {
                     cnt++;
@@ -233,7 +243,7 @@ private:
 public:
     
     bool try_add_orb_at(color_e c, int x, int y) {
-        assert(c >= gold && c <= silver);
+        assert(c >= color_e::gold && c <= color_e::silver);
         assert(x >= 0 && x < GRID_MAX);
         assert(y >= 0 && y < GRID_MAX);
         auto &src_tile = tiles[x][y];
@@ -325,7 +335,7 @@ level_t::level_t(level_recipe_t *recipe) :
             auto &src_tile = recipe->tiles[x + y * recipe->header.width];
             auto &dst_tile = _grid->tiles[off_x + x][off_y + y];
             dst_tile.state = src_tile;
-            if (dst_tile.state.target != none && dst_tile.state.target != dst_tile.state.current) {
+            if (dst_tile.state.target != color_e::none && dst_tile.state.target != dst_tile.state.current) {
                 _remaining++;
             }
         }
@@ -357,10 +367,10 @@ void level_t::draw_all(canvas_c &screen) const {
             draw_tile(screen, x, y);
         }
     }
-    screen.draw(font, "TIME:", point_s(LABEL_X_INSET, TIME_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "TIME:", point_s(LABEL_X_INSET, TIME_Y_INSET), canvas_c::alignment_e::left);
     draw_time(screen);
     
-    screen.draw(font, "ORBS:", point_s(LABEL_X_INSET, ORB_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "ORBS:", point_s(LABEL_X_INSET, ORB_Y_INSET), canvas_c::alignment_e::left);
     rect_s rect(0, 0, 16, 10);
     for (int i = 0; i < 2; i++) {
         point_s at = point_s(ORB_X_INSET + i * ORB_X_SPACING, ORB_Y_INSET - 1);
@@ -369,10 +379,10 @@ void level_t::draw_all(canvas_c &screen) const {
     }
     draw_orb_counts(screen);
     
-    screen.draw(font, "MOVES:", point_s(LABEL_X_INSET, MOVES_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "MOVES:", point_s(LABEL_X_INSET, MOVES_Y_INSET), canvas_c::alignment_e::left);
     draw_move_count(screen);
 
-    screen.draw(font, "REMAINING:", point_s(LABEL_X_INSET, REMAINING_Y_INSET), canvas_c::align_left);
+    screen.draw(font, "REMAINING:", point_s(LABEL_X_INSET, REMAINING_Y_INSET), canvas_c::alignment_e::left);
     draw_remaining_count(screen);
 }
 
@@ -381,8 +391,8 @@ const tilestate_t &level_t::tilestate_at(int x, int y) const {
 }
 
 inline static const int16_t tilestate_tile_index(const tilestate_t &state) {
-    int16_t idx = state.target + state.current * 3;
-    idx += (state.type - 1) * 9;
+    int16_t idx = static_cast<int16_t>(state.target) + static_cast<int16_t>(state.current) * 3;
+    idx += (static_cast<int16_t>(state.type) - 1) * 9;
     return idx;
 }
 
@@ -392,9 +402,9 @@ static inline int tileset_at(int x, int y) {
 
 inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &assets, const tilestate_t &state, int x, int y) {
     const point_s at(x * 16, y * 16);
-    if (state.type == empty) {
-        if (state.target != none) {
-            screen.draw(assets.tileset(EMPTY_TILE), (state.target - 1), at);
+    if (state.type == tiletype_e::empty) {
+        if (state.target != color_e::none) {
+            screen.draw(assets.tileset(EMPTY_TILE), (static_cast<int16_t>(state.target) - 1), at);
         }
         return;
     }
@@ -404,14 +414,14 @@ inline static void draw_tilestate(canvas_c &screen, const cgasset_manager &asset
 
 void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool selected) {
     auto &assets = cgasset_manager::shared();
-    if (state.type == empty) {
+    if (state.type == tiletype_e::empty) {
         auto &empty_tile = assets.tileset(EMPTY_TILE);
         const rect_s rect(at, size_s(16, 16));
         screen.draw(assets.image(BACKGROUND), rect, at);
         switch (state.target) {
-            case none:
+            case color_e::none:
                 break;
-            case both: {
+            case color_e::both: {
                 point_s o_at = at;
                 o_at.x += 2;
                 o_at.y += 2;
@@ -422,7 +432,7 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
                 break;
             }
             default: {
-                screen.draw(empty_tile, (state.target - 1), at);
+                screen.draw(empty_tile, (static_cast<int16_t>(state.target) - 1), at);
                 break;
             }
         }
@@ -431,9 +441,9 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
     }
     point_s o_at = at;
     switch (state.orb) {
-        case none:
+        case color_e::none:
             break;
-        case both: {
+        case color_e::both: {
             o_at.x += 3;
             o_at.y += 6;
             draw_orb(screen, color_e::silver, o_at);
@@ -453,7 +463,7 @@ void draw_tilestate(canvas_c &screen, const tilestate_t &state, point_s at, bool
 }
 
 inline static void draw_orb(canvas_c &screen, const cgasset_manager &assets, color_e color, int shade, int x, int y) {
-    int16_t idx = (color - 1);
+    int16_t idx = (static_cast<int16_t>(color) - 1);
     idx += shade * 2;
     const point_s at(x * 16, y * 16 + 3);
     screen.draw(assets.tileset(ORBS), idx, at);
@@ -461,20 +471,20 @@ inline static void draw_orb(canvas_c &screen, const cgasset_manager &assets, col
 
 void draw_orb(canvas_c &screen, color_e color, point_s at) {
     auto &assets = cgasset_manager::shared();
-    int16_t idx = (color - 1);
+    int16_t idx = (static_cast<int16_t>(color) - 1);
     screen.draw(assets.tileset(ORBS), idx, at);
 }
 
 void level_t::draw_tile(canvas_c &screen, int x, int y) const {
     auto &assets = cgasset_manager::shared();
     auto &tile = _grid->tiles[x][y];
-    if (tile.state.type == empty && tile.state.target == none) {
+    if (tile.state.type == tiletype_e::empty && tile.state.target == color_e::none) {
         return;
     } else {
         if (tile.transition.step > 0) {
             draw_tilestate(screen, assets, tile.transition.from_state, x, y);
             const int shade = canvas_c::STENCIL_FULLY_OPAQUE - tile.transition.step * canvas_c::STENCIL_FULLY_OPAQUE / tile_c::STEP_MAX;
-            auto stencil = canvas_c::stencil(canvas_c::orderred, shade);
+            auto stencil = canvas_c::stencil(canvas_c::stencil_e::orderred, shade);
             screen.with_stencil(stencil, [&, this] {
                 draw_tilestate(screen, assets, tile.state, x, y);
             });
@@ -507,7 +517,7 @@ void level_t::draw_time(canvas_c &screen) const {
     const rect_s rect = rect_s(at, size_s(40, 8));
 
     screen.draw(assets.image(BACKGROUND), rect, at);
-    screen.draw(assets.font(MONO_FONT), buf, at, canvas_c::align_left);
+    screen.draw(assets.font(MONO_FONT), buf, at, canvas_c::alignment_e::left);
 }
 
 void level_t::draw_orb_counts(canvas_c &screen) const {
@@ -524,7 +534,7 @@ void level_t::draw_orb_counts(canvas_c &screen) const {
         point_s at(ORB_X_INSET + ORB_X_LEAD + i * ORB_X_SPACING, ORB_Y_INSET);
         rect_s rect(at, size_s(16, 8));
         screen.draw(background, rect, at);
-        screen.draw(mono_font, buf, at, canvas_c::align_left);
+        screen.draw(mono_font, buf, at, canvas_c::alignment_e::left);
     }
 }
 
@@ -545,7 +555,7 @@ void level_t::draw_move_count(canvas_c &screen) const {
     const rect_s rect = rect_s(at, size_s(24, 8));
 
     screen.draw(background, rect, at);
-    screen.draw(mono_font, buf, at, canvas_c::align_left);
+    screen.draw(mono_font, buf, at, canvas_c::alignment_e::left);
 }
 
 void level_t::draw_remaining_count(canvas_c &screen) const {
@@ -565,7 +575,7 @@ void level_t::draw_remaining_count(canvas_c &screen) const {
     const rect_s rect = rect_s(at, size_s(24, 8));
 
     screen.draw(background, rect, at);
-    screen.draw(mono_font, buf, at, canvas_c::align_left);
+    screen.draw(mono_font, buf, at, canvas_c::alignment_e::left);
 }
 
 level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int passed_seconds) {
@@ -581,26 +591,26 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
 
     if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
         debug_cpu_color(DBEUG_CPU_LEVEL_RESOLVE);
-        bool lb = mouse.state(mouse_c::left) == mouse_c::clicked;
-        bool rb = mouse.state(mouse_c::right) == mouse_c::clicked;
+        bool lb = mouse.state(mouse_c::button_e::left) == mouse_c::state_e::clicked;
+        bool rb = mouse.state(mouse_c::button_e::right) == mouse_c::state_e::clicked;
         if (lb || rb) {
-            cgp_tile_changes = no_changes;
+            cgp_tile_changes = tile_changes_e::no_changes;
             // Try remove an orb
             auto color = _grid->try_remove_orb_at(at.x, at.y);
             if (color != color_e::none) {
-                _results.orbs[color - 1] += 1;
+                _results.orbs[static_cast<int16_t>(color) - 1] += 1;
                 goto done;
             }
             // Try add an orb
             color = lb ? color_e::gold : color_e::silver;
-            if (_results.orbs[color - 1] > 0) {
+            if (_results.orbs[static_cast<int16_t>(color) - 1] > 0) {
                 if (_grid->try_add_orb_at(color, at.x, at.y)) {
-                    _results.orbs[color - 1] -= 1;
+                    _results.orbs[static_cast<int16_t>(color) - 1] -= 1;
                     _grid->resolve_at(at.x, at.y);
                 }
             }
         done:
-            if ((cgp_tile_changes & added_orb) || cgp_tile_changes & removed_orb) {
+            if ((cgp_tile_changes & tile_changes_e::added_orb) != tile_changes_e::no_changes || (cgp_tile_changes & tile_changes_e::removed_orb) != tile_changes_e::no_changes) {
                 _results.moves += 1;
                 draw_orb_counts(screen);
                 draw_move_count(screen);
@@ -608,15 +618,15 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
             auto &assets = cgasset_manager::shared();
             if (assets.support_audio()) {
                 int sound_index = -1;
-                if (cgp_tile_changes >= (broke_glass + fused_orb)) {
+                if ((int)cgp_tile_changes >= (int)tile_changes_e::broke_glass + (int)tile_changes_e::fused_orb) {
                     sound_index = FUSE_BREAK_TILE;
-                } else if (cgp_tile_changes >= broke_glass) {
+                } else if (cgp_tile_changes >= tile_changes_e::broke_glass) {
                     sound_index = BREAK_TILE;
-                } else if (cgp_tile_changes >= fused_orb) {
+                } else if (cgp_tile_changes >= tile_changes_e::fused_orb) {
                     sound_index = FUSE_ORB;
-                } else if (cgp_tile_changes >= added_orb) {
+                } else if (cgp_tile_changes >= tile_changes_e::added_orb) {
                     sound_index = DROP_ORB;
-                } else if (cgp_tile_changes >= removed_orb) {
+                } else if (cgp_tile_changes >= tile_changes_e::removed_orb) {
                     sound_index = TAKE_ORB;
                 } else {
                     sound_index = NO_DROP_ORB;
@@ -639,11 +649,11 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
             draw_remaining_count(screen);
         }
         if (completed) {
-            return success;
+            return state_e::success;
         }
     }
     
-    return (int16_t)_results.time > 0 ? normal : failed;
+    return (int16_t)_results.time > 0 ? state_e::normal : state_e::failed;
 }
 
 bool level_recipe_t::empty() const {

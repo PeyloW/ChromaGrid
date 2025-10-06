@@ -14,14 +14,14 @@
 #include "vector.hpp"
 #include "asset.hpp"
 
-typedef enum __packed {
+enum cgassets_e {
     INTRO, BACKGROUND, TILES_A, TILES_B, TILES_C, EMPTY_TILE, ORBS, CURSOR, BUTTON, SELECTION, SHIMMER,
     FONT, MONO_FONT, SMALL_FONT, SMALL_MONO_FONT, DISK, SPOT,
     DROP_ORB, TAKE_ORB, FUSE_ORB, NO_DROP_ORB, BREAK_TILE, FUSE_BREAK_TILE,
     MUSIC,
     LEVELS, LEVEL_RESULTS, USER_LEVELS,
     MENU_SCROLL
-} cgassets_e;
+} __packed;
 
 class levels_c : public asset_c, public vector_c<level_recipe_t*, 45> {
 public:

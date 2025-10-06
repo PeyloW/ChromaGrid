@@ -11,13 +11,13 @@
 int main(int argc, const char * argv[]) {
     return  machine_c::with_machine(argc, argv, [] (machine_c &m) {
         switch (m.type()) {
-            case machine_c::st:
+            case machine_c::type_e::st:
                 printf("Type ST.\n\r");
                 break;
-            case machine_c::ste:
+            case machine_c::type_e::ste:
                 printf("Type STe.\n\r");
                 break;
-            case machine_c::falcon:
+            case machine_c::type_e::falcon:
                 printf("Type Falcon.\n\r");
                 break;
             default:

@@ -44,7 +44,7 @@ public:
         auto &canvas = clear_screen.canvas();
         
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
-        canvas.with_stencil(canvas_c::stencil(canvas_c::orderred, 48), [this, &canvas, &rect] {
+        canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 48), [this, &canvas, &rect] {
             canvas.draw_aligned(background, rect, rect.origin);
         });
         rect = rect_s(
@@ -112,7 +112,7 @@ public:
                 static const char *title = "Error Saving Results";
                 static const char *text = "Could not save level results. Check that disk is not write protected and try again.";
                 auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_ended_scene_c::did_choose, *this);
-                manager.push(scene, transition_c::create(canvas_c::orderred));
+                manager.push(scene, transition_c::create(canvas_c::stencil_e::orderred));
             }
             _save_results = false;
         }
@@ -121,7 +121,7 @@ public:
         if (choice == cgerror_scene_c::choice_e::retry) {
             _save_results = true;
         }
-        manager.pop(transition_c::create(canvas_c::orderred));
+        manager.pop(transition_c::create(canvas_c::stencil_e::orderred));
     }
 private:
     bool _save_results;
@@ -140,7 +140,7 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, int level) :
 {
     _menu_buttons.add_button("Main Menu");
     _menu_buttons.add_button("Restart");
-    _menu_buttons.buttons[1].style = cgbutton_t::destructive;
+    _menu_buttons.buttons[1].style = cgbutton_t::style_e::destructive;
 }
 
 cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe) :
@@ -152,7 +152,7 @@ cglevel_scene_c::cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recip
 {
     _menu_buttons.add_button("Back");
     _menu_buttons.add_button("Restart");
-    _menu_buttons.buttons[1].style = cgbutton_t::destructive;
+    _menu_buttons.buttons[1].style = cgbutton_t::style_e::destructive;
 }
 
 void tick_second(cglevel_scene_c *that) {
@@ -178,7 +178,7 @@ void cglevel_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
         }
     }
     str << ends;
-    canvas.draw(small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::align_left);
+    canvas.draw(small_font, buffer, rect_s(8, 193, 304, 6), 0, canvas_c::alignment_e::left);
 
     _menu_buttons.draw_all(canvas);
     _level.draw_all(canvas);
@@ -215,10 +215,10 @@ void cglevel_scene_c::update_clear(screen_c &clear_screen, int ticks) {
     auto passed = _passed_seconds;
     _passed_seconds = 0;
     auto state = _level.update_tick(canvas, mouse, passed);
-    if (state != level_t::normal) {
+    if (state != level_t::state_e::normal) {
         level_result_t results;
         _level.results(&results);
-        results.calculate_score(state == level_t::success);
+        results.calculate_score(state == level_t::state_e::success);
         manager.replace(new cglevel_ended_scene_c(manager, _level_num, results));
     }
 }
@@ -238,7 +238,7 @@ void cglevel_scene_c::update_back(screen_c &back_screen, int ticks) {
     } else if (_shimmer_ticks <= 0) {
         _shimmer_ticks = 0;
         int tile = fast_rand() % (12 * 12);
-        if (_level.tilestate_at(tile % 12, tile / 12).type != empty) {
+        if (_level.tilestate_at(tile % 12, tile / 12).type != tiletype_e::empty) {
             _shimmer_tile = tile;
         }
     }

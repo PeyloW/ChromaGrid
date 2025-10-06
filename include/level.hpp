@@ -29,18 +29,33 @@ DEFINE_IFF_ID (CGLR); // ChromaGrid Level Results
 #define DEBUG_CPU_LEVEL_GRID_TICK 0x200
 #define DEBUG_CPU_LEVEL_GRID_DRAW 0x400
 
-typedef enum __packed {
-    none, gold, silver, both
-} color_e;
+enum class color_e : uint8_t {
+    none = 0,
+    gold = 1 << 0,
+    silver = 1 << 1,
+    both = gold | silver
+};
+static color_e operator|(const color_e a, const color_e b) {
+    return static_cast<color_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+}
+static color_e& operator|=(color_e& a, const color_e b) {
+    a = a | b; return a;
+}
+static color_e operator&(const color_e a, const color_e b) {
+    return static_cast<color_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+}
+static color_e& operator&=(color_e& a, const color_e b) {
+    a = a & b; return a;
+}
 
-typedef enum __packed {
+enum class tiletype_e : uint8_t {
     empty,
     blocked,
     broken,
     glass,
     regular,
     magnetic
-} tiletype_e;
+};
 
 struct __packed_struct tilestate_t  {
     tiletype_e type;
@@ -48,7 +63,7 @@ struct __packed_struct tilestate_t  {
     color_e current;
     color_e orb;
     inline bool can_have_orb() const {
-        return type >= glass;
+        return type >= tiletype_e::glass;
     }
 };
 static_assert(sizeof(tilestate_t) == 4, "tilestate_t size overflow");
@@ -115,11 +130,11 @@ class grid_c;
 
 class level_t : public nocopy_c {
 public:
-    typedef enum __packed {
+    enum class state_e : uint8_t {
         normal,
         failed,
         success
-    } state_e;
+    };
     
     level_t(level_recipe_t *recipe);
     ~level_t();

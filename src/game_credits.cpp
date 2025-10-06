@@ -16,7 +16,7 @@ cgcredits_scene_c::cgcredits_scene_c(scene_manager_c &manager, page_e page) :
     for (auto title = &button_titles[0]; *title; title++) {
         _menu_buttons.add_button(*title);
     }
-    _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::disabled;
+    _menu_buttons.buttons[4 - (int)page].state = cgbutton_t::state_e::disabled;
 }
 
 static void draw_credits(font_c &font, font_c &small_font, canvas_c &screen) {
@@ -35,9 +35,9 @@ static void draw_credits(font_c &font, font_c &small_font, canvas_c &screen) {
     point_s atc(16, 40 +  0);
     point_s atp(40, 40 + 10);
     for (auto credit = &credits[0]; credit->credit; credit++) {
-        screen.draw(font, credit->credit, atc, canvas_c::align_left);
+        screen.draw(font, credit->credit, atc, canvas_c::alignment_e::left);
         atc.y += 26;
-        screen.draw(font, credit->person, atp, canvas_c::align_left);
+        screen.draw(font, credit->person, atp, canvas_c::alignment_e::left);
         atp.y += 26;
     }
 }
@@ -98,16 +98,16 @@ void cgcredits_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     _menu_buttons.draw_all(canvas);
 
     switch (_page) {
-        case credits:
+        case page_e::credits:
             draw_credits(font, small_font, canvas);
             break;
-        case recognitions:
+        case page_e::recognitions:
             draw_recognitions(font, small_font, canvas);
             break;
-        case dedications:
+        case page_e::dedications:
             draw_dedications(font, small_font, canvas);
             break;
-        case greetings:
+        case page_e::greetings:
             draw_greetings(font, small_font, canvas);
             break;
     }

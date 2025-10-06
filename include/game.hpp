@@ -64,7 +64,7 @@ public:
     enum class choice_e : uint8_t {
         retry, cancel
     };
-    typedef void (scene_c::*choice_f)(choice_e choice);
+    using choice_f = void(scene_c::*)(choice_e choice);
     cgerror_scene_c(scene_manager_c &manager, const char *title, const char *text, choice_f callback, scene_c &target);
 
     virtual void will_appear(screen_c &clear_screen, bool obsured);
@@ -89,10 +89,10 @@ private:
 
 class cgcredits_scene_c : public cggame_scene_c {
 public:
-    typedef enum __packed {
+    enum class page_e : uint8_t {
         credits, recognitions, dedications, greetings
-    } page_e;
-    cgcredits_scene_c(scene_manager_c &manager, page_e page = credits);
+    };
+    cgcredits_scene_c(scene_manager_c &manager, page_e page = page_e::credits);
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
@@ -102,10 +102,10 @@ private:
 
 class cghelp_scene_c : public cggame_scene_c {
 public:
-    typedef enum __packed {
+    enum class page_e : uint8_t {
         basics, special_tiles, scoring, level_editor
-    } page_e;
-    cghelp_scene_c(scene_manager_c &manager, page_e page = basics);
+    };
+    cghelp_scene_c(scene_manager_c &manager, page_e page = page_e::basics);
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
@@ -115,10 +115,10 @@ private:
 
 class cgscores_scene_c : public cggame_scene_c {
 public:
-    typedef enum __packed {
+    enum class scoring_e : uint8_t {
         score, time, moves
-    } scoring_e;
-    cgscores_scene_c(scene_manager_c &manager, scoring_e scoring = score);
+    };
+    cgscores_scene_c(scene_manager_c &manager, scoring_e scoring = scoring_e::score);
     virtual void will_appear(screen_c &clear_screen, bool obsured);
     virtual void update_clear(screen_c &clear_screen, int ticks);
 private:
