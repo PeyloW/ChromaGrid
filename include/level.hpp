@@ -14,6 +14,7 @@
 #include "input.hpp"
 #include "iffstream.hpp"
 #include "memory.hpp"
+#include "optionset.hpp"
 
 using namespace toybox;
 using namespace toybox;
@@ -35,18 +36,8 @@ enum class color_e : uint8_t {
     silver = 1 << 1,
     both = gold | silver
 };
-static color_e operator|(const color_e a, const color_e b) {
-    return static_cast<color_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-}
-static color_e& operator|=(color_e& a, const color_e b) {
-    a = a | b; return a;
-}
-static color_e operator&(const color_e a, const color_e b) {
-    return static_cast<color_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-}
-static color_e& operator&=(color_e& a, const color_e b) {
-    a = a & b; return a;
-}
+template<>
+struct toybox::is_optionset<color_e> : true_type {};
 
 enum class tiletype_e : uint8_t {
     empty,

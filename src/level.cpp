@@ -18,20 +18,8 @@ enum class tile_changes_e : uint8_t {
     fused_orb = 1 << 3,
     broke_glass = 1 << 4
 };
-__forceinline tile_changes_e &operator|=(tile_changes_e &a, const tile_changes_e &b) {
-    a = static_cast<tile_changes_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-    return a;
-}
-__forceinline tile_changes_e operator|(tile_changes_e a, const tile_changes_e &b) {
-    return static_cast<tile_changes_e>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
-}
-__forceinline tile_changes_e &operator&=(tile_changes_e &a, const tile_changes_e &b) {
-    a = static_cast<tile_changes_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-    return a;
-}
-__forceinline tile_changes_e operator&(tile_changes_e a, const tile_changes_e &b) {
-    return static_cast<tile_changes_e>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
-}
+template <>
+struct toybox::is_optionset<tile_changes_e> : true_type {};
 
 static tile_changes_e cgp_tile_changes = tile_changes_e::no_changes;
 
