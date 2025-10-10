@@ -41,7 +41,7 @@ public:
     };
 
     virtual void will_appear(screen_c &clear_screen, bool obsured) {
-        auto &canvas = clear_screen.canvas();
+        auto &canvas = clear_screen;
         
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 48), [this, &canvas, &rect] {
@@ -85,7 +85,7 @@ public:
     }
 
     virtual void update_clear(screen_c &clear_screen, int ticks) {
-        auto &canvas = clear_screen.canvas();
+        auto &canvas = clear_screen;
         int button = update_button_group(canvas, _menu_buttons);
         switch (button) {
             case 0:
@@ -103,7 +103,7 @@ public:
         }
         if (_save_results) {
             auto &disk = cgasset_manager::shared().image(DISK);
-            manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
+            manager.screen(scene_manager_c::screen_e::front).draw(disk, point_s(288, 8));
             clear_screen.dirtymap()->mark(rect_s(288, 8, 24, 24));
             #ifndef __M68000__
             sleep(2);
@@ -164,7 +164,7 @@ static int next_shimmer_ticks() {
 }
 
 void cglevel_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     canvas.draw_aligned(background, point_s());
     char buffer[256] = {0};
     strstream_c str(buffer, 256);
@@ -193,7 +193,7 @@ void cglevel_scene_c::will_disappear(bool obscured) {
 };
 
 void cglevel_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
@@ -224,7 +224,7 @@ void cglevel_scene_c::update_clear(screen_c &clear_screen, int ticks) {
 }
 
 void cglevel_scene_c::update_back(screen_c &back_screen, int ticks) {
-    auto &canvas = back_screen.canvas();
+    auto &canvas = back_screen;
     _shimmer_ticks -= ticks;
     if (_shimmer_tile != -1) {
         if (_shimmer_ticks < -7) {

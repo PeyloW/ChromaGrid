@@ -34,7 +34,7 @@ void scroller_c::restore() {
 }
 
 void scroller_c::update(screen_c &screen) {
-    auto &canvas = screen.canvas();
+    auto &canvas = screen;
     canvas.draw(canvas.image(), rect_s(0, 192, 320, 8), point_s(-1, 200));
     canvas.draw_aligned(canvas.image(), rect_s(0, 200, 320, 8), point_s(0, 192));
     

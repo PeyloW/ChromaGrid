@@ -21,7 +21,7 @@ cgmenu_scene_c::cgmenu_scene_c(scene_manager_c &manager) :
 }
 
 void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     auto &tiles = assets.tileset(TILES_A);
     
     canvas.draw_aligned(background, point_s());
@@ -65,7 +65,7 @@ void cgmenu_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
 }
 
 void cgmenu_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case 0:
@@ -124,7 +124,7 @@ cglevel_select_scene_c::cglevel_select_scene_c(scene_manager_c &manager) :
 }
 
 void cglevel_select_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
 
@@ -136,7 +136,7 @@ void cglevel_select_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
 }
 
 void cglevel_select_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     int button = update_button_group(canvas, _menu_buttons);
     if (button == 0) {
         manager.pop();

@@ -32,14 +32,14 @@ cggame_scene_c::configuration_s &cgintro_scene_c::configuration() const {
 
 void cgintro_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
     auto &image = cgasset_manager::shared().image(INTRO);
-    clear_screen.canvas().draw_aligned(image, point_s());
-    _menu_buttons.draw_all(clear_screen.canvas());
+    clear_screen.draw_aligned(image, point_s());
+    _menu_buttons.draw_all(clear_screen);
 }
 
 static cgintro_scene_c *state = nullptr;
 void cgintro_scene_c::update_preload(int loaded, int count) {
     auto &clear_image = state->manager.screen(scene_manager_c::screen_e::clear).image();
-    auto &front_canvas = state->manager.screen(scene_manager_c::screen_e::front).canvas();
+    auto &front_canvas = state->manager.screen(scene_manager_c::screen_e::front);
     rect_s rect(LOADING_BUTTON_ORIGIN, LOADING_BUTTON_SIZE);
     rect.size.width = rect.size.width * loaded / count;
     front_canvas.draw(clear_image, rect, LOADING_BUTTON_ORIGIN);
@@ -63,7 +63,7 @@ void cgintro_scene_c::update_preload(int loaded, int count) {
 #define CG_DAY ( (__DATE__[4] == ' ' ? 0 : (__DATE__[4] - '0') * 10) + __DATE__[5] - '0' )
 
 void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     auto &assets = cgasset_manager::shared();
     switch (_update_count++) {
         case 0 ... 1:
@@ -79,11 +79,11 @@ void cgintro_scene_c::update_clear(screen_c &clear_screen, int ticks) {
             state = nullptr;
             manager.set_overlay_scene(new cgoverlay_scene_c(manager));
             _menu_buttons.buttons[0].text = "CONTINUE";
-            _menu_buttons.draw_all(clear_screen.canvas());
+            _menu_buttons.draw_all(clear_screen);
             strstream_c version(10);
             version.width(2); version.fill('0');
             version << "v1." << (int16_t)CG_MONTH << '.' << (int16_t)CG_DAY << ends;
-            clear_screen.canvas().draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::alignment_e::right, 9);
+            clear_screen.draw(assets.font(SMALL_FONT), version.str(), point_s(318, 193), canvas_c::alignment_e::right, 9);
             break;
         }
         default: {
@@ -120,7 +120,7 @@ cggame_scene_c::configuration_s &cgoverlay_scene_c::configuration() const {
 }
 
 void cgoverlay_scene_c::update_back(screen_c &back_screen, int ticks) {
-    auto &canvas = back_screen.canvas();
+    auto &canvas = back_screen;
     canvas.with_clipping(true, [this, &canvas] {
         point_s at = mouse.postion();
         at.x -= 2;
@@ -139,7 +139,7 @@ cgerror_scene_c::cgerror_scene_c(scene_manager_c &manager, const char *title, co
 }
 
 void cgerror_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     auto &assets = cgasset_manager::shared();
     canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 48), [this, &canvas] {
         canvas.fill(7, rect_s(0, 0, 320, 200));
@@ -152,7 +152,7 @@ void cgerror_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
 }
 
 void cgerror_scene_c::update_back(screen_c &back_screen, int ticks) {
-    int button = update_button_group(back_screen.canvas(), _buttons);
+    int button = update_button_group(back_screen, _buttons);
     if (button >= 0) {
         (_target.*_callback)((choice_e)button);
     }

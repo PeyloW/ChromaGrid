@@ -20,7 +20,7 @@ cgscores_scene_c::cgscores_scene_c(scene_manager_c &manager, scoring_e scoring) 
 }
 
 void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     
@@ -74,7 +74,7 @@ void cgscores_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
 }
 
 void cgscores_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     int button = update_button_group(canvas, _menu_buttons);
     switch (button) {
         case -1:

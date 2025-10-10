@@ -56,7 +56,7 @@ public:
     }
 
     virtual void will_appear(screen_c &clear_screen, bool obsured) {
-        auto &canvas = clear_screen.canvas();
+        auto &canvas = clear_screen;
         rect_s rect(0, 0, MAIN_MENU_ORIGIN_X, 200);
         canvas.with_stencil(canvas_c::stencil(canvas_c::stencil_e::orderred, 32), [this, &canvas, &rect] {
             canvas.draw_aligned(background, rect, rect.origin);
@@ -73,7 +73,7 @@ public:
         if (_save) {
             _save = false;
             auto &disk = cgasset_manager::shared().image(DISK);
-            manager.screen(scene_manager_c::screen_e::front).canvas().draw(disk, point_s(288, 8));
+            manager.screen(scene_manager_c::screen_e::front).draw(disk, point_s(288, 8));
             clear_screen.dirtymap()->mark(rect_s(288, 8, 24, 24));
             #ifndef __M68000__
             sleep(2);
@@ -87,7 +87,7 @@ public:
             }
             manager.pop(transition_c::create(canvas_c::stencil_e::random));
         }
-        auto &canvas = clear_screen.canvas();
+        auto &canvas = clear_screen;
         int button = update_button_group(canvas, _menu_buttons);
         auto transition = transition_c::create(canvas_c::stencil_e::random);
         if (button == 0) {
@@ -209,7 +209,7 @@ static const char *_template_help_texts[7] = {
 };
 
 void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     canvas.draw_aligned(background, point_s());
     _menu_buttons.draw_all(canvas);
     _count_buttons.draw_all(canvas);
@@ -256,7 +256,7 @@ tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c
 }
 
 void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
-    auto &canvas = clear_screen.canvas();
+    auto &canvas = clear_screen;
     static union {
         level_recipe_t recipe;
         uint8_t _dummy[level_recipe_t::MAX_SIZE];
@@ -354,7 +354,7 @@ void cglevel_edit_scene_c::update_back(screen_c &back_screen, int ticks) {
     } else if (_shimmer_ticks <= 0) {
         int16_t idx = ABS(_shimmer_ticks);
         point_s at(LEVEL_EDIT_TEMPLATE_ORIGIN_X + _selected_template * 16, LEVEL_EDIT_TEMPLATE_ORIGIN_Y);
-        back_screen.canvas().draw(assets.tileset(SHIMMER), idx, at);
+        back_screen.draw(assets.tileset(SHIMMER), idx, at);
     }
 }
 
