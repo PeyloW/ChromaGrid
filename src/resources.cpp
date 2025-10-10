@@ -10,24 +10,6 @@
 #include "game.hpp"
 #include "iffstream.hpp"
 
-static void remap_to(color_e col, canvas_c::remap_table_c &table, int masked_idx = image_c::MASKED_CIDX) {
-    switch (col) {
-        case color_e::gold:
-            table[2] = 12;
-            table[3] = 13;
-            table[4] = 14;
-            break;
-        case color_e::silver:
-            table[2] = 11;
-            table[3] = 8;
-            table[4] = 9;
-            break;
-        default:
-            break;
-    }
-    table[masked_idx] = image_c::MASKED_CIDX;
-}
-
 extern "C" __neverinline void read_cheats(bool &max_time, bool &max_orbs) {
     uint16_t cheat = (uint16_t)machine_c::shared().get_cookie(0x5F434743, -1); // '_CGC'
     if (cheat != 0xffff) {
@@ -151,18 +133,20 @@ asset_c *cgasset_manager::create_asset(int id, const asset_def_s &def) const {
     auto asset = asset_manager_c::create_asset(id, def);
     if (id >= TILES_A && id <= TILES_C) {
         tileset_c &tiles = *(tileset_c*)asset;
-        for (int x = 1; x < 3; x++) {
+        auto remap = [&](int x) {
+            assert(x == 1 || x == 2);
+            constexpr canvas_c::remap_table_c tables[2] = {
+                canvas_c::remap_table_c({ {2, 12}, {3, 13}, {4, 14} }),
+                canvas_c::remap_table_c({ {2, 11}, {3, 8}, {4, 9} })
+            };
             canvas_c tiles_cnv(*tiles.image());
             rect_s rect(x * 48, 0, 48, 80);
             tiles_cnv.draw(*tiles.image(), rect_s(0, 0, 48, 80), rect.origin);
             canvas_c::remap_table_c table;
-            if (x == 1) {
-                remap_to(color_e::gold, table);
-            } else {
-                remap_to(color_e::silver, table);
-            }
-            tiles_cnv.remap_colors(table, rect);
-        }
+            tiles_cnv.remap_colors(tables[x - 1], rect);
+        };
+        remap(1);
+        remap(2);
         //tiles.image()->save("/tmp/tiles.iff", compression_type_e::compression_type_none, false);
     }
     return asset;
