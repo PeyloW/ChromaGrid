@@ -305,8 +305,8 @@ void cglevel_edit_scene_c::update_clear(screen_c &clear_screen, int ticks) {
         draw_counts(canvas);
     }
     
-    bool lb = mouse.state(mouse_c::button_e::left) == mouse_c::state_e::clicked;
-    bool rb = mouse.state(mouse_c::button_e::right) == mouse_c::state_e::clicked;
+    bool lb = mouse.state(mouse_c::button_e::left) == button_state_e::clicked;
+    bool rb = mouse.state(mouse_c::button_e::right) == button_state_e::clicked;
     const auto pos = mouse.postion();
     
     if (pos.x < MAIN_MENU_ORIGIN_X && pos.y < MAIN_MENU_SIZE_HEIGHT) {

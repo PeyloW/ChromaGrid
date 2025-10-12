@@ -5,8 +5,7 @@
 //  Created by Fredrik on 2024-03-01.
 //
 
-#ifndef resources_hpp
-#define resources_hpp
+#pragma once
 
 #include "image.hpp"
 #include "audio.hpp"
@@ -70,5 +69,3 @@ private:
     const bool _max_time;
     const bool _max_orbs;
 };
-
-#endif /* resources_hpp */

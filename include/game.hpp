@@ -5,8 +5,7 @@
 //  Created by Fredrik on 2024-02-03.
 //
 
-#ifndef game_hpp
-#define game_hpp
+#pragma once
 
 #include "level.hpp"
 #include "scene.hpp"
@@ -184,5 +183,4 @@ private:
     scroller_c _scroller;
     int _shimmer_ticks;
 };
-
-#endif /* game_hpp */
+#pragma once

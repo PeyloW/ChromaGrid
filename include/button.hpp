@@ -5,8 +5,7 @@
 //  Created by Fredrik on 2024-03-03.
 //
 
-#ifndef button_hpp
-#define button_hpp
+#pragma once
 
 #include "types.hpp"
 #include "resources.hpp"
@@ -83,6 +82,3 @@ public:
 
     vector_c<cgbutton_t, BUTTON_COUNT> buttons;
 };
-
-
-#endif /* button_hpp */

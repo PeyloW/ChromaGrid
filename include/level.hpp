@@ -5,8 +5,7 @@
 //  Created by Fredrik on 2024-01-30.
 //
 
-#ifndef grid_h
-#define grid_h
+#pragma once
 
 #include "cincludes.hpp"
 #include "types.hpp"
@@ -150,5 +149,3 @@ private:
     uint16_t _remaining;
     unique_ptr_c<grid_c> _grid;
 };
-
-#endif /* grid_h */

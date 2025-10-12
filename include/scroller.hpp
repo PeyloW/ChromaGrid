@@ -5,8 +5,7 @@
 //  Created by Fredrik on 2024-05-23.
 //
 
-#ifndef scroller_hpp
-#define scroller_hpp
+#pragma once
 
 #include "types.hpp"
 #include "resources.hpp"
@@ -32,5 +31,3 @@ private:
     rect_s _char_rect;
     int _paragraph_pos;
 };
-
-#endif /* scroller_hpp */

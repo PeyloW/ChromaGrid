@@ -579,8 +579,8 @@ level_t::state_e level_t::update_tick(canvas_c &screen, mouse_c &mouse, int pass
 
     if (at.x < grid_c::GRID_MAX && at.y < grid_c::GRID_MAX) {
         debug_cpu_color(DBEUG_CPU_LEVEL_RESOLVE);
-        bool lb = mouse.state(mouse_c::button_e::left) == mouse_c::state_e::clicked;
-        bool rb = mouse.state(mouse_c::button_e::right) == mouse_c::state_e::clicked;
+        bool lb = mouse.state(mouse_c::button_e::left) == button_state_e::clicked;
+        bool rb = mouse.state(mouse_c::button_e::right) == button_state_e::clicked;
         if (lb || rb) {
             cgp_tile_changes = tile_changes_e::no_changes;
             // Try remove an orb

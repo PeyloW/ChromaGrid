@@ -75,21 +75,21 @@ int cgbutton_group_base_c::update_button_range(cgbutton_t *begin, cgbutton_t *en
     if (_tracked_button >= 0) {
         auto &button = begin[_tracked_button];
         //assert(button.state == cgbutton_t::pressed);
-        if (state == mouse_c::state_e::released || !button.rect.contains(pos)) {
+        if (state == button_state_e::released || !button.rect.contains(pos)) {
             button.state = cgbutton_t::state_e::normal;
             button.draw_in(screen);
             _tracked_button = -1;
         }
     }
     if (_group_rect.contains(pos)) {
-        if (state != mouse_c::state_e::released) {
+        if (state != button_state_e::released) {
             int idx = 0;
             for (cgbutton_t *button = begin; button != end; button++, idx++) {
                 if (button->state >= cgbutton_t::state_e::disabled) {
                     continue;
                 }
                 if (button->rect.contains(pos)) {
-                    if (state == mouse_c::state_e::pressed) {
+                    if (state == button_state_e::pressed) {
                         if (button->state == cgbutton_t::state_e::normal) {
                             button->state = cgbutton_t::state_e::pressed;
                             button->draw_in(screen);
