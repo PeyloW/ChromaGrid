@@ -72,7 +72,7 @@ struct level_recipe_t {
     } header;
     const char *text;
     tilestate_t tiles[];
-    static const int MAX_SIZE = 16 + sizeof(tilestate_t) * 12 * 12;
+    static constexpr int MAX_SIZE = 16 + sizeof(tilestate_t) * 12 * 12;
     bool empty() const;
     int size() const;
     bool save(iffstream_c &iff);
@@ -91,9 +91,9 @@ namespace toybox {
 }
     
 struct __packed_struct level_result_t {
-    static const uint16_t FAILED_SCORE = 0;
-    static const uint16_t PER_ORB_SCORE = 100;
-    static const uint16_t PER_SECOND_SCORE = 10;
+    static constexpr uint16_t FAILED_SCORE = 0;
+    static constexpr uint16_t PER_ORB_SCORE = 100;
+    static constexpr uint16_t PER_SECOND_SCORE = 10;
     uint16_t score;
     uint8_t orbs[2];
     uint16_t time;

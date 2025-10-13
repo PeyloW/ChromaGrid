@@ -20,7 +20,7 @@ cghelp_scene_c::cghelp_scene_c(scene_manager_c &manager, page_e page) :
 }
 
 
-static const char *basics_texts[] = {
+static constexpr const char *basics_texts[] = {
     "The goal of each level is to color all the marked tiles on the board according to their target color within the time limit with the available orbs.",
     "Orbs are placed on tiles using the left button for gold, and right button for silver. Clicking an orb on the board picks it up again. Placing or picking up an orb counts as one move.",
     "Placing an orb on a tile next to an empty space on the board creates a new tile in the empty space of the same type. Diagonal placement does not count.",
@@ -28,21 +28,21 @@ static const char *basics_texts[] = {
     nullptr
 };
 
-static const char *special_tiles_texts[] = {
+static constexpr const char *special_tiles_texts[] = {
     "Orbs cannot be placed on blocked tiles or broken glass tiles.",
     "A glass tile breaks when an orb is removed from it by picking it up or by fusing it.",
     "Orbs can only be removed from magnetic tiles by fusing them, not by picking them up.",
     nullptr
 };
 
-static const char *scoring_texts[] = {
+static constexpr const char *scoring_texts[] = {
     "Each level is scored by remaining Time, number of Moves used and Points.",
     "Each remaining second is worth 10pts, and each remaining orb not on the board is worth 100pts.",
     "Optimizing your strategy for Time, Moves, or Points may penalize the other scores.  Experiment and replay levels to get high scores in all three.",
     nullptr
 };
 
-static const char *level_editor_texts[] = {
+static constexpr const char *level_editor_texts[] = {
     "Clicking on the grid updates tiles based on the currently selected tool.",
     "With a tile type tool selected, left-clicking cycles through the target color and right-clicking cycles through the current color.",
     "With the orbs tool selected a left click places a gold orb and a right click places a silver orb. Clicking a tile with an existing orb removes the orb.",
@@ -52,7 +52,7 @@ static const char *level_editor_texts[] = {
     nullptr
 };
 
-static void draw_help(const cgasset_manager &rsc, canvas_c &screen, const char *title, const char *texts[]) {
+static void draw_help(const cgasset_manager &rsc, canvas_c &screen, const char *const title, const char *const texts[]) {
     auto &font = rsc.font(FONT);
     auto &small_font = rsc.font(SMALL_FONT);
     screen.draw(font, title, point_s(96, 12));

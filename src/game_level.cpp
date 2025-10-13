@@ -109,8 +109,8 @@ public:
             sleep(2);
             #endif
             if (!assets.level_results().save()) {
-                static const char *title = "Error Saving Results";
-                static const char *text = "Could not save level results. Check that disk is not write protected and try again.";
+                static constexpr const char *title = "Error Saving Results";
+                static constexpr const char *text = "Could not save level results. Check that disk is not write protected and try again.";
                 auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_ended_scene_c::did_choose, *this);
                 manager.push(scene, transition_c::create(canvas_c::stencil_e::orderred));
             }

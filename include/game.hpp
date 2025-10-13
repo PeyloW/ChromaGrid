@@ -128,7 +128,7 @@ private:
 class cglevel_scene_c : public cggame_scene_c {
     friend void tick_second(cglevel_scene_c *that);
 public:
-    static const int TEST_LEVEL = -1;
+    static constexpr int TEST_LEVEL = -1;
     cglevel_scene_c(scene_manager_c &manager, int level);
     cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe);
 

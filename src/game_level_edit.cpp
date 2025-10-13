@@ -79,8 +79,8 @@ public:
             sleep(2);
             #endif
             if (!assets.user_levels().save()) {
-                static const char *title = "Error Saving Levels";
-                static const char *text = "Could not save user levels. Check that disk is not write protected and try again.";
+                static constexpr const char *title = "Error Saving Levels";
+                static constexpr const char *text = "Could not save user levels. Check that disk is not write protected and try again.";
                 auto scene = new cgerror_scene_c(manager, title, text, (cgerror_scene_c::choice_f)&cglevel_edit_persistence_scene_c::did_choose, *this);
                 manager.push(scene, transition_c::create(canvas_c::stencil_e::orderred));
                 return;
@@ -198,7 +198,7 @@ cglevel_edit_scene_c::cglevel_edit_scene_c(scene_manager_c &manager, level_recip
     _shimmer_ticks = 0;
 }
 
-static const char *_template_help_texts[7] = {
+static constexpr const char *_template_help_texts[7] = {
     "Place gold or silver targets with left or right mouse button. Select again to remove target.",
     "Place regular tiles with left mouse button, remove with right mouse button. Select again to rotate target color.",
     "Place magnetic tiles with left mouse button, remove with right mouse button. Select again to rotate the tile's current color.",
@@ -225,7 +225,7 @@ void cglevel_edit_scene_c::will_appear(screen_c &clear_screen, bool obsured) {
 }
 
 tilestate_t cglevel_edit_scene_c::next_state(const tilestate_t &current, mouse_c::button_e button) const {
-    static const tilestate_t empty = (tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::none };
+    static constexpr tilestate_t empty = (tilestate_t){ tiletype_e::empty, color_e::none, color_e::none, color_e::none };
     auto copy = current;
     auto &selected = _tile_templates[_selected_template];
     if (selected.orb != color_e::none) {

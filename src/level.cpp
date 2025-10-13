@@ -75,7 +75,7 @@ bool level_result_t::merge_from(const level_result_t &new_result) {
 
 class tile_c {
 public:
-    static const uint8_t STEP_MAX = 16;
+    static constexpr uint8_t STEP_MAX = 16;
     
     __forceinline void tick() {
         if (transition.step > 0) {
@@ -177,7 +177,7 @@ public:
 //  4. tick() and redraw tiles with callback.
 class grid_c {
 public:
-    static const int GRID_MAX = 12;
+    static constexpr int GRID_MAX = 12;
     tile_c tiles[GRID_MAX][GRID_MAX];
 private:
 
