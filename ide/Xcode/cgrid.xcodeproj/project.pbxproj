@@ -20,7 +20,7 @@
 
 /* Begin PBXFileReference section */
 		A61509F32E89D31A00358801 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/LICENSE.txt; sourceTree = "<absolute>"; };
-		A61509F42E89D31A00358801 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/Makefile; sourceTree = "<absolute>"; };
+		A61509F42E89D31A00358801 /* Makefile */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/Makefile; sourceTree = "<absolute>"; tabWidth = 4; };
 		A61509FC2E89D31A00358801 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/README.md; sourceTree = "<absolute>"; };
 		A65231F22E89EE2E00750BC8 /* cgrid_index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgrid_index; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -47,6 +47,9 @@
 		A65232232E89EE5E00750BC8 /* Exceptions for "toybox" folder in "cgrid_index" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				sample/src/demo_assets.cpp,
+				sample/src/demo_main.cpp,
+				sample/src/main.cpp,
 				src/asset.cpp,
 				src/audio_atari.cpp,
 				src/audio_mixer_atari.cpp,
@@ -187,6 +190,38 @@
 			passBuildSettingsInEnvironment = 1;
 			productName = cgrid;
 		};
+		A68D47D22E9C84DC00174946 /* toybox_tests */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "HOST=sdl2 all";
+			buildConfigurationList = A68D47D32E9C84DC00174946 /* Build configuration list for PBXLegacyTarget "toybox_tests" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = ../../../toybox/tests/;
+			dependencies = (
+			);
+			name = toybox_tests;
+			packageProductDependencies = (
+			);
+			passBuildSettingsInEnvironment = 1;
+			productName = cgrid;
+		};
+		A68D49152E9FE77300174946 /* toybox_sample */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "HOST=sdl2 install";
+			buildConfigurationList = A68D49162E9FE77300174946 /* Build configuration list for PBXLegacyTarget "toybox_sample" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = ../../../toybox/sample/;
+			dependencies = (
+			);
+			name = toybox_sample;
+			packageProductDependencies = (
+			);
+			passBuildSettingsInEnvironment = 1;
+			productName = cgrid;
+		};
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
@@ -242,6 +277,8 @@
 			targets = (
 				A6150A4E2E89D81000358801 /* cgrid */,
 				A65231F12E89EE2E00750BC8 /* cgrid_index */,
+				A68D47D22E9C84DC00174946 /* toybox_tests */,
+				A68D49152E9FE77300174946 /* toybox_sample */,
 			);
 		};
 /* End PBXProject section */
@@ -319,7 +356,7 @@
 					"-DTOYBOX_TARGET_ATARI=2",
 					"-DTOYBOX_HOST=sdl2",
 					"-g",
-					"-std=c++20",
+					"-std=c++23",
 					"-Wno-vla-cxx-extension",
 					"-I/opt/homebrew/include/SDL2",
 				);
@@ -381,7 +418,7 @@
 					"-DTOYBOX_TARGET_ATARI=2",
 					"-DTOYBOX_HOST=sdl2",
 					"-g",
-					"-std=c++20",
+					"-std=c++23",
 					"-Wno-vla-cxx-extension",
 					"-I/opt/homebrew/include/SDL2",
 				);
@@ -437,6 +474,64 @@
 			};
 			name = Release;
 		};
+		A68D47D42E9C84DC00174946 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../../toybox/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A68D47D52E9C84DC00174946 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../../toybox/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		A68D49172E9FE77300174946 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../../toybox/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A68D49182E9FE77300174946 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../../toybox/include",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -463,6 +558,24 @@
 			buildConfigurations = (
 				A65231F82E89EE2E00750BC8 /* Debug */,
 				A65231F92E89EE2E00750BC8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A68D47D32E9C84DC00174946 /* Build configuration list for PBXLegacyTarget "toybox_tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A68D47D42E9C84DC00174946 /* Debug */,
+				A68D47D52E9C84DC00174946 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A68D49162E9FE77300174946 /* Build configuration list for PBXLegacyTarget "toybox_sample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A68D49172E9FE77300174946 /* Debug */,
+				A68D49182E9FE77300174946 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
