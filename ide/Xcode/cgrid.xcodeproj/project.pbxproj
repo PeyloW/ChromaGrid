@@ -19,10 +19,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A61509F32E89D31A00358801 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/LICENSE.txt; sourceTree = "<absolute>"; };
-		A61509F42E89D31A00358801 /* Makefile */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/Makefile; sourceTree = "<absolute>"; tabWidth = 4; };
-		A61509FC2E89D31A00358801 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = /Users/peylow/Projects/atari_hobby/ChromaGrid/README.md; sourceTree = "<absolute>"; };
+		A61509F32E89D31A00358801 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = ../../LICENSE.txt; sourceTree = SOURCE_ROOT; };
+		A61509F42E89D31A00358801 /* Makefile */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../Makefile; sourceTree = SOURCE_ROOT; tabWidth = 4; };
+		A61509FC2E89D31A00358801 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = SOURCE_ROOT; };
 		A65231F22E89EE2E00750BC8 /* cgrid_index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgrid_index; sourceTree = BUILT_PRODUCTS_DIR; };
+		A68D4AA22EA1370700174946 /* toybox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = toybox.xcodeproj; sourceTree = "<group>"; };
+		A68D4D442EA139BC00174946 /* toybox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = toybox.xcodeproj; path = ../../../toybox/ide/Xcode/toybox.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -44,78 +46,32 @@
 			);
 			target = A65231F12E89EE2E00750BC8 /* cgrid_index */;
 		};
-		A65232232E89EE5E00750BC8 /* Exceptions for "toybox" folder in "cgrid_index" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				sample/src/demo_assets.cpp,
-				sample/src/demo_main.cpp,
-				sample/src/main.cpp,
-				src/asset.cpp,
-				src/audio_atari.cpp,
-				src/audio_mixer_atari.cpp,
-				src/audio.cpp,
-				src/blitter_atari.cpp,
-				src/canvas_atari.cpp,
-				src/canvas_stencil.cpp,
-				src/canvas.cpp,
-				src/cpp_runtime.cpp,
-				src/dirtymap.cpp,
-				src/font.cpp,
-				src/host_bridge.cpp,
-				src/iffstream.cpp,
-				src/image.cpp,
-				src/input_atari.cpp,
-				src/input.cpp,
-				src/machine_atari.cpp,
-				src/machine_sdl2.cpp,
-				src/palette.cpp,
-				src/scene_transition.cpp,
-				src/scene.cpp,
-				src/screen.cpp,
-				src/stream.cpp,
-				src/tileset.cpp,
-				src/timer_atari.cpp,
-				src/timer.cpp,
-				src/util_stream.cpp,
-				src/utility.cpp,
-			);
-			target = A65231F12E89EE2E00750BC8 /* cgrid_index */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A61509B42E89D2BC00358801 /* toybox */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				A65232232E89EE5E00750BC8 /* Exceptions for "toybox" folder in "cgrid_index" target */,
-			);
-			name = toybox;
-			path = /Users/peylow/Projects/atari_hobby/toybox;
-			sourceTree = "<absolute>";
-		};
 		A61509D02E89D31A00358801 /* Assets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			name = Assets;
-			path = /Users/peylow/Projects/atari_hobby/ChromaGrid/Assets;
-			sourceTree = "<absolute>";
+			path = ../../Assets;
+			sourceTree = SOURCE_ROOT;
 		};
 		A61509EC2E89D31A00358801 /* data */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			name = data;
-			path = /Users/peylow/Projects/atari_hobby/ChromaGrid/data;
-			sourceTree = "<absolute>";
+			path = ../../data;
+			sourceTree = SOURCE_ROOT;
 		};
 		A61509F22E89D31A00358801 /* include */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			name = include;
-			path = /Users/peylow/Projects/atari_hobby/ChromaGrid/include;
-			sourceTree = "<absolute>";
+			path = ../../include;
+			sourceTree = SOURCE_ROOT;
 		};
 		A61509FB2E89D31A00358801 /* other */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			name = other;
-			path = /Users/peylow/Projects/atari_hobby/ChromaGrid/other;
-			sourceTree = "<absolute>";
+			path = ../../other;
+			sourceTree = SOURCE_ROOT;
 		};
 		A6150A092E89D31A00358801 /* src */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -123,8 +79,8 @@
 				A65232062E89EE4B00750BC8 /* Exceptions for "src" folder in "cgrid_index" target */,
 			);
 			name = src;
-			path = /Users/peylow/Projects/atari_hobby/ChromaGrid/src;
-			sourceTree = "<absolute>";
+			path = ../../src;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -142,7 +98,7 @@
 		A61509482E89D22600358801 = {
 			isa = PBXGroup;
 			children = (
-				A61509B42E89D2BC00358801 /* toybox */,
+				A68D4D442EA139BC00174946 /* toybox.xcodeproj */,
 				A61509B52E89D2E800358801 /* ChromaGrid */,
 				A65231F32E89EE2E00750BC8 /* Products */,
 			);
@@ -153,12 +109,12 @@
 			children = (
 				A61509D02E89D31A00358801 /* Assets */,
 				A61509EC2E89D31A00358801 /* data */,
-				A61509F22E89D31A00358801 /* include */,
-				A61509F32E89D31A00358801 /* LICENSE.txt */,
-				A61509F42E89D31A00358801 /* Makefile */,
 				A61509FB2E89D31A00358801 /* other */,
-				A61509FC2E89D31A00358801 /* README.md */,
+				A61509F22E89D31A00358801 /* include */,
 				A6150A092E89D31A00358801 /* src */,
+				A61509F42E89D31A00358801 /* Makefile */,
+				A61509F32E89D31A00358801 /* LICENSE.txt */,
+				A61509FC2E89D31A00358801 /* README.md */,
 			);
 			path = ChromaGrid;
 			sourceTree = "<group>";
@@ -167,6 +123,13 @@
 			isa = PBXGroup;
 			children = (
 				A65231F22E89EE2E00750BC8 /* cgrid_index */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A68D4AA32EA1370700174946 /* Products */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -185,38 +148,6 @@
 			dependencies = (
 			);
 			name = cgrid;
-			packageProductDependencies = (
-			);
-			passBuildSettingsInEnvironment = 1;
-			productName = cgrid;
-		};
-		A68D47D22E9C84DC00174946 /* toybox_tests */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "HOST=sdl2 all";
-			buildConfigurationList = A68D47D32E9C84DC00174946 /* Build configuration list for PBXLegacyTarget "toybox_tests" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = ../../../toybox/tests/;
-			dependencies = (
-			);
-			name = toybox_tests;
-			packageProductDependencies = (
-			);
-			passBuildSettingsInEnvironment = 1;
-			productName = cgrid;
-		};
-		A68D49152E9FE77300174946 /* toybox_sample */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "HOST=sdl2 install";
-			buildConfigurationList = A68D49162E9FE77300174946 /* Build configuration list for PBXLegacyTarget "toybox_sample" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = ../../../toybox/sample/;
-			dependencies = (
-			);
-			name = toybox_sample;
 			packageProductDependencies = (
 			);
 			passBuildSettingsInEnvironment = 1;
@@ -273,12 +204,16 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A65231F32E89EE2E00750BC8 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A68D4AA32EA1370700174946 /* Products */;
+					ProjectRef = A68D4AA22EA1370700174946 /* toybox.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A6150A4E2E89D81000358801 /* cgrid */,
 				A65231F12E89EE2E00750BC8 /* cgrid_index */,
-				A68D47D22E9C84DC00174946 /* toybox_tests */,
-				A68D49152E9FE77300174946 /* toybox_sample */,
 			);
 		};
 /* End PBXProject section */
@@ -474,64 +409,6 @@
 			};
 			name = Release;
 		};
-		A68D47D42E9C84DC00174946 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../../toybox/include",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		A68D47D52E9C84DC00174946 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../../toybox/include",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		A68D49172E9FE77300174946 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../../toybox/include",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		A68D49182E9FE77300174946 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../../toybox/include",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -558,24 +435,6 @@
 			buildConfigurations = (
 				A65231F82E89EE2E00750BC8 /* Debug */,
 				A65231F92E89EE2E00750BC8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A68D47D32E9C84DC00174946 /* Build configuration list for PBXLegacyTarget "toybox_tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A68D47D42E9C84DC00174946 /* Debug */,
-				A68D47D52E9C84DC00174946 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A68D49162E9FE77300174946 /* Build configuration list for PBXLegacyTarget "toybox_sample" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A68D49172E9FE77300174946 /* Debug */,
-				A68D49182E9FE77300174946 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
