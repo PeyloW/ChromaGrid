@@ -13,12 +13,12 @@
 #include "button.hpp"
 #include "scroller.hpp"
 
-class cgintro_scene_c : public scene_c {
+class cgintro_scene_c final : public scene_c {
 public:
     cgintro_scene_c(scene_manager_c &manager);
-    virtual configuration_s &configuration() const;
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual configuration_s &configuration() const override;
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     static void update_preload(int loaded, int count);
     int _update_count;
@@ -35,7 +35,7 @@ public:
 #define MAIN_MENU_BUTTONS_SIZE (size_s(MAIN_MENU_SIZE_WIDTH - MAIN_MENU_MARGINS * 2, 14))
 #define MAIN_MENU_BUTTONS_SPACING ((int16_t)-6)
     cggame_scene_c(scene_manager_c &manager);
-    virtual configuration_s &configuration() const;
+    virtual configuration_s &configuration() const override;
     template<class BG>
     int update_button_group(canvas_c &screen, BG &buttons) const {
         return buttons.update_buttons(screen, mouse);
@@ -48,17 +48,17 @@ protected:
     font_c &small_font;
 };
 
-class cgoverlay_scene_c : public cggame_scene_c {
+class cgoverlay_scene_c final : public cggame_scene_c {
 public:
     cgoverlay_scene_c(scene_manager_c &manager) : 
         cggame_scene_c(manager)
     {}
-    virtual configuration_s &configuration() const;
-    virtual void will_appear(screen_c &clear_screen, bool obsured) {};
-    virtual void update_back(screen_c &back_screen, int ticks);
+    virtual configuration_s &configuration() const override;
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override {};
+    virtual void update_back(screen_c &back_screen, int ticks) override;
 };
 
-class cgerror_scene_c : public cggame_scene_c {
+class cgerror_scene_c final : public cggame_scene_c {
 public:
     enum class choice_e : uint8_t {
         retry, cancel
@@ -66,8 +66,8 @@ public:
     using choice_f = void(scene_c::*)(choice_e choice);
     cgerror_scene_c(scene_manager_c &manager, const char *title, const char *text, choice_f callback, scene_c &target);
 
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_back(screen_c &back_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_back(screen_c &back_screen, int ticks) override;
 private:
     const char *_title;
     const char *_text;
@@ -76,66 +76,66 @@ private:
     scene_c &_target;
 };
 
-class cgmenu_scene_c : public cggame_scene_c {
+class cgmenu_scene_c final : public cggame_scene_c {
 public:
     cgmenu_scene_c(scene_manager_c &manager);
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     cgbutton_group_c<5> _menu_buttons;
     scroller_c _scroller;
 };
 
-class cgcredits_scene_c : public cggame_scene_c {
+class cgcredits_scene_c final : public cggame_scene_c {
 public:
     enum class page_e : uint8_t {
         credits, recognitions, dedications, greetings
     };
     cgcredits_scene_c(scene_manager_c &manager, page_e page = page_e::credits);
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     page_e _page;
     cgbutton_group_c<5> _menu_buttons;
 };
 
-class cghelp_scene_c : public cggame_scene_c {
+class cghelp_scene_c final : public cggame_scene_c {
 public:
     enum class page_e : uint8_t {
         basics, special_tiles, scoring, level_editor
     };
     cghelp_scene_c(scene_manager_c &manager, page_e page = page_e::basics);
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     page_e _page;
     cgbutton_group_c<5> _menu_buttons;
 };
 
-class cgscores_scene_c : public cggame_scene_c {
+class cgscores_scene_c final : public cggame_scene_c {
 public:
     enum class scoring_e : uint8_t {
         score, time, moves
     };
     cgscores_scene_c(scene_manager_c &manager, scoring_e scoring = scoring_e::score);
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     scoring_e _scoring;
     cgbutton_group_c<4> _menu_buttons;
 };
 
-class cglevel_scene_c : public cggame_scene_c {
+class cglevel_scene_c final : public cggame_scene_c {
     friend void tick_second(cglevel_scene_c *that);
 public:
     static constexpr int TEST_LEVEL = -1;
     cglevel_scene_c(scene_manager_c &manager, int level);
     cglevel_scene_c(scene_manager_c &manager, level_recipe_t *recipe);
 
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void will_disappear(bool obscured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
-    virtual void update_back(screen_c &back_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void will_disappear(bool obscured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
+    virtual void update_back(screen_c &back_screen, int ticks) override;
 private:
     int _shimmer_ticks;
     int _shimmer_tile;
@@ -146,24 +146,24 @@ private:
     level_t _level;
 };
 
-class cglevel_select_scene_c : public cggame_scene_c {
+class cglevel_select_scene_c final : public cggame_scene_c {
 public:
     cglevel_select_scene_c(scene_manager_c &manager);
 
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
 private:
     cgbutton_group_c<1> _menu_buttons;
     vector_c<cgbutton_group_c<5>, 9> _select_button_groups;
 };
 
-class cglevel_edit_scene_c : public cggame_scene_c {
+class cglevel_edit_scene_c final : public cggame_scene_c {
 public:
     cglevel_edit_scene_c(scene_manager_c &manager, level_recipe_t *recipe);
     
-    virtual void will_appear(screen_c &clear_screen, bool obsured);
-    virtual void update_clear(screen_c &clear_screen, int ticks);
-    virtual void update_back(screen_c &back_screen, int ticks);
+    virtual void will_appear(screen_c &clear_screen, bool obsured) override;
+    virtual void update_clear(screen_c &clear_screen, int ticks) override;
+    virtual void update_back(screen_c &back_screen, int ticks) override;
 
 private:
     tilestate_t next_state(const tilestate_t &current, mouse_c::button_e button) const;

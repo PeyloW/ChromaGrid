@@ -47,7 +47,7 @@ private:
     unique_ptr_c<const char> _text;
 };
 
-class cgasset_manager : public asset_manager_c {
+class cgasset_manager final : public asset_manager_c {
 public:
     cgasset_manager();
     virtual ~cgasset_manager() {}
@@ -64,7 +64,7 @@ public:
     bool max_time() const __pure { return _max_time; }
     bool max_orbs() const __pure { return _max_orbs; }
 protected:
-    virtual asset_c *create_asset(int id, const asset_def_s &def) const;
+    virtual asset_c *create_asset(int id, const asset_def_s &def) const override;
 private:
     const bool _max_time;
     const bool _max_orbs;
